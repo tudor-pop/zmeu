@@ -61,6 +61,7 @@ public class Lexer {
 //                System.exit(1);
             }
         }
+        tokens.add(new Token("EOF", TokenType.EOF));
         return tokens;
     }
 }

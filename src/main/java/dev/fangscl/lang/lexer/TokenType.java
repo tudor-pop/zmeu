@@ -18,6 +18,7 @@ public enum TokenType {
     OpenBrackets,
     CloseBrackets,
     BinaryOperator,
+    EOF,
     Unknown;
 
     public static TokenType toSymbol(char token) {
