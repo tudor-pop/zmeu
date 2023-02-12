@@ -1,6 +1,8 @@
-var x = 10;
+var x = 10
 
 const y = 100
 x+y
 
 var z = x + y * ( x/y)
+
+x { }

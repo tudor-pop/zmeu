@@ -13,6 +13,10 @@ public enum TokenType {
     Identifier,
     OpenParanthesis,
     CloseParanthesis,
+    OpenBraces,
+    CloseBraces,
+    OpenBrackets,
+    CloseBrackets,
     BinaryOperator,
     Unknown;
 
@@ -21,6 +25,10 @@ public enum TokenType {
             case '=' -> Equals;
             case '(' -> OpenParanthesis;
             case ')' -> CloseParanthesis;
+            case '{' -> OpenBraces;
+            case '}' -> CloseBraces;
+            case '[' -> OpenBrackets;
+            case ']' -> CloseBrackets;
             case '+', '-', '*', '/' -> BinaryOperator;
             default -> Unknown;
         };
@@ -35,13 +43,6 @@ public enum TokenType {
         return toSymbol(character) != Unknown;
     }
 
-    public static boolean isKeyword(String keyword) {
-        return switch (keyword) {
-            case "var", "const" -> true;
-            default -> false;
-        };
-    }
-
     public static TokenType toKeyword(String keyword) {
         return switch (keyword) {
             case "var"-> Var;
@@ -49,6 +50,11 @@ public enum TokenType {
             default -> Unknown;
         };
     }
+
+    public static boolean isKeyword(String keyword) {
+        return toKeyword(keyword) != Unknown;
+    }
+
     public static TokenType toKeywordOrIdentifier(String keyword) {
         var res = toKeyword(keyword);
         return res == Unknown ? Identifier : res;
