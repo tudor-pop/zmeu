@@ -1,14 +1,12 @@
-package dev.fangscl.lang.lexer;
-
-import java.security.Key;
-import java.util.HashMap;
+package dev.fangscl.lexer;
 
 // var x = 40 + (foo * bar)
 // [VarToken, IdentifierToken, EqualsToken, IntegerToken]
 public enum TokenType {
     Var,
     Const,
-    Number,
+    Integer,
+    Decimal,
     Equals,
     Identifier,
     OpenParanthesis,
@@ -63,7 +61,7 @@ public enum TokenType {
 
     public static TokenType toNumber(char digit) {
         if (Character.isDigit(digit)) {
-            return Number;
+            return Integer;
         }
         return Unknown;
     }

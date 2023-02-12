@@ -1,4 +1,4 @@
-package dev.fangscl.lang.lexer;
+package dev.fangscl.lexer;
 
 import lombok.Data;
 
