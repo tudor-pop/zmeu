@@ -1,5 +1,7 @@
 package dev.fangscl.lexer;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 // var x = 40 + (foo * bar)
 // [VarToken, IdentifierToken, EqualsToken, IntegerToken]
 public enum TokenType {
@@ -33,6 +35,9 @@ public enum TokenType {
         };
     }
 
+    public static boolean in(String operator, String... symbols) {
+        return ArrayUtils.contains(symbols, operator);
+    }
 
     public static TokenType toSymbol(String token) {
         return toSymbol(token.charAt(0));

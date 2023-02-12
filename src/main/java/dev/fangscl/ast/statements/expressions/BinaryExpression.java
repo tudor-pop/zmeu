@@ -14,4 +14,11 @@ public class BinaryExpression extends Expression {
     public BinaryExpression() {
         this.kind = NodeType.BinaryExpression;
     }
+
+    public BinaryExpression(Expression left, Expression right, String operator) {
+        this();
+        this.left = left;
+        this.right = right;
+        this.operator = operator;
+    }
 }
