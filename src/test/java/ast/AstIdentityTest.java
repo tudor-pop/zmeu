@@ -1,7 +1,7 @@
 package ast;
 
 import dev.fangscl.ast.NodeType;
-import dev.fangscl.ast.statements.IdentifierExpression;
+import dev.fangscl.ast.statements.expressions.IdentifierExpression;
 import dev.fangscl.ast.statements.Statement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

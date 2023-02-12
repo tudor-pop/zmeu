@@ -1,6 +1,7 @@
-package dev.fangscl.ast.statements;
+package dev.fangscl.ast.statements.expressions;
 
 import dev.fangscl.ast.NodeType;
+import dev.fangscl.ast.statements.expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

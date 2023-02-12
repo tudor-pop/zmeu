@@ -1,4 +1,4 @@
-package dev.fangscl.ast.statements;
+package dev.fangscl.ast.statements.expressions;
 
 import dev.fangscl.ast.NodeType;
 import lombok.Data;
@@ -6,18 +6,18 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IntegerLiteralExpression extends Expression {
+public class IntegerExpression extends Expression {
     private int value;
 
-    public IntegerLiteralExpression() {
+    public IntegerExpression() {
         this.kind = NodeType.NumericLiteral;
     }
 
-    public IntegerLiteralExpression(int value) {
+    public IntegerExpression(int value) {
         this();
         this.value = value;
     }
-    public IntegerLiteralExpression(String value) {
+    public IntegerExpression(String value) {
         this();
         this.value = Integer.parseInt(value);
     }

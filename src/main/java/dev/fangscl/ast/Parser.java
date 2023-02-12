@@ -1,6 +1,10 @@
 package dev.fangscl.ast;
 
 import dev.fangscl.ast.statements.*;
+import dev.fangscl.ast.statements.expressions.DecimalExpression;
+import dev.fangscl.ast.statements.expressions.Expression;
+import dev.fangscl.ast.statements.expressions.IdentifierExpression;
+import dev.fangscl.ast.statements.expressions.IntegerExpression;
 import dev.fangscl.lexer.Lexer;
 import dev.fangscl.lexer.Token;
 import dev.fangscl.lexer.TokenType;
@@ -41,8 +45,8 @@ public class Parser {
     private Expression parseExpression(Token token) {
         return switch (token.getType()) {
             case Identifier -> new IdentifierExpression(token.getValue());
-            case Integer -> new IntegerLiteralExpression(token.getValue());
-            case Decimal -> new DecimalLiteralExpression(token.getValue());
+            case Integer -> new IntegerExpression(token.getValue());
+            case Decimal -> new DecimalExpression(token.getValue());
             default -> new Expression();
         };
     }

@@ -13,9 +13,9 @@ public class Main {
         var gson = new GsonBuilder()
 //                .setPrettyPrinting()
                 .create();
-        var parser = new Parser(new Lexer());
         var scanner = new Scanner(System.in);
         while (true) {
+            var parser = new Parser(new Lexer());
             System.out.print("> ");
             var line = scanner.nextLine();
             if (line.equalsIgnoreCase("exit") || line.equalsIgnoreCase("exit()") ||

@@ -1,4 +1,4 @@
-package dev.fangscl.ast.statements;
+package dev.fangscl.ast.statements.expressions;
 
 import dev.fangscl.ast.NodeType;
 import lombok.Data;
