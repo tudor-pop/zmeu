@@ -30,7 +30,7 @@ public enum TokenType {
             case '}' -> CloseBraces;
             case '[' -> OpenBrackets;
             case ']' -> CloseBrackets;
-            case '+', '-', '*', '/' -> BinaryOperator;
+            case '+', '-', '*', '/', '%' -> BinaryOperator;
             default -> Unknown;
         };
     }

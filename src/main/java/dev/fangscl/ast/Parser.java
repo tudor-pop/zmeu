@@ -34,11 +34,11 @@ public class Parser {
         iterator = tokens.listIterator();
 
         while (iterator.hasNext()) {
-            var token = iterator.next();
-            if (token.getType() == TokenType.EOF) {
+            var current = iterator.next();
+            if (current.getType() == TokenType.EOF) {
                 break;
             }
-            program.addStatement(this.parseStatement(token));
+            program.addStatement(this.parseStatement(current));
         }
 
         return program;
@@ -58,16 +58,28 @@ public class Parser {
     }
 
     private Expression parseAdditive(Token token) {
-        var left = parseLiteral(token);
+        var left = parseMultiplicative(token);
 
         // (10+5)-5
-        for (var operator = iterator.next(); iterator.hasNext() && TokenType.in(operator.getValue(), "+", "-"); ) {
+        while (iterator.hasNext() && TokenType.in(tokens.get(iterator.nextIndex()).getValue(), "+", "-")) {
+            var operator = iterator.next();
+            var next = iterator.next(); // get right hand side of an expression
+            Expression right = this.parseMultiplicative(next);
+            left = new BinaryExpression(left, right, operator.getValue());
+        }
+
+        return left;
+    }
+
+    private Expression parseMultiplicative(Token token) {
+        var left = parseLiteral(token);
+
+        // (10*5)-5
+        while (iterator.hasNext() && TokenType.in(tokens.get(iterator.nextIndex()).getValue(), "*", "/", "%")) {
+            var operator = iterator.next();
             var next = iterator.next(); // get right hand side of an expression
             Expression right = this.parseLiteral(next);
             left = new BinaryExpression(left, right, operator.getValue());
-            if (iterator.hasNext()) {
-                operator = iterator.next();
-            }
         }
 
         return left;
