@@ -19,4 +19,8 @@ public class ProgramStatement extends Statement {
         this.kind = NodeType.Program;
         this.body = body;
     }
+
+    public void addStatement(Statement statement) {
+        this.body.add(statement);
+    }
 }

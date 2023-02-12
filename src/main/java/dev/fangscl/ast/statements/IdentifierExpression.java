@@ -12,4 +12,8 @@ public class IdentifierExpression extends Expression {
     public IdentifierExpression() {
         this.kind = NodeType.Identifier;
     }
+    public IdentifierExpression(String symbol) {
+        this();
+        this.symbol = symbol;
+    }
 }
