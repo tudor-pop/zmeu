@@ -96,4 +96,13 @@ public class LexerTest {
         });
     }
 
+    @Test
+    void parseLongBinaryOp() throws IOException {
+        Assertions.assertThrows(LexerTokenException.class, () -> {
+            var doubleToken = lexer.tokenize("var x=.11dd");
+            Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+            Assertions.assertEquals(".11d", doubleToken.get(3).getValue());
+        });
+    }
+
 }

@@ -7,58 +7,59 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
+import java.util.LinkedList;
 import java.util.List;
 
 @Log4j2
 public class Lexer {
     @Getter
-    private final List<Token> tokens = new ArrayList<>();
+    private final LinkedList<Token> tokens = new LinkedList<>();
 
     public List<Token> tokenize(String source) {
-        for (int i = 0; i < source.length(); i++) {
-            var it = source.charAt(i);
-
-            if (Character.isDigit(it) || it == '.') {
+        var iterator = new StringCharacterIterator(source);
+        for (char i = iterator.first(); iterator.current() != CharacterIterator.DONE; i = iterator.next()) {
+            if (Character.isDigit(i) || i == '.') {
                 /* parse the number if there are multiple digits */
                 var tokenString = new StringBuilder(2);
 
-                for (int j = i; j < source.length(); j++, i = j - 1) {
+                for (char j = i; j != CharacterIterator.DONE; j = iterator.next()) {
                     /* j stops at the next character after the number eg 12;
                      * i must be at position of number 2 because it will get incremented to ; at the end of the top loop
                      * */
-                    var jit = source.charAt(j);
-                    if (Character.isDigit(jit)) {
-                        tokenString.append(jit);
-                    } else if (jit == '.') {
+                    if (Character.isDigit(j)) {
+                        tokenString.append(j);
+                    } else if (j == '.') {
                         // valid input: 1.2 , .5 , 0.522123f
-                        int j2 = j + 1;
-                        for (int k = j; k < source.length() && (Character.isDigit(source.charAt(j2)) || source.charAt(j2) == 'f' || source.charAt(j2) == 'd'); k++, j = k - 1) {
-                            var kit = source.charAt(k);
-                            if (source.charAt(k) == source.charAt(j) && (source.charAt(k) == 'f' || source.charAt(k) == 'd')) {
-                                // .2dddd or 0.223ffff ... multiple f/d not allowed or just break
-                                throw new LexerTokenException("Invalid decimal number");
-                            } else {
-                                tokenString.append(kit); // add the "." to the number
+                        for (char k = j; k != CharacterIterator.DONE; k = iterator.next()) {
+                            if (tokenString.length() > 0) {
+                                int j2 = tokenString.charAt(tokenString.length() - 1);
+                                if (j2 == 'f' || j2 == 'd') {
+                                    // .2dddd or 0.223ffff ... multiple f/d not allowed or just break
+                                    throw new LexerTokenException("Invalid decimal number");
+                                }
                             }
+                            tokenString.append(k); // add the "." to the number
                         }
                         var token = new Token(tokenString.toString(), TokenType.Decimal);
                         tokens.add(token);
                         // invalid input: 2.  0.d
                     } else {
+                        i = iterator.previous();
                         break;
                     }
                 }
-                var token = new Token(tokenString.toString(), TokenType.toNumber(it));
+                var token = new Token(tokenString.toString(), TokenType.toNumber(i));
                 tokens.add(token);
-            } else if (Character.isAlphabetic(it)) {
+            } else if (Character.isAlphabetic(i)) {
                 /* parse the keyword if there are multiple digits */
                 var tokenString = new StringBuilder(3);
-                for (int j = i; j < source.length(); j++, i = j - 1) {
-                    var jit = source.charAt(j);
-                    if (Character.isAlphabetic(jit)) {
-                        tokenString.append(jit);
+                for (char j = i; j != CharacterIterator.DONE; j = iterator.next()) {
+                    if (Character.isAlphabetic(j)) {
+                        tokenString.append(j);
                     } else {
+                        iterator.previous();
                         break;
                     }
                 }
@@ -71,14 +72,15 @@ public class Lexer {
                     var token = new Token(keyword, type);
                     tokens.add(token);
                 }
-            } else if (TokenType.isSymbol(it)) {
-                var token = new Token(it, TokenType.toSymbol(it));
+            } else if (TokenType.isSymbol(i)) {
+                var token = new Token(i, TokenType.toSymbol(i));
                 tokens.add(token);
-            } else if (TokenType.isSkippable(it)) {
+            } else if (TokenType.isSkippable(i)) {
             } else {
-                log.error("Unrecognized character was found in source: {}", it);
+                log.error("Unrecognized character was found in source: {}", i);
 //                System.exit(1);
             }
+
         }
         return tokens;
     }
