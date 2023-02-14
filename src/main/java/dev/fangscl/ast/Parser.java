@@ -45,16 +45,11 @@ public class Parser {
     }
 
     private Statement parseStatement(Token token) {
-        return parseAdditive(token);
+        return parseExpression(token);
     }
 
-    private Expression parseLiteral(Token token) {
-        return switch (token.getType()) {
-            case Identifier -> new IdentifierExpression(token.getValue());
-            case Integer -> new IntegerExpression(token.getValue());
-            case Decimal -> new DecimalExpression(token.getValue());
-            default -> new Expression();
-        };
+    private Expression parseExpression(Token token) {
+        return parseAdditive(token);
     }
 
     private Expression parseAdditive(Token token) {
@@ -83,6 +78,29 @@ public class Parser {
         }
 
         return left;
+    }
+
+    private Expression parseLiteral(Token token) {
+        return switch (token.getType()) {
+            case Identifier -> new IdentifierExpression(token.getValue());
+            case Integer -> new IntegerExpression(token.getValue());
+            case Decimal -> new DecimalExpression(token.getValue());
+            case OpenParanthesis -> {
+                var res = parseExpression(iterator.next());
+                expect(TokenType.CloseParanthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
+                yield res;
+            }
+            default -> new ErrorExpression(token.getValue());
+        };
+    }
+
+    private Token expect(TokenType type, String error) {
+        var prev = iterator.next();
+        if (prev.getType() != type) {
+            log.error("Parser error\n {} {} \nExpected: {} ", error, prev , type);
+            System.exit(1);
+        }
+        return prev;
     }
 
 }
