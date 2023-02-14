@@ -1,11 +1,16 @@
-package dev.fangscl.ast;
+package dev.fangscl.Parsing;
 
-import dev.fangscl.ast.Statements.ProgramStatement;
-import dev.fangscl.ast.Statements.Statement;
-import dev.fangscl.ast.Statements.Expressions.*;
-import dev.fangscl.lexer.Lexer;
-import dev.fangscl.lexer.Token;
-import dev.fangscl.lexer.TokenType;
+import dev.fangscl.ast.TypeSystem.Base.Expression;
+import dev.fangscl.ast.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.ast.TypeSystem.Expressions.ErrorExpression;
+import dev.fangscl.ast.TypeSystem.Literals.DecimalLiteral;
+import dev.fangscl.ast.TypeSystem.Literals.Identifier;
+import dev.fangscl.ast.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.ast.TypeSystem.Program;
+import dev.fangscl.ast.TypeSystem.Base.Statement;
+import dev.fangscl.Parsing.Lexer.Lexer;
+import dev.fangscl.Parsing.Lexer.Token;
+import dev.fangscl.Parsing.Lexer.TokenType;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
@@ -27,8 +32,8 @@ public class Parser {
         this.lexer = lexer;
     }
 
-    public ProgramStatement produceAST(String src) {
-        var program = new ProgramStatement();
+    public Program produceAST(String src) {
+        var program = new Program();
 
         tokens = lexer.tokenize(src);
         iterator = tokens.listIterator();
@@ -82,9 +87,9 @@ public class Parser {
 
     private Expression parseLiteral(Token token) {
         return switch (token.getType()) {
-            case Identifier -> new IdentifierExpression(token.getValue());
-            case Integer -> new IntegerExpression(token.getValue());
-            case Decimal -> new DecimalExpression(token.getValue());
+            case Identifier -> new Identifier(token.getValue());
+            case Integer -> new IntegerLiteral(token.getValue());
+            case Decimal -> new DecimalLiteral(token.getValue());
             case OpenParanthesis -> {
                 var res = parseExpression(iterator.next());
                 expect(TokenType.CloseParanthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");

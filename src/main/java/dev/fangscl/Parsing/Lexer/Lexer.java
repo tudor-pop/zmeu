@@ -1,4 +1,4 @@
-package dev.fangscl.lexer;
+package dev.fangscl.Parsing.Lexer;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;

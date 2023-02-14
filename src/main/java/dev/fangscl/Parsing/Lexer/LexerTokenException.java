@@ -1,4 +1,4 @@
-package dev.fangscl.lexer;
+package dev.fangscl.Parsing.Lexer;
 
 public class LexerTokenException extends RuntimeException {
 

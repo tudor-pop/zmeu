@@ -1,8 +1,8 @@
 package lexer;
 
-import dev.fangscl.lexer.Lexer;
-import dev.fangscl.lexer.LexerTokenException;
-import dev.fangscl.lexer.TokenType;
+import dev.fangscl.Parsing.Lexer.Lexer;
+import dev.fangscl.Parsing.Lexer.LexerTokenException;
+import dev.fangscl.Parsing.Lexer.TokenType;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

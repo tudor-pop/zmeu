@@ -1,4 +1,4 @@
-package dev.fangscl.lexer;
+package dev.fangscl.Parsing.Lexer;
 
 import org.apache.commons.lang3.ArrayUtils;
 

@@ -1,6 +1,4 @@
-package dev.fangscl.ast.Statements.Expressions;
-
-import dev.fangscl.ast.Statements.Statement;
+package dev.fangscl.ast.TypeSystem.Base;
 
 /**
  * Order of preccedence

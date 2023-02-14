@@ -1,6 +1,6 @@
-package dev.fangscl.ast.Statements;
+package dev.fangscl.ast.TypeSystem;
 
-import dev.fangscl.ast.NodeType;
+import dev.fangscl.ast.TypeSystem.Base.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,13 +9,13 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ProgramStatement extends Statement {
+public class Program extends Statement {
     private List<Statement> body;
 
-    public ProgramStatement() {
+    public Program() {
         this(new ArrayList<>());
     }
-    public ProgramStatement(List<Statement> body) {
+    public Program(List<Statement> body) {
         this.kind = NodeType.Program;
         this.body = body;
     }

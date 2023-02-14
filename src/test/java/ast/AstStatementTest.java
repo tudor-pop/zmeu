@@ -1,7 +1,7 @@
 package ast;
 
-import dev.fangscl.ast.Parser;
-import dev.fangscl.lexer.Lexer;
+import dev.fangscl.Parsing.Parser;
+import dev.fangscl.Parsing.Lexer.Lexer;
 import org.junit.jupiter.api.BeforeEach;
 
 class AstStatementTest {

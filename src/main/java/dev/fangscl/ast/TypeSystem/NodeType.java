@@ -1,4 +1,4 @@
-package dev.fangscl.ast;
+package dev.fangscl.ast.TypeSystem;
 
 public enum NodeType {
     Program,

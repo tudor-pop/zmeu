@@ -1,6 +1,7 @@
-package dev.fangscl.ast.Statements.Expressions;
+package dev.fangscl.ast.TypeSystem.Expressions;
 
-import dev.fangscl.ast.NodeType;
+import dev.fangscl.ast.TypeSystem.Base.Expression;
+import dev.fangscl.ast.TypeSystem.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
