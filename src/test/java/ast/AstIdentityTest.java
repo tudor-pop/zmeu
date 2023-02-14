@@ -52,6 +52,15 @@ public class AstIdentityTest extends AstStatementTest {
                         {"body":[{"left":{"value":1,"kind":"NumericLiteral"},"right":{"left":{"value":2,"kind":"NumericLiteral"},"right":{"value":3,"kind":"NumericLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
+    @Test
+    void testAdditionParanthesis() {
+        var res = parser.produceAST("1 + 2 - (3*4)");
+        String expression = gson.toJson(res);
+        Assertions.assertEquals("""
+                        {"body":[{"left":{"left":{"value":1,"kind":"NumericLiteral"},"right":{"value":2,"kind":"NumericLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"left":{"value":3,"kind":"NumericLiteral"},"right":{"value":4,"kind":"NumericLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
+                , expression);
+    }
+
 
     @Test
     void testList() {

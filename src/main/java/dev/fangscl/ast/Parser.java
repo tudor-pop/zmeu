@@ -1,8 +1,8 @@
 package dev.fangscl.ast;
 
-import dev.fangscl.ast.statements.ProgramStatement;
-import dev.fangscl.ast.statements.Statement;
-import dev.fangscl.ast.statements.expressions.*;
+import dev.fangscl.ast.Statements.ProgramStatement;
+import dev.fangscl.ast.Statements.Statement;
+import dev.fangscl.ast.Statements.Expressions.*;
 import dev.fangscl.lexer.Lexer;
 import dev.fangscl.lexer.Token;
 import dev.fangscl.lexer.TokenType;

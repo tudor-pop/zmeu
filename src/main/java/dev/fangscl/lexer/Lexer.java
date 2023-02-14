@@ -21,10 +21,10 @@ public class Lexer {
         var iterator = new StringCharacterIterator(source);
         for (char i = iterator.first(); iterator.current() != CharacterIterator.DONE; i = iterator.next()) {
             if (Character.isDigit(i) || i == '.') {
-                Token token = handleDigit(iterator, i);
+                Token token = handleDigit(iterator);
                 tokens.add(token);
             } else if (Character.isAlphabetic(i)) {
-                var token = handleAlphabetic(iterator, i);
+                var token = handleAlphabetic(iterator);
                 tokens.add(token);
             } else if (TokenType.isSymbol(i)) {
                 var token = new Token(i, TokenType.toSymbol(i));
@@ -39,10 +39,10 @@ public class Lexer {
         return tokens;
     }
 
-    private Token handleAlphabetic(StringCharacterIterator iterator, char i) {
+    private Token handleAlphabetic(StringCharacterIterator iterator) {
         /* parse the keyword if there are multiple digits */
         var tokenString = new StringBuilder(3);
-        for (char j = i; j != CharacterIterator.DONE; j = iterator.next()) {
+        for (char j = iterator.current(); j != CharacterIterator.DONE; j = iterator.next()) {
             if (Character.isAlphabetic(j)) {
                 tokenString.append(j);
             } else {
@@ -52,18 +52,14 @@ public class Lexer {
         }
         String keyword = tokenString.toString();
         TokenType type = TokenType.toKeyword(keyword);
-        if (type == TokenType.Unknown) {
-            return new Token(keyword, TokenType.Identifier);
-        } else {
-            return new Token(keyword, type);
-        }
+        return new Token(keyword, type);
     }
 
-    private Token handleDigit(StringCharacterIterator iterator, char i) {
+    private Token handleDigit(StringCharacterIterator iterator) {
         /* parse the number if there are multiple digits */
         var tokenString = new StringBuilder(2);
 
-        for (char j = i; j != CharacterIterator.DONE; j = iterator.next()) {
+        for (char j = iterator.current(); j != CharacterIterator.DONE; j = iterator.next()) {
             /* j stops at the next character after the number eg 12;
              * i must be at position of number 2 because it will get incremented to ; at the end of the top loop
              * */
@@ -81,16 +77,13 @@ public class Lexer {
                     }
                     tokenString.append(k); // add the "." to the number
                 }
-                var token = new Token(tokenString.toString(), TokenType.Decimal);
-                tokens.add(token);
+                return new Token(tokenString.toString(), TokenType.Decimal);
                 // invalid input: 2.  0.d
             } else {
-                i = iterator.previous();
-                break;
+                return new Token(tokenString.toString(), TokenType.toNumber(iterator.previous()));
             }
         }
-        var token = new Token(tokenString.toString(), TokenType.toNumber(i));
-        return token;
+        return new Token(tokenString.toString(), TokenType.toNumber(iterator.current()));
     }
 
     public List<Token> tokenize(File src) throws IOException {

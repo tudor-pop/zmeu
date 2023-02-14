@@ -18,6 +18,7 @@ public enum TokenType {
     OpenBrackets,
     CloseBrackets,
     BinaryOperator,
+    Null,
     EOF,
     Unknown;
 
@@ -51,7 +52,8 @@ public enum TokenType {
         return switch (keyword) {
             case "var"-> Var;
             case "const"-> Const;
-            default -> Unknown;
+            case "null"-> Null;
+            default -> Identifier;
         };
     }
 
