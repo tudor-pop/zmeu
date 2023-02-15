@@ -33,35 +33,35 @@ public class LexerTest {
     @Test
     void parseDouble() throws IOException {
         var token = lexer.tokenize("var x=.1");
-        Assertions.assertSame(TokenType.Decimal, token.get(3).getType());
+        Assertions.assertSame(TokenType.Number, token.get(3).getType());
         Assertions.assertEquals(".1", token.get(3).getValue());
     }
 
     @Test
     void parseDoubleDigits() throws IOException {
         var token = lexer.tokenize("var x=.12");
-        Assertions.assertSame(TokenType.Decimal, token.get(3).getType());
+        Assertions.assertSame(TokenType.Number, token.get(3).getType());
         Assertions.assertEquals(".12", token.get(3).getValue());
     }
 
     @Test
     void parseFloatWithDatatype() throws IOException {
         var floatToken = lexer.tokenize("var x=.1f");
-        Assertions.assertSame(TokenType.Decimal, floatToken.get(3).getType());
+        Assertions.assertSame(TokenType.Number, floatToken.get(3).getType());
         Assertions.assertEquals(".1f", floatToken.get(3).getValue());
     }
 
     @Test
     void parseDoubleWithDatatype() throws IOException {
         var doubleToken = lexer.tokenize("var x=.1d");
-        Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+        Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
         Assertions.assertEquals(".1d", doubleToken.get(3).getValue());
     }
 
     @Test
     void parseLongFloatWithDatatype() throws IOException {
         var doubleToken = lexer.tokenize("var x=.11f");
-        Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+        Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
         Assertions.assertEquals(".11f", doubleToken.get(3).getValue());
     }
 
@@ -69,7 +69,7 @@ public class LexerTest {
     void parseLongFloatWithDatatypeRepeat() throws IOException {
         Assertions.assertThrows(LexerTokenException.class, () -> {
             var doubleToken = lexer.tokenize("var x=.11ff");
-            Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+            Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
             Assertions.assertEquals(".11f", doubleToken.get(3).getValue());
         });
     }
@@ -77,13 +77,13 @@ public class LexerTest {
     @Test
     void parseLongDoubleWithDatatype() throws IOException {
         var doubleToken = lexer.tokenize("var x=.11d");
-        Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+        Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
         Assertions.assertEquals(".11d", doubleToken.get(3).getValue());
     }
     @Test
     void parseLongWith() throws IOException {
         var doubleToken = lexer.tokenize("var x=11.11");
-        Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+        Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
         Assertions.assertEquals("11.11", doubleToken.get(3).getValue());
     }
 
@@ -91,7 +91,7 @@ public class LexerTest {
     void parseLongDoubleWithDatatypeRepeat() throws IOException {
         Assertions.assertThrows(LexerTokenException.class, () -> {
             var doubleToken = lexer.tokenize("var x=.11dd");
-            Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+            Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
             Assertions.assertEquals(".11d", doubleToken.get(3).getValue());
         });
     }
@@ -100,7 +100,7 @@ public class LexerTest {
     void parseLongBinaryOp() throws IOException {
         Assertions.assertThrows(LexerTokenException.class, () -> {
             var doubleToken = lexer.tokenize("var x=.11dd");
-            Assertions.assertSame(TokenType.Decimal, doubleToken.get(3).getType());
+            Assertions.assertSame(TokenType.Number, doubleToken.get(3).getType());
             Assertions.assertEquals(".11d", doubleToken.get(3).getValue());
         });
     }

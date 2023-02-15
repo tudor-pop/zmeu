@@ -1,6 +1,5 @@
 package ast;
 
-import com.google.gson.Gson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AstIdentityTest extends AstStatementTest {
-    private Gson gson = new Gson();
 
 //    @Test
 //    void testCreate() {

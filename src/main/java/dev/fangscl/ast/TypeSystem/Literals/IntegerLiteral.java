@@ -11,7 +11,7 @@ public class IntegerLiteral extends Expression {
     private int value;
 
     public IntegerLiteral() {
-        this.kind = NodeType.NumericLiteral;
+        this.kind = NodeType.IntegerLiteral;
     }
 
     public IntegerLiteral(int value) {

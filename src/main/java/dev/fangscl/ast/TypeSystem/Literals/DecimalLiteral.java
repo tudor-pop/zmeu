@@ -11,7 +11,7 @@ public class DecimalLiteral extends Expression {
     private double value;
 
     public DecimalLiteral() {
-        this.kind = NodeType.NumericLiteral;
+        this.kind = NodeType.DecimalLiteral;
     }
 
     public DecimalLiteral(double value) {

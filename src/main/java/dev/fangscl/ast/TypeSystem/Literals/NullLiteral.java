@@ -11,7 +11,7 @@ public class NullLiteral extends Expression {
     private String value;
 
     public NullLiteral() {
-        this.kind = NodeType.NumericLiteral;
+        this.kind = NodeType.NullLiteral;
         this.value = "null";
     }
 

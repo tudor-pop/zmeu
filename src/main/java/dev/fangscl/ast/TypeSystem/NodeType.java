@@ -3,7 +3,8 @@ package dev.fangscl.ast.TypeSystem;
 public enum NodeType {
     Program,
     NullLiteral,
-    NumericLiteral,
+    DecimalLiteral,
+    IntegerLiteral,
     Identifier,
     BinaryExpression
 }

@@ -6,6 +6,7 @@ import dev.fangscl.ast.TypeSystem.Expressions.ErrorExpression;
 import dev.fangscl.ast.TypeSystem.Literals.DecimalLiteral;
 import dev.fangscl.ast.TypeSystem.Literals.Identifier;
 import dev.fangscl.ast.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.ast.TypeSystem.Literals.NullLiteral;
 import dev.fangscl.ast.TypeSystem.Program;
 import dev.fangscl.ast.TypeSystem.Base.Statement;
 import dev.fangscl.Parsing.Lexer.Lexer;
@@ -87,9 +88,10 @@ public class Parser {
 
     private Expression parseLiteral(Token token) {
         return switch (token.getType()) {
+            case Null -> new NullLiteral();
             case Identifier -> new Identifier(token.getValue());
-            case Integer -> new IntegerLiteral(token.getValue());
             case Decimal -> new DecimalLiteral(token.getValue());
+            case Integer -> new IntegerLiteral(token.getValue());
             case OpenParanthesis -> {
                 var res = parseExpression(iterator.next());
                 expect(TokenType.CloseParanthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");

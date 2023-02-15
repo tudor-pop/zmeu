@@ -83,7 +83,7 @@ public class Lexer {
                 return new Token(tokenString.toString(), TokenType.toNumber(iterator.previous()));
             }
         }
-        return new Token(tokenString.toString(), TokenType.toNumber(iterator.current()));
+        return new Token(tokenString.toString(), TokenType.toNumber(iterator.previous()));
     }
 
     public List<Token> tokenize(File src) throws IOException {
