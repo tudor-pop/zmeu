@@ -10,6 +10,6 @@ public class DecimalValue extends RuntimeValue {
 
     public DecimalValue(double number) {
         this.value = number;
-        this.type = ValueType.Number;
+        this.type = ValueType.Decimal;
     }
 }

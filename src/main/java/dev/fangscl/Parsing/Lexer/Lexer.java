@@ -12,6 +12,13 @@ import java.text.StringCharacterIterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * -----------------------------------------------------------
+ * ------------               Lexer             --------------
+ * -----------------------------------------------------------
+ * ------   Responsible for producing tokens from source   ---
+ * -----------------------------------------------------------
+ */
 @Log4j2
 public class Lexer {
     @Getter

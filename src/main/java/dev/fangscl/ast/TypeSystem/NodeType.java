@@ -5,6 +5,7 @@ public enum NodeType {
     NullLiteral,
     DecimalLiteral,
     IntegerLiteral,
+    BooleanLiteral,
     Identifier,
     BinaryExpression
 }

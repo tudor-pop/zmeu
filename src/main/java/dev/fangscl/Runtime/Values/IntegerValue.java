@@ -10,6 +10,6 @@ public class IntegerValue extends RuntimeValue {
 
     public IntegerValue(int number) {
         this.value = number;
-        this.type = ValueType.Number;
+        this.type = ValueType.Integer;
     }
 }

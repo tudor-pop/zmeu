@@ -1,5 +1,7 @@
 package ast;
 
+import dev.fangscl.ast.TypeSystem.Base.Statement;
+import dev.fangscl.ast.TypeSystem.Expressions.BinaryExpression;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +23,10 @@ public class AstIdentityTest extends AstStatementTest {
         var res = parser.produceAST("1 + 1");
         String expression = gson.toJson(res);
         Assertions.assertEquals("""
-                        {"body":[{"left":{"value":1,"kind":"NumericLiteral"},"right":{"value":1,"kind":"NumericLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
+                        {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
+        Statement actualValue = res.getBody().get(0);
+        Assertions.assertInstanceOf(BinaryExpression.class, actualValue);
     }
 
     @Test
@@ -30,7 +34,7 @@ public class AstIdentityTest extends AstStatementTest {
         var res = parser.produceAST("1 + 1+1");
         String expression = gson.toJson(res);
         Assertions.assertEquals("""
-                        {"body":[{"left":{"left":{"value":1,"kind":"NumericLiteral"},"right":{"value":1,"kind":"NumericLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":1,"kind":"NumericLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
+                        {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
 
@@ -39,7 +43,7 @@ public class AstIdentityTest extends AstStatementTest {
         var res = parser.produceAST("1 + 1-11");
         String expression = gson.toJson(res);
         Assertions.assertEquals("""
-                        {"body":[{"left":{"left":{"value":1,"kind":"NumericLiteral"},"right":{"value":1,"kind":"NumericLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":11,"kind":"NumericLiteral"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
+                        {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":11,"kind":"IntegerLiteral"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
     @Test
@@ -47,7 +51,7 @@ public class AstIdentityTest extends AstStatementTest {
         var res = parser.produceAST("1 + 2*3");
         String expression = gson.toJson(res);
         Assertions.assertEquals("""
-                        {"body":[{"left":{"value":1,"kind":"NumericLiteral"},"right":{"left":{"value":2,"kind":"NumericLiteral"},"right":{"value":3,"kind":"NumericLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
+                        {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"left":{"value":2,"kind":"IntegerLiteral"},"right":{"value":3,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
     @Test
@@ -55,7 +59,7 @@ public class AstIdentityTest extends AstStatementTest {
         var res = parser.produceAST("1 + 2 - (3*4)");
         String expression = gson.toJson(res);
         Assertions.assertEquals("""
-                        {"body":[{"left":{"left":{"value":1,"kind":"NumericLiteral"},"right":{"value":2,"kind":"NumericLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"left":{"value":3,"kind":"NumericLiteral"},"right":{"value":4,"kind":"NumericLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
+                        {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":2,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"left":{"value":3,"kind":"IntegerLiteral"},"right":{"value":4,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
 

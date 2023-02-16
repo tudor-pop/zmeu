@@ -1,9 +1,13 @@
 package dev.fangscl;
 
 import com.google.gson.GsonBuilder;
-import dev.fangscl.Parsing.Parser;
 import dev.fangscl.Parsing.Lexer.Lexer;
+import dev.fangscl.Parsing.Parser;
 import dev.fangscl.Runtime.Interpreter;
+import dev.fangscl.Runtime.Scope.Scope;
+import dev.fangscl.Runtime.Values.BooleanValue;
+import dev.fangscl.Runtime.Values.IntegerValue;
+import dev.fangscl.Runtime.Values.NullValue;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Scanner;
@@ -18,6 +22,11 @@ public class Main {
                 .create();
         Interpreter interpreter = new Interpreter();
         var scanner = new Scanner(System.in);
+        Scope scope = new Scope();
+        scope.declareVar("x", new IntegerValue(12));
+        scope.declareVar("true", new BooleanValue(true));
+        scope.declareVar("false", new BooleanValue(false));
+        scope.declareVar("null", new NullValue());
         while (true) {
             var parser = new Parser(new Lexer());
             System.out.print("> ");
@@ -28,7 +37,7 @@ public class Main {
             }
             var program = parser.produceAST(line);
             System.out.println(gson.toJson(program));
-            var evalRes = interpreter.eval(program);
+            var evalRes = interpreter.eval(program, scope);
             log.error("{}", evalRes);
             log.error("\n\n");
         }
