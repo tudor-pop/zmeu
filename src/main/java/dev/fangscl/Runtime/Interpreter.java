@@ -34,7 +34,7 @@ public class Interpreter {
             case BinaryExpression -> eval((BinaryExpression) statement, scope);
             case Program -> eval((Program) statement, scope);
             default -> {
-                log.error("This AST does cannot be interpreted yet {}", statement);
+                log.debug("This AST does cannot be interpreted yet {}", statement);
                 System.exit(1);
                 yield null;
             }

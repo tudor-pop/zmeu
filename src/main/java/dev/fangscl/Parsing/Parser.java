@@ -104,7 +104,7 @@ public class Parser {
     private Token expect(TokenType type, String error) {
         var prev = iterator.next();
         if (prev.getType() != type) {
-            log.error("Parser error\n {} {} \nExpected: {} ", error, prev , type);
+            log.debug("Parser error\n {} {} \nExpected: {} ", error, prev , type);
             System.exit(1);
         }
         return prev;

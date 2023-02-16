@@ -5,19 +5,61 @@ import org.apache.commons.lang3.ArrayUtils;
 // var x = 40 + (foo * bar)
 // [VarToken, IdentifierToken, EqualsToken, IntegerToken]
 public enum TokenType {
-    Var,
-    Const,
+    /*****   Literal types   *****/
     Integer,
     Decimal,
-    Equals,
     Identifier,
+
+    /******   Expressions   ******/
+    Equals,
+    Var,
+    Param,
+    This,
+
+
+    /******   IAC   *****/
+    Resource,
+    Existing,
+    Module,
+
+    /******   Visibility *****/
+     /* all properties are private by default. This means that:
+     1. the property/module will be accessible from other files
+     2. the property/module won't be logged
+     3. the property/module will appear in state file/deployment history
+     */
+    Public,
+    /* all properties are private by default. This means that:
+     1. the property/module won't be accessible from other files
+     2. the property/module won't be logged
+     3. the property/module will appear in state file/deployment history
+     */
+    Private,
+    /* all properties are private by default. This means that:
+     1. the property/module will be accessible from other files (access some secure password)
+     2. the property/module won't be logged
+     3. the property/module won't appear in state file/deployment history
+     */
+    Secure,
+    /* all properties are private by default. This means that:
+     1. the property/module will be accessible from other files
+     2. the property/module will be logged
+     3. the property/module will appear in state file/deployment history
+     */
+    Output,
+
+    /*****   Grouping   *****/
     OpenParanthesis,
     CloseParanthesis,
     OpenBraces,
     CloseBraces,
     OpenBrackets,
     CloseBrackets,
+
+    /*****   Operators   ******/
     BinaryOperator,
+    TernaryOperator,
+    OptionalOperator,
     Null,
     EOF,
     Unknown;
@@ -31,6 +73,7 @@ public enum TokenType {
             case '}' -> CloseBraces;
             case '[' -> OpenBrackets;
             case ']' -> CloseBrackets;
+            case '?' -> OptionalOperator;
             case '+', '-', '*', '/', '%' -> BinaryOperator;
             default -> Unknown;
         };
@@ -50,9 +93,17 @@ public enum TokenType {
 
     public static TokenType toKeyword(String keyword) {
         return switch (keyword) {
-            case "var"-> Var;
-            case "const"-> Const;
-            case "null"-> Null;
+            case "var" -> Var;
+            case "param" -> Param;
+            case "this" -> This;
+            case "resource" -> Resource;
+            case "public" -> Public;
+            case "private" -> Private;
+            case "secure" -> Secure;
+            case "output" -> Output;
+            case "existing" -> Existing;
+            case "module" -> Module;
+            case "null" -> Null;
             default -> Identifier;
         };
     }

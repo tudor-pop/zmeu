@@ -27,7 +27,7 @@ public class LexerTest {
         for (var line : lines) {
             lexer.tokenize(line);
         }
-        log.error("lines: {}", lexer.getTokens());
+        log.debug("lines: {}", lexer.getTokens());
     }
 
     @Test

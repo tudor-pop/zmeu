@@ -38,7 +38,7 @@ public class Lexer {
                 tokens.add(token);
             } else if (TokenType.isSkippable(i)) {
             } else {
-                log.error("Unrecognized character was found in source: {}", i);
+                log.debug("Unrecognized character was found in source: {}", i);
 //                System.exit(1);
             }
 
