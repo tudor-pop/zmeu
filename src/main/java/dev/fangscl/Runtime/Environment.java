@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.Scope;
+package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Values.RuntimeValue;
 import org.jetbrains.annotations.Nullable;
@@ -6,16 +6,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Scope {
+public class Environment {
     @Nullable
-    private Scope parent;
-    private Map<String, RuntimeValue> variables;
+    private final Environment parent;
+    private final Map<String, RuntimeValue> variables;
 
-    public Scope(@Nullable Scope parent) {
+    public Environment(@Nullable Environment parent) {
         this.parent = parent;
         variables = new HashMap<>(32);
     }
-    public Scope() {
+    public Environment() {
         this(null);
     }
 
@@ -58,7 +58,7 @@ public class Scope {
      * @param varname
      * @return
      */
-    private Scope resolve(String varname) {
+    private Environment resolve(String varname) {
         if (variables.containsKey(varname)) {
             return this;
         }

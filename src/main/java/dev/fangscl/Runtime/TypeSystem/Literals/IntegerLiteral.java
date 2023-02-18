@@ -18,6 +18,7 @@ public class IntegerLiteral extends Expression {
         this();
         this.value = value;
     }
+
     public IntegerLiteral(String value) {
         this();
         this.value = Integer.parseInt(value);

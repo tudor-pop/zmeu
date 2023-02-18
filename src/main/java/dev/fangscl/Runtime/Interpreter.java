@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Scope.Scope;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
@@ -13,26 +12,42 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class Interpreter {
+    private final Environment global;
 
-    public RuntimeValue eval(Program expression, Scope scope) {
+    public Interpreter(Environment global) {
+        this.global = global;
+//        this.global.declareVar("null", new NullValue());
+        this.global.declareVar("true", new BooleanValue(true));
+        this.global.declareVar("false", new BooleanValue(false));
+    }
+
+    public Interpreter() {
+        this(new Environment());
+    }
+
+    private RuntimeValue eval(Program expression, Environment environment) {
         RuntimeValue lastEval = new NullValue();
 
         for (var i : expression.getBody()) {
-            lastEval = eval(i, scope);
+            lastEval = eval(i, environment);
         }
 
         return lastEval;
     }
 
-    private RuntimeValue eval(Statement statement, Scope scope) {
+    public RuntimeValue eval(Statement expression) {
+        return this.eval(expression, this.global);
+    }
+
+    public RuntimeValue eval(Statement statement, Environment env) {
         return switch (statement.getKind()) {
             case DecimalLiteral -> new DecimalValue(((DecimalLiteral) statement).getValue());
             case IntegerLiteral -> new IntegerValue(((IntegerLiteral) statement).getValue());
             case BooleanLiteral -> new BooleanValue(((BooleanLiteral) statement).isValue());
-            case Identifier -> scope.evaluateVar(((Identifier) statement).getSymbol());
+            case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
             case NullLiteral -> new NullValue();
-            case BinaryExpression -> eval((BinaryExpression) statement, scope);
-            case Program -> eval((Program) statement, scope);
+            case BinaryExpression -> eval((BinaryExpression) statement, env);
+            case Program -> eval((Program) statement, env);
             default -> {
                 log.debug("This AST does cannot be interpreted yet {}", statement);
                 System.exit(1);
@@ -41,9 +56,9 @@ public class Interpreter {
         };
     }
 
-    private RuntimeValue eval(BinaryExpression expression, Scope scope) {
-        var lhs = eval(expression.getLeft(), scope);
-        var rhs = eval(expression.getRight(), scope);
+    private RuntimeValue eval(BinaryExpression expression, Environment environment) {
+        var lhs = eval(expression.getLeft(), environment);
+        var rhs = eval(expression.getRight(), environment);
         if ((lhs.getType() == ValueType.Decimal && rhs.getType() == ValueType.Decimal) ||
                 (lhs.getType() == ValueType.Integer && rhs.getType() == ValueType.Integer)) {
             return eval(lhs, rhs, expression.getOperator());

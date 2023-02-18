@@ -1,43 +1,44 @@
 package dev.fangscl.Runtime;
 
-import com.google.gson.Gson;
-import dev.fangscl.Parsing.Lexer;
-import dev.fangscl.Parsing.Parser;
-import dev.fangscl.Runtime.Scope.Scope;
+import dev.fangscl.Runtime.TypeSystem.Literals.BooleanLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.NullLiteral;
+import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.ValueType;
+import dev.fangscl.Runtime.Values.NullValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class InterpreterTest {
-    protected Parser parser;
     protected Interpreter interpreter;
-    private Gson gson = new Gson();
 
     @BeforeEach
     void reset() {
-        this.parser = new Parser(new Lexer());
         this.interpreter = new Interpreter();
     }
 
     @Test
-    void testVariableEvaluation() {
-        var scope = new Scope();
-        scope.declareVar("x", new IntegerValue(10));
-        var program = parser.produceAST("x");
-        var evalRes = interpreter.eval(program, scope);
-        Assertions.assertInstanceOf(IntegerValue.class, evalRes);
+    void testLiteral() {
+        var evalRes = interpreter.eval(new IntegerLiteral(10));
         Assertions.assertEquals(10, ((IntegerValue) evalRes).getValue());
     }
 
     @Test
-    void testVariable() {
-        var scope = new Scope();
-        scope.declareVar("x", new IntegerValue(10));
-        var program = parser.produceAST("x+null");
-        var evalRes = interpreter.eval(program, scope);
-        Assertions.assertEquals(ValueType.Null, evalRes.getType());
+    void testBoolFalse() {
+        var evalRes = interpreter.eval(new BooleanLiteral(false));
+        Assertions.assertFalse(((BooleanValue) evalRes).isValue());
     }
+    @Test
+    void testBoolTrue() {
+        var evalRes = interpreter.eval(new BooleanLiteral(true));
+        Assertions.assertTrue(((BooleanValue) evalRes).isValue());
+    }
+    @Test
+    void testNull() {
+        var evalRes = interpreter.eval(new NullLiteral());
+        Assertions.assertNull(((NullValue) evalRes).getValue());
+    }
+
 
 }
