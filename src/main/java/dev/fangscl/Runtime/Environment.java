@@ -48,7 +48,8 @@ public class Environment {
         return value;
     }
 
-    public RuntimeValue evaluateVar(String varname) {
+    public RuntimeValue evaluateVar(@Nullable String varname) {
+        if (varname == null) varname = "null";
         return resolve(varname) // search the scope
                 .variables.get(varname); // return the value
     }

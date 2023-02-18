@@ -18,4 +18,8 @@ public class Identifier extends Expression {
         this();
         this.symbol = symbol;
     }
+    public Identifier(boolean symbol) {
+        this();
+        this.symbol = String.valueOf(symbol);
+    }
 }

@@ -1,8 +1,7 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.TypeSystem.Literals.BooleanLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.Identifier;
 import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
-import dev.fangscl.Runtime.TypeSystem.Literals.NullLiteral;
 import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.NullValue;
@@ -26,17 +25,17 @@ class InterpreterTest {
 
     @Test
     void testBoolFalse() {
-        var evalRes = interpreter.eval(new BooleanLiteral(false));
+        var evalRes = interpreter.eval(new Identifier(false));
         Assertions.assertFalse(((BooleanValue) evalRes).isValue());
     }
     @Test
     void testBoolTrue() {
-        var evalRes = interpreter.eval(new BooleanLiteral(true));
+        var evalRes = interpreter.eval(new Identifier(true));
         Assertions.assertTrue(((BooleanValue) evalRes).isValue());
     }
     @Test
     void testNull() {
-        var evalRes = interpreter.eval(new NullLiteral());
+        var evalRes = interpreter.eval(new Identifier());
         Assertions.assertNull(((NullValue) evalRes).getValue());
     }
 

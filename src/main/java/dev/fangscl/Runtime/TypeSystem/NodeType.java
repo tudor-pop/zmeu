@@ -2,10 +2,10 @@ package dev.fangscl.Runtime.TypeSystem;
 
 public enum NodeType {
     Program,
-    NullLiteral,
+//    NullLiteral,
     DecimalLiteral,
     IntegerLiteral,
-    BooleanLiteral,
+//    BooleanLiteral,
     Identifier,
     BinaryExpression
 }

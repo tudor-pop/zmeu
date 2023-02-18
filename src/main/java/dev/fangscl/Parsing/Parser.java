@@ -1,14 +1,13 @@
 package dev.fangscl.Parsing;
 
 import dev.fangscl.Runtime.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
 import dev.fangscl.Runtime.TypeSystem.Literals.DecimalLiteral;
 import dev.fangscl.Runtime.TypeSystem.Literals.Identifier;
 import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
-import dev.fangscl.Runtime.TypeSystem.Literals.NullLiteral;
 import dev.fangscl.Runtime.TypeSystem.Program;
-import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
@@ -86,7 +85,6 @@ public class Parser {
 
     private Expression parseLiteral(Token token) {
         return switch (token.getType()) {
-            case Null -> new NullLiteral();
             case Identifier -> new Identifier(token.getValue());
             case Decimal -> new DecimalLiteral(token.getValue());
             case Integer -> new IntegerLiteral(token.getValue());
@@ -102,7 +100,7 @@ public class Parser {
     private Token expect(TokenType type, String error) {
         var prev = iterator.next();
         if (prev.getType() != type) {
-            log.debug("Parser error\n {} {} \nExpected: {} ", error, prev , type);
+            log.debug("Parser error\n {} {} \nExpected: {} ", error, prev, type);
             System.exit(1);
         }
         return prev;
