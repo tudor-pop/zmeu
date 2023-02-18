@@ -1,7 +1,7 @@
 package ast;
 
-import dev.fangscl.ast.TypeSystem.Base.Statement;
-import dev.fangscl.ast.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.Runtime.TypeSystem.Base.Statement;
+import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

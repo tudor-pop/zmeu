@@ -1,6 +1,6 @@
-package dev.fangscl.ast.TypeSystem;
+package dev.fangscl.Runtime.TypeSystem;
 
-import dev.fangscl.ast.TypeSystem.Base.Statement;
+import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

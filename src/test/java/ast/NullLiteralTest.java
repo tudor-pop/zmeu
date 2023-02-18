@@ -1,6 +1,6 @@
 package ast;
 
-import dev.fangscl.ast.TypeSystem.Literals.NullLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.NullLiteral;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

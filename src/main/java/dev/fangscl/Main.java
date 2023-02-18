@@ -1,7 +1,7 @@
 package dev.fangscl;
 
 import com.google.gson.GsonBuilder;
-import dev.fangscl.Parsing.Lexer.Lexer;
+import dev.fangscl.Parsing.Lexer;
 import dev.fangscl.Parsing.Parser;
 import dev.fangscl.Runtime.Interpreter;
 import dev.fangscl.Runtime.Scope.Scope;

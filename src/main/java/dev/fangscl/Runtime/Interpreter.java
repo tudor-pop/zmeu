@@ -2,13 +2,13 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Scope.Scope;
 import dev.fangscl.Runtime.Values.*;
-import dev.fangscl.ast.TypeSystem.Base.Statement;
-import dev.fangscl.ast.TypeSystem.Expressions.BinaryExpression;
-import dev.fangscl.ast.TypeSystem.Literals.BooleanLiteral;
-import dev.fangscl.ast.TypeSystem.Literals.DecimalLiteral;
-import dev.fangscl.ast.TypeSystem.Literals.Identifier;
-import dev.fangscl.ast.TypeSystem.Literals.IntegerLiteral;
-import dev.fangscl.ast.TypeSystem.Program;
+import dev.fangscl.Runtime.TypeSystem.Base.Statement;
+import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.Runtime.TypeSystem.Literals.BooleanLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.DecimalLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.Identifier;
+import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

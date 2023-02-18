@@ -1,6 +1,6 @@
-package dev.fangscl.ast.TypeSystem.Expressions;
+package dev.fangscl.Runtime.TypeSystem.Expressions;
 
-import dev.fangscl.ast.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Base.Expression;
 
 public class ErrorExpression extends Expression {
     private String msg;

@@ -1,4 +1,4 @@
-package dev.fangscl.ast.TypeSystem.Base;
+package dev.fangscl.Runtime.TypeSystem.Base;
 
 /**
  * Order of preccedence

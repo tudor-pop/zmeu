@@ -1,4 +1,4 @@
-package dev.fangscl.Parsing.Lexer;
+package dev.fangscl.Parsing;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -73,16 +73,18 @@ public class Lexer {
             if (Character.isDigit(j)) {
                 tokenString.append(j);
             } else if (j == '.') {
-                // valid input: 1.2 , .5 , 0.522123f
-                for (char k = j; k != CharacterIterator.DONE; k = iterator.next()) {
-                    if (tokenString.length() > 0) {
-                        int j2 = tokenString.charAt(tokenString.length() - 1);
-                        if (j2 == 'f' || j2 == 'd') {
-                            // .2dddd or 0.223ffff ... multiple f/d not allowed or just break
-                            throw new LexerTokenException("Invalid decimal number");
-                        }
-                    }
-                    tokenString.append(k); // add the "." to the number
+                tokenString.append(j); // add the "." to the number
+                // valid input: 1.2 , .5 , 0.522123
+                for (char k = iterator.next(); k != CharacterIterator.DONE && Character.isDigit(k); k = iterator.next()) {
+//                    if (tokenString.length() > 0) {
+//                        int j2 = tokenString.charAt(tokenString.length() - 1);
+//                        if (j2 == 'f' || j2 == 'd') {
+//                            // .2dddd or 0.223ffff ... multiple f/d not allowed or just break
+//                            throw new LexerTokenException("Invalid decimal number");
+//                        }
+//                    }
+
+                    tokenString.append(k);
                 }
                 return new Token(tokenString.toString(), TokenType.Decimal);
                 // invalid input: 2.  0.d

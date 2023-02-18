@@ -1,17 +1,14 @@
 package dev.fangscl.Parsing;
 
-import dev.fangscl.ast.TypeSystem.Base.Expression;
-import dev.fangscl.ast.TypeSystem.Expressions.BinaryExpression;
-import dev.fangscl.ast.TypeSystem.Expressions.ErrorExpression;
-import dev.fangscl.ast.TypeSystem.Literals.DecimalLiteral;
-import dev.fangscl.ast.TypeSystem.Literals.Identifier;
-import dev.fangscl.ast.TypeSystem.Literals.IntegerLiteral;
-import dev.fangscl.ast.TypeSystem.Literals.NullLiteral;
-import dev.fangscl.ast.TypeSystem.Program;
-import dev.fangscl.ast.TypeSystem.Base.Statement;
-import dev.fangscl.Parsing.Lexer.Lexer;
-import dev.fangscl.Parsing.Lexer.Token;
-import dev.fangscl.Parsing.Lexer.TokenType;
+import dev.fangscl.Runtime.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
+import dev.fangscl.Runtime.TypeSystem.Literals.DecimalLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.Identifier;
+import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.Runtime.TypeSystem.Literals.NullLiteral;
+import dev.fangscl.Runtime.TypeSystem.Program;
+import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
@@ -19,7 +16,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 /*
- * Responsability: take the tokens from the lexer and create an AST
+ * Responsability: It does lexical analisys and source code validation. Take the tokens from the lexer and create an AST.
+ *
  *
  * */
 @Data
