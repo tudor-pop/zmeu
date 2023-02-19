@@ -10,14 +10,22 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserIdentityTest extends ParserStatementTest {
+public class ParserNumericTest extends ParserStatementTest {
 
     @Test
-    void testCreate() {
+    void testInteger() {
         var res = parser.produceAST("1");
         Statement expression = res.first();
         Assertions.assertEquals(NodeType.IntegerLiteral, expression.getKind());
         Assertions.assertEquals(1, ((NumericLiteral) expression).getValue());
+    }
+
+    @Test
+    void testDecimal() {
+        var res = parser.produceAST("1.1");
+        Statement expression = res.first();
+        Assertions.assertEquals(NodeType.DecimalLiteral, expression.getKind());
+        Assertions.assertEquals(1.1, ((NumericLiteral) expression).getValue());
     }
 
     @Test
