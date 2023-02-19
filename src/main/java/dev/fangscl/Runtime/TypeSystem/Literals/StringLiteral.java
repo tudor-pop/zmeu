@@ -5,21 +5,21 @@ import dev.fangscl.Runtime.TypeSystem.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * A string literal has the form of: "hello" or empty string ""
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IntegerLiteral extends Expression {
-    private int value;
+public class StringLiteral extends Expression {
+    private String value;
 
-    public IntegerLiteral() {
-        this.kind = NodeType.IntegerLiteral;
+    public StringLiteral() {
+        this.kind = NodeType.StringLiteral;
     }
 
-    public IntegerLiteral(int value) {
+    public StringLiteral(String value) {
         this();
         this.value = value;
     }
 
-    public IntegerLiteral(String value) {
-        this(Integer.parseInt(value));
-    }
 }

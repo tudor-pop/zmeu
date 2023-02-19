@@ -5,7 +5,8 @@ public enum ValueType {
     Identifier,
     Decimal,
     Boolean,
-    Integer
+    Integer,
+    String
 }
 
 

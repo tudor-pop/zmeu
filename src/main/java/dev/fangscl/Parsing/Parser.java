@@ -37,7 +37,7 @@ public class Parser {
         iterator = tokens.listIterator();
 
         while (iterator.hasNext()) {
-            var current = iterator.next();
+            Token current = iterator.next();
             if (current.getType() == TokenType.EOF) {
                 break;
             }

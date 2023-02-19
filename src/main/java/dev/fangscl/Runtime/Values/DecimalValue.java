@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
+import dev.fangscl.Runtime.TypeSystem.Literals.DecimalLiteral;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,5 +12,13 @@ public class DecimalValue extends RuntimeValue {
     public DecimalValue(double number) {
         this.value = number;
         this.type = ValueType.Decimal;
+    }
+
+    public DecimalValue(float number) {
+        this.value = number;
+    }
+
+    public DecimalValue(DecimalLiteral decimalLiteral) {
+        this(decimalLiteral.getValue());
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import dev.fangscl.Parsing.Lexer;
 import dev.fangscl.Parsing.Parser;
 import dev.fangscl.Runtime.Interpreter;
+import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +32,7 @@ public class Main {
                     line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("quit()")) {
                 System.exit(0);
             }
-            var program = parser.produceAST(line);
+            Program program = parser.produceAST(line);
             System.out.println(gson.toJson(program));
             var evalRes = interpreter.eval(program);
             log.debug("{}", evalRes);

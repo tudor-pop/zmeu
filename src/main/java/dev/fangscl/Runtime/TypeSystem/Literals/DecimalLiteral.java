@@ -18,8 +18,12 @@ public class DecimalLiteral extends Expression {
         this();
         this.value = value;
     }
+
+    public DecimalLiteral(float value) {
+        this((double) value);
+    }
+
     public DecimalLiteral(String value) {
-        this();
-        this.value = Double.parseDouble(value);
+        this(Double.parseDouble(value));
     }
 }

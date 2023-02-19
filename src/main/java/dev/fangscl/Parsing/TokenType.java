@@ -9,6 +9,7 @@ public enum TokenType {
     Integer,
     Decimal,
     Identifier,
+    String,
 
     /******   Expressions   ******/
     Equals,
