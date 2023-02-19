@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,7 +22,7 @@ import java.util.List;
 @Log4j2
 public class Lexer {
     @Getter
-    private final LinkedList<Token> tokens = new LinkedList<>();
+    private final List<Token> tokens = new ArrayList<>();
 
     public List<Token> tokenize(String source) {
         var iterator = new StringCharacterIterator(source);

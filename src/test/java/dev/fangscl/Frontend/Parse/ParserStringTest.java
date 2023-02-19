@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parse;
 
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
@@ -19,10 +20,11 @@ public class ParserStringTest extends ParserStatementTest {
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("Hello", ((StringLiteral) expression).getValue());
+        log.info(gson.toJson(res));
     }
 
     @Test
-    void testInteger() {
+    void testIntegerStrShouldEvalToString() {
         var res = parser.produceAST(""" 
                 "42" 
                 """);
@@ -30,17 +32,37 @@ public class ParserStringTest extends ParserStatementTest {
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("42", ((StringLiteral) expression).getValue());
         assertEquals("""
-                {"body":[{"value":"42","kind":"StringLiteral"}],"kind":"Program"}"""
+                        {"body":[{"value":"42","kind":"StringLiteral"}],"kind":"Program"}"""
                 , gson.toJson(res));
+        log.info(gson.toJson(res));
     }
 
     @Test
-    void testSingleQuotes() {
+    void testSingleQuotesShouldEvalToString() {
         var res = parser.produceAST(""" 
                 '42' """);
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("42", ((StringLiteral) expression).getValue());
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testNumberStringShouldEvalToNumber() {
+        var res = parser.produceAST("42");
+        Statement expression = res.first();
+        assertEquals(NodeType.IntegerLiteral, expression.getKind());
+        assertEquals(42, ((NumericLiteral) expression).getValue());
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testNumberStringShouldEvalToNumberWithTrailingSpace() {
+        var res = parser.produceAST("   \"  42  \"    ");
+        Statement expression = res.first();
+        assertEquals(NodeType.StringLiteral, expression.getKind());
+        assertEquals("  42  ", ((StringLiteral) expression).getValue());
+        log.info(gson.toJson(res));
     }
 
 
