@@ -1,7 +1,7 @@
-package dev.fangscl.Runtime.TypeSystem.Literals;
+package dev.fangscl.Frontend.Parser.Literals;
 
 import dev.fangscl.Runtime.TypeSystem.Base.Expression;
-import dev.fangscl.Runtime.TypeSystem.NodeType;
+import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

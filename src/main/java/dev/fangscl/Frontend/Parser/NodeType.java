@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.TypeSystem;
+package dev.fangscl.Frontend.Parser;
 
 public enum NodeType {
     Program,

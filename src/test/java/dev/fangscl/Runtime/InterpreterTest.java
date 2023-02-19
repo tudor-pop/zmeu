@@ -1,8 +1,8 @@
 package dev.fangscl.Runtime;
 
 import com.google.gson.Gson;
-import dev.fangscl.Runtime.TypeSystem.Literals.Identifier;
-import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Runtime.Values.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ class InterpreterTest {
 
     @Test
     void testIntegerLiteral() {
-        var evalRes = interpreter.eval(new IntegerLiteral(10));
+        var evalRes = interpreter.eval(new NumericLiteral(10));
         Assertions.assertEquals(10, ((IntegerValue) evalRes).getValue());
     }
 

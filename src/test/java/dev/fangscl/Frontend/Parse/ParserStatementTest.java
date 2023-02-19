@@ -1,11 +1,11 @@
-package ast;
+package dev.fangscl.Frontend.Parse;
 
 import com.google.gson.Gson;
-import dev.fangscl.Parsing.Parser;
-import dev.fangscl.Parsing.Lexer;
+import dev.fangscl.Frontend.Lexer.Lexer;
+import dev.fangscl.Frontend.Parser.Parser;
 import org.junit.jupiter.api.BeforeEach;
 
-class AstStatementTest {
+class ParserStatementTest {
     protected Parser parser;
     protected Gson gson = new Gson();
 

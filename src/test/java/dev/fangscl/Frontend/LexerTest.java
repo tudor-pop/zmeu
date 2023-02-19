@@ -1,7 +1,7 @@
-package lexer;
+package dev.fangscl.Frontend;
 
-import dev.fangscl.Parsing.Lexer;
-import dev.fangscl.Parsing.TokenType;
+import dev.fangscl.Frontend.Lexer.Lexer;
+import dev.fangscl.Frontend.Lexer.TokenType;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

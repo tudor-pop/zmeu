@@ -1,4 +1,4 @@
-package dev.fangscl.Parsing;
+package dev.fangscl.Frontend.Lexer;
 
 import lombok.Data;
 

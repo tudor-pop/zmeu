@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime.TypeSystem;
 
+import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,5 +23,9 @@ public class Program extends Statement {
 
     public void addStatement(Statement statement) {
         this.body.add(statement);
+    }
+
+    public Statement first(){
+        return body.listIterator().next();
     }
 }

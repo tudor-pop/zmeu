@@ -1,6 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
-import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +14,7 @@ public class IntegerValue extends RuntimeValue {
         this.type = ValueType.Integer;
     }
 
-    public IntegerValue(IntegerLiteral number) {
-        this(number.getValue());
+    public IntegerValue(NumericLiteral number) {
+        this(number.getValue().intValue());
     }
 }

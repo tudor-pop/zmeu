@@ -1,8 +1,8 @@
 package dev.fangscl;
 
 import com.google.gson.GsonBuilder;
-import dev.fangscl.Parsing.Lexer;
-import dev.fangscl.Parsing.Parser;
+import dev.fangscl.Frontend.Lexer.Lexer;
+import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Runtime.Interpreter;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.extern.log4j.Log4j2;

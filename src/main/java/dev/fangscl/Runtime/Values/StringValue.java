@@ -1,6 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
-import dev.fangscl.Runtime.TypeSystem.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;

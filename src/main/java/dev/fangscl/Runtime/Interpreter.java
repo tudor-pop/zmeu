@@ -3,10 +3,9 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Runtime.TypeSystem.Base.Expression;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
-import dev.fangscl.Runtime.TypeSystem.Literals.DecimalLiteral;
-import dev.fangscl.Runtime.TypeSystem.Literals.Identifier;
-import dev.fangscl.Runtime.TypeSystem.Literals.IntegerLiteral;
-import dev.fangscl.Runtime.TypeSystem.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
@@ -98,10 +97,8 @@ public class Interpreter {
     }
 
     public RuntimeValue eval(Expression expression, Environment env) {
-        if (expression instanceof IntegerLiteral e) {
+        if (expression instanceof NumericLiteral e) {
             return new IntegerValue(e);
-        } else if (expression instanceof DecimalLiteral e) {
-            return new DecimalValue(e);
         } else if (expression instanceof StringLiteral e) {
             return new StringValue(e);
         } else if (expression instanceof BinaryExpression e) {

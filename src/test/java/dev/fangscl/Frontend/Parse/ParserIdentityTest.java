@@ -1,5 +1,7 @@
-package ast;
+package dev.fangscl.Frontend.Parse;
 
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import org.junit.jupiter.api.Assertions;
@@ -8,15 +10,15 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AstIdentityTest extends AstStatementTest {
+public class ParserIdentityTest extends ParserStatementTest {
 
-//    @Test
-//    void testCreate() {
-//        var res = parser.produceAST("var x = 1");
-//        Statement expression = res.getBody().get(1);
-//        Assertions.assertEquals(NodeType.Identifier, expression.getKind());
-//        Assertions.assertEquals("x", ((IdentifierExpression) expression).getSymbol());
-//    }
+    @Test
+    void testCreate() {
+        var res = parser.produceAST("1");
+        Statement expression = res.first();
+        Assertions.assertEquals(NodeType.IntegerLiteral, expression.getKind());
+        Assertions.assertEquals(1, ((NumericLiteral) expression).getValue());
+    }
 
     @Test
     void testAddition() {
@@ -46,6 +48,7 @@ public class AstIdentityTest extends AstStatementTest {
                         {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":11,"kind":"IntegerLiteral"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
+
     @Test
     void testAdditionMultiplication() {
         var res = parser.produceAST("1 + 2*3");
@@ -54,6 +57,7 @@ public class AstIdentityTest extends AstStatementTest {
                         {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"left":{"value":2,"kind":"IntegerLiteral"},"right":{"value":3,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
                 , expression);
     }
+
     @Test
     void testAdditionParanthesis() {
         var res = parser.produceAST("1 + 2 - (3*4)");

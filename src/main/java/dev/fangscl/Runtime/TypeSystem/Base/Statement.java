@@ -1,6 +1,6 @@
 package dev.fangscl.Runtime.TypeSystem.Base;
 
-import dev.fangscl.Runtime.TypeSystem.NodeType;
+import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 
 /*
