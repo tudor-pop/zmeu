@@ -33,6 +33,9 @@ public class Lexer {
             } else if (Character.isAlphabetic(i)) {
                 var token = handleAlphabetic(iterator);
                 tokens.add(token);
+            } else if (i == '\"') {
+                var token = handleString(iterator);
+                tokens.add(token);
             } else if (TokenType.isSymbol(i)) {
                 var token = new Token(i, TokenType.toSymbol(i));
                 tokens.add(token);
@@ -46,12 +49,20 @@ public class Lexer {
         return tokens;
     }
 
+    private Token handleString(StringCharacterIterator iterator) {
+        var tokenString = new StringBuilder(6);
+        for (char i = iterator.next(); i != CharacterIterator.DONE && i != '\"'; i = iterator.next()) {
+            tokenString.append(i);
+        }
+        return new Token(tokenString.toString(), TokenType.String);
+    }
+
     private Token handleAlphabetic(StringCharacterIterator iterator) {
         /* parse the keyword if there are multiple digits */
         var tokenString = new StringBuilder(3);
-        for (char j = iterator.current(); j != CharacterIterator.DONE; j = iterator.next()) {
-            if (Character.isAlphabetic(j)) {
-                tokenString.append(j);
+        for (char i = iterator.current(); i != CharacterIterator.DONE; i = iterator.next()) {
+            if (Character.isAlphabetic(i)) {
+                tokenString.append(i);
             } else {
                 iterator.previous();
                 break;
@@ -66,16 +77,16 @@ public class Lexer {
         /* parse the number if there are multiple digits */
         var tokenString = new StringBuilder(2);
 
-        for (char j = iterator.current(); j != CharacterIterator.DONE; j = iterator.next()) {
-            /* j stops at the next character after the number eg 12;
+        for (char i = iterator.current(); i != CharacterIterator.DONE; i = iterator.next()) {
+            /* i stops at the next character after the number eg 12;
              * i must be at position of number 2 because it will get incremented to ; at the end of the top loop
              * */
-            if (Character.isDigit(j)) {
-                tokenString.append(j);
-            } else if (j == '.') {
-                tokenString.append(j); // add the "." to the number
+            if (Character.isDigit(i)) {
+                tokenString.append(i);
+            } else if (i == '.') {
+                tokenString.append(i); // add the "." to the number
                 // valid input: 1.2 , .5 , 0.522123
-                for (char k = iterator.next(); k != CharacterIterator.DONE && Character.isDigit(k); k = iterator.next()) {
+                for (char j = iterator.next(); j != CharacterIterator.DONE && Character.isDigit(j); j = iterator.next()) {
 //                    if (tokenString.length() > 0) {
 //                        int j2 = tokenString.charAt(tokenString.length() - 1);
 //                        if (j2 == 'f' || j2 == 'd') {
@@ -84,7 +95,7 @@ public class Lexer {
 //                        }
 //                    }
 
-                    tokenString.append(k);
+                    tokenString.append(j);
                 }
                 return new Token(tokenString.toString(), TokenType.Decimal);
                 // invalid input: 2.  0.d

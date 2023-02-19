@@ -3,15 +3,17 @@ package dev.fangscl.Frontend.Parser;
 import dev.fangscl.Frontend.Lexer.Lexer;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Runtime.TypeSystem.Base.Expression;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -24,6 +26,9 @@ import java.util.ListIterator;
  *      ;
  *  NumericLiteral
  *      : NUMBER
+ *      ;
+ *  StringLiteral
+ *      : STRING
  *      ;
  *
  * */
@@ -38,7 +43,7 @@ public class Parser {
         this.lexer = lexer;
     }
 
-    public Program produceAST(String src){
+    public Program produceAST(String src) {
         tokens = lexer.tokenize(src);
         iterator = tokens.listIterator();
 
@@ -48,10 +53,10 @@ public class Parser {
     private Program produceAST() {
         var program = new Program();
         while (iterator.hasNext()) {
-            Token current = iterator.next();
-            if (current.getType() == TokenType.EOF) {
-                break;
-            }
+            Token current = eat();
+//            if (current.getType() == TokenType.EOF) {
+//                break;
+//            }
             program.addStatement(this.parseStatement(current));
         }
 
@@ -70,9 +75,9 @@ public class Parser {
         var left = parseMultiplicative(token);
 
         // (10+5)-5
-        while (iterator.hasNext() && TokenType.in(tokens.get(iterator.nextIndex()).getValue(), "+", "-")) {
-            var operator = iterator.next();
-            var next = iterator.next(); // get right hand side of an expression
+        while (iterator.hasNext() && lookAhead().in("+", "-")) {
+            var operator = eat();
+            var next = eat(); // get right hand side of an expression
             Expression right = this.parseMultiplicative(next);
             left = new BinaryExpression(left, right, operator.getValue());
         }
@@ -84,9 +89,9 @@ public class Parser {
         var left = parseLiteral(token);
 
         // (10*5)-5
-        while (iterator.hasNext() && TokenType.in(tokens.get(iterator.nextIndex()).getValue(), "*", "/", "%")) {
-            var operator = iterator.next();
-            var next = iterator.next(); // get right hand side of an expression
+        while (iterator.hasNext() && lookAhead().in("*", "/", "%")) {
+            var operator = eat();
+            var next = eat(); // get right hand side of an expression
             Expression right = this.parseLiteral(next);
             left = new BinaryExpression(left, right, operator.getValue());
         }
@@ -94,26 +99,36 @@ public class Parser {
         return left;
     }
 
+    @Nullable
+    private Token lookAhead() {
+        return tokens.get(iterator.nextIndex());
+    }
+
     private Expression parseLiteral(Token token) {
         return switch (token.getType()) {
             case Identifier -> new Identifier(token.getValue());
             case Decimal, Integer -> new NumericLiteral(token.getValue());
+            case String -> new StringLiteral(token.getValue());
             case OpenParanthesis -> {
-                var res = parseExpression(iterator.next());
-                expect(TokenType.CloseParanthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
+                var res = parseExpression(eat());
+                eat(TokenType.CloseParanthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
                 yield res;
             }
             default -> new ErrorExpression(token.getValue());
         };
     }
 
-    private Token expect(TokenType type, String error) {
-        var prev = iterator.next();
-        if (prev.getType() != type) {
-            log.debug("Parser error\n {} {} \nExpected: {} ", error, prev, type);
-            System.exit(1);
+    private Token eat(TokenType type, String error) {
+        var current = eat();
+        if (current.getType() != type) {
+            log.debug("Parser error\n {} {} \nExpected: {} ", error, current, type);
+            throw new RuntimeException("Parser error." + error);
         }
-        return prev;
+        return current;
+    }
+
+    private Token eat() {
+        return iterator.next();
     }
 
 }

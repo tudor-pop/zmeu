@@ -4,6 +4,8 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 @Log4j2
 public class LexerBasicsTest {
 
@@ -53,4 +55,12 @@ public class LexerBasicsTest {
         Number number = 2.1d;
         Assertions.assertEquals(2.1, number);
     }
+
+    @Test
+    void checkIterator() {
+        var list = Arrays.asList(1, 2, 3);
+        Assertions.assertEquals(1, list.iterator().next());
+    }
+
+
 }

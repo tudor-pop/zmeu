@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Lexer;
 
 import lombok.Data;
+import org.apache.commons.lang3.ArrayUtils;
 
 @Data
 public class Token {
@@ -19,6 +20,10 @@ public class Token {
     public Token(String value, TokenType type) {
         this.value = value;
         this.type = type;
+    }
+
+    public boolean in(String... list){
+        return ArrayUtils.contains(list, this.value);
     }
 
 
