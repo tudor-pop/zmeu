@@ -11,8 +11,8 @@ import java.util.Optional;
 /**
  * A string literal has the form of: "hello" or empty string ""
  * StringLiteral
- *      : STRING
- *      ;
+ * : STRING
+ * ;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -29,6 +29,7 @@ public class StringLiteral extends Expression {
             this.value = value;
         } else {
             this.value = Optional.ofNullable(StringUtils.substringBetween(value, "\"", "\""))
+                    .or(() -> Optional.ofNullable(StringUtils.substringBetween(value, "'", "'")))
                     .orElse(value);
         }
     }

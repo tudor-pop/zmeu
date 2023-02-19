@@ -33,7 +33,7 @@ public class Lexer {
             } else if (Character.isAlphabetic(i)) {
                 var token = handleAlphabetic(iterator);
                 tokens.add(token);
-            } else if (i == '\"') {
+            } else if (i == '\"' || i == '\'') {
                 var token = handleString(iterator);
                 tokens.add(token);
             } else if (TokenType.isSymbol(i)) {
@@ -51,7 +51,7 @@ public class Lexer {
 
     private Token handleString(StringCharacterIterator iterator) {
         var tokenString = new StringBuilder(6);
-        for (char i = iterator.next(); i != CharacterIterator.DONE && i != '\"'; i = iterator.next()) {
+        for (char i = iterator.current(); i != CharacterIterator.DONE && (i != '\"' || i != '\''); i = iterator.next()) {
             tokenString.append(i);
         }
         return new Token(tokenString.toString(), TokenType.String);
