@@ -43,4 +43,12 @@ public class NumericLiteral extends Expression {
         }
     }
 
+    public boolean isDecimal() {
+        return this.kind == NodeType.DecimalLiteral;
+    }
+
+    public boolean isInteger() {
+        return this.kind == NodeType.IntegerLiteral;
+    }
+
 }
