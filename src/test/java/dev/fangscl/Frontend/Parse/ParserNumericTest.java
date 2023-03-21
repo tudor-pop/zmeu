@@ -24,10 +24,10 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testDecimal() {
-        var res = parser.produceAST("1.1");
+        var res = parser.produceAST("1.11");
         Statement expression = res.first();
         assertEquals(NodeType.DecimalLiteral, expression.getKind());
-        assertEquals(1.1, ((NumericLiteral) expression).getValue());
+        assertEquals(1.11, ((NumericLiteral) expression).getValue());
     }
 
     @Test
