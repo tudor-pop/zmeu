@@ -13,6 +13,7 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * ---------------------------------------------------------------------
@@ -23,9 +24,16 @@ import java.util.Map;
  */
 @Log4j2
 public class Tokenizer {
-    private static Map<String, String> spec = Map.ofEntries(
-           Map.entry("""
-                   ("|')[^("|')]*("|')""","STRING")
+    private static Map<TokenType, Pattern> spec = Map.ofEntries(
+            Map.entry(TokenType.String, matcher("""
+                    ("|')[^("|')]*("|')
+                    """)),
+            Map.entry(TokenType.Integer, matcher("""
+                    ^([0-9]*[.])?[0-9]+
+                     """)),
+            Map.entry(TokenType.Decimal, matcher("""
+                    ^([0-9]*[.])?[0-9]+
+                     """))
     );
     @Getter
     private final List<Token> tokens = new ArrayList<>();
@@ -47,7 +55,7 @@ public class Tokenizer {
                 var token = handleAlphabetic();
                 tokens.add(token);
             } else if (i == '\"' || i == '\'') {
-                var token = handleString();
+                var token = handle(TokenType.String);
                 tokens.add(token);
             } else if (TokenType.isSymbol(i)) {
                 var token = new Token(i, TokenType.toSymbol(i));
@@ -62,11 +70,12 @@ public class Tokenizer {
         return tokens;
     }
 
-    private Token handleString() {
+    private Token handle(TokenType type) {
         var str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-        var p = Regex.isString(str);
+        var p = spec.get(type)
+                .matcher(str);
         if (p.find()) {
-            return new Token(p.group(), TokenType.String);
+            return new Token(p.group(), type);
         }
         return new Token(str, TokenType.Unknown);
     }
@@ -109,7 +118,7 @@ public class Tokenizer {
         /* parse the number if there are multiple digits */
         var res = new StringBuilder(2);
 
-        for (char i = iterator.current(); isNotEOF(); i = iterator.next()) {
+        for (char i = iterator.current(); !isEOF(); i = iterator.next()) {
             /* i stops at the next character after the number eg 12;
              * i must be at position of number 2 because it will get incremented to ; at the end of the top loop
              * */
@@ -153,5 +162,9 @@ public class Tokenizer {
 
     private boolean isEOF() {
         return this.iterator.current() == CharacterIterator.DONE;
+    }
+
+    private static Pattern matcher(String sequence) {
+        return Pattern.compile(sequence.trim());
     }
 }
