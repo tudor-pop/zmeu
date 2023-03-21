@@ -1,7 +1,7 @@
 package dev.fangscl.Frontend.Parse;
 
 import com.google.gson.Gson;
-import dev.fangscl.Frontend.Lexer.Lexer;
+import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,7 @@ class ParserStatementTest {
 
     @BeforeEach
     void init() {
-        parser = new Parser(new Lexer());
+        parser = new Parser(new Tokenizer());
     }
 
 

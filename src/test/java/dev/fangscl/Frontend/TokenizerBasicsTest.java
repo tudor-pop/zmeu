@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
 @Log4j2
-public class LexerBasicsTest {
+public class TokenizerBasicsTest {
 
     @Test
     void checkLoop() {

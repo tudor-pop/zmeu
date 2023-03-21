@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * -----------------------------------------------------------
- * ------------               Lexer             --------------
- * -----------------------------------------------------------
- * ------   Responsible for producing tokens from source   ---
- * -----------------------------------------------------------
+ * ---------------------------------------------------------------------
+ * ------------               Lexer/Tokenizer             --------------
+ * ---------------------------------------------------------------------
+ * ------   Responsible for producing tokens from source   -------------
+ * ---------------------------------------------------------------------
  */
 @Log4j2
-public class Lexer {
+public class Tokenizer {
     @Getter
     private final List<Token> tokens = new ArrayList<>();
     private StringCharacterIterator iterator;

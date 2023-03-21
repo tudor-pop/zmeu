@@ -1,6 +1,6 @@
 package dev.fangscl.Frontend.Parser;
 
-import dev.fangscl.Frontend.Lexer.Lexer;
+import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
@@ -37,14 +37,14 @@ import java.util.ListIterator;
 public class Parser {
     private List<Token> tokens;
     private ListIterator<Token> iterator;
-    private Lexer lexer;
+    private Tokenizer tokenizer;
 
-    public Parser(Lexer lexer) {
-        this.lexer = lexer;
+    public Parser(Tokenizer tokenizer) {
+        this.tokenizer = tokenizer;
     }
 
     public Program produceAST(String src) {
-        tokens = lexer.tokenize(src);
+        tokens = tokenizer.tokenize(src);
         iterator = tokens.listIterator();
 
         return produceAST();

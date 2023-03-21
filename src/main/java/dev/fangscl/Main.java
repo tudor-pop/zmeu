@@ -1,7 +1,7 @@
 package dev.fangscl;
 
 import com.google.gson.GsonBuilder;
-import dev.fangscl.Frontend.Lexer.Lexer;
+import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Runtime.Interpreter;
 import dev.fangscl.Runtime.TypeSystem.Program;
@@ -25,7 +25,7 @@ public class Main {
         var interpreter = new Interpreter();
         var scanner = new Scanner(System.in);
         while (true) {
-            var parser = new Parser(new Lexer());
+            var parser = new Parser(new Tokenizer());
             System.out.print("> ");
             var line = scanner.nextLine();
             if (line.equalsIgnoreCase("exit") || line.equalsIgnoreCase("exit()") ||
