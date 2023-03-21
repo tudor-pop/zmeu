@@ -5,12 +5,14 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.CharBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ---------------------------------------------------------------------
@@ -21,14 +23,22 @@ import java.util.List;
  */
 @Log4j2
 public class Tokenizer {
+    private static Map<String, String> spec = Map.ofEntries(
+           Map.entry("""
+                   ("|')[^("|')]*("|')""","STRING")
+    );
     @Getter
     private final List<Token> tokens = new ArrayList<>();
     private StringCharacterIterator iterator;
-    private String source;
+    /**
+     * CharBuffer won't create a copy of the string when doing string.substring(start,end)
+     */
+    private CharBuffer source;
 
     public List<Token> tokenize(String source) {
         this.iterator = new StringCharacterIterator(source);
-        this.source = source;
+        this.source = CharBuffer.wrap(source);
+
         for (char i = iterator.first(); !isEOF(); i = iterator.next()) {
             if (Character.isDigit(i) || i == '.') {
                 Token token = handleDigit();
@@ -53,7 +63,7 @@ public class Tokenizer {
     }
 
     private Token handleString() {
-        var str = source.substring(iterator.getIndex());
+        var str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
         var p = Regex.isString(str);
         if (p.find()) {
             return new Token(p.group(), TokenType.String);

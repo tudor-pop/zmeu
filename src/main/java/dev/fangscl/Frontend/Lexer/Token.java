@@ -12,6 +12,11 @@ public class Token {
         this(value, TokenType.toSymbol(value));
     }
 
+    public Token(CharSequence value, TokenType type) {
+        this.value = value.toString();
+        this.type = type;
+    }
+
     public Token(char value, TokenType type) {
         this.value = String.valueOf(value);
         this.type = type;
