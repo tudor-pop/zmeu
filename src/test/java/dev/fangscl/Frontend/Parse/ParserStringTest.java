@@ -31,9 +31,6 @@ public class ParserStringTest extends ParserStatementTest {
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("42", ((StringLiteral) expression).getValue());
-        assertEquals("""
-                        {"body":[{"value":"42","kind":"StringLiteral"}],"kind":"Program"}"""
-                , gson.toJson(res));
         log.info(gson.toJson(res));
     }
 

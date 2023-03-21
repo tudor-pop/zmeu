@@ -19,12 +19,17 @@ public class Regex {
     public static Matcher isNumber(CharSequence sequence) {
         Pattern number = Pattern.compile("^([0-9]*[.])?[0-9]+");
         var matcher = number.matcher(sequence);
-        matcher.find();
         return matcher;
     }
 
     public static Matcher isNumber(char sequence) {
         return isNumber(String.valueOf(sequence));
+    }
+
+    public static Matcher isString(CharSequence sequence) {
+        var matcher = Pattern.compile("""
+                ("|')[^("|')]*("|')""").matcher(sequence);
+        return matcher;
     }
 
 }

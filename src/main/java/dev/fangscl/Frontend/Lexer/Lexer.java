@@ -53,11 +53,12 @@ public class Lexer {
     }
 
     private Token handleString() {
-        var tokenString = new StringBuilder(6);
-        for (char i = iterator.current(); !isEOF() && (i != '\"' || i != '\''); i = iterator.next()) {
-            tokenString.append(i);
+        var str = source.substring(iterator.getIndex());
+        var p = Regex.isString(str);
+        if (p.find()) {
+            return new Token(p.group(), TokenType.String);
         }
-        return new Token(tokenString.toString(), TokenType.String);
+        return new Token(str, TokenType.Unknown);
     }
 
     private Token handleAlphabetic() {
@@ -77,22 +78,23 @@ public class Lexer {
     }
 
     private Token handleDigit() {
+//        int index = iterator.getIndex();
 //        if (Character.isDigit(iterator.current())) {
-//            Matcher matcher = Regex.isNumber(source.substring(iterator.getIndex(), Math.min(14, iterator.getEndIndex())));
+//            String substring = source.substring(index);
+//            Matcher matcher = Regex.isNumber(substring);
 //            // number has max 7 chars. This is an optimisation because in the tutorial gets the entire substring from current index to the end
 //            // which could be very costly when using many files. Assuming 7 chars long digits is a good heuristic as nobody
 //            // will create 1.000.000 VMs
-//            int end = iterator.getIndex() + matcher.end();
-//            var res = source.substring(iterator.getIndex(), end);
-//            if (res.contains(".")) {
+//            int end = index + matcher.end();
+//            if (substring.contains(".")) {
 //                iterator.setIndex(end);
-//                return new Token(res, TokenType.Decimal);
+//                return new Token(matcher.group(), TokenType.Decimal);
 //            } else {
 //                iterator.setIndex(end);
-//                return new Token(res, TokenType.Integer);
+//                return new Token(matcher.group(), TokenType.Integer);
 //            }
 //        } else {
-//            iterator.setIndex(iterator.getIndex() + 1);
+//            iterator.setIndex(index + 1);
 //        }
         /* parse the number if there are multiple digits */
         var res = new StringBuilder(2);
