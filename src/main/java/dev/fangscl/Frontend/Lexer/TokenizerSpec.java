@@ -1,9 +1,25 @@
 package dev.fangscl.Frontend.Lexer;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Regex {
+class TokenizerSpec {
+    static Map<TokenType, Pattern> spec = Map.ofEntries(
+            Map.entry(TokenType.String, matcher("""
+                    ("|')[^("|')]*("|')
+                    """)),
+            Map.entry(TokenType.Integer, matcher("""
+                    ^([0-9]*[.])?[0-9]+
+                     """)),
+            Map.entry(TokenType.Decimal, matcher("""
+                    ^([0-9]*[.])?[0-9]+
+                     """))
+    );
+
+    private static Pattern matcher(String sequence) {
+        return Pattern.compile(sequence.trim());
+    }
 
 
     /**

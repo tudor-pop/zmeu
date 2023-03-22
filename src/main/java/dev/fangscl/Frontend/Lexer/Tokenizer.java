@@ -2,6 +2,7 @@ package dev.fangscl.Frontend.Lexer;
 
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,8 +13,6 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * ---------------------------------------------------------------------
@@ -24,17 +23,6 @@ import java.util.regex.Pattern;
  */
 @Log4j2
 public class Tokenizer {
-    private static Map<TokenType, Pattern> spec = Map.ofEntries(
-            Map.entry(TokenType.String, matcher("""
-                    ("|')[^("|')]*("|')
-                    """)),
-            Map.entry(TokenType.Integer, matcher("""
-                    ^([0-9]*[.])?[0-9]+
-                     """)),
-            Map.entry(TokenType.Decimal, matcher("""
-                    ^([0-9]*[.])?[0-9]+
-                     """))
-    );
     @Getter
     private final List<Token> tokens = new ArrayList<>();
     private StringCharacterIterator iterator;
@@ -47,32 +35,35 @@ public class Tokenizer {
         this.iterator = new StringCharacterIterator(source);
         this.source = CharBuffer.wrap(source);
 
-        for (char i = iterator.first(); !isEOF(); i = iterator.next()) {
-            if (Character.isDigit(i) || i == '.') {
-                Token token = handleDigit();
-                tokens.add(token);
-            } else if (Character.isAlphabetic(i)) {
-                var token = handleAlphabetic();
-                tokens.add(token);
-            } else if (i == '\"' || i == '\'') {
-                var token = handle(TokenType.String);
-                tokens.add(token);
-            } else if (TokenType.isSymbol(i)) {
-                var token = new Token(i, TokenType.toSymbol(i));
-                tokens.add(token);
-            } else if (TokenType.isSkippable(i)) {
-            } else {
-                log.debug("Unrecognized character was found in source: {}", i);
-//                System.exit(1);
+        for (char i = iterator.first(); hasNext(); i = iterator.next()) {
+            var token = getNextToken(i);
+            if (token == null) {
+                continue;
             }
-
+            tokens.add(token);
         }
         return tokens;
     }
 
+    @Nullable
+    private Token getNextToken(char i) {
+        if (Character.isDigit(i) || i == '.') {
+            return handleDigit();
+        } else if (Character.isAlphabetic(i)) {
+            return handleAlphabetic();
+        } else if (i == '\"' || i == '\'') {
+            return handle(TokenType.String);
+        } else if (TokenType.isSymbol(i)) {
+            return new Token(i, TokenType.toSymbol(i));
+        } else if (TokenType.isSkippable(i)) {
+            return null;
+        }
+        throw new TokenException("Unrecognized character was found in source: " + i);
+    }
+
     private Token handle(TokenType type) {
         var str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-        var p = spec.get(type)
+        var p = TokenizerSpec.spec.get(type)
                 .matcher(str);
         if (p.find()) {
             return new Token(p.group(), type);
@@ -83,7 +74,7 @@ public class Tokenizer {
     private Token handleAlphabetic() {
         /* parse the keyword if there are multiple digits */
         var tokenString = new StringBuilder(3);
-        for (char i = iterator.current(); !isEOF(); i = iterator.next()) {
+        for (char i = iterator.current(); hasNext(); i = iterator.next()) {
             if (Character.isAlphabetic(i)) {
                 tokenString.append(i);
             } else {
@@ -118,7 +109,7 @@ public class Tokenizer {
         /* parse the number if there are multiple digits */
         var res = new StringBuilder(2);
 
-        for (char i = iterator.current(); !isEOF(); i = iterator.next()) {
+        for (char i = iterator.current(); hasNext(); i = iterator.next()) {
             /* i stops at the next character after the number eg 12;
              * i must be at position of number 2 because it will get incremented to ; at the end of the top loop
              * */
@@ -156,7 +147,7 @@ public class Tokenizer {
         return tokens;
     }
 
-    private boolean isNotEOF() {
+    private boolean hasNext() {
         return this.iterator.current() != CharacterIterator.DONE;
     }
 
@@ -164,7 +155,4 @@ public class Tokenizer {
         return this.iterator.current() == CharacterIterator.DONE;
     }
 
-    private static Pattern matcher(String sequence) {
-        return Pattern.compile(sequence.trim());
-    }
 }
