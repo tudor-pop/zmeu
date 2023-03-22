@@ -1,4 +1,4 @@
-package dev.fangscl.Frontend;
+package dev.fangscl.Frontend.Token;
 
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;

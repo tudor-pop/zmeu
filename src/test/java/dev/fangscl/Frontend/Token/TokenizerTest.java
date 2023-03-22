@@ -1,15 +1,13 @@
-package dev.fangscl.Frontend;
+package dev.fangscl.Frontend.Token;
 
-import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Lexer.TokenType;
+import dev.fangscl.Frontend.Lexer.Tokenizer;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Log4j2
 public class TokenizerTest {
@@ -20,14 +18,6 @@ public class TokenizerTest {
         tokenizer = new Tokenizer();
     }
 
-    @Test
-    void checkLoop() throws IOException {
-        var lines = Files.readAllLines(Paths.get("test-1.fcl"));
-        for (var line : lines) {
-            tokenizer.tokenize(line);
-        }
-        log.debug("lines: {}", tokenizer.getTokens());
-    }
 
     @Test
     void parseSingleDecimalNumber() throws IOException {

@@ -14,6 +14,9 @@ class TokenizerSpec {
                      """)),
             Map.entry(TokenType.Decimal, matcher("""
                     ^([0-9]*[.])?[0-9]+
+                     """)),
+            Map.entry(TokenType.Number, matcher("""
+                    ^([0-9]*[.])?[0-9]+
                      """))
     );
 

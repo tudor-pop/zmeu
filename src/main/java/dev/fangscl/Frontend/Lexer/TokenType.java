@@ -8,6 +8,7 @@ public enum TokenType {
     /*****   Literal types   *****/
     Integer,
     Decimal,
+    Number,
     Identifier,
     String,
 

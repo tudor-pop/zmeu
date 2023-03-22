@@ -49,10 +49,7 @@ public class Tokenizer {
     @Nullable
     private Token getNextToken(char i) {
         if (Character.isDigit(i)) {
-            if (i == '.'){
-                return handle(TokenType.Decimal);
-            }
-            return handle(TokenType.Integer);
+            return handle(TokenType.Number);
         } else if (Character.isAlphabetic(i)) {
             return handleAlphabetic();
         } else if (i == '\"' || i == '\'') {
@@ -67,9 +64,18 @@ public class Tokenizer {
 
     private Token handle(TokenType type) {
         var str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-        var p = spec.get(type).matcher(str);
-        if (p.find()) {
-            return new Token(p.group(), type);
+        var matcher = spec.get(type).matcher(str);
+        if (matcher.find()) {
+            if (type == TokenType.Number) {
+                String group = matcher.group();
+                iterator.setIndex(iterator.getIndex() + matcher.end());
+                return group.contains(".") ?
+                        new Token(group, TokenType.Decimal) :
+                        new Token(group, TokenType.Integer);
+            } else {
+                iterator.setIndex(iterator.getIndex() + matcher.end());
+                return new Token(matcher.group(), type);
+            }
         }
         return new Token(str, TokenType.Unknown);
     }
