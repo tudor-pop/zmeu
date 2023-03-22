@@ -25,6 +25,7 @@ import java.util.List;
 public class Tokenizer {
     @Getter
     private final List<Token> tokens = new ArrayList<>();
+    private final TokenizerSpec spec = new TokenizerSpec();
     private StringCharacterIterator iterator;
     /**
      * CharBuffer won't create a copy of the string when doing string.substring(start,end)
@@ -47,8 +48,11 @@ public class Tokenizer {
 
     @Nullable
     private Token getNextToken(char i) {
-        if (Character.isDigit(i) || i == '.') {
-            return handleDigit();
+        if (Character.isDigit(i)) {
+            if (i == '.'){
+                return handle(TokenType.Decimal);
+            }
+            return handle(TokenType.Integer);
         } else if (Character.isAlphabetic(i)) {
             return handleAlphabetic();
         } else if (i == '\"' || i == '\'') {
@@ -63,8 +67,7 @@ public class Tokenizer {
 
     private Token handle(TokenType type) {
         var str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-        var p = TokenizerSpec.spec.get(type)
-                .matcher(str);
+        var p = spec.get(type).matcher(str);
         if (p.find()) {
             return new Token(p.group(), type);
         }

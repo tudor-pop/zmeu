@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class TokenizerSpec {
-    static Map<TokenType, Pattern> spec = Map.ofEntries(
+    private static Map<TokenType, Pattern> spec = Map.ofEntries(
             Map.entry(TokenType.String, matcher("""
                     ("|')[^("|')]*("|')
                     """)),
@@ -21,6 +21,9 @@ class TokenizerSpec {
         return Pattern.compile(sequence.trim());
     }
 
+    Pattern get(TokenType type) {
+        return spec.get(type);
+    }
 
     /**
      * This will match:
