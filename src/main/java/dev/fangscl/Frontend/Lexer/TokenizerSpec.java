@@ -5,27 +5,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class TokenizerSpec {
-    private static Map<TokenType, Pattern> spec = Map.ofEntries(
-            Map.entry(TokenType.String, matcher("""
-                    ("|')[^("|')]*("|')
-                    """)),
-            Map.entry(TokenType.Integer, matcher("""
+     static Map<Pattern, TokenType> spec = Map.ofEntries(
+            Map.entry(matcher("""
+                     ^\s+
+                    """), TokenType.WhiteSpace),
+            Map.entry(matcher("""
+                     ("|')[^("|')]*("|')
+                    """), TokenType.String),
+             Map.entry(matcher("""
                     ^([0-9]*[.])?[0-9]+
-                     """)),
-            Map.entry(TokenType.Decimal, matcher("""
-                    ^([0-9]*[.])?[0-9]+
-                     """)),
-            Map.entry(TokenType.Number, matcher("""
-                    ^([0-9]*[.])?[0-9]+
-                     """))
+                     """), TokenType.Number)
     );
 
     private static Pattern matcher(String sequence) {
         return Pattern.compile(sequence.trim());
-    }
-
-    Pattern get(TokenType type) {
-        return spec.get(type);
     }
 
     /**

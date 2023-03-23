@@ -31,5 +31,8 @@ public class Token {
         return ArrayUtils.contains(list, this.value);
     }
 
+    public int getValueInt() {
+        return Integer.parseInt(this.value);
+    }
 
 }

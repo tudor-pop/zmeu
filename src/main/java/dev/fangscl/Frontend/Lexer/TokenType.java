@@ -11,6 +11,7 @@ public enum TokenType {
     Number,
     Identifier,
     String,
+    WhiteSpace,
 
     /******   Expressions   ******/
     Equals,
