@@ -52,5 +52,11 @@ public class TokenizerTest {
         Assertions.assertEquals(TokenType.String, result.get(0).getType());
         Assertions.assertEquals("\'hello\'", result.get(0).getValue());
     }
+    @Test
+    void testLiteralWhitespaceString() {
+        var result = tokenizer.tokenize("   42    ");
+        Assertions.assertEquals(TokenType.Integer, result.get(0).getType());
+        Assertions.assertEquals("42", result.get(0).getValue());
+    }
 
 }

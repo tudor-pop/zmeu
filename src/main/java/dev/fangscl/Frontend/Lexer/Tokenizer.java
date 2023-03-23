@@ -44,12 +44,15 @@ public class Tokenizer {
 
     @Nullable
     private Token getNextToken(char i) {
-        CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
         for (var it : TokenizerSpec.spec.entrySet()) {
+            CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
             var token = handle(it.getKey(), it.getValue(), str);
             if (token == null) {
                 continue;
             }
+//            if (token.getType() == TokenType.WhiteSpace) {
+//                return getNextToken(i);
+//            }
             return token;
         }
         throw new TokenException("Unrecognized character was found in source: " + i);

@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 class TokenizerSpec {
      static Map<Pattern, TokenType> spec = Map.ofEntries(
             Map.entry(matcher("""
-                     ^\s+
-                    """), TokenType.WhiteSpace),
+                     ^\s+"""), TokenType.WhiteSpace),
             Map.entry(matcher("""
                      ("|')[^("|')]*("|')
                     """), TokenType.String),
