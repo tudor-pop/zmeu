@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static dev.fangscl.Frontend.Lexer.TokenType.*;
+
 /**
  * ---------------------------------------------------------------------
  * ------------               Lexer/Tokenizer             --------------
@@ -34,19 +36,24 @@ public class Tokenizer {
         this.iterator = new StringCharacterIterator(source);
         this.source = CharBuffer.wrap(source);
 
-        for (; hasNext(); iterator.next()) {
-            var token = getNextToken();
-            if (token == null || token.getType() == TokenType.WhiteSpace) {
+        for (char ch = iterator.first(); hasNext(); ch = iterator.next()) {
+            var token = getNextToken(ch);
+            if (token == null || token.getType() == WhiteSpace) {
                 continue;
             }
             tokens.add(token);
         }
-        tokens.add(new Token(TokenType.EOF.toString(), TokenType.EOF, null, line));
+        tokens.add(new Token(EOF.toString(), EOF, null, line));
         return tokens;
     }
 
     @Nullable
-    private Token getNextToken() {
+    private Token getNextToken(char ch) {
+        var symbol = TokenType.toSymbol(ch);
+        if (symbol != Unknown) {
+            return new Token(ch, symbol, ch, line);
+        }
+
         for (var it : TokenizerSpec.spec.entrySet()) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
             var value = handle(it.getKey(), str);
@@ -54,16 +61,17 @@ public class Tokenizer {
                 continue;
             }
             TokenType type = it.getValue();
-            if (type == TokenType.WhiteSpace) {
+            if (type == WhiteSpace) {
                 return null;
             }
-            if (type == TokenType.NewLine) {
+            if (type == NewLine) {
                 line++;
                 continue;
             }
             return new Token(value, type, value, line);
         }
-        throw new TokenException(line, "");
+        log.error("{} {} | Unknown symbol: {}", line, line, ch);
+        return null;
     }
 
     private String handle(Pattern pattern, CharBuffer str) {

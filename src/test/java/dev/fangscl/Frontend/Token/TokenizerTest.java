@@ -57,6 +57,7 @@ public class TokenizerTest {
         Assertions.assertEquals("\'hello\'", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testLiteralWhitespaceString() {
         var result = tokenizer.tokenize("   42    ");
@@ -70,6 +71,57 @@ public class TokenizerTest {
         var result = tokenizer.tokenize("   \"  42  \"    ");
         Assertions.assertEquals(TokenType.String, result.get(0).getType());
         Assertions.assertEquals("\"  42  \"", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testOpenParanthesis() {
+        var result = tokenizer.tokenize("(");
+        Assertions.assertEquals(TokenType.OpenParanthesis, result.get(0).getType());
+        Assertions.assertEquals("(", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testCloseParanthesis() {
+        var result = tokenizer.tokenize(")");
+        Assertions.assertEquals(TokenType.CloseParanthesis, result.get(0).getType());
+        Assertions.assertEquals(")", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testOpenBraces() {
+        var result = tokenizer.tokenize("{");
+        Assertions.assertEquals(TokenType.OpenBraces, result.get(0).getType());
+        Assertions.assertEquals("{", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testCloseBraces() {
+        var result = tokenizer.tokenize("}");
+        Assertions.assertEquals(TokenType.CloseBraces, result.get(0).getType());
+        Assertions.assertEquals("}", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testOpenBrackets() {
+        var result = tokenizer.tokenize("[");
+        Assertions.assertEquals(TokenType.OpenBrackets, result.get(0).getType());
+        Assertions.assertEquals("[", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testCloseBrackets() {
+        var result = tokenizer.tokenize("]");
+        Assertions.assertEquals(TokenType.CloseBrackets, result.get(0).getType());
+        Assertions.assertEquals("]", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testUnexpected() {
+        var result = tokenizer.tokenize("&");
         log.info(result);
     }
 

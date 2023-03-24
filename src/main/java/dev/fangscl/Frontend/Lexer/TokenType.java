@@ -69,16 +69,15 @@ public enum TokenType {
     Dot,
 
     /*****   Operators   ******/
-    BinaryOperator,
     TernaryOperator,
     OptionalOperator,
+    Plus, Minus, Multiply, Division, Modulo,
     Null,
     EOF,
     Unknown;
 
     public static TokenType toSymbol(char token) {
         return switch (token) {
-            case '=' -> Equals;
             case '(' -> OpenParanthesis;
             case ')' -> CloseParanthesis;
             case '{' -> OpenBraces;
@@ -86,7 +85,11 @@ public enum TokenType {
             case '[' -> OpenBrackets;
             case ']' -> CloseBrackets;
             case '?' -> OptionalOperator;
-            case '+', '-', '*', '/', '%' -> BinaryOperator;
+            case '+' -> Plus;
+            case '-' -> Minus;
+            case '*' -> Multiply;
+            case '/' -> Division;
+            case '%' -> Modulo;
             default -> Unknown;
         };
     }

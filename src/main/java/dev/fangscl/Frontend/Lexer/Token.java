@@ -16,6 +16,9 @@ public class Token {
         this.line = line;
         this.literal = literal;
     }
+    public Token(char value, TokenType type, Object literal, int line) {
+        this(String.valueOf(value), type, literal, line);
+    }
 
     public boolean in(String... list) {
         return ArrayUtils.contains(list, this.value);
