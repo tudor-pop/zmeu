@@ -137,6 +137,7 @@ public class TokenizerTest {
         Assertions.assertEquals("==", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testLessEquals() {
         var result = tokenizer.tokenize("<=");
@@ -144,6 +145,7 @@ public class TokenizerTest {
         Assertions.assertEquals("<=", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testLess() {
         var result = tokenizer.tokenize("<");
@@ -151,6 +153,7 @@ public class TokenizerTest {
         Assertions.assertEquals("<", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testGreater() {
         var result = tokenizer.tokenize(">");
@@ -158,6 +161,7 @@ public class TokenizerTest {
         Assertions.assertEquals(">", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testGreaterEquals() {
         var result = tokenizer.tokenize(">=");
@@ -165,6 +169,7 @@ public class TokenizerTest {
         Assertions.assertEquals(">=", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testDivision() {
         var result = tokenizer.tokenize("/");
@@ -172,6 +177,7 @@ public class TokenizerTest {
         Assertions.assertEquals("/", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testComment() {
         var result = tokenizer.tokenize("// a comment goes until the end of line \n");
@@ -184,6 +190,38 @@ public class TokenizerTest {
         var result = tokenizer.tokenize("// a comment goes until the end of line \n 10");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals("10", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testUnknownIdentifier() {
+        var result = tokenizer.tokenize("tudor");
+        Assertions.assertEquals(TokenType.Identifier, result.get(0).getType());
+        Assertions.assertEquals("tudor", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testKeywordVar() {
+        var result = tokenizer.tokenize("var");
+        Assertions.assertEquals(TokenType.Var, result.get(0).getType());
+        Assertions.assertEquals("var", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testKeywordModule() {
+        var result = tokenizer.tokenize("module");
+        Assertions.assertEquals(TokenType.Module, result.get(0).getType());
+        Assertions.assertEquals("module", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testKeywordParam() {
+        var result = tokenizer.tokenize("param");
+        Assertions.assertEquals(TokenType.Param, result.get(0).getType());
+        Assertions.assertEquals("param", result.get(0).getValue());
         log.info(result);
     }
 

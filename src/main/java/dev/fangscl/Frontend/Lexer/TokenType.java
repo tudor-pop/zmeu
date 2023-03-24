@@ -22,7 +22,7 @@ public enum TokenType {
     Bang,
     Bang_Equal,
     /***********   Keywords   ******************/
-    And, Or, Schema, Return, Print, For, While, ReadOnly, If, Else, False, True, Fun,
+    And, Or, Schema, Return, For, While, ReadOnly, If, Else, False, True, Fun,
     Var,
     Param,
     This,
@@ -57,7 +57,6 @@ public enum TokenType {
      2. the property/module will be logged
      3. the property/module will appear in state file/deployment history
      */
-    Output,
 
     /*****   Grouping   *****/
     OpenParanthesis,
@@ -116,10 +115,21 @@ public enum TokenType {
             case "public" -> Public;
             case "private" -> Private;
             case "secure" -> Secure;
-            case "output" -> Output;
             case "existing" -> Existing;
             case "module" -> Module;
             case "null" -> Null;
+            case "and" -> And;
+            case "or" -> Or;
+            case "schema" -> Schema;
+            case "return" -> Return;
+            case "fun" -> Fun;
+            case "readonly" -> ReadOnly;
+            case "if" -> If;
+            case "else" -> Else;
+            case "while" -> While;
+            case "for" -> For;
+            case "true" -> True;
+            case "false" -> False;
             default -> Identifier;
         };
     }
@@ -128,10 +138,6 @@ public enum TokenType {
         return toKeyword(keyword) != Unknown;
     }
 
-    public static TokenType toKeywordOrIdentifier(String keyword) {
-        var res = toKeyword(keyword);
-        return res == Unknown ? Identifier : res;
-    }
 
     public static TokenType toNumber(char digit) {
         if (Character.isDigit(digit)) {

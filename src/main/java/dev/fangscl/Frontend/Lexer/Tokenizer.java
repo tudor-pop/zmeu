@@ -38,6 +38,10 @@ public class Tokenizer {
         this.source = CharBuffer.wrap(source);
 
         for (char ch = iterator.first(); hasNext(); ch = iterator.next()) {
+            if (ch == '\n') {
+                line++;
+                continue;
+            }
             var token = getNextToken(ch);
             if (token == null) {
                 continue;
@@ -59,18 +63,22 @@ public class Tokenizer {
                         // possible optimisation, jump straight to last character if we go line by line because it should be a \n
                         iterator.next();
                     }
+                    line++;
                     return null; // line was ignored, move on to next line
                 }
             }
             return new Token(ch, symbol, ch, line);
         }
-        symbol = toComplexSymbol(ch); // handle < > <= >= != ==
+        symbol = toOperator(ch); // handle < > <= >= != ==
         if (symbol != Unknown) {
             if (symbol == Less || symbol == Greater) {
                 return new Token(java.lang.String.format("%c", ch), symbol, ch, line);
             } else {
                 return new Token(java.lang.String.format("%c%c", ch, iterator.current()), symbol, ch, line);
             }
+        }
+        if (isAlpha(ch)) {
+            return identifier();
         }
 
         for (var it : spec.entrySet()) {
@@ -93,6 +101,30 @@ public class Tokenizer {
         return null;
     }
 
+    private Token identifier() {
+        int start = iterator.getIndex();
+        while (isAlphaNumeric(lookahead())) {
+            iterator.next();
+        }
+        var keyword = source.subSequence(start, iterator.getIndex()).toString();
+        var keywordOrId = toKeyword(keyword);
+        return new Token(keyword, keywordOrId, keyword, line);
+    }
+
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') ||
+               (c >= 'A' && c <= 'Z') ||
+               c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
     private String handle(Pattern pattern, CharBuffer str) {
         var matcher = pattern.matcher(str);
         if (!matcher.find()) {
@@ -103,7 +135,7 @@ public class Tokenizer {
         return matcher.group();
     }
 
-    public TokenType toComplexSymbol(char token) {
+    public TokenType toOperator(char token) {
         return switch (token) {
             case '!' -> is('=') ? Bang_Equal : Bang;
             case '=' -> is('=') ? Equal_Equal : Equal;
