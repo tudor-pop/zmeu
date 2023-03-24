@@ -19,14 +19,14 @@ public class TokenizerTest {
     @Test
     void testLiteralOneNumber() {
         var result = tokenizer.tokenize("1");
-        Assertions.assertEquals(TokenType.Integer, result.get(0).getType());
+        Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals(1, result.get(0).getValueInt());
     }
 
     @Test
     void testLiteralMultipleNumbers() {
         var result = tokenizer.tokenize("422");
-        Assertions.assertEquals(TokenType.Integer, result.get(0).getType());
+        Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals(422, result.get(0).getValueInt());
     }
 
@@ -55,7 +55,7 @@ public class TokenizerTest {
     @Test
     void testLiteralWhitespaceString() {
         var result = tokenizer.tokenize("   42    ");
-        Assertions.assertEquals(TokenType.Integer, result.get(0).getType());
+        Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals("42", result.get(0).getValue());
     }
 

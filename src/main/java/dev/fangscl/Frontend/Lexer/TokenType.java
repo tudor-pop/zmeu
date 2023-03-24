@@ -6,12 +6,11 @@ import org.apache.commons.lang3.ArrayUtils;
 // [VarToken, IdentifierToken, EqualsToken, IntegerToken]
 public enum TokenType {
     /*****   Literal types   *****/
-    Integer,
-    Decimal,
     Number,
     Identifier,
     String,
     WhiteSpace,
+    NewLine,
 
     /******   Expressions   ******/
     Equals,
@@ -122,7 +121,7 @@ public enum TokenType {
 
     public static TokenType toNumber(char digit) {
         if (Character.isDigit(digit)) {
-            return Integer;
+            return Number;
         }
         return Unknown;
     }

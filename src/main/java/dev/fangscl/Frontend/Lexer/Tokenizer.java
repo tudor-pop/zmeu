@@ -23,6 +23,7 @@ public class Tokenizer {
     @Getter
     private final List<Token> tokens = new ArrayList<>();
     private StringCharacterIterator iterator;
+    private int countLines = 0;
     /**
      * CharBuffer won't create a copy of the string when doing string.substring(start,end)
      */
@@ -46,32 +47,31 @@ public class Tokenizer {
     private Token getNextToken(char i) {
         for (var it : TokenizerSpec.spec.entrySet()) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-            var token = handle(it.getKey(), it.getValue(), str);
-            if (token == null) {
+            var value = handle(it.getKey(), str);
+            if (value == null) {
                 continue;
             }
-//            if (token.getType() == TokenType.WhiteSpace) {
-//                return getNextToken(i);
-//            }
-            return token;
+            TokenType type = it.getValue();
+            if (type == TokenType.WhiteSpace) {
+                return null;
+            }
+            if (type == TokenType.NewLine) {
+                countLines++;
+                continue;
+            }
+            return new Token(value, type);
         }
-        throw new TokenException("Unrecognized character was found in source: " + i);
+        throw new TokenException(countLines, String.valueOf(i));
     }
 
-    private Token handle(Pattern pattern, TokenType type, CharBuffer str) {
+    private String handle(Pattern pattern, CharBuffer str) {
         var matcher = pattern.matcher(str);
         if (!matcher.find()) {
             return null;
         }
-        var group = matcher.group();
-        iterator.setIndex(iterator.getIndex() + matcher.end());
-        if (type == TokenType.Number) {
-            return group.contains(".") ?
-                    new Token(group, TokenType.Decimal) :
-                    new Token(group, TokenType.Integer);
-        }
+        iterator.setIndex(iterator.getIndex() + matcher.end() - 1);
 
-        return new Token(group, type);
+        return matcher.group();
     }
 
     private Token handleAlphabetic() {

@@ -9,6 +9,8 @@ class TokenizerSpec {
             Map.entry(matcher("""
                      ^\s+"""), TokenType.WhiteSpace),
             Map.entry(matcher("""
+                     ^\\n"""), TokenType.WhiteSpace),
+            Map.entry(matcher("""
                      ("|')[^("|')]*("|')
                     """), TokenType.String),
              Map.entry(matcher("""

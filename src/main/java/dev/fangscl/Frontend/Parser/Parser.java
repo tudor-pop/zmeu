@@ -107,7 +107,7 @@ public class Parser {
     private Expression parseLiteral(Token token) {
         return switch (token.getType()) {
             case Identifier -> new Identifier(token.getValue());
-            case Decimal, Integer -> new NumericLiteral(token.getValue());
+            case Number -> new NumericLiteral(token.getValue());
             case String -> new StringLiteral(token.getValue());
             case OpenParanthesis -> {
                 var res = parseExpression(eat());

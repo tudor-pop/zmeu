@@ -1,12 +1,13 @@
 package dev.fangscl.Frontend.Lexer;
 
 public class TokenException extends RuntimeException {
+    private int line;
 
     public TokenException() {
     }
 
-    public TokenException(String message) {
-        super(message);
+    public TokenException(int line, String message) {
+        super(String.format("line %d | Unrecognized character was found in source: %s", line, message));
     }
 
     public TokenException(String message, Throwable cause) {
