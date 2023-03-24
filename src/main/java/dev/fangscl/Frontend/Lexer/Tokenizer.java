@@ -23,28 +23,30 @@ public class Tokenizer {
     @Getter
     private final List<Token> tokens = new ArrayList<>();
     private StringCharacterIterator iterator;
-    private int countLines = 0;
+    private int line = 1;
     /**
      * CharBuffer won't create a copy of the string when doing string.substring(start,end)
      */
     private CharBuffer source;
 
+
     public List<Token> tokenize(String source) {
         this.iterator = new StringCharacterIterator(source);
         this.source = CharBuffer.wrap(source);
 
-        for (char i = iterator.first(); hasNext(); i = iterator.next()) {
-            var token = getNextToken(i);
+        for (; hasNext(); iterator.next()) {
+            var token = getNextToken();
             if (token == null || token.getType() == TokenType.WhiteSpace) {
                 continue;
             }
             tokens.add(token);
         }
+        tokens.add(new Token(TokenType.EOF.toString(), TokenType.EOF, null, line));
         return tokens;
     }
 
     @Nullable
-    private Token getNextToken(char i) {
+    private Token getNextToken() {
         for (var it : TokenizerSpec.spec.entrySet()) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
             var value = handle(it.getKey(), str);
@@ -56,12 +58,12 @@ public class Tokenizer {
                 return null;
             }
             if (type == TokenType.NewLine) {
-                countLines++;
+                line++;
                 continue;
             }
-            return new Token(value, type);
+            return new Token(value, type, value, line);
         }
-        throw new TokenException(countLines, String.valueOf(i));
+        throw new TokenException(line, "");
     }
 
     private String handle(Pattern pattern, CharBuffer str) {
@@ -72,22 +74,6 @@ public class Tokenizer {
         iterator.setIndex(iterator.getIndex() + matcher.end() - 1);
 
         return matcher.group();
-    }
-
-    private Token handleAlphabetic() {
-        /* parse the keyword if there are multiple digits */
-        var tokenString = new StringBuilder(3);
-        for (char i = iterator.current(); hasNext(); i = iterator.next()) {
-            if (Character.isAlphabetic(i)) {
-                tokenString.append(i);
-            } else {
-                iterator.previous();
-                break;
-            }
-        }
-        String keyword = tokenString.toString();
-        TokenType type = TokenType.toKeyword(keyword);
-        return new Token(keyword, type);
     }
 
     private boolean hasNext() {

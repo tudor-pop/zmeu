@@ -5,29 +5,19 @@ import org.apache.commons.lang3.ArrayUtils;
 
 @Data
 public class Token {
+    private final Object literal;
+    private final int line;
     private final String value;
     private final TokenType type;
 
-    public Token(String value) {
-        this(value, TokenType.toSymbol(value));
-    }
-
-    public Token(CharSequence value, TokenType type) {
-        this.value = value.toString();
-        this.type = type;
-    }
-
-    public Token(char value, TokenType type) {
-        this.value = String.valueOf(value);
-        this.type = type;
-    }
-
-    public Token(String value, TokenType type) {
+    public Token(String value, TokenType type, Object literal, int line) {
         this.value = value;
         this.type = type;
+        this.line = line;
+        this.literal = literal;
     }
 
-    public boolean in(String... list){
+    public boolean in(String... list) {
         return ArrayUtils.contains(list, this.value);
     }
 

@@ -21,6 +21,8 @@ public enum TokenType {
     Less_Equal,
     Bang,
     Bang_Equal,
+    /***********   Keywords   ******************/
+    And, Or, Schema, Return, Print, For, While, ReadOnly, If, Else, False, True, Fun,
     Var,
     Param,
     This,
