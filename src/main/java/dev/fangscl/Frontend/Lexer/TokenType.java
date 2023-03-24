@@ -13,7 +13,7 @@ public enum TokenType {
     NewLine,
 
     /******   Expressions   ******/
-    Equals,
+    Equal,
     Equal_Equal,
     Greater,
     Greater_Equal,
@@ -93,6 +93,7 @@ public enum TokenType {
             default -> Unknown;
         };
     }
+
 
     public static boolean in(String operator, String... symbols) {
         return ArrayUtils.contains(symbols, operator);

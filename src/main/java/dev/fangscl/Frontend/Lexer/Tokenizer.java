@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static dev.fangscl.Frontend.Lexer.TokenType.*;
+import static dev.fangscl.Frontend.Lexer.TokenizerSpec.*;
 
 /**
  * ---------------------------------------------------------------------
@@ -38,7 +39,7 @@ public class Tokenizer {
 
         for (char ch = iterator.first(); hasNext(); ch = iterator.next()) {
             var token = getNextToken(ch);
-            if (token == null || token.getType() == WhiteSpace) {
+            if (token == null) {
                 continue;
             }
             tokens.add(token);
@@ -49,12 +50,30 @@ public class Tokenizer {
 
     @Nullable
     private Token getNextToken(char ch) {
-        var symbol = TokenType.toSymbol(ch);
+        var symbol = TokenType.toSymbol(ch); // handle paranthesis and */-+
         if (symbol != Unknown) {
+            if (symbol == Division) {
+                if (is('/')) { // if the second character is "/" start ignoring the line until End of line
+                    while (lookahead() != '\n' && hasNext()) {
+                        // A comment goes until the end of the line.
+                        // possible optimisation, jump straight to last character if we go line by line because it should be a \n
+                        iterator.next();
+                    }
+                    return null; // line was ignored, move on to next line
+                }
+            }
             return new Token(ch, symbol, ch, line);
         }
+        symbol = toComplexSymbol(ch); // handle < > <= >= != ==
+        if (symbol != Unknown) {
+            if (symbol == Less || symbol == Greater) {
+                return new Token(java.lang.String.format("%c", ch), symbol, ch, line);
+            } else {
+                return new Token(java.lang.String.format("%c%c", ch, iterator.current()), symbol, ch, line);
+            }
+        }
 
-        for (var it : TokenizerSpec.spec.entrySet()) {
+        for (var it : spec.entrySet()) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
             var value = handle(it.getKey(), str);
             if (value == null) {
@@ -82,6 +101,26 @@ public class Tokenizer {
         iterator.setIndex(iterator.getIndex() + matcher.end() - 1);
 
         return matcher.group();
+    }
+
+    public TokenType toComplexSymbol(char token) {
+        return switch (token) {
+            case '!' -> is('=') ? Bang_Equal : Bang;
+            case '=' -> is('=') ? Equal_Equal : Equal;
+            case '<' -> is('=') ? Less_Equal : Less;
+            case '>' -> is('=') ? Greater_Equal : Greater;
+            default -> Unknown;
+        };
+    }
+
+    private boolean is(char ch) {
+        if (isEOF()) return false;
+        return iterator.next() == ch;
+    }
+
+    private char lookahead() {
+        if (isEOF()) return '\0';
+        return iterator.current();
     }
 
     private boolean hasNext() {

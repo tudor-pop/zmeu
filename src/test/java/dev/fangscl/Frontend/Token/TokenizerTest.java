@@ -89,6 +89,7 @@ public class TokenizerTest {
         Assertions.assertEquals(")", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testOpenBraces() {
         var result = tokenizer.tokenize("{");
@@ -104,6 +105,7 @@ public class TokenizerTest {
         Assertions.assertEquals("}", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testOpenBrackets() {
         var result = tokenizer.tokenize("[");
@@ -119,6 +121,72 @@ public class TokenizerTest {
         Assertions.assertEquals("]", result.get(0).getValue());
         log.info(result);
     }
+
+    @Test
+    void testNotEquals() {
+        var result = tokenizer.tokenize("!=");
+        Assertions.assertEquals(TokenType.Bang_Equal, result.get(0).getType());
+        Assertions.assertEquals("!=", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testEqualsEquals() {
+        var result = tokenizer.tokenize("==");
+        Assertions.assertEquals(TokenType.Equal_Equal, result.get(0).getType());
+        Assertions.assertEquals("==", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testLessEquals() {
+        var result = tokenizer.tokenize("<=");
+        Assertions.assertEquals(TokenType.Less_Equal, result.get(0).getType());
+        Assertions.assertEquals("<=", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testLess() {
+        var result = tokenizer.tokenize("<");
+        Assertions.assertEquals(TokenType.Less, result.get(0).getType());
+        Assertions.assertEquals("<", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testGreater() {
+        var result = tokenizer.tokenize(">");
+        Assertions.assertEquals(TokenType.Greater, result.get(0).getType());
+        Assertions.assertEquals(">", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testGreaterEquals() {
+        var result = tokenizer.tokenize(">=");
+        Assertions.assertEquals(TokenType.Greater_Equal, result.get(0).getType());
+        Assertions.assertEquals(">=", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testDivision() {
+        var result = tokenizer.tokenize("/");
+        Assertions.assertEquals(TokenType.Division, result.get(0).getType());
+        Assertions.assertEquals("/", result.get(0).getValue());
+        log.info(result);
+    }
+    @Test
+    void testComment() {
+        var result = tokenizer.tokenize("// a comment goes until the end of line \n");
+        Assertions.assertEquals("EOF", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testAfterComment() {
+        var result = tokenizer.tokenize("// a comment goes until the end of line \n 10");
+        Assertions.assertEquals(TokenType.Number, result.get(0).getType());
+        Assertions.assertEquals("10", result.get(0).getValue());
+        log.info(result);
+    }
+
     @Test
     void testUnexpected() {
         var result = tokenizer.tokenize("&");
