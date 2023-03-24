@@ -21,6 +21,7 @@ public class TokenizerTest {
         var result = tokenizer.tokenize("1");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals(1, result.get(0).getValueInt());
+        log.info(result);
     }
 
     @Test
@@ -28,6 +29,7 @@ public class TokenizerTest {
         var result = tokenizer.tokenize("422");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals(422, result.get(0).getValueInt());
+        log.info(result);
     }
 
     @Test
@@ -37,6 +39,7 @@ public class TokenizerTest {
                 """);
         Assertions.assertEquals(TokenType.String, result.get(0).getType());
         Assertions.assertEquals("\"422\"", result.get(0).getValue());
+        log.info(result);
     }
 
     @Test
@@ -44,6 +47,7 @@ public class TokenizerTest {
         var result = tokenizer.tokenize("\"hello\"");
         Assertions.assertEquals(TokenType.String, result.get(0).getType());
         Assertions.assertEquals("\"hello\"", result.get(0).getValue());
+        log.info(result);
     }
 
     @Test
@@ -51,12 +55,22 @@ public class TokenizerTest {
         var result = tokenizer.tokenize("'hello'");
         Assertions.assertEquals(TokenType.String, result.get(0).getType());
         Assertions.assertEquals("\'hello\'", result.get(0).getValue());
+        log.info(result);
     }
     @Test
     void testLiteralWhitespaceString() {
         var result = tokenizer.tokenize("   42    ");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals("42", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testLiteralWhitespaceStringInside() {
+        var result = tokenizer.tokenize("   \"  42  \"    ");
+        Assertions.assertEquals(TokenType.String, result.get(0).getType());
+        Assertions.assertEquals("\"  42  \"", result.get(0).getValue());
+        log.info(result);
     }
 
 }

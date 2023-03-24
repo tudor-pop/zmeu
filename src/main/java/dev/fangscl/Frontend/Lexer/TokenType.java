@@ -14,6 +14,13 @@ public enum TokenType {
 
     /******   Expressions   ******/
     Equals,
+    Equal_Equal,
+    Greater,
+    Greater_Equal,
+    Less,
+    Less_Equal,
+    Bang,
+    Bang_Equal,
     Var,
     Param,
     This,
@@ -57,6 +64,7 @@ public enum TokenType {
     CloseBraces,
     OpenBrackets,
     CloseBrackets,
+    Dot,
 
     /*****   Operators   ******/
     BinaryOperator,
