@@ -194,6 +194,22 @@ public class TokenizerTest {
     }
 
     @Test
+    void testVarAfterComment() {
+        var result = tokenizer.tokenize("var x=23 // a comment goes until the end of line 10");
+        Assertions.assertEquals(TokenType.Var, result.get(0).getType());
+        Assertions.assertEquals("var", result.get(0).getValue());
+        Assertions.assertEquals(TokenType.Identifier, result.get(1).getType());
+        Assertions.assertEquals("x", result.get(1).getValue());
+        Assertions.assertEquals(TokenType.Equal, result.get(2).getType());
+        Assertions.assertEquals("=", result.get(2).getValue());
+        Assertions.assertEquals(TokenType.Number, result.get(3).getType());
+        Assertions.assertEquals("23", result.get(3).getValue());
+        Assertions.assertEquals(TokenType.EOF, result.get(4).getType());
+        Assertions.assertEquals("EOF", result.get(4).getValue());
+        log.info(result);
+    }
+
+    @Test
     void testUnknownIdentifier() {
         var result = tokenizer.tokenize("tudor");
         Assertions.assertEquals(TokenType.Identifier, result.get(0).getType());
@@ -224,6 +240,7 @@ public class TokenizerTest {
         Assertions.assertEquals("param", result.get(0).getValue());
         log.info(result);
     }
+
     @Test
     void testComplex() {
         var result = tokenizer.tokenize("var x=10");
