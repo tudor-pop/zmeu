@@ -224,6 +224,33 @@ public class TokenizerTest {
         Assertions.assertEquals("param", result.get(0).getValue());
         log.info(result);
     }
+    @Test
+    void testComplex() {
+        var result = tokenizer.tokenize("var x=10");
+        Assertions.assertEquals(TokenType.Var, result.get(0).getType());
+        Assertions.assertEquals("var", result.get(0).getValue());
+        Assertions.assertEquals(TokenType.Identifier, result.get(1).getType());
+        Assertions.assertEquals("x", result.get(1).getValue());
+        Assertions.assertEquals(TokenType.Equal, result.get(2).getType());
+        Assertions.assertEquals("=", result.get(2).getValue());
+        Assertions.assertEquals(TokenType.Number, result.get(3).getType());
+        Assertions.assertEquals("10", result.get(3).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testComplexWithSpace() {
+        var result = tokenizer.tokenize("var xuru   =    10");
+        Assertions.assertEquals(TokenType.Var, result.get(0).getType());
+        Assertions.assertEquals("var", result.get(0).getValue());
+        Assertions.assertEquals(TokenType.Identifier, result.get(1).getType());
+        Assertions.assertEquals("xuru", result.get(1).getValue());
+        Assertions.assertEquals(TokenType.Equal, result.get(2).getType());
+        Assertions.assertEquals("=", result.get(2).getValue());
+        Assertions.assertEquals(TokenType.Number, result.get(3).getType());
+        Assertions.assertEquals("10", result.get(3).getValue());
+        log.info(result);
+    }
 
     @Test
     void testUnexpected() {

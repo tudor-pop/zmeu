@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import static dev.fangscl.Frontend.Lexer.TokenType.*;
 import static dev.fangscl.Frontend.Lexer.TokenizerSpec.*;
+import static java.lang.String.*;
 
 /**
  * ---------------------------------------------------------------------
@@ -71,10 +72,10 @@ public class Tokenizer {
         }
         symbol = toOperator(ch); // handle < > <= >= != ==
         if (symbol != Unknown) {
-            if (symbol == Less || symbol == Greater) {
-                return new Token(java.lang.String.format("%c", ch), symbol, ch, line);
+            if (symbol == Less || symbol == Greater || symbol == Equal || symbol == Minus || symbol == Modulo || symbol == Multiply) {
+                return new Token(format("%c", ch), symbol, ch, line);
             } else {
-                return new Token(java.lang.String.format("%c%c", ch, iterator.current()), symbol, ch, line);
+                return new Token(format("%c%c", ch, iterator.current()), symbol, ch, line);
             }
         }
         if (isAlpha(ch)) {
@@ -108,6 +109,7 @@ public class Tokenizer {
         }
         var keyword = source.subSequence(start, iterator.getIndex()).toString();
         var keywordOrId = toKeyword(keyword);
+        iterator.previous();
         return new Token(keyword, keywordOrId, keyword, line);
     }
 
@@ -147,7 +149,11 @@ public class Tokenizer {
 
     private boolean is(char ch) {
         if (isEOF()) return false;
-        return iterator.next() == ch;
+        try {
+            return iterator.next() == ch;
+        } finally {
+            iterator.previous();
+        }
     }
 
     private char lookahead() {
