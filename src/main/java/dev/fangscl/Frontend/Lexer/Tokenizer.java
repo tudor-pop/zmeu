@@ -58,8 +58,8 @@ public class Tokenizer {
         var symbol = TokenType.toSymbol(ch); // handle paranthesis and */-+
         if (symbol != Unknown) {
             if (symbol == Division) {
-                if (is('/')) { // if the second character is "/" start ignoring the line until End of line
-                    while (lookahead() != '\n' && hasNext()) {
+                if (isNext('/')) { // if the second character is "/" start ignoring the line until End of line
+                    while (!isNext('\n') && !isEOF()) {
                         // A comment goes until the end of the line.
                         // possible optimisation, jump straight to last character if we go line by line because it should be a \n
                         iterator.next();
@@ -75,6 +75,7 @@ public class Tokenizer {
             if (symbol == Less || symbol == Greater || symbol == Equal || symbol == Minus || symbol == Modulo || symbol == Multiply) {
                 return new Token(format("%c", ch), symbol, ch, line);
             } else {
+                iterator.next();
                 return new Token(format("%c%c", ch, iterator.current()), symbol, ch, line);
             }
         }
@@ -139,15 +140,15 @@ public class Tokenizer {
 
     public TokenType toOperator(char token) {
         return switch (token) {
-            case '!' -> is('=') ? Bang_Equal : Bang;
-            case '=' -> is('=') ? Equal_Equal : Equal;
-            case '<' -> is('=') ? Less_Equal : Less;
-            case '>' -> is('=') ? Greater_Equal : Greater;
+            case '!' -> isNext('=') ? Bang_Equal : Bang;
+            case '=' -> isNext('=') ? Equal_Equal : Equal;
+            case '<' -> isNext('=') ? Less_Equal : Less;
+            case '>' -> isNext('=') ? Greater_Equal : Greater;
             default -> Unknown;
         };
     }
 
-    private boolean is(char ch) {
+    private boolean isNext(char ch) {
         if (isEOF()) return false;
         try {
             return iterator.next() == ch;

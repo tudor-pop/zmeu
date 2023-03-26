@@ -177,16 +177,16 @@ public class TokenizerTest {
         Assertions.assertEquals("/", result.get(0).getValue());
         log.info(result);
     }
-
+////////// COMMENTS /////////
     @Test
-    void testComment() {
+    void testCommentIsIgnored() {
         var result = tokenizer.tokenize("// a comment goes until the end of line \n");
         Assertions.assertEquals("EOF", result.get(0).getValue());
         log.info(result);
     }
 
     @Test
-    void testAfterComment() {
+    void testNumberOnNextLineAfterComment() {
         var result = tokenizer.tokenize("// a comment goes until the end of line \n 10");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals("10", result.get(0).getValue());
@@ -194,7 +194,7 @@ public class TokenizerTest {
     }
 
     @Test
-    void testVarAfterComment() {
+    void testCommentIgnoredAfterVar() {
         var result = tokenizer.tokenize("var x=23 // a comment goes until the end of line 10");
         Assertions.assertEquals(TokenType.Var, result.get(0).getType());
         Assertions.assertEquals("var", result.get(0).getValue());
