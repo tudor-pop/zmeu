@@ -21,6 +21,14 @@ public class Token {
         this.literal = literal;
     }
 
+    public Token(Object value, TokenType type) {
+        this(value, type, value, 0);
+    }
+
+    public Token(Object value, TokenType type,int line) {
+        this(value, type, value.toString(), line);
+    }
+
     public Token(char value, TokenType type, Object literal, int line) {
         this(String.valueOf(value), type, literal, line);
     }

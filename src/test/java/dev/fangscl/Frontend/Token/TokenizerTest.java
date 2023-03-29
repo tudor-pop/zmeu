@@ -233,7 +233,7 @@ public class TokenizerTest {
         Assertions.assertEquals(TokenType.Equal, result.get(2).getType());
         Assertions.assertEquals("=", result.get(2).getValue());
         Assertions.assertEquals(TokenType.Number, result.get(3).getType());
-        Assertions.assertEquals("23", result.get(3).getValue());
+        Assertions.assertEquals(23, result.get(3).getValue());
         Assertions.assertEquals(TokenType.EOF, result.get(4).getType());
         Assertions.assertEquals("EOF", result.get(4).getValue());
         log.info(result);
@@ -281,7 +281,7 @@ public class TokenizerTest {
         Assertions.assertEquals(TokenType.Equal, result.get(2).getType());
         Assertions.assertEquals("=", result.get(2).getValue());
         Assertions.assertEquals(TokenType.Number, result.get(3).getType());
-        Assertions.assertEquals("10", result.get(3).getValue());
+        Assertions.assertEquals(10, result.get(3).getValue());
         log.info(result);
     }
 
@@ -295,7 +295,7 @@ public class TokenizerTest {
         Assertions.assertEquals(TokenType.Equal, result.get(2).getType());
         Assertions.assertEquals("=", result.get(2).getValue());
         Assertions.assertEquals(TokenType.Number, result.get(3).getType());
-        Assertions.assertEquals("10", result.get(3).getValue());
+        Assertions.assertEquals(10, result.get(3).getValue());
         log.info(result);
     }
 
