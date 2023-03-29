@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
@@ -34,6 +35,21 @@ public class ParserNumericTest extends ParserStatementTest {
                 .body(List.of(new ExpressionStatement(new NumericLiteral(1.11))))
                 .build();
         assertEquals(expected, res);
+    }
+
+    @Test
+    void testMultipleStatements() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                "Hello"
+                1
+                """));
+        var expected = Program.builder()
+                .body(List.of(
+                        new ExpressionStatement(new StringLiteral("Hello")),
+                        new ExpressionStatement(new NumericLiteral(1)))
+                ).build();
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test
