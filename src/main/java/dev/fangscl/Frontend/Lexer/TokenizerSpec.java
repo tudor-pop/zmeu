@@ -16,7 +16,8 @@ class TokenizerSpec {
             new Entry("^>=", TokenType.Greater_Equal),
             new Entry("^<", TokenType.Less),
             new Entry("^>", TokenType.Greater),
-            new Entry("^//", TokenType.Comment),
+            new Entry("^/(?!/)", TokenType.Division), // match / only if not followed by another / or *
+            new Entry("^//.*", TokenType.Comment),
             new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number)
     );

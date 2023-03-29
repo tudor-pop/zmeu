@@ -99,6 +99,10 @@ public enum TokenType {
         return ArrayUtils.contains(symbols, operator);
     }
 
+    public static boolean isAny(TokenType operator, TokenType... symbols) {
+        return ArrayUtils.contains(symbols, operator);
+    }
+
     public static TokenType toSymbol(String token) {
         return toSymbol(token.charAt(0));
     }
