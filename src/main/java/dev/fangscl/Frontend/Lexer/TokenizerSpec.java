@@ -14,15 +14,23 @@ class TokenizerSpec {
             new Entry("^\\s+", TokenType.WhiteSpace),
             new Entry("^\\n", TokenType.NewLine),
             new Entry("^==", TokenType.Equal_Equal),
+            new Entry("^=", TokenType.Equal),
             new Entry("^!=", TokenType.Bang_Equal),
             new Entry("^<=", TokenType.Less_Equal),
             new Entry("^>=", TokenType.Greater_Equal),
             new Entry("^<", TokenType.Less),
             new Entry("^>", TokenType.Greater),
+            new Entry("^\\{", TokenType.OpenBraces),
+            new Entry("^\\}", TokenType.CloseBraces),
+            new Entry("^\\(", TokenType.OpenParenthesis),
+            new Entry("^\\)", TokenType.CloseParenthesis),
+            new Entry("^\\[", TokenType.OpenBrackets),
+            new Entry("^\\]", TokenType.CloseBrackets),
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
             new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
-            new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number)
+            new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
+            new Entry("^(var)", TokenType.Var)
     );
 
     @Data

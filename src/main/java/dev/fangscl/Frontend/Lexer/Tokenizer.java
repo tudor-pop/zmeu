@@ -55,22 +55,6 @@ public class Tokenizer {
 
     @Nullable
     private Token getNextToken(char ch) {
-        var symbol = TokenType.toSymbol(ch); // handle paranthesis and */-+
-        if (symbol != Unknown) {
-            if (symbol == Division) {
-                if (isNext('/')) { // if the second character is "/" start ignoring the line until End of line
-                    while (!isNext('\n') && !isEOF()) {
-                        // A comment goes until the end of the line.
-                        // possible optimisation, jump straight to last character if we go line by line because it should be a \n
-                        iterator.next();
-                    }
-                    line++;
-                    return null; // line was ignored, move on to next line
-                }
-            }
-            return new Token(ch, symbol, ch, line);
-        }
-
         if (isAlpha(ch)) {
             return identifier();
         }
