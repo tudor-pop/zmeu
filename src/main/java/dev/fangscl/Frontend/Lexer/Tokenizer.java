@@ -114,25 +114,6 @@ public class Tokenizer {
         return matcher.group();
     }
 
-    public TokenType toOperator(char token) {
-        return switch (token) {
-            case '!' -> isNext('=') ? Bang_Equal : Bang;
-            case '=' -> isNext('=') ? Equal_Equal : Equal;
-            case '<' -> isNext('=') ? Less_Equal : Less;
-            case '>' -> isNext('=') ? Greater_Equal : Greater;
-            default -> Unknown;
-        };
-    }
-
-    private boolean isNext(char ch) {
-        if (isEOF()) return false;
-        try {
-            return iterator.next() == ch;
-        } finally {
-            iterator.previous();
-        }
-    }
-
     private char lookahead() {
         if (isEOF()) return '\0';
         return iterator.current();
@@ -146,4 +127,7 @@ public class Tokenizer {
         return this.iterator.current() == CharacterIterator.DONE;
     }
 
+    public Token tokenizeLiteral(String source) {
+        return tokenize(source).get(0);
+    }
 }
