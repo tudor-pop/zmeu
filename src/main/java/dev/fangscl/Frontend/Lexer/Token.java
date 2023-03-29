@@ -28,4 +28,8 @@ public class Token {
         return Integer.parseInt(this.value);
     }
 
+    public double getValueDouble() {
+        return Double.parseDouble(this.value);
+    }
+
 }

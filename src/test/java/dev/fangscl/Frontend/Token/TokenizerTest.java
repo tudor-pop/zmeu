@@ -17,7 +17,7 @@ public class TokenizerTest {
     }
 
     @Test
-    void testLiteralOneNumber() {
+    void testOneDigit() {
         var result = tokenizer.tokenize("1");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals(1, result.get(0).getValueInt());
@@ -25,10 +25,26 @@ public class TokenizerTest {
     }
 
     @Test
-    void testLiteralMultipleNumbers() {
+    void testMultipleDigits() {
         var result = tokenizer.tokenize("422");
         Assertions.assertEquals(TokenType.Number, result.get(0).getType());
         Assertions.assertEquals(422, result.get(0).getValueInt());
+        log.info(result);
+    }
+
+    @Test
+    void testDecimal() {
+        var result = tokenizer.tokenize("1.2");
+        Assertions.assertEquals(TokenType.Number, result.get(0).getType());
+        Assertions.assertEquals(1.2, result.get(0).getValueDouble());
+        log.info(result);
+    }
+
+
+    @Test
+    void testSpace() {
+        var result = tokenizer.tokenize("  ");
+        Assertions.assertEquals(TokenType.EOF, result.get(0).getType());
         log.info(result);
     }
 
