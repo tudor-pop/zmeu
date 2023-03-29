@@ -3,7 +3,6 @@ package dev.fangscl.Frontend.Parse;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
-import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @Log4j2
 public class ParserNumericTest extends ParserStatementTest {
@@ -55,12 +53,17 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testAddition() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 1"));
-        String expression = gson.toJson(res);
-        assertEquals("""
-                        {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
-                , expression);
-        Statement actualValue = res.getBody().get(0);
-        assertInstanceOf(BinaryExpression.class, actualValue);
+
+
+        var expected = Program.builder()
+                .body(List.of(new ExpressionStatement(
+                        new BinaryExpression(
+                                new NumericLiteral(1),
+                                new NumericLiteral(1),
+                                "+")))
+                ).build();
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test

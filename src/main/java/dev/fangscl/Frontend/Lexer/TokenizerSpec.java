@@ -11,11 +11,14 @@ class TokenizerSpec {
 //            skip comment
             new Entry("^//.*", TokenType.Comment),
             new Entry("\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
+            new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
+            new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
             new Entry("^\\s+", TokenType.WhiteSpace),
             new Entry("^\\n", TokenType.NewLine),
             new Entry("^;", TokenType.LineTerminator),
             new Entry("^==", TokenType.Equal_Equal),
             new Entry("^=", TokenType.Equal),
+            new Entry("^\\+", TokenType.Plus),
             new Entry("^!=", TokenType.Bang_Equal),
             new Entry("^<=", TokenType.Less_Equal),
             new Entry("^>=", TokenType.Greater_Equal),
@@ -29,8 +32,7 @@ class TokenizerSpec {
             new Entry("^\\]", TokenType.CloseBrackets),
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
-            new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
-            new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
+
             new Entry("^(var)", TokenType.Var)
     );
 
