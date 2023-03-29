@@ -67,6 +67,19 @@ public class TokenizerTest {
     }
 
     @Test
+    void testMultilineComment() {
+        var result = tokenizer.tokenize("""
+                 /* 
+                  * "hello" 
+                  */
+                  "Str"
+                """);
+        Assertions.assertEquals(TokenType.String, result.get(0).getType());
+        Assertions.assertEquals("\"Str\"", result.get(0).getValue());
+        log.info(result);
+    }
+
+    @Test
     void testLiteralSingleQuoteString() {
         var result = tokenizer.tokenize("'hello'");
         Assertions.assertEquals(TokenType.String, result.get(0).getType());
@@ -193,7 +206,8 @@ public class TokenizerTest {
         Assertions.assertEquals("/", result.get(0).getValue());
         log.info(result);
     }
-////////// COMMENTS /////////
+
+    ////////// COMMENTS /////////
     @Test
     void testCommentIsIgnored() {
         var result = tokenizer.tokenize("// a comment goes until the end of line \n");

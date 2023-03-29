@@ -82,7 +82,7 @@ public class Tokenizer {
                 continue;
             }
             TokenType type = it.getType();
-            if (TokenType.isAny(type, WhiteSpace, Comment)) {
+            if (TokenType.isAny(type, WhiteSpace, Comment, NewLine)) {
                 return null;
             }
             if (type == NewLine) {

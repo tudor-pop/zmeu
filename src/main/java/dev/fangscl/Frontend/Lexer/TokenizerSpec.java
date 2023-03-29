@@ -8,16 +8,19 @@ import java.util.regex.Pattern;
 
 class TokenizerSpec {
     static List<Entry> spec = Arrays.asList(
-            new Entry("^\s+", TokenType.WhiteSpace),
-            new Entry("^\\n", TokenType.WhiteSpace),
+//            skip comment
+            new Entry("^//.*", TokenType.Comment),
+            new Entry("\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
+            new Entry("^\\s+", TokenType.WhiteSpace),
+            new Entry("^\\n", TokenType.NewLine),
             new Entry("^==", TokenType.Equal_Equal),
             new Entry("^!=", TokenType.Bang_Equal),
             new Entry("^<=", TokenType.Less_Equal),
             new Entry("^>=", TokenType.Greater_Equal),
             new Entry("^<", TokenType.Less),
             new Entry("^>", TokenType.Greater),
-            new Entry("^/(?!/)", TokenType.Division), // match / only if not followed by another / or *
-            new Entry("^//.*", TokenType.Comment),
+            // match / only if not followed by another /
+            new Entry("^/(?!/)", TokenType.Division),
             new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number)
     );
