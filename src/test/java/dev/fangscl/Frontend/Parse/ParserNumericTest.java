@@ -1,11 +1,11 @@
 package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+@Log4j2
 public class ParserNumericTest extends ParserStatementTest {
 
     @Test
@@ -23,14 +24,16 @@ public class ParserNumericTest extends ParserStatementTest {
                 .body(List.of(new ExpressionStatement(new NumericLiteral(1))))
                 .build();
         assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test
     void testDecimal() {
         var res = parser.produceAST(tokenizer.tokenize("1.11"));
-        Statement expression = res.first();
-        assertEquals(NodeType.DecimalLiteral, expression.getKind());
-        assertEquals(1.11, ((NumericLiteral) expression).getValue());
+        var expected = Program.builder()
+                .body(List.of(new ExpressionStatement(new NumericLiteral(1.11))))
+                .build();
+        assertEquals(expected, res);
     }
 
     @Test

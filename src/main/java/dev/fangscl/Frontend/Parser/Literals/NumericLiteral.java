@@ -5,6 +5,8 @@ import dev.fangscl.Runtime.TypeSystem.Base.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.text.DecimalFormat;
+
 /*
  * NumericLiteral
  *      : NUMBER
@@ -13,6 +15,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class NumericLiteral extends Expression {
+    private static DecimalFormat df = new DecimalFormat("#######.#######");
     private Number value;
 
     private NumericLiteral() {
@@ -32,7 +35,7 @@ public class NumericLiteral extends Expression {
 
     private void setDecimal(double value) {
         this.kind = NodeType.DecimalLiteral;
-        this.value = value;
+        this.value = Double.valueOf(df.format(value));
     }
 
     public NumericLiteral(int value) {
