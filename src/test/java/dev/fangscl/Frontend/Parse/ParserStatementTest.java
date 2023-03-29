@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 class ParserStatementTest {
     protected Parser parser;
+    protected Tokenizer tokenizer;
     protected Gson gson = new Gson();
 
 
@@ -21,7 +22,8 @@ class ParserStatementTest {
 
     @BeforeEach
     void init() {
-        parser = new Parser(new Tokenizer());
+        tokenizer = new Tokenizer();
+        parser = new Parser();
     }
 
 

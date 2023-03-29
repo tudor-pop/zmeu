@@ -1,6 +1,5 @@
 package dev.fangscl.Frontend.Parser;
 
-import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
@@ -37,26 +36,31 @@ import java.util.ListIterator;
 public class Parser {
     private List<Token> tokens;
     private ListIterator<Token> iterator;
-    private Tokenizer tokenizer;
 
-    public Parser(Tokenizer tokenizer) {
-        this.tokenizer = tokenizer;
+    public Parser(List<Token> tokens) {
+        setTokens(tokens);
     }
 
-    public Program produceAST(String src) {
-        tokens = tokenizer.tokenize(src);
-        iterator = tokens.listIterator();
+    public Parser() {
+    }
 
+    private void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
+        this.iterator = tokens.listIterator();
+    }
+
+    public Program produceAST(List<Token> tokens) {
+        setTokens(tokens);
         return produceAST();
     }
 
-    private Program produceAST() {
+    public Program produceAST() {
         var program = new Program();
         while (iterator.hasNext()) {
             Token current = eat();
-//            if (current.getType() == TokenType.EOF) {
-//                break;
-//            }
+            if (current.getType() == TokenType.EOF) {
+                break;
+            }
             program.addStatement(this.parseStatement(current));
         }
 

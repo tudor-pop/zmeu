@@ -16,7 +16,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testInteger() {
-        var res = parser.produceAST("1");
+        var res = parser.produceAST(tokenizer.tokenize("1"));
         Statement expression = res.first();
         assertEquals(NodeType.IntegerLiteral, expression.getKind());
         assertEquals(1, ((NumericLiteral) expression).getValue());
@@ -24,7 +24,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testDecimal() {
-        var res = parser.produceAST("1.11");
+        var res = parser.produceAST(tokenizer.tokenize("1.11"));
         Statement expression = res.first();
         assertEquals(NodeType.DecimalLiteral, expression.getKind());
         assertEquals(1.11, ((NumericLiteral) expression).getValue());
@@ -32,7 +32,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testAddition() {
-        var res = parser.produceAST("1 + 1");
+        var res = parser.produceAST(tokenizer.tokenize("1 + 1"));
         String expression = gson.toJson(res);
         assertEquals("""
                         {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
@@ -43,7 +43,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testAddition3() {
-        var res = parser.produceAST("1 + 1+1");
+        var res = parser.produceAST(tokenizer.tokenize("1 + 1+1"));
         String expression = gson.toJson(res);
         assertEquals("""
                         {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
@@ -52,7 +52,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testAdditionSubstraction3() {
-        var res = parser.produceAST("1 + 1-11");
+        var res = parser.produceAST(tokenizer.tokenize("1 + 1-11"));
         String expression = gson.toJson(res);
         assertEquals("""
                         {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":11,"kind":"IntegerLiteral"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
@@ -61,7 +61,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testAdditionMultiplication() {
-        var res = parser.produceAST("1 + 2*3");
+        var res = parser.produceAST(tokenizer.tokenize("1 + 2*3"));
         String expression = gson.toJson(res);
         assertEquals("""
                         {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"left":{"value":2,"kind":"IntegerLiteral"},"right":{"value":3,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
@@ -70,7 +70,7 @@ public class ParserNumericTest extends ParserStatementTest {
 
     @Test
     void testAdditionParanthesis() {
-        var res = parser.produceAST("1 + 2 - (3*4)");
+        var res = parser.produceAST(tokenizer.tokenize("1 + 2 - (3*4)"));
         String expression = gson.toJson(res);
         assertEquals("""
                         {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":2,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"left":{"value":3,"kind":"IntegerLiteral"},"right":{"value":4,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""

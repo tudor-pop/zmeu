@@ -25,14 +25,15 @@ public class Main {
         var interpreter = new Interpreter();
         var scanner = new Scanner(System.in);
         while (true) {
-            var parser = new Parser(new Tokenizer());
+            var tokenizer = new Tokenizer();
+            var parser = new Parser();
             System.out.print("> ");
             var line = scanner.nextLine();
             if (line.equalsIgnoreCase("exit") || line.equalsIgnoreCase("exit()") ||
                     line.equalsIgnoreCase("quit") || line.equalsIgnoreCase("quit()")) {
                 System.exit(0);
             }
-            Program program = parser.produceAST(line);
+            Program program = parser.produceAST(tokenizer.tokenize(line));
             System.out.println(gson.toJson(program));
             var evalRes = interpreter.eval(program);
             log.debug("{}", evalRes);

@@ -14,9 +14,9 @@ public class ParserStringTest extends ParserStatementTest {
 
     @Test
     void testHello() {
-        var res = parser.produceAST(""" 
+        var res = parser.produceAST(tokenizer.tokenize(""" 
                 "Hello" 
-                """);
+                """));
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("Hello", ((StringLiteral) expression).getValue());
@@ -25,9 +25,9 @@ public class ParserStringTest extends ParserStatementTest {
 
     @Test
     void testIntegerStrShouldEvalToString() {
-        var res = parser.produceAST(""" 
+        var res = parser.produceAST(tokenizer.tokenize(""" 
                 "42" 
-                """);
+                """));
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("42", ((StringLiteral) expression).getValue());
@@ -36,8 +36,8 @@ public class ParserStringTest extends ParserStatementTest {
 
     @Test
     void testSingleQuotesShouldEvalToString() {
-        var res = parser.produceAST(""" 
-                '42' """);
+        var res = parser.produceAST(tokenizer.tokenize(""" 
+                '42' """));
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("42", ((StringLiteral) expression).getValue());
@@ -46,7 +46,7 @@ public class ParserStringTest extends ParserStatementTest {
 
     @Test
     void testNumberStringShouldEvalToNumber() {
-        var res = parser.produceAST("42");
+        var res = parser.produceAST(tokenizer.tokenize("42"));
         Statement expression = res.first();
         assertEquals(NodeType.IntegerLiteral, expression.getKind());
         assertEquals(42, ((NumericLiteral) expression).getValue());
@@ -55,7 +55,7 @@ public class ParserStringTest extends ParserStatementTest {
 
     @Test
     void testNumberStringShouldEvalToNumberWithTrailingSpace() {
-        var res = parser.produceAST("   \"  42  \"    ");
+        var res = parser.produceAST(tokenizer.tokenize("   \"  42  \"    "));
         Statement expression = res.first();
         assertEquals(NodeType.StringLiteral, expression.getKind());
         assertEquals("  42  ", ((StringLiteral) expression).getValue());
