@@ -10,13 +10,13 @@ import lombok.EqualsAndHashCode;
 public class BinaryExpression extends Expression {
     private Expression left;
     private Expression right;
-    private String operator;
+    private Object operator;
 
     public BinaryExpression() {
         this.kind = NodeType.BinaryExpression;
     }
 
-    public BinaryExpression(Expression left, Expression right, String operator) {
+    public BinaryExpression(Expression left, Expression right, Object operator) {
         this();
         this.left = left;
         this.right = right;

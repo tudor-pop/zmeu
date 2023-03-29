@@ -127,9 +127,9 @@ public class Interpreter {
         return new NullValue();
     }
 
-    private RuntimeValue eval(RuntimeValue lhs, RuntimeValue rhs, String operator) {
-        if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn) {
-            var res = switch (operator) {
+    private RuntimeValue eval(RuntimeValue lhs, RuntimeValue rhs, Object operator) {
+        if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn && operator instanceof String op) {
+            var res = switch (op) {
                 case "+" -> lhsn.getValue() + rhsn.getValue();
                 case "-" -> lhsn.getValue() - rhsn.getValue();
                 case "/" -> lhsn.getValue() / rhsn.getValue();

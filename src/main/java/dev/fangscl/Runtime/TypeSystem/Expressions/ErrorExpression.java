@@ -7,7 +7,18 @@ public class ErrorExpression extends Expression {
     private int position;
 
     public ErrorExpression(String msg) {
-        this.msg = "Unknown token found during parsing: %s  ".formatted(msg);
+        setMsg(msg);
+    }
+
+    public ErrorExpression(Object msg) {
+        if (msg instanceof String s) {
+            setMsg(s);
+        }
+    }
+
+    private void setMsg(String msg) {
+        String template = "Unknown token found during parsing: %s  ";
+        this.msg = template.formatted(msg);
     }
 
     public ErrorExpression(int position) {

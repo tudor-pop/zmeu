@@ -34,6 +34,16 @@ public class NumericLiteral extends Expression {
     }
 
     public NumericLiteral(String value) {
+        setValue(value);
+    }
+
+    public NumericLiteral(Object value) {
+        if (value instanceof String s) {
+            setValue(s);
+        }
+    }
+
+    private void setValue(String value) {
         if (value.indexOf('.') != -1) { // string contains . => is a float/double
             this.value = Double.parseDouble(value);
             this.kind = NodeType.DecimalLiteral;

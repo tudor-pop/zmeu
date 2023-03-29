@@ -25,12 +25,23 @@ public class StringLiteral extends Expression {
 
     public StringLiteral(String value) {
         this();
+        setValue(value);
+    }
+
+    private void setValue(String value) {
         if (StringUtils.isBlank(value)) {
             this.value = value;
         } else {
             this.value = Optional.ofNullable(StringUtils.substringBetween(value, "\"", "\""))
                     .or(() -> Optional.ofNullable(StringUtils.substringBetween(value, "'", "'")))
                     .orElse(value);
+        }
+    }
+
+    public StringLiteral(Object value) {
+        this();
+        if (value instanceof String s) {
+            setValue(s);
         }
     }
 

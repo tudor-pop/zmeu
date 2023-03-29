@@ -20,7 +20,7 @@ public class TokenizerTest {
     void testOneDigit() {
         var result = tokenizer.tokenizeLiteral("1");
         Assertions.assertEquals(TokenType.Number, result.getType());
-        Assertions.assertEquals(1, result.getValueInt());
+        Assertions.assertEquals(1, result.getValue());
         log.info(result);
     }
 
@@ -28,7 +28,7 @@ public class TokenizerTest {
     void testMultipleDigits() {
         var result = tokenizer.tokenizeLiteral("422");
         Assertions.assertEquals(TokenType.Number, result.getType());
-        Assertions.assertEquals(422, result.getValueInt());
+        Assertions.assertEquals(422, result.getValue());
         log.info(result);
     }
 
@@ -36,7 +36,7 @@ public class TokenizerTest {
     void testDecimal() {
         var result = tokenizer.tokenizeLiteral("1.2");
         Assertions.assertEquals(TokenType.Number, result.getType());
-        Assertions.assertEquals(1.2, result.getValueDouble());
+        Assertions.assertEquals(1.2f, result.getValue());
         log.info(result);
     }
 
@@ -91,7 +91,7 @@ public class TokenizerTest {
     void testLiteralWhitespaceString() {
         var result = tokenizer.tokenizeLiteral("   42    ");
         Assertions.assertEquals(TokenType.Number, result.getType());
-        Assertions.assertEquals("42", result.getValue());
+        Assertions.assertEquals(42, result.getValue());
         log.info(result);
     }
 
@@ -219,7 +219,7 @@ public class TokenizerTest {
     void testNumberOnNextLineAfterComment() {
         var result = tokenizer.tokenizeLiteral("// a comment goes until the end of line \n 10");
         Assertions.assertEquals(TokenType.Number, result.getType());
-        Assertions.assertEquals("10", result.getValue());
+        Assertions.assertEquals(10, result.getValue());
         log.info(result);
     }
 
