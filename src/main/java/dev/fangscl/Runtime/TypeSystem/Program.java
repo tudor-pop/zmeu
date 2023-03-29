@@ -24,6 +24,9 @@ public class Program extends Statement {
     public void addStatement(Statement statement) {
         this.body.add(statement);
     }
+    public void add(Statement statement) {
+        this.addStatement(statement);
+    }
 
     public Statement first(){
         return body.listIterator().next();

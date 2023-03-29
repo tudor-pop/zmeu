@@ -11,10 +11,10 @@ package dev.fangscl.Runtime.TypeSystem.Base;
  * MultiplicativeExpression
  * LiteralExpression - Identity, integer, decimal
  * <p>
- * Expression
- * : Literal
+ * ExpressionStatement
+ * : Expression
  * ;
  */
-public class Expression extends Statement {
+public class ExpressionStatement extends Statement {
 
 }

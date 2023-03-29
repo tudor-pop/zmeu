@@ -12,6 +12,7 @@ public enum TokenType {
     WhiteSpace,
     Comment,
     NewLine,
+    LineTerminator,
 
     /******   Expressions   ******/
     Equal,

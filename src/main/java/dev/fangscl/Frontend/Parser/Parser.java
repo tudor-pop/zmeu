@@ -21,13 +21,17 @@ import java.util.ListIterator;
  * Responsability: It does lexical analisys and source code validation. Take the tokens from the lexer and create an AST.
  *  Main entry point:
  *  Program
- *      : NumericLiteral
+ *      : StatementList
  *      ;
  *  NumericLiteral
  *      : NUMBER
  *      ;
  *  StringLiteral
  *      : STRING
+ *      ;
+ *  StatementList
+ *      : Statement
+ *      | StatementList
  *      ;
  *
  * */
@@ -61,7 +65,7 @@ public class Parser {
             if (current.getType() == TokenType.EOF) {
                 break;
             }
-            program.addStatement(this.parseStatement(current));
+            program.add(this.parseStatement(current));
         }
 
         return program;

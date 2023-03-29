@@ -67,6 +67,22 @@ public class TokenizerTest {
     }
 
     @Test
+    void testLineTerminator() {
+        var result = tokenizer.tokenizeLiteral(";");
+        Assertions.assertEquals(TokenType.LineTerminator, result.getType());
+        Assertions.assertEquals(";", result.getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testLineTerminatorComplex() {
+        var result = tokenizer.tokenize("1+1;");
+        Assertions.assertEquals(TokenType.LineTerminator, result.get(2).getType());
+        Assertions.assertEquals(";", result.get(2).getValue());
+        log.info(result);
+    }
+
+    @Test
     void testMultilineComment() {
         var result = tokenizer.tokenizeLiteral("""
                  /* 

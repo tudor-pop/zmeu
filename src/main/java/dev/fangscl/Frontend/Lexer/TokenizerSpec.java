@@ -13,6 +13,7 @@ class TokenizerSpec {
             new Entry("\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
             new Entry("^\\s+", TokenType.WhiteSpace),
             new Entry("^\\n", TokenType.NewLine),
+            new Entry("^;", TokenType.LineTerminator),
             new Entry("^==", TokenType.Equal_Equal),
             new Entry("^=", TokenType.Equal),
             new Entry("^!=", TokenType.Bang_Equal),
