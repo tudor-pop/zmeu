@@ -19,16 +19,27 @@ public class NumericLiteral extends Expression {
     }
 
     public NumericLiteral(double value) {
-        this.kind = NodeType.DecimalLiteral;
-        this.value = value;
+        setDecimal(value);
     }
 
     public NumericLiteral(float value) {
+        setDecimal(value);
+    }
+
+    private void setDecimal(float value) {
+        setDecimal((double) value);
+    }
+
+    private void setDecimal(double value) {
         this.kind = NodeType.DecimalLiteral;
         this.value = value;
     }
 
     public NumericLiteral(int value) {
+        setInteger(value);
+    }
+
+    private void setInteger(int value) {
         this.kind = NodeType.IntegerLiteral;
         this.value = value;
     }
@@ -40,6 +51,12 @@ public class NumericLiteral extends Expression {
     public NumericLiteral(Object value) {
         if (value instanceof String s) {
             setValue(s);
+        } else if (value instanceof Integer i) {
+            setInteger(i);
+        } else if (value instanceof Double i) {
+            setDecimal(i);
+        } else if (value instanceof Float i) {
+            setDecimal(i);
         }
     }
 

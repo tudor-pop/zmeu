@@ -6,6 +6,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Runtime.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
@@ -72,7 +73,7 @@ public class Parser {
     }
 
     private Statement parseStatement(Token token) {
-        return parseExpression(token);
+        return new ExpressionStatement(parseExpression(token));
     }
 
     private Expression parseExpression(Token token) {

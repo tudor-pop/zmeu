@@ -2,8 +2,10 @@ package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
+import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.Runtime.TypeSystem.Program;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,9 +19,10 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testInteger() {
         var res = parser.produceAST(tokenizer.tokenize("1"));
-        Statement expression = res.first();
-        assertEquals(NodeType.IntegerLiteral, expression.getKind());
-        assertEquals(1, ((NumericLiteral) expression).getValue());
+        var expected = Program.builder()
+                .body(List.of(new ExpressionStatement(new NumericLiteral(1))))
+                .build();
+        assertEquals(expected, res);
     }
 
     @Test

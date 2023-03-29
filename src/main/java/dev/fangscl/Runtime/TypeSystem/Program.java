@@ -2,6 +2,7 @@ package dev.fangscl.Runtime.TypeSystem;
 
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@Builder
 @EqualsAndHashCode(callSuper = true)
 public class Program extends Statement {
     private List<Statement> body;
