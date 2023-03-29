@@ -10,6 +10,7 @@ public enum TokenType {
     Identifier,
     String,
     WhiteSpace,
+    Comment,
     NewLine,
 
     /******   Expressions   ******/
@@ -59,8 +60,8 @@ public enum TokenType {
      */
 
     /*****   Grouping   *****/
-    OpenParanthesis,
-    CloseParanthesis,
+    OpenParenthesis,
+    CloseParenthesis,
     OpenBraces,
     CloseBraces,
     OpenBrackets,
@@ -77,8 +78,8 @@ public enum TokenType {
 
     public static TokenType toSymbol(char token) {
         return switch (token) {
-            case '(' -> OpenParanthesis;
-            case ')' -> CloseParanthesis;
+            case '(' -> OpenParenthesis;
+            case ')' -> CloseParenthesis;
             case '{' -> OpenBraces;
             case '}' -> CloseBraces;
             case '[' -> OpenBrackets;

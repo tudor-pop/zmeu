@@ -1,51 +1,40 @@
 package dev.fangscl.Frontend.Lexer;
 
-import java.util.Map;
-import java.util.regex.Matcher;
+import lombok.Data;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 class TokenizerSpec {
-     static Map<Pattern, TokenType> spec = Map.ofEntries(
-            Map.entry(matcher("""
-                     ^\s+"""), TokenType.WhiteSpace),
-            Map.entry(matcher("""
-                     ^\\n"""), TokenType.WhiteSpace),
-            Map.entry(matcher("""
-                     ("|')[^("|')]*("|')
-                    """), TokenType.String),
-             Map.entry(matcher("""
-                    ^([0-9]*[.])?[0-9]+
-                     """), TokenType.Number)
+    static List<Entry> spec = Arrays.asList(
+            new Entry("^\s+", TokenType.WhiteSpace),
+            new Entry("^\\n", TokenType.WhiteSpace),
+            new Entry("^==", TokenType.Equal_Equal),
+            new Entry("^!=", TokenType.Bang_Equal),
+            new Entry("^<=", TokenType.Less_Equal),
+            new Entry("^>=", TokenType.Greater_Equal),
+            new Entry("^<", TokenType.Less),
+            new Entry("^>", TokenType.Greater),
+            new Entry("^//", TokenType.Comment),
+            new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
+            new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number)
     );
 
-    private static Pattern matcher(String sequence) {
-        return Pattern.compile(sequence.trim());
-    }
+    @Data
+    static class Entry {
+        private final Pattern pattern;
+        private final TokenType type;
 
-    /**
-     * This will match:
-     * 123
-     * 123.456
-     * .456
-     * https://stackoverflow.com/questions/12643009/regular-expression-for-floating-point-numbers
-     *
-     * @param sequence
-     * @return
-     */
-    public static Matcher isNumber(CharSequence sequence) {
-        Pattern number = Pattern.compile("^([0-9]*[.])?[0-9]+");
-        var matcher = number.matcher(sequence);
-        return matcher;
-    }
+        Entry(String pattern, TokenType type) {
+            this.pattern = matcher(pattern);
+            this.type = type;
+        }
 
-    public static Matcher isNumber(char sequence) {
-        return isNumber(String.valueOf(sequence));
+        private static Pattern matcher(String sequence) {
+            return Pattern.compile(sequence.trim());
+        }
     }
-
-    public static Matcher isString(CharSequence sequence) {
-        var matcher = Pattern.compile("""
-                ("|')[^("|')]*("|')""").matcher(sequence);
-        return matcher;
-    }
-
 }
+
+

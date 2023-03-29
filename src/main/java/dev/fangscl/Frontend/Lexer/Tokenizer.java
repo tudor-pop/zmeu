@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.String;
 import java.nio.CharBuffer;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -12,8 +13,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static dev.fangscl.Frontend.Lexer.TokenType.*;
-import static dev.fangscl.Frontend.Lexer.TokenizerSpec.*;
-import static java.lang.String.*;
+import static dev.fangscl.Frontend.Lexer.TokenizerSpec.spec;
 
 /**
  * ---------------------------------------------------------------------
@@ -70,26 +70,18 @@ public class Tokenizer {
             }
             return new Token(ch, symbol, ch, line);
         }
-        symbol = toOperator(ch); // handle < > <= >= != ==
-        if (symbol != Unknown) {
-            if (symbol == Less || symbol == Greater || symbol == Equal || symbol == Minus || symbol == Modulo || symbol == Multiply) {
-                return new Token(format("%c", ch), symbol, ch, line);
-            } else {
-                iterator.next();
-                return new Token(format("%c%c", ch, iterator.current()), symbol, ch, line);
-            }
-        }
+
         if (isAlpha(ch)) {
             return identifier();
         }
 
-        for (var it : spec.entrySet()) {
+        for (var it : spec) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-            var value = handle(it.getKey(), str);
+            var value = handle(it.getPattern(), str);
             if (value == null) {
                 continue;
             }
-            TokenType type = it.getValue();
+            TokenType type = it.getType();
             if (type == WhiteSpace) {
                 return null;
             }

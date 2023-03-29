@@ -109,9 +109,9 @@ public class Parser {
             case Identifier -> new Identifier(token.getValue());
             case Number -> new NumericLiteral(token.getValue());
             case String -> new StringLiteral(token.getValue());
-            case OpenParanthesis -> {
+            case OpenParenthesis -> {
                 var res = parseExpression(eat());
-                eat(TokenType.CloseParanthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
+                eat(TokenType.CloseParenthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
                 yield res;
             }
             default -> new ErrorExpression(token.getValue());

@@ -93,7 +93,7 @@ public class TokenizerTest {
     @Test
     void testOpenParanthesis() {
         var result = tokenizer.tokenize("(");
-        Assertions.assertEquals(TokenType.OpenParanthesis, result.get(0).getType());
+        Assertions.assertEquals(TokenType.OpenParenthesis, result.get(0).getType());
         Assertions.assertEquals("(", result.get(0).getValue());
         log.info(result);
     }
@@ -101,7 +101,7 @@ public class TokenizerTest {
     @Test
     void testCloseParanthesis() {
         var result = tokenizer.tokenize(")");
-        Assertions.assertEquals(TokenType.CloseParanthesis, result.get(0).getType());
+        Assertions.assertEquals(TokenType.CloseParenthesis, result.get(0).getType());
         Assertions.assertEquals(")", result.get(0).getValue());
         log.info(result);
     }
