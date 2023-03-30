@@ -56,6 +56,39 @@ public class ParserNumericTest extends ParserStatementTest {
     }
 
     @Test
+    void testSubstraction() {
+        var res = parser.produceAST(tokenizer.tokenize("1-1"));
+
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(1, 1, "-")));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testMultiplication() {
+        var res = parser.produceAST(tokenizer.tokenize("1*1"));
+
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(1, 1, "*")));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testDivision() {
+        var res = parser.produceAST(tokenizer.tokenize("1/1"));
+
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(1, 1, "/")));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
     void testAddition3() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 1+1"));
         var expected = Program.of(ExpressionStatement.of(
@@ -103,6 +136,34 @@ public class ParserNumericTest extends ParserStatementTest {
                         BinaryExpression.of(
                                 BinaryExpression.of(1, 2, "+"),
                                 BinaryExpression.of(3, 4, "*"),
+                                "-"))
+        );
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void testMultiplicationWithParanthesis() {
+        var res = parser.produceAST(tokenizer.tokenize("1 * 2 - (3*4)"));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                BinaryExpression.of(1, 2, "*"),
+                                BinaryExpression.of(3, 4, "*"),
+                                "-"))
+        );
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void testDivisionWithParanthesis() {
+        var res = parser.produceAST(tokenizer.tokenize("1 / 2 - (3/4)"));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                BinaryExpression.of(1, 2, "/"),
+                                BinaryExpression.of(3, 4, "/"),
                                 "-"))
         );
         log.info(gson.toJson(res));
