@@ -98,10 +98,15 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testAdditionParanthesis() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 2 - (3*4)"));
-        String expression = gson.toJson(res);
-        assertEquals("""
-                        {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":2,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"left":{"value":3,"kind":"IntegerLiteral"},"right":{"value":4,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
-                , expression);
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                BinaryExpression.of(1, 2, "+"),
+                                BinaryExpression.of(3, 4, "*"),
+                                "-"))
+        );
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
     }
 
 
