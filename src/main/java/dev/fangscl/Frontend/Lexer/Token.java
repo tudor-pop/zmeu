@@ -6,19 +6,19 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 @Data
 public class Token {
-    private final Object literal;
+    private final Object raw;
     private final int line;
     private final Object value;
     private final TokenType type;
 
-    public Token(Object value, TokenType type, Object literal, int line) {
+    public Token(Object value, TokenType type, Object raw, int line) {
         this.value = switch (type) {
             case Number -> NumberUtils.createNumber(value.toString());
             default -> value;
         };
         this.type = type;
         this.line = line;
-        this.literal = literal;
+        this.raw = raw;
     }
 
     public Token(Object value, TokenType type) {
@@ -29,8 +29,8 @@ public class Token {
         this(value, type, value.toString(), line);
     }
 
-    public Token(char value, TokenType type, Object literal, int line) {
-        this(String.valueOf(value), type, literal, line);
+    public Token(char value, TokenType type, Object raw, int line) {
+        this(String.valueOf(value), type, raw, line);
     }
 
     public boolean in(String... list) {

@@ -75,10 +75,26 @@ public class TokenizerTest {
     }
 
     @Test
+    void testPlus() {
+        var result = tokenizer.tokenizeLiteral("+");
+        Assertions.assertEquals(TokenType.Plus, result.getType());
+        Assertions.assertEquals("+", result.getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testMinus() {
+        var result = tokenizer.tokenizeLiteral("-");
+        Assertions.assertEquals(TokenType.Minus, result.getType());
+        Assertions.assertEquals("-", result.getValue());
+        log.info(result);
+    }
+
+    @Test
     void testLineTerminatorComplex() {
         var result = tokenizer.tokenize("1+1;");
-        Assertions.assertEquals(TokenType.LineTerminator, result.get(2).getType());
-        Assertions.assertEquals(";", result.get(2).getValue());
+        Assertions.assertEquals(TokenType.LineTerminator, result.get(3).getType());
+        Assertions.assertEquals(";", result.get(3).getValue());
         log.info(result);
     }
 
