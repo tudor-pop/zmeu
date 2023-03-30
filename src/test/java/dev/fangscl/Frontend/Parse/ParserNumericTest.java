@@ -85,10 +85,18 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testAdditionSubstraction3() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 1-11"));
-        String expression = gson.toJson(res);
-        assertEquals("""
-                        {"body":[{"left":{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"value":1,"kind":"IntegerLiteral"},"operator":"+","kind":"BinaryExpression"},"right":{"value":11,"kind":"IntegerLiteral"},"operator":"-","kind":"BinaryExpression"}],"kind":"Program"}"""
-                , expression);
+        var expected = Program.builder()
+                .body(List.of(new ExpressionStatement(
+                                new BinaryExpression(
+                                        new BinaryExpression(
+                                                new NumericLiteral(1),
+                                                new NumericLiteral(1), "+"),
+                                        new NumericLiteral(11),
+                                        "-"))
+                        )
+                ).build();
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test

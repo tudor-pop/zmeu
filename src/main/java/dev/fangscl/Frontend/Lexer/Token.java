@@ -29,13 +29,12 @@ public class Token {
         this(value, type, value.toString(), line);
     }
 
-    public Token(char value, TokenType type, Object raw, int line) {
-        this(String.valueOf(value), type, raw, line);
-    }
-
     public boolean in(String... list) {
         return ArrayUtils.contains(list, this.value);
     }
 
+    public static Token of(Object value, TokenType type,Object raw, int line) {
+        return new Token(value, type, raw, line);
+    }
 
 }
