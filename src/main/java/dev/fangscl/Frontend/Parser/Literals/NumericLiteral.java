@@ -1,7 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Runtime.TypeSystem.Base.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +13,7 @@ import java.text.DecimalFormat;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class NumericLiteral extends Expression {
+public class NumericLiteral extends Literal {
     private static DecimalFormat df = new DecimalFormat("#######.#######");
     private Number value;
 
@@ -61,6 +60,10 @@ public class NumericLiteral extends Expression {
         } else if (value instanceof Float i) {
             setDecimal(i);
         }
+    }
+
+    public static NumericLiteral of(Object value) {
+        return new NumericLiteral(value);
     }
 
     private void setValue(String value) {

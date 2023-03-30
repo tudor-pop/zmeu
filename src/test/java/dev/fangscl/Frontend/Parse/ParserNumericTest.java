@@ -1,7 +1,6 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
@@ -19,9 +18,7 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testInteger() {
         var res = parser.produceAST(tokenizer.tokenize("1"));
-        var expected = Program.builder()
-                .body(List.of(new ExpressionStatement(new NumericLiteral(1))))
-                .build();
+        var expected = Program.of(ExpressionStatement.of(Literal.of(1)));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -29,9 +26,7 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testDecimal() {
         var res = parser.produceAST(tokenizer.tokenize("1.11"));
-        var expected = Program.builder()
-                .body(List.of(new ExpressionStatement(new NumericLiteral(1.11))))
-                .build();
+        var expected = Program.of(ExpressionStatement.of(Literal.of(1.11)));
         assertEquals(expected, res);
     }
 
@@ -41,11 +36,10 @@ public class ParserNumericTest extends ParserStatementTest {
                 "Hello"
                 1
                 """));
-        var expected = Program.builder()
-                .body(List.of(
-                        new ExpressionStatement(new StringLiteral("Hello")),
-                        new ExpressionStatement(new NumericLiteral(1)))
-                ).build();
+        var expected = Program.of(
+                ExpressionStatement.of("Hello"),
+                ExpressionStatement.of(1)
+        );
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -54,13 +48,9 @@ public class ParserNumericTest extends ParserStatementTest {
     void testAddition() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 1"));
 
-        var expected = Program.builder()
-                .body(List.of(new ExpressionStatement(
-                        new BinaryExpression(
-                                new NumericLiteral(1),
-                                new NumericLiteral(1),
-                                "+")))
-                ).build();
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(1, 1, "+")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -68,16 +58,12 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testAddition3() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 1+1"));
-        var expected = Program.builder()
-                .body(List.of(new ExpressionStatement(
-                                new BinaryExpression(
-                                        new BinaryExpression(
-                                                new NumericLiteral(1),
-                                                new NumericLiteral(1), "+"),
-                                        new NumericLiteral(1),
-                                        "+"))
-                        )
-                ).build();
+        var expected = Program.of(ExpressionStatement.of(
+                BinaryExpression.of(
+                        BinaryExpression.of(1, 1, "+"),
+                        Literal.of(1),
+                        "+"))
+        );
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -85,16 +71,12 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testAdditionSubstraction3() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 1-11"));
-        var expected = Program.builder()
-                .body(List.of(new ExpressionStatement(
-                                new BinaryExpression(
-                                        new BinaryExpression(
-                                                new NumericLiteral(1),
-                                                new NumericLiteral(1), "+"),
-                                        new NumericLiteral(11),
-                                        "-"))
-                        )
-                ).build();
+        var expected = Program.of(ExpressionStatement.of(
+                BinaryExpression.of(
+                        BinaryExpression.of(1, 1, "+"),
+                        11,
+                        "-"))
+        );
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -102,10 +84,15 @@ public class ParserNumericTest extends ParserStatementTest {
     @Test
     void testAdditionMultiplication() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 2*3"));
-        String expression = gson.toJson(res);
-        assertEquals("""
-                        {"body":[{"left":{"value":1,"kind":"IntegerLiteral"},"right":{"left":{"value":2,"kind":"IntegerLiteral"},"right":{"value":3,"kind":"IntegerLiteral"},"operator":"*","kind":"BinaryExpression"},"operator":"+","kind":"BinaryExpression"}],"kind":"Program"}"""
-                , expression);
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                1,
+                                BinaryExpression.of(2, 3, "*"),
+                                "+"))
+        );
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
     }
 
     @Test
