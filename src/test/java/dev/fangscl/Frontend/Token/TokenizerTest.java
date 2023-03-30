@@ -80,13 +80,20 @@ public class TokenizerTest {
         Assertions.assertEquals(TokenType.Plus, result.getType());
         Assertions.assertEquals("+", result.getValue());
         log.info(result);
-    }
 
+    }
     @Test
     void testMinus() {
         var result = tokenizer.tokenizeLiteral("-");
         Assertions.assertEquals(TokenType.Minus, result.getType());
         Assertions.assertEquals("-", result.getValue());
+        log.info(result);
+    }
+    @Test
+    void testMultiplication() {
+        var result = tokenizer.tokenizeLiteral("*");
+        Assertions.assertEquals(TokenType.Multiply, result.getType());
+        Assertions.assertEquals("*", result.getValue());
         log.info(result);
     }
 

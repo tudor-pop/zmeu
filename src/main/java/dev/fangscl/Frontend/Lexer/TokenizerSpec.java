@@ -19,6 +19,7 @@ class TokenizerSpec {
             new Entry("^==", TokenType.Equal_Equal),
             new Entry("^=", TokenType.Equal),
             new Entry("^\\+", TokenType.Plus),
+            new Entry("^\\*", TokenType.Multiply),
             new Entry("^-", TokenType.Minus),
             new Entry("^!=", TokenType.Bang_Equal),
             new Entry("^<=", TokenType.Less_Equal),
