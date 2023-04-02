@@ -50,4 +50,9 @@ public class BlockStatement extends Statement {
     public static Statement of(String value) {
         return new BlockStatement(Literal.of(value));
     }
+
+    @Override
+    public String toSExpression() {
+        return  expression.toSExpression() ;
+    }
 }

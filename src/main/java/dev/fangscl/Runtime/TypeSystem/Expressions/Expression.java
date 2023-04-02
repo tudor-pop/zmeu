@@ -18,7 +18,7 @@ import dev.fangscl.Runtime.TypeSystem.Base.Statement;
  * : Literal
  * ;
  */
-public class Expression extends Statement {
+public abstract class Expression extends Statement {
 
     public static Expression of(Expression left, Expression right, Object operator) {
         return new BinaryExpression(left, right, operator);

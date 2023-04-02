@@ -21,6 +21,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
                 ExpressionStatement.of(
                         BinaryExpression.of(1, 1, "+")));
         assertEquals(expected, res);
+        assertEquals("(+ 1 1)", res.toSExpression());
         log.info(gson.toJson(res));
     }
 
@@ -32,6 +33,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
                 ExpressionStatement.of(
                         BinaryExpression.of(1, 1, "-")));
         assertEquals(expected, res);
+        assertEquals("(- 1 1)", res.toSExpression());
         log.info(gson.toJson(res));
     }
 
@@ -43,6 +45,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
                 ExpressionStatement.of(
                         BinaryExpression.of(1, 1, "*")));
         assertEquals(expected, res);
+        assertEquals("(* 1 1)", res.toSExpression());
         log.info(gson.toJson(res));
     }
 
@@ -54,6 +57,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
                 ExpressionStatement.of(
                         BinaryExpression.of(1, 1, "/")));
         assertEquals(expected, res);
+        assertEquals("(/ 1 1)", res.toSExpression());
         log.info(gson.toJson(res));
     }
 
@@ -67,6 +71,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
                         "+"))
         );
         assertEquals(expected, res);
+        assertEquals("(+ (+ 1 1) 1)", res.toSExpression());
         log.info(gson.toJson(res));
     }
 
@@ -80,6 +85,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
                         "-"))
         );
         assertEquals(expected, res);
+        assertEquals("(- (+ 1 1) 11)", res.toSExpression());
         log.info(gson.toJson(res));
     }
 
@@ -93,8 +99,9 @@ public class ParserOperatorsTest extends ParserStatementTest {
                                 BinaryExpression.of(2, 3, "*"),
                                 "+"))
         );
-        log.info(gson.toJson(res));
+        assertEquals("(+ 1 (* 2 3))", res.toSExpression());
         assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test
@@ -107,8 +114,9 @@ public class ParserOperatorsTest extends ParserStatementTest {
                                 BinaryExpression.of(3, 4, "*"),
                                 "-"))
         );
-        log.info(gson.toJson(res));
+        assertEquals("(- (+ 1 2) (* 3 4))", res.toSExpression());
         assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test
@@ -121,8 +129,9 @@ public class ParserOperatorsTest extends ParserStatementTest {
                                 BinaryExpression.of(3, 4, "*"),
                                 "-"))
         );
-        log.info(gson.toJson(res));
+        assertEquals("(- (* 1 2) (* 3 4))", res.toSExpression());
         assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
     @Test
@@ -135,8 +144,9 @@ public class ParserOperatorsTest extends ParserStatementTest {
                                 BinaryExpression.of(3, 4, "/"),
                                 "-"))
         );
-        log.info(gson.toJson(res));
+        assertEquals("(- (/ 1 2) (/ 3 4))", res.toSExpression());
         assertEquals(expected, res);
+        log.info(gson.toJson(res));
     }
 
 

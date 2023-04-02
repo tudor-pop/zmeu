@@ -29,4 +29,9 @@ public class Identifier extends Expression {
         this();
         this.symbol = String.valueOf(symbol);
     }
+
+    @Override
+    public String toSExpression() {
+        return symbol;
+    }
 }

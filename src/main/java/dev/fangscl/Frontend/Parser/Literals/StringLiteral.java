@@ -44,5 +44,8 @@ public class StringLiteral extends Expression {
             setValue(s);
         }
     }
-
+    @Override
+    public String toSExpression() {
+        return value;
+    }
 }

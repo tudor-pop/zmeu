@@ -50,4 +50,9 @@ public class ExpressionStatement extends Statement {
     public static Statement of(String value) {
         return new ExpressionStatement(Literal.of(value));
     }
+
+    @Override
+    public String toSExpression() {
+        return expression.toSExpression();
+    }
 }

@@ -28,4 +28,9 @@ public class ErrorExpression extends Expression {
     public ErrorExpression() {
         this.msg = "Unknown token found during parsing";
     }
+
+    @Override
+    public String toSExpression() {
+        return String.valueOf(position);
+    }
 }

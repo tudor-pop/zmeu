@@ -21,4 +21,9 @@ public class BinaryExpression extends Expression {
         this.right = right;
         this.operator = operator;
     }
+
+    @Override
+    public String toSExpression() {
+        return "(" + operator + " " + left.toSExpression() + " " + right.toSExpression() + ")";
+    }
 }

@@ -84,4 +84,8 @@ public class NumericLiteral extends Literal {
         return this.kind == NodeType.IntegerLiteral;
     }
 
+    @Override
+    public String toSExpression() {
+        return String.valueOf(value);
+    }
 }

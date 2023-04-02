@@ -2,7 +2,7 @@ package dev.fangscl.Frontend.Parser.Literals;
 
 import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 
-public class Literal extends Expression {
+public abstract class Literal extends Expression {
     public static Literal of(int value) {
         return new NumericLiteral(value);
     }

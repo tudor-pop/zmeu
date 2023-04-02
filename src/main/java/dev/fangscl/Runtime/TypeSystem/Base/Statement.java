@@ -16,7 +16,9 @@ import lombok.Data;
  * ;
  */
 @Data
-public class Statement {
+public abstract class Statement {
     protected NodeType kind;
+
+    public abstract String toSExpression();
 }
 
