@@ -7,42 +7,11 @@ import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class ParserNumericTest extends ParserStatementTest {
+public class ParserOperatorsTest extends ParserStatementTest {
 
-    @Test
-    void testInteger() {
-        var res = parser.produceAST(tokenizer.tokenize("1"));
-        var expected = Program.of(ExpressionStatement.of(Literal.of(1)));
-        assertEquals(expected, res);
-        log.info(gson.toJson(res));
-    }
-
-    @Test
-    void testDecimal() {
-        var res = parser.produceAST(tokenizer.tokenize("1.11"));
-        var expected = Program.of(ExpressionStatement.of(Literal.of(1.11)));
-        assertEquals(expected, res);
-    }
-
-    @Test
-    void testMultipleStatements() {
-        var res = parser.produceAST(tokenizer.tokenize("""
-                "Hello"
-                1
-                """));
-        var expected = Program.of(
-                ExpressionStatement.of("Hello"),
-                ExpressionStatement.of(1)
-        );
-        assertEquals(expected, res);
-        log.info(gson.toJson(res));
-    }
 
     @Test
     void testAddition() {
@@ -170,16 +139,5 @@ public class ParserNumericTest extends ParserStatementTest {
         assertEquals(expected, res);
     }
 
-
-    @Test
-    void testList() {
-        List<String> list = new ArrayList<>();
-        list.add("a");
-        list.add("b");
-        var i = list.iterator();
-        System.out.println(i.next());
-        var j = list.iterator();
-        System.out.println(j.next());
-    }
 
 }
