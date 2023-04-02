@@ -1,6 +1,6 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;

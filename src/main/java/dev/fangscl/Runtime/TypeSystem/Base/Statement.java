@@ -11,7 +11,8 @@ import lombok.Data;
  * <p>
  *
  * Statement
- * : Expression
+ * : ExpressionStatement
+ * | BlockStatement
  * ;
  */
 @Data

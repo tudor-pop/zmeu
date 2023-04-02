@@ -1,7 +1,5 @@
 package dev.fangscl.Runtime.TypeSystem.Expressions;
 
-import dev.fangscl.Runtime.TypeSystem.Base.Expression;
-
 public class ErrorExpression extends Expression {
     private String msg;
     private int position;

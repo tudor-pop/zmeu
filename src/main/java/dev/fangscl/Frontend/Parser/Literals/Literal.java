@@ -1,6 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
-import dev.fangscl.Runtime.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 
 public class Literal extends Expression {
     public static Literal of(int value) {

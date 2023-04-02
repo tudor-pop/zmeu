@@ -1,7 +1,7 @@
-package dev.fangscl.Runtime.TypeSystem.Base;
+package dev.fangscl.Runtime.TypeSystem.Expressions;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
-import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 
 /**
  * Order of preccedence

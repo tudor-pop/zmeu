@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Runtime.TypeSystem.Base.BlockStatement;
 import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import lombok.extern.log4j.Log4j2;
@@ -13,8 +14,8 @@ public class ParserBlockTest extends ParserStatementTest {
 
     @Test
     void testInteger() {
-        var res = parser.produceAST(tokenizer.tokenize("1"));
-        var expected = Program.of(ExpressionStatement.of(Literal.of(1)));
+        var res = parser.produceAST(tokenizer.tokenize("{ 42; }"));
+        var expected = Program.of(BlockStatement.of("{ 42; }"));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }

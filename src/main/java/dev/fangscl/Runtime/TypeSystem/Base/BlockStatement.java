@@ -23,31 +23,31 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ExpressionStatement extends Statement {
+public class BlockStatement extends Statement {
     private Expression expression;
 
-    public ExpressionStatement(Expression expression) {
-        this.kind = NodeType.ExpressionStatement;
+    public BlockStatement(Expression expression) {
+        this.kind = NodeType.BlockStatement;
         this.expression = expression;
     }
 
     public static Statement of(Expression expression) {
-        return new ExpressionStatement(expression);
+        return new BlockStatement(expression);
     }
 
     public static Statement of(int value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new BlockStatement(Literal.of(value));
     }
 
     public static Statement of(double value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new BlockStatement(Literal.of(value));
     }
 
     public static Statement of(float value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new BlockStatement(Literal.of(value));
     }
 
     public static Statement of(String value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new BlockStatement(Literal.of(value));
     }
 }

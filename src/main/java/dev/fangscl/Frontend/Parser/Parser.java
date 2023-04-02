@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
-import dev.fangscl.Runtime.TypeSystem.Base.Expression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Base.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
@@ -118,6 +118,11 @@ public class Parser {
             case Identifier -> new Identifier(token.getValue());
             case Number -> new NumericLiteral(token.getValue());
             case String -> new StringLiteral(token.getValue());
+            case OpenBraces ->  {
+                var res = parseExpression(eat());
+                eat(TokenType.CloseBraces, "unexpected token");
+                yield res;
+            }
             case OpenParenthesis -> {
                 var res = parseExpression(eat());
                 eat(TokenType.CloseParenthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
