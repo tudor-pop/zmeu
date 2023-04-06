@@ -10,14 +10,14 @@ class TokenizerSpec {
     static List<Entry> spec = Arrays.asList(
 //            skip comment
             new Entry("^//.*", TokenType.Comment),
-            new Entry("\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
+            new Entry("^\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
             new Entry("^\\{", TokenType.OpenBraces),
             new Entry("^\\}", TokenType.CloseBraces),
             new Entry("^\\(", TokenType.OpenParenthesis),
             new Entry("^\\)", TokenType.CloseParenthesis),
             new Entry("^\\[", TokenType.OpenBrackets),
             new Entry("^\\]", TokenType.CloseBrackets),
-            new Entry("(\"|')[^(\"|')]*(\"|')", TokenType.String),
+            new Entry("^(\"|')[^(\"|')]*(\"|')", TokenType.String),
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
             new Entry("^\\s+", TokenType.WhiteSpace),
             new Entry("^\\n", TokenType.NewLine),

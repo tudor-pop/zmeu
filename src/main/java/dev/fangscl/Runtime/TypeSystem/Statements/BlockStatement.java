@@ -5,6 +5,7 @@ import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <p>
@@ -17,9 +18,13 @@ import lombok.EqualsAndHashCode;
 public class BlockStatement extends Statement {
     private Statement expression;
 
-    public BlockStatement(Statement expression) {
+    public BlockStatement(@Nullable Statement expression) {
         this.kind = NodeType.BlockStatement;
         this.expression = expression;
+    }
+
+    public BlockStatement() {
+        this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of(Expression expression) {
@@ -36,6 +41,10 @@ public class BlockStatement extends Statement {
 
     public static Statement of(double value) {
         return new BlockStatement(Literal.of(value));
+    }
+
+    public static Statement of() {
+        return new BlockStatement();
     }
 
     public static Statement of(float value) {

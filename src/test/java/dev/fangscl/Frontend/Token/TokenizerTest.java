@@ -252,6 +252,15 @@ public class TokenizerTest {
         Assertions.assertEquals("{", result.getValue());
         log.info(result);
     }
+    @Test
+    void testOpenNested() {
+        var result = tokenizer.tokenize("{ { \"hey\" ");
+        Assertions.assertEquals(TokenType.OpenBraces, result.get(0).getType());
+        Assertions.assertEquals("{", result.get(0).getValue());
+        Assertions.assertEquals(TokenType.OpenBraces, result.get(1).getType());
+        Assertions.assertEquals("{", result.get(1).getValue());
+        log.info(result);
+    }
 
     ////////// COMMENTS /////////
     @Test

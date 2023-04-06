@@ -26,6 +26,22 @@ public class ParserBlockTest extends ParserStatementTest {
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
+    @Test
+    void testEmptyBlock() {
+        var res = parser.produceAST(tokenizer.tokenize("{ }    "));
+        var expected = Program.of(BlockStatement.of());
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+
+    @Test
+    void testNestedBlocksString() {
+        var res = parser.produceAST(tokenizer.tokenize("{ { \"hello\" } }"));
+        var expected = Program.of(BlockStatement.of(BlockStatement.of(ExpressionStatement.of("hello"))));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
 
 
 

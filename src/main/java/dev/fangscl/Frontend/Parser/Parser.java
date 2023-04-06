@@ -5,13 +5,13 @@ import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
-import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
-import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
-import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import dev.fangscl.Runtime.TypeSystem.Program;
+import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
+import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
+import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
@@ -69,24 +69,29 @@ public class Parser {
             if (current.getType() == TokenType.EOF) {
                 break;
             }
-            program.add(this.parseStatement(current));
+            Statement statement = this.parseStatement(current);
+            if (statement == null) {
+                continue;
+            }
+            program.add(statement);
         }
 
         return program;
     }
 
+    @Nullable
     private Statement parseStatement(Token token) {
         return switch (token.getType()) {
             case OpenBraces -> {
-                token = eat();
-                var block = BlockStatement.of(parseStatement(token)); // parseStatement because a block contains more statements
                 if (lookAhead().getType() == TokenType.CloseBraces) { // ? { } => eat } & return the block
                     eat(TokenType.CloseBraces, "Error");
-                } else {
-                    yield parseExpression(token);
+                    yield new BlockStatement();
                 }
+                token = eat();
+                var block = new BlockStatement(parseStatement(token)); // parseStatement because a block contains more statements
                 yield block;
             }
+            case CloseBraces -> null;
             default -> new ExpressionStatement(parseExpression(token));
         };
     }
