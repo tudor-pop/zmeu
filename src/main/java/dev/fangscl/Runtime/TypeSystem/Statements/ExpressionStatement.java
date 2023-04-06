@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.TypeSystem.Base;
+package dev.fangscl.Runtime.TypeSystem.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.NodeType;
@@ -23,36 +23,36 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BlockStatement extends Statement {
-    private Expression expression;
+public class ExpressionStatement extends Statement {
+    private Statement expression;
 
-    public BlockStatement(Expression expression) {
-        this.kind = NodeType.BlockStatement;
+    public ExpressionStatement(Statement expression) {
+        this.kind = NodeType.ExpressionStatement;
         this.expression = expression;
     }
 
     public static Statement of(Expression expression) {
-        return new BlockStatement(expression);
+        return new ExpressionStatement(expression);
     }
 
     public static Statement of(int value) {
-        return new BlockStatement(Literal.of(value));
+        return new ExpressionStatement(Literal.of(value));
     }
 
     public static Statement of(double value) {
-        return new BlockStatement(Literal.of(value));
+        return new ExpressionStatement(Literal.of(value));
     }
 
     public static Statement of(float value) {
-        return new BlockStatement(Literal.of(value));
+        return new ExpressionStatement(Literal.of(value));
     }
 
     public static Statement of(String value) {
-        return new BlockStatement(Literal.of(value));
+        return new ExpressionStatement(Literal.of(value));
     }
 
     @Override
     public String toSExpression() {
-        return  expression.toSExpression() ;
+        return expression.toSExpression();
     }
 }

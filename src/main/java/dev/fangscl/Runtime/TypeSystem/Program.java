@@ -1,7 +1,7 @@
 package dev.fangscl.Runtime.TypeSystem;
 
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Runtime.TypeSystem.Base.Statement;
+import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

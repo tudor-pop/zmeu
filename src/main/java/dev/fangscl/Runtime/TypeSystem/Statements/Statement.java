@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.TypeSystem.Base;
+package dev.fangscl.Runtime.TypeSystem.Statements;
 
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -13,6 +13,10 @@ import lombok.Data;
  * Statement
  * : ExpressionStatement
  * | BlockStatement
+ * | IfStatement
+ * | WhileStatement
+ * | ForStatement
+ * | FunctionDeclaration
  * ;
  */
 @Data

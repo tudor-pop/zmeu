@@ -5,9 +5,10 @@ import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
-import dev.fangscl.Runtime.TypeSystem.Base.ExpressionStatement;
-import dev.fangscl.Runtime.TypeSystem.Base.Statement;
+import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
+import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
@@ -19,7 +20,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 /*
- * Responsability: It does lexical analisys and source code validation. Take the tokens from the lexer and create an AST.
+ * Responsability: It does lexical analisys and source code validation.
+ * Take the tokens from the lexer and create an AST.
+ * Evaluation does not happen at this step only in the interpreter
  *  Main entry point:
  *  Program
  *      : StatementList
@@ -73,7 +76,19 @@ public class Parser {
     }
 
     private Statement parseStatement(Token token) {
-        return new ExpressionStatement(parseExpression(token));
+        return switch (token.getType()) {
+            case OpenBraces -> {
+                token = eat();
+                var block = BlockStatement.of(parseStatement(token)); // parseStatement because a block contains more statements
+                if (lookAhead().getType() == TokenType.CloseBraces) { // ? { } => eat } & return the block
+                    eat(TokenType.CloseBraces, "Error");
+                } else {
+                    yield parseExpression(token);
+                }
+                yield block;
+            }
+            default -> new ExpressionStatement(parseExpression(token));
+        };
     }
 
     private Expression parseExpression(Token token) {
@@ -118,14 +133,9 @@ public class Parser {
             case Identifier -> new Identifier(token.getValue());
             case Number -> new NumericLiteral(token.getValue());
             case String -> new StringLiteral(token.getValue());
-            case OpenBraces ->  {
-                var res = parseExpression(eat());
-                eat(TokenType.CloseBraces, "unexpected token");
-                yield res;
-            }
             case OpenParenthesis -> {
                 var res = parseExpression(eat());
-                eat(TokenType.CloseParenthesis, "Unexpected token found inside paranthesized expression. Expected closed paranthesis.");
+                eat(TokenType.CloseParenthesis, "Unexpected token found inside paranthesized expression. Expected closed parenthesis.");
                 yield res;
             }
             default -> new ErrorExpression(token.getValue());
@@ -139,6 +149,10 @@ public class Parser {
             throw new RuntimeException("Parser error." + error);
         }
         return current;
+    }
+
+    private Token eat(TokenType type) {
+        return eat(type, "Unexpected token found");
     }
 
     private Token eat() {
