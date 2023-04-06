@@ -173,7 +173,6 @@ public class TokenizerTest {
         Assertions.assertEquals("}", result.getValue());
         log.info(result);
     }
-
     @Test
     void testOpenBrackets() {
         var result = tokenizer.tokenizeLiteral("[");
@@ -243,6 +242,14 @@ public class TokenizerTest {
         var result = tokenizer.tokenizeLiteral("/");
         Assertions.assertEquals(TokenType.Division, result.getType());
         Assertions.assertEquals("/", result.getValue());
+        log.info(result);
+    }
+// Complex strings
+    @Test
+    void testOpenBracesWithText() {
+        var result = tokenizer.tokenizeLiteral("{ \"hey\" }");
+        Assertions.assertEquals(TokenType.OpenBraces, result.getType());
+        Assertions.assertEquals("{", result.getValue());
         log.info(result);
     }
 
