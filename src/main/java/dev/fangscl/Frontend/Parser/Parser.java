@@ -5,6 +5,7 @@ import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Runtime.TypeSystem.Expressions.AssignmentExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
@@ -105,7 +106,16 @@ public class Parser {
     }
 
     private Expression parseExpression(Token token) {
-        return parseAdditive(token);
+        return parseAssignment(token);
+    }
+
+    private Expression parseAssignment(Token token) {
+        Expression left = parseAdditive(token);
+        if (!lookAhead().is(TokenType.Equal)) {
+            return left;
+        }
+        eat(TokenType.Equal);
+        return new AssignmentExpression(left, parseExpression(eat()));
     }
 
     private Expression parseAdditive(Token token) {
@@ -143,7 +153,7 @@ public class Parser {
             case String -> new StringLiteral(token.getValue());
             case OpenParenthesis -> {
                 var res = parseExpression(eat());
-                eat(TokenType.CloseParenthesis, "Unexpected token found inside paranthesized expression. Expected closed parenthesis.");
+                eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
                 yield res;
             }
             default -> new ErrorExpression(token.getValue());

@@ -11,5 +11,6 @@ public enum NodeType {
     StringLiteral,
 //    BooleanLiteral,
     Identifier,
-    BinaryExpression
+    BinaryExpression,
+    AssignmentExpression
 }

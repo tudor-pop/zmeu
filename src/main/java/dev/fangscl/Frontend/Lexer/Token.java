@@ -3,6 +3,7 @@ package dev.fangscl.Frontend.Lexer;
 import lombok.Data;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 
 @Data
 public class Token {
@@ -25,7 +26,7 @@ public class Token {
         this(value, type, value, 0);
     }
 
-    public Token(Object value, TokenType type,int line) {
+    public Token(Object value, TokenType type, int line) {
         this(value, type, value.toString(), line);
     }
 
@@ -33,7 +34,11 @@ public class Token {
         return ArrayUtils.contains(list, this.value);
     }
 
-    public static Token of(Object value, TokenType type,Object raw, int line) {
+    public boolean is(@NotNull TokenType type) {
+        return this.type == type;
+    }
+
+    public static Token of(Object value, TokenType type, Object raw, int line) {
         return new Token(value, type, raw, line);
     }
 

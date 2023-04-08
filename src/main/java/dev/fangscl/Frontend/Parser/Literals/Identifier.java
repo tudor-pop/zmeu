@@ -1,7 +1,7 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.NodeType;
+import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +18,7 @@ public class Identifier extends Expression {
         this();
         this.symbol = symbol;
     }
+
     public Identifier(Object symbol) {
         this();
         if (symbol instanceof String s) {
@@ -33,5 +34,9 @@ public class Identifier extends Expression {
     @Override
     public String toSExpression() {
         return symbol;
+    }
+
+    public static Expression of(String left) {
+        return new Identifier(left);
     }
 }
