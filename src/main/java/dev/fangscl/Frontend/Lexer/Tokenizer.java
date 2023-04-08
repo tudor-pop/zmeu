@@ -41,6 +41,8 @@ public class Tokenizer {
         for (char ch = iterator.first(); hasNext(); ch = iterator.next()) {
             if (ch == '\n') {
                 line++;
+//                tokens.add(new Token(ch, NewLine, ch, line));
+            } else if (ch == ' ') {
                 continue;
             }
             var token = getNextToken(ch);
@@ -66,12 +68,8 @@ public class Tokenizer {
                 continue;
             }
             TokenType type = it.getType();
-            if (TokenType.isAny(type, WhiteSpace, Comment, NewLine)) {
+            if (TokenType.isAny(type, WhiteSpace, Comment)) {
                 return null;
-            }
-            if (type == NewLine) {
-                line++;
-                continue;
             }
             return new Token(value, type, value, line);
         }

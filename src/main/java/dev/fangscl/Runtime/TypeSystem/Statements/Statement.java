@@ -13,6 +13,7 @@ import lombok.Data;
  * Statement
  * : ExpressionStatement
  * | BlockStatement
+ * | EmptyStatement
  * | IfStatement
  * | WhileStatement
  * | ForStatement

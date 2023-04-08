@@ -10,6 +10,7 @@ import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
+import dev.fangscl.Runtime.TypeSystem.Statements.EmptyStatement;
 import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
 import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
 import lombok.Data;
@@ -82,6 +83,7 @@ public class Parser {
     @Nullable
     private Statement parseStatement(Token token) {
         return switch (token.getType()) {
+            case NewLine -> new EmptyStatement();
             case OpenBraces -> {
                 if (lookAhead().getType() == TokenType.CloseBraces) { // ? { } => eat } & return the block
                     eat(TokenType.CloseBraces, "Error");
@@ -92,7 +94,13 @@ public class Parser {
                 yield block;
             }
             case CloseBraces -> null;
-            default -> new ExpressionStatement(parseExpression(token));
+            default -> {
+                var res = new ExpressionStatement(parseExpression(token));
+                if (iterator.hasNext() && lookAhead().getType() == TokenType.NewLine) {
+                    eat(TokenType.NewLine);
+                }
+                yield res;
+            }
         };
     }
 

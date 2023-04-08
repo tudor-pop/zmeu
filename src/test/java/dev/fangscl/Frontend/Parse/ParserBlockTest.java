@@ -2,6 +2,7 @@ package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
 import dev.fangscl.Runtime.TypeSystem.Program;
+import dev.fangscl.Runtime.TypeSystem.Statements.EmptyStatement;
 import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,22 @@ public class ParserBlockTest extends ParserStatementTest {
         log.info(gson.toJson(res));
     }
 
+
+    @Test
+    void testEmptyStatement() {
+        var res = parser.produceAST(tokenizer.tokenize("\n"));
+        var expected = Program.of(new EmptyStatement());
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testEmptyStatementInBlock() {
+        var res = parser.produceAST(tokenizer.tokenize("{ \n }"));
+        var expected = Program.of(BlockStatement.of(new EmptyStatement()));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
 
 
 }

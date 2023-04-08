@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  * LiteralExpression - Identity, integer, decimal
  * <p>
  * ExpressionStatement
- * : Expression
+ * : Expression ['\n']
  * ;
  */
 @Data
