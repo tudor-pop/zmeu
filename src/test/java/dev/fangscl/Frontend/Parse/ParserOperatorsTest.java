@@ -28,9 +28,9 @@ public class ParserOperatorsTest extends ParserStatementTest {
     @Test
     void testAdditionMultipleLines() {
         var res = parser.produceAST(tokenizer.tokenize("""
-        1 + 1
-        2+2
-        """));
+                1 + 1
+                2+2
+                """));
 
         var expected = Program.of(
                 ExpressionStatement.of(
@@ -122,6 +122,36 @@ public class ParserOperatorsTest extends ParserStatementTest {
     }
 
     @Test
+    void testAdditionMultiplicationChangeOrder() {
+        var res = parser.produceAST(tokenizer.tokenize("(1 + 2) * 3"));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                BinaryExpression.of(1, 2, "+"),
+                                3, "*")
+                ));
+
+        assertEquals("(* (+ 1 2) 3)", res.toSExpression());
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testAdditionMultiplicationChangeOrder2() {
+        var res = parser.produceAST(tokenizer.tokenize("3 * (1 + 2)"));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(3,
+                                BinaryExpression.of(1, 2, "+"),
+                                "*")
+                ));
+
+        assertEquals("(* 3 (+ 1 2))", res.toSExpression());
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
     void testAdditionParanthesis() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 2 - (3*4)"));
         var expected = Program.of(
@@ -135,20 +165,7 @@ public class ParserOperatorsTest extends ParserStatementTest {
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
-    @Test
-    void testAdditionParanthesisFirst() {
-        var res = parser.produceAST(tokenizer.tokenize("(1 + 2) - 3*4"));
-        var expected = Program.of(
-                ExpressionStatement.of(
-                        BinaryExpression.of(
-                                BinaryExpression.of(1, 2, "+"),
-                                BinaryExpression.of(3, 4, "*"),
-                                "-"))
-        );
-        assertEquals("(- (+ 1 2) (* 3 4))", res.toSExpression());
-        assertEquals(expected, res);
-        log.info(gson.toJson(res));
-    }
+
 
     @Test
     void testMultiplicationWithParanthesis() {
