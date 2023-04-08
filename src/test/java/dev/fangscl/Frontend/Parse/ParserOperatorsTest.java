@@ -26,6 +26,23 @@ public class ParserOperatorsTest extends ParserStatementTest {
     }
 
     @Test
+    void testAdditionMultipleLines() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+        1 + 1
+        2+2
+        """));
+
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(1, 1, "+")),
+                ExpressionStatement.of(
+                        BinaryExpression.of(2, 2, "+")));
+        assertEquals(expected, res);
+        assertEquals("(+ 1 1)(+ 2 2)", res.toSExpression());
+        log.info(gson.toJson(res));
+    }
+
+    @Test
     void testSubstraction() {
         var res = parser.produceAST(tokenizer.tokenize("1-1"));
 
@@ -107,6 +124,20 @@ public class ParserOperatorsTest extends ParserStatementTest {
     @Test
     void testAdditionParanthesis() {
         var res = parser.produceAST(tokenizer.tokenize("1 + 2 - (3*4)"));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                BinaryExpression.of(1, 2, "+"),
+                                BinaryExpression.of(3, 4, "*"),
+                                "-"))
+        );
+        assertEquals("(- (+ 1 2) (* 3 4))", res.toSExpression());
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+    @Test
+    void testAdditionParanthesisFirst() {
+        var res = parser.produceAST(tokenizer.tokenize("(1 + 2) - 3*4"));
         var expected = Program.of(
                 ExpressionStatement.of(
                         BinaryExpression.of(

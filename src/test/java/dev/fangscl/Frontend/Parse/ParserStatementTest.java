@@ -8,11 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.platform.suite.api.SelectPackages;
-import org.junit.platform.suite.api.Suite;
 
-@Suite
-@SelectPackages({"dev.fangscl.Frontend.Parse"})
+
 class ParserStatementTest {
     protected Parser parser;
     protected Tokenizer tokenizer;

@@ -136,11 +136,6 @@ public class Parser {
         return left;
     }
 
-    @Nullable
-    private Token lookAhead() {
-        return tokens.get(iterator.nextIndex());
-    }
-
     private Expression parseLiteral(Token token) {
         return switch (token.getType()) {
             case Identifier -> new Identifier(token.getValue());
@@ -153,6 +148,11 @@ public class Parser {
             }
             default -> new ErrorExpression(token.getValue());
         };
+    }
+
+    @Nullable
+    private Token lookAhead() {
+        return tokens.get(iterator.nextIndex());
     }
 
     private Token eat(TokenType type, String error) {
