@@ -57,13 +57,13 @@ public class Tokenizer {
 
     @Nullable
     private Token getNextToken(char ch) {
-        if (isAlpha(ch)) {
-            return identifier();
-        }
+//        if (isAlpha(ch)) {
+//            return identifier();
+//        }
 
         for (var it : spec) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-            var value = handle(it.getPattern(), str);
+            var value = match(it.getPattern(), str);
             if (value == null) {
                 continue;
             }
@@ -102,7 +102,7 @@ public class Tokenizer {
         return c >= '0' && c <= '9';
     }
 
-    private String handle(Pattern pattern, CharBuffer str) {
+    private String match(Pattern pattern, CharBuffer str) {
         var matcher = pattern.matcher(str);
         if (!matcher.find()) {
             return null;

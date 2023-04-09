@@ -37,7 +37,8 @@ class TokenizerSpec {
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
 
-            new Entry("^(var)", TokenType.Var)
+            new Entry("^(var)", TokenType.Var),
+            new Entry("^\\w+", TokenType.Identifier)
     );
 
     @Data

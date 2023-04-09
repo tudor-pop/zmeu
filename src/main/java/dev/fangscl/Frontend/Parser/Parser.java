@@ -97,7 +97,7 @@ public class Parser {
             case CloseBraces -> null;
             default -> {
                 var res = new ExpressionStatement(parseExpression(token));
-                if (iterator.hasNext() && lookAhead().getType() == TokenType.NewLine) {
+                if (iterator.hasNext() && lookAhead().is(TokenType.NewLine)) {
                     eat(TokenType.NewLine);
                 }
                 yield res;
