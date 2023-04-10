@@ -17,7 +17,8 @@ public class AssignmentTest extends ParserStatementTest {
     @Test
     void testAssignment() {
         var res = parser.produceAST(tokenizer.tokenize("x=2"));
-        var expected = Program.of(ExpressionStatement.of(new AssignmentExpression(Identifier.of("x"), NumericLiteral.of(2))));
+        var expected = Program.of(ExpressionStatement.of(
+                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2),"=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -26,8 +27,10 @@ public class AssignmentTest extends ParserStatementTest {
     void testMultipleAssignments() {
         var res = parser.produceAST(tokenizer.tokenize("x=y=2"));
         var expected = Program.of(ExpressionStatement.of(
-                new AssignmentExpression(Identifier.of("x"),
-                        new AssignmentExpression(Identifier.of("y"), NumericLiteral.of(2)))));
+                AssignmentExpression.of(Identifier.of("x"),
+                        AssignmentExpression.of(Identifier.of("y"), NumericLiteral.of(2),
+                                "="),
+                        "=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -37,9 +40,10 @@ public class AssignmentTest extends ParserStatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x=y=z=2"));
         var expected = Program.of(
                 ExpressionStatement.of(
-                        new AssignmentExpression(Identifier.of("x"),
-                                new AssignmentExpression(Identifier.of("y"),
-                                        new AssignmentExpression(Identifier.of("z"), NumericLiteral.of(2)))
+                        AssignmentExpression.of(Identifier.of("x"),
+                                AssignmentExpression.of(Identifier.of("y"),
+                                        AssignmentExpression.of(Identifier.of("z"), NumericLiteral.of(2), "="), "="),
+                                "="
                         )
                 )
         );
@@ -52,7 +56,7 @@ public class AssignmentTest extends ParserStatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x+x"));
         var expected = Program.of(
                 ExpressionStatement.of(
-                        BinaryExpression.of(Identifier.of("x"), Identifier.of("x"),"+")
+                        BinaryExpression.of(Identifier.of("x"), Identifier.of("x"), "+")
                 )
         );
         assertEquals(expected, res);

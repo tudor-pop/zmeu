@@ -96,7 +96,7 @@ public class Parser {
             }
             case CloseBraces -> null;
             default -> {
-                var res = new ExpressionStatement(parseExpression(token));
+                var res = new ExpressionStatement(Expression(token));
                 if (iterator.hasNext() && lookAhead().is(TokenType.NewLine)) {
                     eat(TokenType.NewLine);
                 }
@@ -105,57 +105,128 @@ public class Parser {
         };
     }
 
-    private Expression parseExpression(Token token) {
-        return parseAssignment(token);
+    private Expression Expression(Token token) {
+        return AssignmentExpression(token);
     }
 
-    private Expression parseAssignment(Token token) {
-        Expression left = parseAdditive(token);
+    /**
+     * AssignmentExpression
+     * : Identifier AssignmentOperator AssignmentExpression
+     */
+    private Expression AssignmentExpression(Token token) {
+        Expression left = AdditiveExpression(token);
         if (!lookAhead().is(TokenType.Equal)) {
             return left;
         }
-        eat(TokenType.Equal);
-        return new AssignmentExpression(left, parseExpression(eat()));
+        var operator = AssignmentOperator();
+        return AssignmentExpression.of(checkValidAssignment(left), AssignmentExpression(eat()), operator);
     }
 
-    private Expression parseAdditive(Token token) {
-        var left = parseMultiplicative(token);
+    /**
+     * AssignmentOperator
+     * : SIMPLE_ASSIGN
+     * | COMPLEX_ASSIGN
+     */
+    private Object AssignmentOperator() {
+        if (lookAhead().is(TokenType.Equal)) {
+            return eat(TokenType.Equal);
+        }
+        return eat(TokenType.Equal_Complex);
+    }
+
+    /**
+     * LeftHandSideExpression
+     * : Identifier
+     */
+    private Object leftHandSideExpression() {
+        return Identifier();
+    }
+
+    /**
+     * Identifier
+     * : IDENTIFIER
+     * ;
+     */
+    private Expression Identifier() {
+        return Literal(eat());
+    }
+
+    private Expression checkValidAssignment(Expression target) {
+        if (target.is(NodeType.Identifier)) {
+            return target;
+        }
+        throw new SyntaxError("Invalid left-hand side in assignment expression");
+    }
+
+    private Expression PrimaryExpression(Token token) {
+//        var lookahead = lookAhead();
+        return switch (token.getType()) {
+            case OpenParenthesis -> ParanthesizedExpression(eat());
+            default -> Literal(token);
+        };
+    }
+
+    /**
+     * ParanthesizedExpression
+     * : '(' Expression ')'
+     * ;
+     */
+    private Expression ParanthesizedExpression(Token token) {
+//        eat(TokenType.OpenParenthesis);
+        var res = Expression(token);
+        eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        return res;
+    }
+
+
+    /**
+     * AdditiveExpression
+     * : MultiplicativeExpression
+     * | AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression -> MultiplicativeExpression ADDITIVE_OPERATOR MultiplicativeExpression
+     * ;
+     */
+    private Expression AdditiveExpression(Token token) {
+        var left = MultiplicativeExpression(token);
 
         // (10+5)-5
-        while (iterator.hasNext() && lookAhead().in("+", "-")) {
+        while (iterator.hasNext() && lookAhead().is("+", "-")) {
             var operator = eat();
-            var next = eat(); // get right hand side of an expression
-            Expression right = this.parseMultiplicative(next);
-            left = new BinaryExpression(left, right, operator.getValue());
+            Expression right = this.MultiplicativeExpression(eat());
+            left = BinaryExpression.of(left, right, operator.getValue());
         }
 
         return left;
     }
 
-    private Expression parseMultiplicative(Token token) {
-        var left = parseLiteral(token);
+    /**
+     * MultiplicativeExpression
+     * : PrimaryExpression
+     * | MultiplicativeExpression MULTIPLICATIVE_OPERATOR PrimaryExpression -> PrimaryExpression MULTIPLICATIVE_OPERATOR PrimaryExpression
+     * ;
+     */
+    private Expression MultiplicativeExpression(Token token) {
+        var left = PrimaryExpression(token);
 
         // (10*5)-5
-        while (iterator.hasNext() && lookAhead().in("*", "/", "%")) {
+        while (iterator.hasNext() && lookAhead().is("*", "/", "%")) {
             var operator = eat();
-            var next = eat(); // get right hand side of an expression
-            Expression right = this.parseLiteral(next);
+            Expression right = PrimaryExpression(eat());
             left = new BinaryExpression(left, right, operator.getValue());
         }
 
         return left;
     }
 
-    private Expression parseLiteral(Token token) {
+    private Expression Literal(Token token) {
         return switch (token.getType()) {
             case Identifier -> new Identifier(token.getValue());
             case Number -> new NumericLiteral(token.getValue());
             case String -> new StringLiteral(token.getValue());
-            case OpenParenthesis -> {
-                var res = parseExpression(eat());
-                eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
-                yield res;
-            }
+//            case OpenParenthesis -> {
+//                var res = Expression(eat());
+//                eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+//                yield res;
+//            }
             default -> new ErrorExpression(token.getValue());
         };
     }

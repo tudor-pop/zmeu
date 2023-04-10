@@ -8,26 +8,39 @@ import java.util.regex.Pattern;
 
 class TokenizerSpec {
     static List<Entry> spec = Arrays.asList(
-//            skip comment
+// ---------------------------------- Comments --------------------------------------------------
+            // Skip single line comment: //
             new Entry("^//.*", TokenType.Comment),
+            // Skip multiline comment: /*  */
             new Entry("^\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
-
+// --------------------------------- Grouping operators -----------------------------------------
             new Entry("^\\{", TokenType.OpenBraces),
             new Entry("^\\}", TokenType.CloseBraces),
             new Entry("^\\(", TokenType.OpenParenthesis),
             new Entry("^\\)", TokenType.CloseParenthesis),
             new Entry("^\\[", TokenType.OpenBrackets),
             new Entry("^\\]", TokenType.CloseBrackets),
-
+// ---------------------------------- Literals ----------------------------------------------
+            // match string: " str ", ' str '
             new Entry("^(\"|')[^(\"|')]*(\"|')", TokenType.String),
+            // match numbers: 1, 111.222
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
+
+// --------------------------------- Whitespace --------------------------------------------------------
             new Entry("^\\n", TokenType.NewLine),
             new Entry("^\\s+", TokenType.WhiteSpace),
 //            new Entry("^;", TokenType.LineTerminator),
+
+// --------------------------------- Assignment --------------------------------------------------------
             new Entry("^==", TokenType.Equal_Equal),
+            // =, +=, -=, /=, *=
             new Entry("^=", TokenType.Equal),
+            new Entry("^[\\+\\-\\*\\/]=", TokenType.Equal_Complex),
+
+// --------------------------------- Operators --------------------------------------------------------
             new Entry("^\\+", TokenType.Plus),
             new Entry("^\\*", TokenType.Multiply),
+            //todo add exponentiation ^
             new Entry("^-", TokenType.Minus),
             new Entry("^!=", TokenType.Bang_Equal),
             new Entry("^<=", TokenType.Less_Equal),

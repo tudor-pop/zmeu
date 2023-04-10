@@ -16,6 +16,7 @@ public enum TokenType {
 
     /******   Expressions   ******/
     Equal,
+    Equal_Complex,
     Equal_Equal,
     Greater,
     Greater_Equal,

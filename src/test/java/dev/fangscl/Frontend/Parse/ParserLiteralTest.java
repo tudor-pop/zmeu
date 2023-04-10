@@ -68,9 +68,22 @@ public class ParserLiteralTest extends ParserStatementTest {
     @Test
     void testSingleQuotesShouldEvalToString() {
         var res = parser.produceAST(tokenizer.tokenize(""" 
-                '42' """));
+                '42' 
+                """));
         var expected = Program.of(
                 ExpressionStatement.of("42")
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testSingleQuotesWithSpaceShouldEvalToString() {
+        var res = parser.produceAST(tokenizer.tokenize(""" 
+                '  42  ' 
+                """));
+        var expected = Program.of(
+                ExpressionStatement.of("  42  ")
         );
         assertEquals(expected, res);
         log.info(gson.toJson(res));

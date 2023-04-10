@@ -30,7 +30,7 @@ public class Token {
         this(value, type, value.toString(), line);
     }
 
-    public boolean in(String... list) {
+    public boolean is(String... list) {
         return ArrayUtils.contains(list, this.value);
     }
 

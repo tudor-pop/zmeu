@@ -14,18 +14,23 @@ import lombok.EqualsAndHashCode;
 public class AssignmentExpression extends Expression {
     private Expression left;
     private Expression right;
-    private String operator;
+    private Object operator;
 
     public AssignmentExpression() {
         this.kind = NodeType.AssignmentExpression;
     }
 
-    public AssignmentExpression(Expression left, Expression right) {
+    private AssignmentExpression(Expression left, Expression right, Object operator) {
         this();
         this.left = left;
         this.right = right;
-        this.operator = "=";
+        this.operator = operator;
     }
+
+    public static Expression of(Expression left, Expression right, Object operator) {
+        return new AssignmentExpression(left, right, operator);
+    }
+
 
     @Override
     public String toSExpression() {

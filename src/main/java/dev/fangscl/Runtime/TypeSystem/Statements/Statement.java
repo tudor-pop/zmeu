@@ -25,5 +25,9 @@ public abstract class Statement {
     protected NodeType kind;
 
     public abstract String toSExpression();
+
+    public boolean is(NodeType type) {
+        return kind == type;
+    }
 }
 
