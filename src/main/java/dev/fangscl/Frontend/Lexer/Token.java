@@ -38,6 +38,14 @@ public class Token {
         return this.type == type;
     }
 
+    public boolean is(@NotNull TokenType... type) {
+        return ArrayUtils.contains(type, this.type);
+    }
+
+    public boolean isAssignment() {
+        return is(TokenType.Equal, TokenType.Equal_Complex);
+    }
+
     public static Token of(Object value, TokenType type, Object raw, int line) {
         return new Token(value, type, raw, line);
     }

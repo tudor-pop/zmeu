@@ -112,11 +112,12 @@ public class Parser {
      */
     private Expression AssignmentExpression() {
         Expression left = AdditiveExpression();
-        if (!lookAhead().is(TokenType.Equal)) {
+        if (!lookAhead().isAssignment()) {
             return left;
         }
-        var operator = AssignmentOperator();
-        return AssignmentExpression.of(checkValidAssignment(left), AssignmentExpression(), operator);
+        var operator = AssignmentOperator().getValue();
+        current = eat();
+        return AssignmentExpression.of(isValidAssignment(left), AssignmentExpression(), operator);
     }
 
     /**
@@ -124,35 +125,20 @@ public class Parser {
      * : SIMPLE_ASSIGN
      * | COMPLEX_ASSIGN
      */
-    private Object AssignmentOperator() {
-        if (lookAhead().is(TokenType.Equal)) {
-            return eat(TokenType.Equal);
+    private Token AssignmentOperator() {
+        Token token = lookAhead();
+        if (token.isAssignment()) {
+            current = eat(token.getType());
+            return current;
         }
-        return eat(TokenType.Equal_Complex);
+        throw new RuntimeException("Unrecognized token");
     }
 
-    /**
-     * LeftHandSideExpression
-     * : Identifier
-     */
-    private Object leftHandSideExpression() {
-        return Identifier();
-    }
-
-    /**
-     * Identifier
-     * : IDENTIFIER
-     * ;
-     */
-    private Expression Identifier() {
-        return Literal(eat());
-    }
-
-    private Expression checkValidAssignment(Expression target) {
+    private Expression isValidAssignment(Expression target) {
         if (target.is(NodeType.Identifier)) {
             return target;
         }
-        throw new SyntaxError("Invalid left-hand side in assignment expression");
+        throw new SyntaxError("Invalid left-hand side in assignment expression. Cannot assign %s to %s".formatted(target,current.getValue()));
     }
 
 
@@ -204,9 +190,28 @@ public class Parser {
                 current = eat();
                 yield ParanthesizedExpression();
             }
+            case Number, String, Identifier -> Literal();
             case EOF -> null;
-            default -> Literal(current);
+            default -> LeftHandSideExpression();
         };
+    }
+
+    /**
+     * LeftHandSideExpression
+     * : Identifier
+     */
+    private Expression LeftHandSideExpression() {
+        return Identifier();
+    }
+
+    /**
+     * Identifier
+     * : IDENTIFIER
+     * ;
+     */
+    private Expression Identifier() {
+        current = eat();
+        return new Identifier(current.getValue());
     }
 
     /**
@@ -221,16 +226,15 @@ public class Parser {
         return res;
     }
 
-    private Expression Literal(Token token) {
-        return switch (token.getType()) {
-            case Identifier -> new Identifier(token.getValue());
-            case Number -> new NumericLiteral(token.getValue());
-            case String -> new StringLiteral(token.getValue());
-            default -> new ErrorExpression(token.getValue());
+    private Expression Literal() {
+        return switch (current.getType()) {
+            case Identifier -> new Identifier(current.getValue());
+            case Number -> new NumericLiteral(current.getValue());
+            case String -> new StringLiteral(current.getValue());
+            default -> new ErrorExpression(current.getValue());
         };
     }
 
-    @Nullable
     private Token lookAhead() {
         return tokens.get(iterator.nextIndex());
     }
