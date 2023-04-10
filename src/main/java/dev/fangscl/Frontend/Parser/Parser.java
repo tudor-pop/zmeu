@@ -46,6 +46,7 @@ import java.util.ListIterator;
 public class Parser {
     private List<Token> tokens;
     private ListIterator<Token> iterator;
+    private Token current;
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -66,8 +67,8 @@ public class Parser {
 
     public Program produceAST() {
         var program = new Program();
-        for (var current = iterator.next(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
-            Statement statement = Statement(current);
+        for (current = iterator.next(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
+            Statement statement = Statement();
             if (statement == null) {
                 continue;
             }
@@ -78,21 +79,21 @@ public class Parser {
     }
 
     @Nullable
-    private Statement Statement(Token token) {
-        return switch (token.getType()) {
+    private Statement Statement() {
+        return switch (current.getType()) {
             case NewLine -> new EmptyStatement();
             case OpenBraces -> {
                 if (lookAhead().getType() == TokenType.CloseBraces) { // ? { } => eat } & return the block
                     eat(TokenType.CloseBraces, "Error");
                     yield new BlockStatement();
                 }
-                token = eat();
-                var block = new BlockStatement(Statement(token)); // parseStatement because a block contains more statements
+                current = eat();
+                var block = new BlockStatement(Statement()); // parseStatement because a block contains more statements
                 yield block;
             }
             case CloseBraces -> null;
             default -> {
-                var res = new ExpressionStatement(Expression(token));
+                var res = new ExpressionStatement(Expression(current));
                 if (iterator.hasNext() && lookAhead().is(TokenType.NewLine)) {
                     eat(TokenType.NewLine);
                 }
