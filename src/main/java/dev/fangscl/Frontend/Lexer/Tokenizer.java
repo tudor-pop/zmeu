@@ -42,6 +42,7 @@ public class Tokenizer {
             if (ch == '\n') {
                 line++;
 //                tokens.add(new Token(ch, NewLine, ch, line));
+//                continue;
             } else if (ch == ' ') {
                 continue;
             }

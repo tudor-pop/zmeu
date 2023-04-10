@@ -66,12 +66,8 @@ public class Parser {
 
     public Program produceAST() {
         var program = new Program();
-        while (iterator.hasNext()) {
-            Token current = eat();
-            if (current.getType() == TokenType.EOF) {
-                break;
-            }
-            Statement statement = this.parseStatement(current);
+        for (var current = iterator.next(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
+            Statement statement = Statement(current);
             if (statement == null) {
                 continue;
             }
@@ -82,7 +78,7 @@ public class Parser {
     }
 
     @Nullable
-    private Statement parseStatement(Token token) {
+    private Statement Statement(Token token) {
         return switch (token.getType()) {
             case NewLine -> new EmptyStatement();
             case OpenBraces -> {
@@ -91,7 +87,7 @@ public class Parser {
                     yield new BlockStatement();
                 }
                 token = eat();
-                var block = new BlockStatement(parseStatement(token)); // parseStatement because a block contains more statements
+                var block = new BlockStatement(Statement(token)); // parseStatement because a block contains more statements
                 yield block;
             }
             case CloseBraces -> null;
@@ -158,26 +154,6 @@ public class Parser {
         throw new SyntaxError("Invalid left-hand side in assignment expression");
     }
 
-    private Expression PrimaryExpression(Token token) {
-//        var lookahead = lookAhead();
-        return switch (token.getType()) {
-            case OpenParenthesis -> ParanthesizedExpression(eat());
-            default -> Literal(token);
-        };
-    }
-
-    /**
-     * ParanthesizedExpression
-     * : '(' Expression ')'
-     * ;
-     */
-    private Expression ParanthesizedExpression(Token token) {
-//        eat(TokenType.OpenParenthesis);
-        var res = Expression(token);
-        eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
-        return res;
-    }
-
 
     /**
      * AdditiveExpression
@@ -217,16 +193,31 @@ public class Parser {
         return left;
     }
 
+    private Expression PrimaryExpression(Token token) {
+//        var lookahead = lookAhead();
+        return switch (token.getType()) {
+            case OpenParenthesis -> ParanthesizedExpression(eat());
+            default -> Literal(token);
+        };
+    }
+
+    /**
+     * ParanthesizedExpression
+     * : '(' Expression ')'
+     * ;
+     */
+    private Expression ParanthesizedExpression(Token token) {
+//        eat(TokenType.OpenParenthesis);
+        var res = Expression(token);
+        eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        return res;
+    }
+
     private Expression Literal(Token token) {
         return switch (token.getType()) {
             case Identifier -> new Identifier(token.getValue());
             case Number -> new NumericLiteral(token.getValue());
             case String -> new StringLiteral(token.getValue());
-//            case OpenParenthesis -> {
-//                var res = Expression(eat());
-//                eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
-//                yield res;
-//            }
             default -> new ErrorExpression(token.getValue());
         };
     }
