@@ -88,4 +88,10 @@ public class NumericLiteral extends Literal {
     public String toSExpression() {
         return String.valueOf(value);
     }
+
+
+    @Override
+    public Object getVal() {
+        return value;
+    }
 }

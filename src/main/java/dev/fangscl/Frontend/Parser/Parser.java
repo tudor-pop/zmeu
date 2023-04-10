@@ -3,6 +3,7 @@ package dev.fangscl.Frontend.Parser;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Runtime.TypeSystem.Expressions.AssignmentExpression;
@@ -117,7 +118,7 @@ public class Parser {
         }
         var operator = AssignmentOperator().getValue();
         current = eat();
-        return AssignmentExpression.of(isValidAssignment(left), AssignmentExpression(), operator);
+        return AssignmentExpression.of(isValidAssignment(left, operator), AssignmentExpression(), operator);
     }
 
     /**
@@ -134,11 +135,14 @@ public class Parser {
         throw new RuntimeException("Unrecognized token");
     }
 
-    private Expression isValidAssignment(Expression target) {
+    private Expression isValidAssignment(Expression target, Object operator) {
         if (target.is(NodeType.Identifier)) {
             return target;
         }
-        throw new SyntaxError("Invalid left-hand side in assignment expression. Cannot assign %s to %s".formatted(target,current.getValue()));
+        if (target instanceof Literal n)
+            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, current.getValue()));
+        else
+            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(target, operator, current.getValue()));
     }
 
 

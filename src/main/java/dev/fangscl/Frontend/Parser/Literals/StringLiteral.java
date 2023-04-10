@@ -1,7 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +15,7 @@ import java.util.Optional;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class StringLiteral extends Expression {
+public class StringLiteral extends Literal {
     private String value;
 
     public StringLiteral() {
@@ -46,6 +45,11 @@ public class StringLiteral extends Expression {
     }
     @Override
     public String toSExpression() {
+        return value;
+    }
+
+    @Override
+    public Object getVal() {
         return value;
     }
 }

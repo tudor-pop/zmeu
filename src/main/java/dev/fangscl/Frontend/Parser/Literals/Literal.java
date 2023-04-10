@@ -18,4 +18,6 @@ public abstract class Literal extends Expression {
     public static StringLiteral of(String value) {
         return new StringLiteral(value);
     }
+
+    abstract public Object getVal();
 }

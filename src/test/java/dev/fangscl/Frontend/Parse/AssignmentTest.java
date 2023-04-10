@@ -2,11 +2,13 @@ package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.SyntaxError;
 import dev.fangscl.Runtime.TypeSystem.Expressions.AssignmentExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +20,7 @@ public class AssignmentTest extends ParserStatementTest {
     void testAssignment() {
         var res = parser.produceAST(tokenizer.tokenize("x=2"));
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2),"=")));
+                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -65,9 +67,9 @@ public class AssignmentTest extends ParserStatementTest {
 
     @Test
     void testAssignmentOnlyToIdentifiers() {
-        var res = parser.produceAST(tokenizer.tokenize("2=2"));
-//        assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        Assertions.assertThrows(SyntaxError.class, () ->
+                parser.produceAST(tokenizer.tokenize("2=2"))
+        );
     }
 
 
