@@ -91,9 +91,9 @@ public class Parser {
                 var block = new BlockStatement(Statement()); // parseStatement because a block contains more statements
                 yield block;
             }
-            case CloseBraces -> null;
+            case CloseBraces, EOF -> null;
             default -> {
-                var res = new ExpressionStatement(Expression(current));
+                var res = new ExpressionStatement(Expression());
                 if (iterator.hasNext() && lookAhead().is(TokenType.NewLine)) {
                     eat(TokenType.NewLine);
                 }
@@ -102,21 +102,21 @@ public class Parser {
         };
     }
 
-    private Expression Expression(Token token) {
-        return AssignmentExpression(token);
+    private Expression Expression() {
+        return AssignmentExpression();
     }
 
     /**
      * AssignmentExpression
      * : Identifier AssignmentOperator AssignmentExpression
      */
-    private Expression AssignmentExpression(Token token) {
-        Expression left = AdditiveExpression(token);
+    private Expression AssignmentExpression() {
+        Expression left = AdditiveExpression();
         if (!lookAhead().is(TokenType.Equal)) {
             return left;
         }
         var operator = AssignmentOperator();
-        return AssignmentExpression.of(checkValidAssignment(left), AssignmentExpression(eat()), operator);
+        return AssignmentExpression.of(checkValidAssignment(left), AssignmentExpression(), operator);
     }
 
     /**
@@ -162,13 +162,14 @@ public class Parser {
      * | AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression -> MultiplicativeExpression ADDITIVE_OPERATOR MultiplicativeExpression
      * ;
      */
-    private Expression AdditiveExpression(Token token) {
-        var left = MultiplicativeExpression(token);
+    private Expression AdditiveExpression() {
+        var left = MultiplicativeExpression();
 
         // (10+5)-5
         while (iterator.hasNext() && lookAhead().is("+", "-")) {
             var operator = eat();
-            Expression right = this.MultiplicativeExpression(eat());
+            current = eat();
+            Expression right = this.MultiplicativeExpression();
             left = BinaryExpression.of(left, right, operator.getValue());
         }
 
@@ -181,24 +182,30 @@ public class Parser {
      * | MultiplicativeExpression MULTIPLICATIVE_OPERATOR PrimaryExpression -> PrimaryExpression MULTIPLICATIVE_OPERATOR PrimaryExpression
      * ;
      */
-    private Expression MultiplicativeExpression(Token token) {
-        var left = PrimaryExpression(token);
+    private Expression MultiplicativeExpression() {
+//        current = eat();
+        var left = PrimaryExpression();
 
         // (10*5)-5
         while (iterator.hasNext() && lookAhead().is("*", "/", "%")) {
             var operator = eat();
-            Expression right = PrimaryExpression(eat());
+            current = eat();
+            Expression right = PrimaryExpression();
             left = new BinaryExpression(left, right, operator.getValue());
         }
 
         return left;
     }
 
-    private Expression PrimaryExpression(Token token) {
+    private Expression PrimaryExpression() {
 //        var lookahead = lookAhead();
-        return switch (token.getType()) {
-            case OpenParenthesis -> ParanthesizedExpression(eat());
-            default -> Literal(token);
+        return switch (current.getType()) {
+            case OpenParenthesis -> {
+                current = eat();
+                yield ParanthesizedExpression();
+            }
+            case EOF -> null;
+            default -> Literal(current);
         };
     }
 
@@ -207,9 +214,9 @@ public class Parser {
      * : '(' Expression ')'
      * ;
      */
-    private Expression ParanthesizedExpression(Token token) {
+    private Expression ParanthesizedExpression() {
 //        eat(TokenType.OpenParenthesis);
-        var res = Expression(token);
+        var res = Expression();
         eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
         return res;
     }
