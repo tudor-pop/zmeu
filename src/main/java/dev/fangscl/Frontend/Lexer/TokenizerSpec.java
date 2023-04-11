@@ -10,9 +10,9 @@ class TokenizerSpec {
     static List<Entry> spec = Arrays.asList(
 // ---------------------------------- Comments --------------------------------------------------
             // Skip single line comment: //
-            new Entry("^//.*", TokenType.Comment),
+            new Entry("^//.*[\\n]?", TokenType.Comment),
             // Skip multiline comment: /*  */
-            new Entry("^\\/\\*[\\s\\S]*?\\*\\/", TokenType.Comment),
+            new Entry("^\\/\\*[\\s\\S]*?\\*\\/[\\n]?", TokenType.Comment),
 // --------------------------------- Grouping operators -----------------------------------------
             new Entry("^\\{", TokenType.OpenBraces),
             new Entry("^\\}", TokenType.CloseBraces),
@@ -20,6 +20,7 @@ class TokenizerSpec {
             new Entry("^\\)", TokenType.CloseParenthesis),
             new Entry("^\\[", TokenType.OpenBrackets),
             new Entry("^\\]", TokenType.CloseBrackets),
+            new Entry("^,", TokenType.Comma),
 // ---------------------------------- Literals ----------------------------------------------
             // match string: " str ", ' str '
             new Entry("^(\"|')[^(\"|')]*(\"|')", TokenType.String),
@@ -27,7 +28,7 @@ class TokenizerSpec {
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
 
 // --------------------------------- Whitespace --------------------------------------------------------
-            new Entry("^\\n", TokenType.NewLine),
+            new Entry("^\\n", TokenType.lineTerminator()),
             new Entry("^\\s+", TokenType.WhiteSpace),
 //            new Entry("^;", TokenType.LineTerminator),
 
@@ -50,7 +51,7 @@ class TokenizerSpec {
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
 
-            new Entry("^(var)", TokenType.Var),
+            new Entry("^\\bvar\\b", TokenType.Var),
             new Entry("^\\w+", TokenType.Identifier)
     );
 

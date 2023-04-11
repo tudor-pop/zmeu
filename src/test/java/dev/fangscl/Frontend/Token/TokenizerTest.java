@@ -68,9 +68,9 @@ public class TokenizerTest {
 
     @Test
     void testLineTerminator() {
-        var result = tokenizer.tokenizeLiteral(";");
-        Assertions.assertEquals(TokenType.LineTerminator, result.getType());
-        Assertions.assertEquals(";", result.getValue());
+        var result = tokenizer.tokenizeLiteral("\n");
+        Assertions.assertEquals(TokenType.NewLine, result.getType());
+        Assertions.assertEquals("\n", result.getValue());
         log.info(result);
     }
 
@@ -99,9 +99,9 @@ public class TokenizerTest {
 
     @Test
     void testLineTerminatorComplex() {
-        var result = tokenizer.tokenize("1+1;");
-        Assertions.assertEquals(TokenType.LineTerminator, result.get(3).getType());
-        Assertions.assertEquals(";", result.get(3).getValue());
+        var result = tokenizer.tokenize("1+1\n");
+        Assertions.assertEquals(TokenType.NewLine, result.get(3).getType());
+        Assertions.assertEquals("\n", result.get(3).getValue());
         log.info(result);
     }
 
@@ -272,7 +272,10 @@ public class TokenizerTest {
 
     @Test
     void testNumberOnNextLineAfterComment() {
-        var result = tokenizer.tokenizeLiteral("// a comment goes until the end of line \n 10");
+        var result = tokenizer.tokenizeLiteral("""
+                // a comment goes until the end of line 
+                10
+                """);
         Assertions.assertEquals(TokenType.Number, result.getType());
         Assertions.assertEquals(10, result.getValue());
         log.info(result);
@@ -351,6 +354,16 @@ public class TokenizerTest {
         Assertions.assertEquals("=", result.get(2).getValue());
         Assertions.assertEquals(TokenType.Number, result.get(3).getType());
         Assertions.assertEquals(10, result.get(3).getValue());
+        log.info(result);
+    }
+
+    @Test
+    void testComplexWithSpaceWithName() {
+        var result = tokenizer.tokenize("var variable");
+        Assertions.assertEquals(TokenType.Var, result.get(0).getType());
+        Assertions.assertEquals("var", result.get(0).getValue());
+        Assertions.assertEquals(TokenType.Identifier, result.get(1).getType());
+        Assertions.assertEquals("variable", result.get(1).getValue());
         log.info(result);
     }
 
