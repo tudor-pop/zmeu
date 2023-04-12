@@ -63,7 +63,7 @@ public class Parser {
 
     public Program produceAST() {
         var program = new Program();
-        for (current = iterator.next(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
+        for (current = lookAhead(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
             Statement statement = Statement();
             if (statement == null) {
                 continue;
@@ -131,8 +131,7 @@ public class Parser {
         var declarations = new ArrayList<VariableDeclaration>();
         do {
             declarations.add(VariableDeclaration());
-//            eat(TokenType.Identifier);
-        } while (lookAhead().is(TokenType.Comma));
+        } while (lookAhead().is(TokenType.Comma) && eat(TokenType.Comma) != null);
         return declarations;
     }
 
@@ -143,7 +142,7 @@ public class Parser {
      */
     private VariableDeclaration VariableDeclaration() {
         var id = Identifier();
-        var init = !lookAhead().is(TokenType.lineTerminator(), TokenType.Comma, TokenType.EOF) ? VariableInitializer() : null;
+        var init = lookAhead().is(TokenType.lineTerminator(), TokenType.Comma, TokenType.EOF) ? null : VariableInitializer();
         return VariableDeclaration.of(id, init);
     }
 
@@ -152,7 +151,7 @@ public class Parser {
      * : SIMPLE_ASSIGN AssignmentExpression
      */
     private Expression VariableInitializer() {
-//        eat(TokenType.Equal);
+        if (lookAhead().is(TokenType.Equal, TokenType.Equal_Complex)) eat();
         return AssignmentExpression();
     }
 
@@ -271,8 +270,8 @@ public class Parser {
      * ;
      */
     private Expression Identifier() {
-        current = eat(TokenType.Identifier);
-        return new Identifier(current.getValue());
+        var id = eat(TokenType.Identifier);
+        return new Identifier(id.getValue());
     }
 
     /**
@@ -301,19 +300,17 @@ public class Parser {
     }
 
     private Token eat(TokenType type, String error) {
-        Token token = lookAhead();
-        if (token == null || token.is(TokenType.EOF)) {
+        Token lookAhead = lookAhead();
+        if (lookAhead == null || lookAhead.is(TokenType.EOF)) {
             log.debug("EndOfFile reached ");
             throw new RuntimeException("Parser error." + error);
         }
-        if (token.is(type)) {
-            current = eat();
-        }
-        if (current.getType() != type) {
+        if (!lookAhead.is(type)) {
             log.debug("Parser error\n {} {} \nExpected: {} ", error, current, type);
             throw new RuntimeException("Parser error." + error);
         }
-        return token;
+        current = eat();
+        return current;
     }
 
     private Token eat(TokenType type) {
