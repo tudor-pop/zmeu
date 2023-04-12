@@ -4,12 +4,17 @@ public enum NodeType {
     Program,
     ExpressionStatement,
     BlockStatement,
+
+    //    Variables
+    VariableStatement,
+    VariableDeclaration,
+
     EmptyStatement,
-//    NullLiteral,
+    //    NullLiteral,
     DecimalLiteral,
     IntegerLiteral,
     StringLiteral,
-//    BooleanLiteral,
+    //    BooleanLiteral,
     Identifier,
     BinaryExpression,
     AssignmentExpression

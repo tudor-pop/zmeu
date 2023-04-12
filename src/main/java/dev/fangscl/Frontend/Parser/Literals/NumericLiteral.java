@@ -66,6 +66,10 @@ public class NumericLiteral extends Literal {
         return new NumericLiteral(value);
     }
 
+    public static NumericLiteral of(int value) {
+        return new NumericLiteral(value);
+    }
+
     private void setValue(String value) {
         if (value.indexOf('.') != -1) { // string contains . => is a float/double
             this.value = Double.parseDouble(value);

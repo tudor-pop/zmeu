@@ -38,6 +38,10 @@ public class Token {
         return this.type == type;
     }
 
+    public boolean isLineTerminator() {
+        return this.type == TokenType.lineTerminator();
+    }
+
     public boolean is(@NotNull TokenType... type) {
         return ArrayUtils.contains(type, this.type);
     }

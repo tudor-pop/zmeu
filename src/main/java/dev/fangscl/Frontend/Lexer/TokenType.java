@@ -12,7 +12,6 @@ public enum TokenType {
     WhiteSpace,
     Comment,
     NewLine,
-    LineTerminator,
 
     /******   Expressions   ******/
     Equal,
@@ -68,6 +67,7 @@ public enum TokenType {
     CloseBraces,
     OpenBrackets,
     CloseBrackets,
+    Comma,
     Dot,
 
     /*****   Operators   ******/
@@ -155,5 +155,9 @@ public enum TokenType {
 
     public static boolean isSkippable(char character) {
         return Character.isWhitespace(character);
+    }
+
+    public static TokenType lineTerminator() {
+        return NewLine;
     }
 }

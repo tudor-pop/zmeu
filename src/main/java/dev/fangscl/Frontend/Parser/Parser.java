@@ -6,19 +6,14 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
-import dev.fangscl.Runtime.TypeSystem.Expressions.AssignmentExpression;
-import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
-import dev.fangscl.Runtime.TypeSystem.Expressions.ErrorExpression;
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
+import dev.fangscl.Runtime.TypeSystem.Expressions.*;
 import dev.fangscl.Runtime.TypeSystem.Program;
-import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
-import dev.fangscl.Runtime.TypeSystem.Statements.EmptyStatement;
-import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
-import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
+import dev.fangscl.Runtime.TypeSystem.Statements.*;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -79,6 +74,14 @@ public class Parser {
         return program;
     }
 
+    /**
+     * Statement
+     * : ExpressionStatement
+     * | BlockStatement
+     * | EmptyStatement
+     * | VariableStatement
+     * ;
+     */
     @Nullable
     private Statement Statement() {
         return switch (current.getType()) {
@@ -92,15 +95,65 @@ public class Parser {
                 var block = new BlockStatement(Statement()); // parseStatement because a block contains more statements
                 yield block;
             }
+            case Var -> VariableStatement();
             case CloseBraces, EOF -> null;
             default -> {
                 var res = new ExpressionStatement(Expression());
-                if (iterator.hasNext() && lookAhead().is(TokenType.NewLine)) {
+                if (iterator.hasNext() && lookAhead().isLineTerminator()) {
                     eat(TokenType.NewLine);
                 }
                 yield res;
             }
         };
+    }
+
+    /**
+     * VariableStatement
+     * : 'var' VariableDeclarationList '[\n]'
+     * ;
+     */
+    private Statement VariableStatement() {
+        eat(TokenType.Var);
+        var declarations = VariableDeclarationList();
+        if (lookAhead().isLineTerminator()) {
+            eat(TokenType.lineTerminator());
+        }
+        return VariableStatement.of(declarations);
+    }
+
+    /**
+     * VariableDeclarationList
+     * : VariableDeclaration
+     * | VariableDeclarationList ',' VariableDeclaration
+     * ;
+     */
+    private List<VariableDeclaration> VariableDeclarationList() {
+        var declarations = new ArrayList<VariableDeclaration>();
+        do {
+            declarations.add(VariableDeclaration());
+//            eat(TokenType.Identifier);
+        } while (lookAhead().is(TokenType.Comma));
+        return declarations;
+    }
+
+    /**
+     * VariableDeclaration
+     * : Identifier OptVariableInitialization
+     * ;
+     */
+    private VariableDeclaration VariableDeclaration() {
+        var id = Identifier();
+        var init = !lookAhead().is(TokenType.lineTerminator(), TokenType.Comma, TokenType.EOF) ? VariableInitializer() : null;
+        return VariableDeclaration.of(id, init);
+    }
+
+    /**
+     * VariableInitializer
+     * : SIMPLE_ASSIGN AssignmentExpression
+     */
+    private Expression VariableInitializer() {
+//        eat(TokenType.Equal);
+        return AssignmentExpression();
     }
 
     private Expression Expression() {
@@ -156,7 +209,7 @@ public class Parser {
         var left = MultiplicativeExpression();
 
         // (10+5)-5
-        while (iterator.hasNext() && lookAhead().is("+", "-")) {
+        while (match("+", "-")) {
             var operator = eat();
             current = eat();
             Expression right = this.MultiplicativeExpression();
@@ -177,7 +230,7 @@ public class Parser {
         var left = PrimaryExpression();
 
         // (10*5)-5
-        while (iterator.hasNext() && lookAhead().is("*", "/", "%")) {
+        while (match("*", "/", "%")) {
             var operator = eat();
             current = eat();
             Expression right = PrimaryExpression();
@@ -185,6 +238,10 @@ public class Parser {
         }
 
         return left;
+    }
+
+    private boolean match(String... strings) {
+        return iterator.hasNext() && lookAhead().is(strings);
     }
 
     private Expression PrimaryExpression() {
@@ -214,7 +271,7 @@ public class Parser {
      * ;
      */
     private Expression Identifier() {
-        current = eat();
+        current = eat(TokenType.Identifier);
         return new Identifier(current.getValue());
     }
 
@@ -244,12 +301,19 @@ public class Parser {
     }
 
     private Token eat(TokenType type, String error) {
-        var current = eat();
+        Token token = lookAhead();
+        if (token == null || token.is(TokenType.EOF)) {
+            log.debug("EndOfFile reached ");
+            throw new RuntimeException("Parser error." + error);
+        }
+        if (token.is(type)) {
+            current = eat();
+        }
         if (current.getType() != type) {
             log.debug("Parser error\n {} {} \nExpected: {} ", error, current, type);
             throw new RuntimeException("Parser error." + error);
         }
-        return current;
+        return token;
     }
 
     private Token eat(TokenType type) {

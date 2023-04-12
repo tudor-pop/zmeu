@@ -36,7 +36,7 @@ public class Identifier extends Expression {
         return symbol;
     }
 
-    public static Expression of(String left) {
+    public static Identifier of(String left) {
         return new Identifier(left);
     }
 }
