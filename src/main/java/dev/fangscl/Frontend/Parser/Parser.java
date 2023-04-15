@@ -63,7 +63,7 @@ public class Parser {
 
     public Program produceAST() {
         var program = new Program();
-        for (current = iterator.next(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
+        for (; iterator.hasNext(); current = iterator.next()) {
             Statement statement = Statement();
             if (statement == null) {
                 continue;
@@ -85,7 +85,7 @@ public class Parser {
      */
     @Nullable
     private Statement Statement() {
-        return switch (current.getType()) {
+        return switch (lookAhead().getType()) {
             case NewLine -> new EmptyStatement();
             case OpenBraces -> {
                 if (isLookahead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
@@ -101,9 +101,6 @@ public class Parser {
             case CloseBraces, EOF -> null;
             default -> {
                 var res = ExpressionStatement();
-                if (isLookahead(TokenType.lineTerminator())) {
-                    eat(TokenType.NewLine);
-                }
                 yield res;
             }
         };
@@ -117,13 +114,14 @@ public class Parser {
     private Statement ExpressionStatement() {
         return new ExpressionStatement(Expression());
     }
+
     /**
      * VariableStatement
      * : 'var' VariableDeclarationList '\n'?
      * ;
      */
     private Statement VariableStatement() {
-//        eat(TokenType.Var); // # no need to eat as it is already current
+        eat(TokenType.Var); // # no need to eat as it is already current
         var declarations = VariableDeclarationList();
         if (isLookahead(TokenType.lineTerminator())) {
             eat(TokenType.lineTerminator());
@@ -214,7 +212,6 @@ public class Parser {
             return left;
         }
         var operator = AssignmentOperator().getValue();
-        current = eat();
         return AssignmentExpression.of(isValidAssignment(left, operator), AssignmentExpression(), operator);
     }
 
@@ -255,7 +252,6 @@ public class Parser {
         // (10+5)-5
         while (match("+", "-")) {
             var operator = eat();
-            current = eat();
             Expression right = this.MultiplicativeExpression();
             left = BinaryExpression.of(left, right, operator.getValue());
         }
@@ -275,7 +271,6 @@ public class Parser {
         // (10*5)-5
         while (match("*", "/", "%")) {
             var operator = eat();
-            current = eat();
             Expression right = PrimaryExpression();
             left = new BinaryExpression(left, right, operator.getValue());
         }
@@ -288,16 +283,19 @@ public class Parser {
     }
 
     private Expression PrimaryExpression() {
-        return switch (current.getType()) {
+        return switch (lookAhead().getType()) {
             case OpenParenthesis -> {
                 eat();
                 yield ParanthesizedExpression();
             }
             case Equal -> {
                 eat();
+                yield AssignmentExpression();
+            }
+            case Number, String -> {
+                eat();
                 yield Literal();
             }
-            case Number, String -> Literal();
             case Identifier -> Identifier();
             case EOF -> null;
             default -> LeftHandSideExpression();
