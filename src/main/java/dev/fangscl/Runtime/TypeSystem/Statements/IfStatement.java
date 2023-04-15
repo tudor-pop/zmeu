@@ -20,8 +20,9 @@ public class IfStatement extends Statement {
     private Statement consequent;
     private Statement alternate;
 
-    public IfStatement(@Nullable Statement consequent, Statement alternate) {
+    public IfStatement(Expression test, @Nullable Statement consequent, Statement alternate) {
         this.kind = NodeType.IfStatement;
+        this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;
     }
@@ -31,19 +32,19 @@ public class IfStatement extends Statement {
     }
 
     public static Statement of(Expression test, Expression consequent, Expression alternate) {
-        return new IfStatement(consequent, alternate);
+        return new IfStatement(test,consequent, alternate);
     }
 
     public static Statement of(Expression test, Statement consequent, Statement alternate) {
-        return new IfStatement(consequent, alternate);
+        return new IfStatement(test,consequent, alternate);
     }
 
     public static Statement of(Expression test, int value) {
-        return new IfStatement(Literal.of(value), null);
+        return new IfStatement(test,Literal.of(value), null);
     }
 
     public static Statement of(Expression test, double value) {
-        return new IfStatement(Literal.of(value), null);
+        return new IfStatement(test,Literal.of(value), null);
     }
 
     public static Statement of() {
@@ -51,11 +52,11 @@ public class IfStatement extends Statement {
     }
 
     public static Statement of(Expression test, float value) {
-        return new IfStatement(Literal.of(value), null);
+        return new IfStatement(test,Literal.of(value), null);
     }
 
     public static Statement of(Expression test, String value) {
-        return new IfStatement(Literal.of(value), null);
+        return new IfStatement(test,Literal.of(value), null);
     }
 
     @Override

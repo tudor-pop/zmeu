@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * <p>
  * BlockStatement
@@ -16,9 +19,14 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class BlockStatement extends Statement {
-    private Statement expression;
+    private List<Statement> expression;
 
-    public BlockStatement(@Nullable Statement expression) {
+    public BlockStatement(@Nullable Statement... expression) {
+        this.kind = NodeType.BlockStatement;
+        this.expression = List.of(expression);
+    }
+
+    public BlockStatement(@Nullable List<Statement> expression) {
         this.kind = NodeType.BlockStatement;
         this.expression = expression;
     }
@@ -32,6 +40,14 @@ public class BlockStatement extends Statement {
     }
 
     public static Statement of(Statement expression) {
+        return new BlockStatement(expression);
+    }
+
+    public static Statement of(Statement... expression) {
+        return new BlockStatement(expression);
+    }
+
+    public static Statement of(List<Statement> expression) {
         return new BlockStatement(expression);
     }
 
@@ -57,6 +73,6 @@ public class BlockStatement extends Statement {
 
     @Override
     public String toSExpression() {
-        return  expression.toSExpression() ;
+        return expression.stream().map(Statement::toSExpression).collect(Collectors.joining());
     }
 }

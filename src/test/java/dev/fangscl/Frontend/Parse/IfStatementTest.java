@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class IfStatementTest extends StatementTest {
 
     @Test
-    void testInteger() {
+    void testIfStatement() {
         var res = parser.produceAST(tokenizer.tokenize("""
                 if (x) { 
                     1

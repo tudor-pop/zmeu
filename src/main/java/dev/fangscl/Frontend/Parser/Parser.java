@@ -43,6 +43,7 @@ public class Parser {
     private List<Token> tokens;
     private ListIterator<Token> iterator;
     private Token current;
+    private Program program = new Program();
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -58,20 +59,35 @@ public class Parser {
 
     public Program produceAST(List<Token> tokens) {
         setTokens(tokens);
-        return produceAST();
+        return Program();
     }
 
-    public Program produceAST() {
-        var program = new Program();
+    private Program Program() {
+        var statements = StatementList(TokenType.EOF);
+        program.setBody(statements);
+        return program;
+    }
+
+    /**
+     * StatementList
+     * : Statement
+     * | StatementList Statement
+     * ;
+     */
+    private List<Statement> StatementList(TokenType endTokenType) {
+        var statementList = new ArrayList<Statement>();
         for (; iterator.hasNext(); current = iterator.next()) {
+            if (isLookahead(endTokenType)) {
+                break;
+            }
             Statement statement = Statement();
-            if (statement == null) {
+            if (statement == null || statement.is(NodeType.EmptyStatement)) {
                 continue;
             }
-            program.add(statement);
+            statementList.add(statement);
         }
 
-        return program;
+        return statementList;
     }
 
     /**
@@ -87,18 +103,10 @@ public class Parser {
     private Statement Statement() {
         return switch (lookAhead().getType()) {
             case NewLine -> new EmptyStatement();
-            case OpenBraces -> {
-                if (isLookahead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
-                    eat(TokenType.CloseBraces, "Error");
-                    yield new BlockStatement();
-                }
-                current = eat();
-                var block = new BlockStatement(Statement()); // parseStatement because a block contains more statements
-                yield block;
-            }
+            case OpenBraces -> BlockStatement();
             case If -> IfStatement();
             case Var -> VariableStatement();
-            case CloseBraces, EOF -> null;
+            case EOF -> null;
             default -> {
                 var res = ExpressionStatement();
                 yield res;
@@ -108,11 +116,27 @@ public class Parser {
 
     /**
      * ExpressionStatement
-     * : Expression
+     * : Expression '\n'
      * ;
      */
     private Statement ExpressionStatement() {
         return new ExpressionStatement(Expression());
+    }
+
+    /**
+     * BlockStatement
+     * : '{' StatementList? '}'
+     * ;
+     */
+    private Statement BlockStatement() {
+        eat(TokenType.OpenBraces);
+        var res = isLookahead(TokenType.CloseBraces) ?
+                BlockStatement.of(EmptyStatement.of()) :
+                BlockStatement.of(StatementList(TokenType.CloseBraces));
+        if (isLookahead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
+            eat(TokenType.CloseBraces, "Error");
+        }
+        return res;
     }
 
     /**
@@ -176,8 +200,8 @@ public class Parser {
 
     /**
      * IfStatement
-     * : 'if' '(' Expression ')' Statement
-     * : 'if' '(' Expression ')' Statement 'else' Statement
+     * : 'if' '(' Expression ')' '{'? Statement '}'?
+     * : 'if' '(' Expression ')' '{'? Statement '}'? 'else' '{'? Statement '}'?
      * ;
      */
     private Statement IfStatement() {
@@ -185,16 +209,28 @@ public class Parser {
         eat(TokenType.OpenParenthesis);
         var test = Expression();
         eat(TokenType.CloseParenthesis);
-        eat(TokenType.OpenBraces);
 
         Statement consequent = Statement();
-//        eat(TokenType.CloseBraces);
         Statement alternate = null;
         if (isLookahead(TokenType.Else)) {
             eat(TokenType.Else);
             alternate = Statement();
         }
         return IfStatement.of(test, consequent, alternate);
+    }
+
+    private void closeBlock() {
+        if (isLookahead(TokenType.NewLine)) {
+            eat(TokenType.NewLine);
+        }
+        eat(TokenType.CloseBraces);
+    }
+
+    private void openBlock() {
+        if (isLookahead(TokenType.NewLine)) {
+            eat(TokenType.NewLine);
+        }
+        eat(TokenType.OpenBraces);
     }
 
     private boolean isLookahead(TokenType type) {
