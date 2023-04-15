@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class ParserLiteralTest extends ParserStatementTest {
+public class LiteralTest extends StatementTest {
 
     @Test
     void testInteger() {
