@@ -4,6 +4,7 @@ public enum NodeType {
     Program,
     ExpressionStatement,
     BlockStatement,
+    IfStatement,
 
     //    Variables
     VariableStatement,

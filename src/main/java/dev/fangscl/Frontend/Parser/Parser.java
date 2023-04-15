@@ -80,6 +80,7 @@ public class Parser {
      * | BlockStatement
      * | EmptyStatement
      * | VariableStatement
+     * | IfStatement
      * ;
      */
     @Nullable
@@ -95,11 +96,12 @@ public class Parser {
                 var block = new BlockStatement(Statement()); // parseStatement because a block contains more statements
                 yield block;
             }
+            case If -> IfStatement();
             case Var -> VariableStatement();
             case CloseBraces, EOF -> null;
             default -> {
                 var res = new ExpressionStatement(Expression());
-                if (iterator.hasNext() && lookAhead().isLineTerminator()) {
+                if (isLookahead(TokenType.lineTerminator())) {
                     eat(TokenType.NewLine);
                 }
                 yield res;
@@ -164,6 +166,33 @@ public class Parser {
      */
     private Expression Expression() {
         return AssignmentExpression();
+    }
+
+    /**
+     * IfStatement
+     * : 'if' '(' Expression ')' Statement
+     * : 'if' '(' Expression ')' Statement 'else' Statement
+     * ;
+     */
+    private Statement IfStatement() {
+        eat(TokenType.OpenParenthesis);
+        var test = Expression();
+        eat(TokenType.CloseParenthesis);
+        eat(TokenType.OpenBraces);
+
+        Statement consequent = Statement();
+//        eat(TokenType.CloseBraces);
+        Statement alternate = null;
+        if (isLookahead(TokenType.Else)) {
+            eat(TokenType.Else);
+            alternate = Statement();
+        }
+        return IfStatement.of(test, consequent, alternate);
+    }
+
+    private boolean isLookahead(TokenType type) {
+        Token token = lookAhead();
+        return token != null && token.is(type);
     }
 
     /**

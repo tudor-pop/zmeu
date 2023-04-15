@@ -52,6 +52,8 @@ class TokenizerSpec {
             new Entry("^/(?!/)", TokenType.Division),
 
             new Entry("^\\bvar\\b", TokenType.Var),
+            new Entry("^\\bif\\b", TokenType.If),
+            new Entry("^\\belse\\b", TokenType.Else),
             new Entry("^\\w+", TokenType.Identifier)
     );
 
