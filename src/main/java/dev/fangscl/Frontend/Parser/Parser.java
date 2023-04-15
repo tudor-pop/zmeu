@@ -63,7 +63,7 @@ public class Parser {
 
     public Program produceAST() {
         var program = new Program();
-        for (current = lookAhead(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
+        for (current = eat(); iterator.hasNext() && current.getType() != TokenType.EOF; current = iterator.next()) {
             Statement statement = Statement();
             if (statement == null) {
                 continue;
@@ -113,7 +113,7 @@ public class Parser {
      * ;
      */
     private Statement VariableStatement() {
-        eat(TokenType.Var);
+//        eat(TokenType.Var); # no need to eat as it is already current
         var declarations = VariableDeclarationList();
         if (lookAhead().isLineTerminator()) {
             eat(TokenType.lineTerminator());
@@ -151,10 +151,17 @@ public class Parser {
      * : SIMPLE_ASSIGN AssignmentExpression
      */
     private Expression VariableInitializer() {
-        if (lookAhead().is(TokenType.Equal, TokenType.Equal_Complex)) eat();
+        if (lookAhead().is(TokenType.Equal, TokenType.Equal_Complex)) {
+            eat(TokenType.Equal);
+        }
         return AssignmentExpression();
     }
 
+    /**
+     * Expression
+     * : AssignmentExpression
+     * ;
+     */
     private Expression Expression() {
         return AssignmentExpression();
     }
@@ -225,7 +232,6 @@ public class Parser {
      * ;
      */
     private Expression MultiplicativeExpression() {
-//        current = eat();
         var left = PrimaryExpression();
 
         // (10*5)-5
@@ -244,11 +250,14 @@ public class Parser {
     }
 
     private Expression PrimaryExpression() {
-//        var lookahead = lookAhead();
         return switch (current.getType()) {
             case OpenParenthesis -> {
-                current = eat();
+                eat();
                 yield ParanthesizedExpression();
+            }
+            case Equal -> {
+                eat();
+                yield Literal();
             }
             case Number, String, Identifier -> Literal();
             case EOF -> null;
@@ -309,8 +318,7 @@ public class Parser {
             log.debug("Parser error\n {} {} \nExpected: {} ", error, current, type);
             throw new RuntimeException("Parser error." + error);
         }
-        current = eat();
-        return current;
+        return eat();
     }
 
     private Token eat(TokenType type) {
@@ -318,7 +326,8 @@ public class Parser {
     }
 
     private Token eat() {
-        return iterator.next();
+        current = iterator.next();
+        return current;
     }
 
 }

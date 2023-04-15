@@ -50,7 +50,7 @@ public class VariableTest extends ParserStatementTest {
         var res = parser.produceAST(tokenizer.tokenize("var x,y=2"));
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(2)),
+                        VariableDeclaration.of(Identifier.of("x")),
                         VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
                 ));
         assertEquals(expected, res);
