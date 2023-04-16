@@ -38,6 +38,9 @@ public class IfStatement extends Statement {
     public static Statement of(Expression test, Statement consequent, Statement alternate) {
         return new IfStatement(test,consequent, alternate);
     }
+    public static Statement of(Expression test, Statement consequent) {
+        return IfStatement.of(test,consequent, null);
+    }
 
     public static Statement of(Expression test, int value) {
         return new IfStatement(test,Literal.of(value), null);

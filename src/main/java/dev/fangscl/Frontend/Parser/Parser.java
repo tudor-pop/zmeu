@@ -209,6 +209,12 @@ public class Parser {
         eat(TokenType.OpenParenthesis);
         var test = Expression();
         eat(TokenType.CloseParenthesis);
+        if (isLookahead(TokenType.NewLine)) {
+            /* if(x)
+             *   x=2
+             */
+            eat(TokenType.NewLine);
+        }
 
         Statement consequent = Statement();
         Statement alternate = null;
