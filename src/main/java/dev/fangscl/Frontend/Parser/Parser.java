@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -77,7 +78,7 @@ public class Parser {
     private List<Statement> StatementList(TokenType endTokenType) {
         var statementList = new ArrayList<Statement>();
         for (; iterator.hasNext(); current = iterator.next()) {
-            if (isLookahead(endTokenType)) {
+            if (IsLookAhead(endTokenType)) { // need to check for EOF before doing any work
                 break;
             }
             Statement statement = Statement();
@@ -85,6 +86,11 @@ public class Parser {
                 continue;
             }
             statementList.add(statement);
+            if (IsLookAhead(endTokenType)) {
+                // after some work is done, before calling iterator.next(),
+                // we must check for EOF again or else we risk going outside the iterator's bounds
+                break;
+            }
         }
 
         return statementList;
@@ -130,10 +136,10 @@ public class Parser {
      */
     private Statement BlockStatement() {
         eat(TokenType.OpenBraces);
-        var res = isLookahead(TokenType.CloseBraces) ?
-                BlockStatement.of(EmptyStatement.of()) :
+        var res = IsLookAhead(TokenType.CloseBraces) ?
+                BlockStatement.of(Collections.emptyList()) :
                 BlockStatement.of(StatementList(TokenType.CloseBraces));
-        if (isLookahead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
+        if (IsLookAhead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
             eat(TokenType.CloseBraces, "Error");
         }
         return res;
@@ -147,7 +153,7 @@ public class Parser {
     private Statement VariableStatement() {
         eat(TokenType.Var); // # no need to eat as it is already current
         var declarations = VariableDeclarationList();
-        if (isLookahead(TokenType.lineTerminator())) {
+        if (IsLookAhead(TokenType.lineTerminator())) {
             eat(TokenType.lineTerminator());
         }
         return VariableStatement.of(declarations);
@@ -163,7 +169,7 @@ public class Parser {
         var declarations = new ArrayList<VariableDeclaration>();
         do {
             declarations.add(VariableDeclaration());
-        } while (isLookahead(TokenType.Comma) && eat(TokenType.Comma) != null);
+        } while (IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
         return declarations;
     }
 
@@ -209,7 +215,7 @@ public class Parser {
         eat(TokenType.OpenParenthesis);
         var test = Expression();
         eat(TokenType.CloseParenthesis);
-        if (isLookahead(TokenType.NewLine)) {
+        if (IsLookAhead(TokenType.NewLine)) {
             /* if(x)
              *   x=2
              */
@@ -218,7 +224,7 @@ public class Parser {
 
         Statement consequent = Statement();
         Statement alternate = null;
-        if (isLookahead(TokenType.Else)) {
+        if (IsLookAhead(TokenType.Else)) {
             eat(TokenType.Else);
             alternate = Statement();
         }
@@ -226,20 +232,23 @@ public class Parser {
     }
 
     private void closeBlock() {
-        if (isLookahead(TokenType.NewLine)) {
+        if (IsLookAhead(TokenType.NewLine)) {
             eat(TokenType.NewLine);
         }
         eat(TokenType.CloseBraces);
     }
 
     private void openBlock() {
-        if (isLookahead(TokenType.NewLine)) {
+        if (IsLookAhead(TokenType.NewLine)) {
             eat(TokenType.NewLine);
         }
         eat(TokenType.OpenBraces);
     }
 
-    private boolean isLookahead(TokenType type) {
+    private boolean IsLookAhead(TokenType type) {
+        if (!iterator.hasNext()) {
+            return false;
+        }
         Token token = lookAhead();
         return token != null && token.is(type);
     }

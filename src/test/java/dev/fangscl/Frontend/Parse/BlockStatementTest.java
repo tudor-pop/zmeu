@@ -1,11 +1,12 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
 import dev.fangscl.Runtime.TypeSystem.Program;
-import dev.fangscl.Runtime.TypeSystem.Statements.EmptyStatement;
+import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
 import dev.fangscl.Runtime.TypeSystem.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -30,7 +31,7 @@ public class BlockStatementTest extends StatementTest {
     @Test
     void testEmptyBlock() {
         var res = parser.produceAST(tokenizer.tokenize("{ }    "));
-        var expected = Program.of(BlockStatement.of());
+        var expected = Program.of(BlockStatement.of(Collections.emptyList()));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -48,7 +49,7 @@ public class BlockStatementTest extends StatementTest {
     @Test
     void testEmptyStatement() {
         var res = parser.produceAST(tokenizer.tokenize("\n"));
-        var expected = Program.of(new EmptyStatement());
+        var expected = Program.of();
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -56,7 +57,7 @@ public class BlockStatementTest extends StatementTest {
     @Test
     void testEmptyStatementInBlock() {
         var res = parser.produceAST(tokenizer.tokenize("{ \n }"));
-        var expected = Program.of(BlockStatement.of(new EmptyStatement()));
+        var expected = Program.of(BlockStatement.of(Collections.emptyList()));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
