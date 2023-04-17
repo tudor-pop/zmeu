@@ -231,20 +231,6 @@ public class Parser {
         return IfStatement.of(test, consequent, alternate);
     }
 
-    private void closeBlock() {
-        if (IsLookAhead(TokenType.NewLine)) {
-            eat(TokenType.NewLine);
-        }
-        eat(TokenType.CloseBraces);
-    }
-
-    private void openBlock() {
-        if (IsLookAhead(TokenType.NewLine)) {
-            eat(TokenType.NewLine);
-        }
-        eat(TokenType.OpenBraces);
-    }
-
     private boolean IsLookAhead(TokenType type) {
         if (!iterator.hasNext()) {
             return false;
@@ -255,15 +241,36 @@ public class Parser {
 
     /**
      * AssignmentExpression
-     * : Identifier AssignmentOperator AssignmentExpression
+     * : RelationalExpression
+     * | LeftHandSideExpression AssignmentOperator AssignmentExpression
      */
     private Expression AssignmentExpression() {
-        Expression left = AdditiveExpression();
+        Expression left = RelationalExpression();
         if (!lookAhead().isAssignment()) {
             return left;
         }
         var operator = AssignmentOperator().getValue();
         return AssignmentExpression.of(isValidAssignment(left, operator), AssignmentExpression(), operator);
+    }
+
+    /**
+     * RELATIONAL_OPERATOR: >,>=,<=,<
+     * x > y
+     * x >= y
+     * x < y
+     * x <= y
+     * RelationalExpression
+     * : AdditiveExpression
+     * | AdditiveExpression RELATIONAL_OPERATOR RelationalExpression
+     * ;
+     */
+    private Expression RelationalExpression() {
+        var additive = AdditiveExpression();
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Less_Equal, TokenType.Greater_Equal, TokenType.Less, TokenType.Greater)) {
+            return additive;
+        }
+        var operator = eat();
+        return BinaryExpression.of(additive, RelationalExpression(), operator.getValue());
     }
 
     /**
@@ -297,6 +304,7 @@ public class Parser {
      * | AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression -> MultiplicativeExpression ADDITIVE_OPERATOR MultiplicativeExpression
      * ;
      */
+    @Nullable
     private Expression AdditiveExpression() {
         var left = MultiplicativeExpression();
 
@@ -333,7 +341,11 @@ public class Parser {
         return iterator.hasNext() && lookAhead().is(strings);
     }
 
+    @Nullable
     private Expression PrimaryExpression() {
+        if (lookAhead() == null) {
+            return null;
+        }
         return switch (lookAhead().getType()) {
             case OpenParenthesis -> {
                 eat();
@@ -393,6 +405,9 @@ public class Parser {
     }
 
     private Token lookAhead() {
+        if (!iterator.hasNext()) {
+            return null;
+        }
         return tokens.get(iterator.nextIndex());
     }
 
@@ -403,8 +418,9 @@ public class Parser {
             throw new RuntimeException("Parser error." + error);
         }
         if (!lookAhead.is(type)) {
-            log.debug("Parser error\n {} {} \nExpected: {} ", error, current, type);
-            throw new RuntimeException("Parser error." + error);
+            var err = "%s %s \n".formatted(error, current);
+            log.debug(err);
+            throw new SyntaxError(err);
         }
         return eat();
     }
