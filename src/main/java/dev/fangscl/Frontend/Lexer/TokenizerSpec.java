@@ -48,8 +48,9 @@ class TokenizerSpec {
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
 // --------------------------------- Logical Operators: <,>, <=, >= --------------------------------------------------------
-            new Entry("^&&", TokenType.And),
-            new Entry("^\\|\\|", TokenType.Or),
+            new Entry("^&&", TokenType.Logical_And),
+            new Entry("^\\|\\|", TokenType.Logical_Or),
+            new Entry("^!", TokenType.Logical_Not),
 
 // --------------------------------- Keywords --------------------------------------------------------
             new Entry("^\\bvar\\b", TokenType.Var),

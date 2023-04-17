@@ -260,12 +260,13 @@ public class Parser {
      */
     private Expression OrExpression() {
         var expression = AndExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Or)) {
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Logical_Or)) {
             return expression;
         }
         var operator = eat();
         return LogicalExpression.of(operator.getValue(), expression, OrExpression());
     }
+
     /**
      * Logical LOGICAL_OPERATOR Expressions: &&, ||
      * x && y
@@ -277,7 +278,7 @@ public class Parser {
      */
     private Expression AndExpression() {
         var expression = EqualityExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.And)) {
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Logical_And)) {
             return expression;
         }
         var operator = eat();
@@ -301,6 +302,7 @@ public class Parser {
         var operator = eat();
         return BinaryExpression.of(expression, EqualityExpression(), operator.getValue());
     }
+
     /**
      * RELATIONAL_OPERATOR: >,>=,<=,<
      * x > y
@@ -368,21 +370,41 @@ public class Parser {
 
     /**
      * MultiplicativeExpression
-     * : PrimaryExpression
-     * | MultiplicativeExpression MULTIPLICATIVE_OPERATOR PrimaryExpression -> PrimaryExpression MULTIPLICATIVE_OPERATOR PrimaryExpression
+     * : UnaryExpression
+     * | MultiplicativeExpression MULTIPLICATIVE_OPERATOR UnaryExpression -> PrimaryExpression MULTIPLICATIVE_OPERATOR PrimaryExpression
      * ;
      */
     private Expression MultiplicativeExpression() {
-        var left = PrimaryExpression();
+        var left = UnaryExpression();
 
         // (10*5)-5
         while (match("*", "/", "%")) {
             var operator = eat();
-            Expression right = PrimaryExpression();
+            Expression right = UnaryExpression();
             left = new BinaryExpression(left, right, operator.getValue());
         }
 
         return left;
+    }
+    /**
+     * UnaryExpression
+     * : LeftHandSideExpression
+     * | ADDITIVE_OPERATOR UnaryExpression
+     * | LOGICAL_NOT UnaryExpression
+     * ;
+     */
+    private Expression UnaryExpression() {
+        var operator = switch (lookAhead().getType()) {
+            case Minus -> eat(TokenType.Minus);
+            case Plus -> eat(TokenType.Plus);
+            case Logical_Not -> eat(TokenType.Logical_Not);
+            default -> null;
+        };
+        if (operator != null) {
+            return UnaryExpression.of(operator.getValue(), UnaryExpression());
+        }
+
+        return LeftHandSideExpression();
     }
 
     private boolean match(String... strings) {
@@ -404,7 +426,7 @@ public class Parser {
                 yield AssignmentExpression();
             }
             case Equality_Operator -> Literal();
-            case Number, String -> {
+            case Number, String, True, False, Null -> /* literals */{
                 eat();
                 yield Literal();
             }
@@ -416,11 +438,11 @@ public class Parser {
 
     /**
      * LeftHandSideExpression
-     * : Identifier
-     * | Literal
+     * : PrimaryExpression
+     * ;
      */
     private Expression LeftHandSideExpression() {
-        return lookAhead().isLiteral() ? Literal() : Identifier();
+        return PrimaryExpression();
     }
 
     /**

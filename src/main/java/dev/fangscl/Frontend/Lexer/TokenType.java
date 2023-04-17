@@ -17,10 +17,9 @@ public enum TokenType {
     Equal,
     Equal_Complex,
     RelationalOperator,
-    Bang,
     Equality_Operator,
     /***********   Keywords   ******************/
-    And, Or, Schema, Return, For, While, ReadOnly, If, Else, False, True, Fun,
+    Logical_And, Logical_Or, Logical_Not, Schema, Return, For, While, ReadOnly, If, Else, False, True, Fun,
     Var,
     Param,
     This,
@@ -121,8 +120,8 @@ public enum TokenType {
             case "existing" -> Existing;
             case "module" -> Module;
             case "null" -> Null;
-            case "and" -> And;
-            case "or" -> Or;
+            case "and" -> Logical_And;
+            case "or" -> Logical_Or;
             case "schema" -> Schema;
             case "return" -> Return;
             case "fun" -> Fun;
