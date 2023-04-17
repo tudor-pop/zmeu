@@ -238,11 +238,11 @@ public class Parser {
 
     /**
      * AssignmentExpression
-     * : EqualityExpression
+     * : LogicalExpression
      * | LeftHandSideExpression AssignmentOperator AssignmentExpression
      */
     private Expression AssignmentExpression() {
-        Expression left = EqualityExpression();
+        Expression left = OrExpression();
         if (!lookAhead().isAssignment()) {
             return left;
         }
@@ -251,23 +251,37 @@ public class Parser {
     }
 
     /**
-     * RELATIONAL_OPERATOR: >,>=,<=,<
-     * x > y
-     * x >= y
-     * x < y
-     * x <= y
-     * RelationalExpression
-     * : AdditiveExpression
-     * | AdditiveExpression RELATIONAL_OPERATOR RelationalExpression
+     * Logical LOGICAL_OPERATOR Expressions: ||
+     * x || y
+     * AndExpression
+     * : AndExpression LOGICAL_OPERATOR OrExpression
+     * | EqualityExpression
      * ;
      */
-    private Expression RelationalExpression() {
-        var additive = AdditiveExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.RelationalOperator)) {
-            return additive;
+    private Expression OrExpression() {
+        var expression = AndExpression();
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Or)) {
+            return expression;
         }
         var operator = eat();
-        return BinaryExpression.of(additive, RelationalExpression(), operator.getValue());
+        return LogicalExpression.of(operator.getValue(), expression, OrExpression());
+    }
+    /**
+     * Logical LOGICAL_OPERATOR Expressions: &&, ||
+     * x && y
+     * x || y
+     * AndExpression
+     * : EqualityExpression LOGICAL_OPERATOR AndExpression
+     * | EqualityExpression
+     * ;
+     */
+    private Expression AndExpression() {
+        var expression = EqualityExpression();
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.And)) {
+            return expression;
+        }
+        var operator = eat();
+        return LogicalExpression.of(operator.getValue(), expression, AndExpression());
     }
 
     /**
@@ -280,12 +294,31 @@ public class Parser {
      * ;
      */
     private Expression EqualityExpression() {
-        var relationalExpression = RelationalExpression();
+        var expression = RelationalExpression();
         if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Equality_Operator)) {
-            return relationalExpression;
+            return expression;
         }
         var operator = eat();
-        return BinaryExpression.of(relationalExpression, EqualityExpression(), operator.getValue());
+        return BinaryExpression.of(expression, EqualityExpression(), operator.getValue());
+    }
+    /**
+     * RELATIONAL_OPERATOR: >,>=,<=,<
+     * x > y
+     * x >= y
+     * x < y
+     * x <= y
+     * RelationalExpression
+     * : AdditiveExpression
+     * | AdditiveExpression RELATIONAL_OPERATOR RelationalExpression
+     * ;
+     */
+    private Expression RelationalExpression() {
+        var expression = AdditiveExpression();
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.RelationalOperator)) {
+            return expression;
+        }
+        var operator = eat();
+        return BinaryExpression.of(expression, RelationalExpression(), operator.getValue());
     }
 
     /**

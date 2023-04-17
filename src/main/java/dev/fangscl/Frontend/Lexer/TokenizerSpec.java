@@ -43,9 +43,13 @@ class TokenizerSpec {
             new Entry("^\\*", TokenType.Multiply),
             //todo add exponentiation ^
             new Entry("^-", TokenType.Minus),
+// --------------------------------- Relational Operators: <,>, <=, >= --------------------------------------------------------
             new Entry("^[<>]=?", TokenType.RelationalOperator),
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
+// --------------------------------- Logical Operators: <,>, <=, >= --------------------------------------------------------
+            new Entry("^&&", TokenType.And),
+            new Entry("^\\|\\|", TokenType.Or),
 
 // --------------------------------- Keywords --------------------------------------------------------
             new Entry("^\\bvar\\b", TokenType.Var),
