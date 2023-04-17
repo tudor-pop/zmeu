@@ -30,6 +30,9 @@ public class AssignmentExpression extends Expression {
     public static Expression of(Expression left, Expression right, Object operator) {
         return new AssignmentExpression(left, right, operator);
     }
+    public static Expression of(Object operator, Expression left, Expression right) {
+        return new AssignmentExpression(left, right, operator);
+    }
 
 
     @Override

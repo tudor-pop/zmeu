@@ -100,6 +100,8 @@ public class Parser {
      * | EmptyStatement
      * | VariableStatement
      * | IfStatement
+     * | IterationStatement
+     * | ForStatement
      * ;
      */
     @Nullable
@@ -108,6 +110,7 @@ public class Parser {
             case NewLine -> new EmptyStatement();
             case OpenBraces -> BlockStatement();
             case If -> IfStatement();
+            case While, For -> IterationStatement();
             case Var -> VariableStatement();
             case EOF -> null;
             default -> {
@@ -115,6 +118,110 @@ public class Parser {
                 yield res;
             }
         };
+    }
+
+    /**
+     * IterationStatement
+     * : WhileStatement
+     * | ForStatement
+     * ;
+     */
+    private Statement IterationStatement() {
+        return switch (lookAhead().getType()) {
+            case While -> WhileStatement();
+            case For -> ForStatement();
+            default -> throw new SyntaxError();
+        };
+    }
+
+    /**
+     * WhileStatement
+     * : while '(' Expression ')' '{'? StatementList '}'?
+     * ;
+     */
+    private Statement WhileStatement() {
+        eat(TokenType.While);
+        eat(TokenType.OpenParenthesis);
+        var test = Expression();
+        eat(TokenType.CloseParenthesis);
+        if (IsLookAhead(TokenType.NewLine)) {
+            /* while(x)
+             *   x=2
+             */
+            eat(TokenType.NewLine);
+        }
+
+        var statement = Statement();
+        return WhileStatement.of(test, statement);
+    }
+
+    /**
+     * ForStatement
+     * : for '(' OptStatementInit ';' OptExpression ';' OptExpression ')' Statement
+     * ;
+     */
+    private Statement ForStatement() {
+        eat(TokenType.For);
+        eat(TokenType.OpenParenthesis);
+
+        Statement init = lookAhead().is(TokenType.SemiColon) ? null : ForStatementInit();
+        eat(TokenType.SemiColon);
+
+        var test = lookAhead().is(TokenType.SemiColon) ? null : Expression();
+        eat(TokenType.SemiColon);
+
+        var update = lookAhead().is(TokenType.CloseParenthesis) ? null : Expression();
+        eat(TokenType.CloseParenthesis);
+        if (IsLookAhead(TokenType.NewLine)) {
+            /* while(x)
+             *   x=2
+             */
+            eat(TokenType.NewLine);
+        }
+
+        var body = Statement();
+        return ForStatement.builder()
+                .test(test)
+                .body(body)
+                .init(init)
+                .update(update)
+                .build();
+    }
+
+    /**
+     * ForStatementInit
+     * : VariableStatementInit
+     * | Expression
+     */
+    private Statement ForStatementInit() {
+        if (lookAhead().is(TokenType.Var)) {
+            return VariableStatementInit();
+        }
+        return Expression();
+    }
+
+    /**
+     * VariableStatementInit
+     * : var VariableStatementList
+     */
+    private Statement VariableStatementInit() {
+        eat(TokenType.Var);
+        var declarations = VariableDeclarationList();
+        return VariableStatement.of(declarations);
+    }
+
+    /**
+     * VariableStatement
+     * : 'var' VariableDeclarationList '\n'?
+     * ;
+     */
+    private Statement VariableStatement() {
+//        eat(TokenType.Var); // # no need to eat as it is already current
+        var statement = VariableStatementInit();
+        if (IsLookAhead(TokenType.lineTerminator())) {
+            eat(TokenType.lineTerminator());
+        }
+        return statement;
     }
 
     /**
@@ -140,20 +247,6 @@ public class Parser {
             eat(TokenType.CloseBraces, "Error");
         }
         return res;
-    }
-
-    /**
-     * VariableStatement
-     * : 'var' VariableDeclarationList '\n'?
-     * ;
-     */
-    private Statement VariableStatement() {
-        eat(TokenType.Var); // # no need to eat as it is already current
-        var declarations = VariableDeclarationList();
-        if (IsLookAhead(TokenType.lineTerminator())) {
-            eat(TokenType.lineTerminator());
-        }
-        return VariableStatement.of(declarations);
     }
 
     /**
@@ -386,6 +479,7 @@ public class Parser {
 
         return left;
     }
+
     /**
      * UnaryExpression
      * : LeftHandSideExpression
@@ -477,7 +571,7 @@ public class Parser {
      */
     private Expression Literal() {
         return switch (current.getType()) {
-            case Equality_Operator -> BooleanLiteral();
+            case True, False -> BooleanLiteral();
             case Null -> NullLiteral.of();
             case Number -> new NumericLiteral(current.getValue());
             case String -> new StringLiteral(current.getValue());
@@ -492,8 +586,8 @@ public class Parser {
      * ;
      */
     private Expression BooleanLiteral() {
-        var literal = eat();
-        return BooleanLiteral.of(literal.getValue());
+//        var literal = eat();
+        return BooleanLiteral.of(current.getValue());
     }
 
     private Token lookAhead() {

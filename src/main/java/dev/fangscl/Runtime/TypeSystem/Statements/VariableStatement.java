@@ -2,6 +2,7 @@ package dev.fangscl.Runtime.TypeSystem.Statements;
 
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Runtime.TypeSystem.Expressions.VariableDeclaration;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Builder
 public class VariableStatement extends Statement {
     private List<VariableDeclaration> declarations;
 

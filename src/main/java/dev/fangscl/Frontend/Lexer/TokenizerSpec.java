@@ -30,7 +30,7 @@ class TokenizerSpec {
 // --------------------------------- Whitespace --------------------------------------------------------
             new Entry("^\\n", TokenType.lineTerminator()),
             new Entry("^\\s+", TokenType.WhiteSpace),
-//            new Entry("^;", TokenType.LineTerminator),
+            new Entry("^;", TokenType.SemiColon),
 
 // --------------------------------- Assignment --------------------------------------------------------
             new Entry("^[!=]=", TokenType.Equality_Operator),
@@ -56,6 +56,8 @@ class TokenizerSpec {
             new Entry("^\\bvar\\b", TokenType.Var),
             new Entry("^\\bif\\b", TokenType.If),
             new Entry("^\\belse\\b", TokenType.Else),
+            new Entry("^\\bwhile\\b", TokenType.While),
+            new Entry("^\\bfor\\b", TokenType.For),
             new Entry("^\\btrue\\b", TokenType.True),
             new Entry("^\\bfalse\\b", TokenType.False),
             new Entry("^\\bnull\\b", TokenType.Null),
