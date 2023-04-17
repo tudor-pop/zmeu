@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,7 +61,7 @@ public class BlockStatement extends Statement {
     }
 
     public static Statement of() {
-        return new BlockStatement();
+        return new BlockStatement(Collections.emptyList());
     }
 
     public static Statement of(float value) {

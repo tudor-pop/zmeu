@@ -24,27 +24,35 @@ public class IfStatementTest extends StatementTest {
                 """));
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
-                        BlockStatement.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")))));
+                        BlockStatement.of(
+                                ExpressionStatement.of(
+                                        AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")
+                                )
+                        )
+                )
+        );
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
 
     @Test
-    void testIfStatementNoCurly() {
+    void testIfStatementXNoCurly() {
         var res = parser.produceAST(tokenizer.tokenize("""
                 if (x) x=1
                 """));
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "="))));
+                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")
+                        )
+                )
+        );
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
 
     @Test
-    void testIfStatementNoCurlyNewLine() {
+    void testIfStatementNoCurly() {
         var res = parser.produceAST(tokenizer.tokenize("""
                 if (x) 
                     x=1
@@ -58,7 +66,24 @@ public class IfStatementTest extends StatementTest {
     }
 
     @Test
-    void testIfStatementNoCurlyNewLineXY() {
+    void testIfElseStatementBlocks() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                if (x) { 
+                    1
+                } else { 
+                    2
+                }
+                """));
+        var expected = Program.of(
+                IfStatement.of(Identifier.of("x"),
+                        BlockStatement.of(ExpressionStatement.of(Literal.of(1))),
+                        BlockStatement.of(ExpressionStatement.of(Literal.of(2)))));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testIfStatementXBlock() {
         var res = parser.produceAST(tokenizer.tokenize("""
                 if (x) {
                     if(y) x=1
@@ -80,18 +105,121 @@ public class IfStatementTest extends StatementTest {
     }
 
     @Test
-    void testIfElseStatement() {
+    void testIfStatementNoBlockY() {
         var res = parser.produceAST(tokenizer.tokenize("""
-                if (x) { 
-                    1
-                } else { 
-                    2
-                }
+                if (x) 
+                    if(y) x=1
                 """));
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
-                        BlockStatement.of(ExpressionStatement.of(Literal.of(1))),
-                        BlockStatement.of(ExpressionStatement.of(Literal.of(2)))));
+                        IfStatement.of(
+                                Identifier.of("y"),
+                                ExpressionStatement.of(
+                                        AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "="))
+                        )
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testIfStatementXCurlyY() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                if (x) 
+                    if(y){ x=1 }
+                """));
+        var expected = Program.of(
+                IfStatement.of(Identifier.of("x"),
+                        IfStatement.of(
+                                Identifier.of("y"),
+                                BlockStatement.of(
+                                        ExpressionStatement.of(
+                                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")
+                                        )
+                                )
+                        )
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testIfStatementNestedElse() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                if (x) 
+                    if(y) {} else { }
+                """));
+        var expected = Program.of(
+                IfStatement.of(Identifier.of("x"),
+                        IfStatement.of(
+                                Identifier.of("y"),
+                                BlockStatement.of(),
+                                BlockStatement.of()
+                        )
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testIfStatementNestedElseElse() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                if (x) 
+                    if(y) {} else { } else {}
+                """));
+        var expected = Program.of(
+                IfStatement.of(Identifier.of("x"),
+                        IfStatement.of(
+                                Identifier.of("y"),
+                                BlockStatement.of(),
+                                BlockStatement.of()
+                        ),
+                        BlockStatement.of()
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testIfStatementNestedElseElseInline() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                if (x) if(y) {} else { } else {}
+                """));
+        var expected = Program.of(
+                IfStatement.of(Identifier.of("x"),
+                        IfStatement.of(
+                                Identifier.of("y"),
+                                BlockStatement.of(),
+                                BlockStatement.of()
+                        ),
+                        BlockStatement.of()
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testIfStatementNestedElseElseAssignInline() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                if (x) if(y) {} else { } else { x=2}
+                """));
+        var expected = Program.of(
+                IfStatement.of(Identifier.of("x"),
+                        IfStatement.of(
+                                Identifier.of("y"),
+                                BlockStatement.of(),
+                                BlockStatement.of()
+                        ),
+                        BlockStatement.of(ExpressionStatement.of(
+                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "=")
+                        ))
+                )
+        );
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
