@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parse;
 
+import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
@@ -57,8 +58,62 @@ public class RelationalTest extends StatementTest {
                         BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(2), "+"), NumericLiteral.of(10),
                         ">")
         ));
-        assertEquals(expected, res);
         log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void testLessLowerPrecedenceThanAdditiveTrue() {
+        var res = parser.produceAST(tokenizer.tokenize("x > 2 == true"));
+        var expected = Program.of(ExpressionStatement.of(
+                BinaryExpression.of(
+                        BinaryExpression.of(
+                                Identifier.of("x"), NumericLiteral.of(2), ">"),
+                        BooleanLiteral.of(true),
+                        "==")
+        ));
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+    @Test
+    void testLessLowerPrecedenceThanAdditiveFalse() {
+        var res = parser.produceAST(tokenizer.tokenize("x > 2 == false"));
+        var expected = Program.of(ExpressionStatement.of(
+                BinaryExpression.of(
+                        BinaryExpression.of(
+                                Identifier.of("x"), NumericLiteral.of(2), ">"),
+                        BooleanLiteral.of(false),
+                        "==")
+        ));
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+    @Test
+    void testLessLowerPrecedenceThanAdditiveNotFalse() {
+        var res = parser.produceAST(tokenizer.tokenize("x > 2 != false"));
+        var expected = Program.of(ExpressionStatement.of(
+                BinaryExpression.of(
+                        BinaryExpression.of(
+                                Identifier.of("x"), NumericLiteral.of(2), ">"),
+                        BooleanLiteral.of(false),
+                        "!=")
+        ));
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void testLessLowerPrecedenceThanAdditiveNotTrue() {
+        var res = parser.produceAST(tokenizer.tokenize("x > 2 != true"));
+        var expected = Program.of(ExpressionStatement.of(
+                BinaryExpression.of(
+                        BinaryExpression.of(
+                                Identifier.of("x"), NumericLiteral.of(2), ">"),
+                        BooleanLiteral.of(true),
+                        "!=")
+        ));
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
     }
 
 }

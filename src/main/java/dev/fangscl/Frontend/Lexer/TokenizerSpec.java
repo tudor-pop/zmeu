@@ -33,7 +33,7 @@ class TokenizerSpec {
 //            new Entry("^;", TokenType.LineTerminator),
 
 // --------------------------------- Assignment --------------------------------------------------------
-            new Entry("^==", TokenType.Equal_Equal),
+            new Entry("^[!=]=", TokenType.Equality_Operator),
             // =, +=, -=, /=, *=
             new Entry("^=", TokenType.Equal),
             new Entry("^[\\+\\-\\*\\/]=", TokenType.Equal_Complex),
@@ -43,7 +43,6 @@ class TokenizerSpec {
             new Entry("^\\*", TokenType.Multiply),
             //todo add exponentiation ^
             new Entry("^-", TokenType.Minus),
-            new Entry("^!=", TokenType.Bang_Equal),
             new Entry("^<=", TokenType.Less_Equal),
             new Entry("^>=", TokenType.Greater_Equal),
             new Entry("^<", TokenType.Less),
@@ -51,9 +50,13 @@ class TokenizerSpec {
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
 
+// --------------------------------- Keywords --------------------------------------------------------
             new Entry("^\\bvar\\b", TokenType.Var),
             new Entry("^\\bif\\b", TokenType.If),
             new Entry("^\\belse\\b", TokenType.Else),
+            new Entry("^\\btrue\\b", TokenType.True),
+            new Entry("^\\bfalse\\b", TokenType.False),
+            new Entry("^\\bnull\\b", TokenType.Null),
             new Entry("^\\w+", TokenType.Identifier)
     );
 

@@ -2,10 +2,7 @@ package dev.fangscl.Frontend.Parser;
 
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.Literal;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Runtime.TypeSystem.Expressions.*;
 import dev.fangscl.Runtime.TypeSystem.Program;
 import dev.fangscl.Runtime.TypeSystem.Statements.*;
@@ -241,11 +238,11 @@ public class Parser {
 
     /**
      * AssignmentExpression
-     * : RelationalExpression
+     * : EqualityExpression
      * | LeftHandSideExpression AssignmentOperator AssignmentExpression
      */
     private Expression AssignmentExpression() {
-        Expression left = RelationalExpression();
+        Expression left = EqualityExpression();
         if (!lookAhead().isAssignment()) {
             return left;
         }
@@ -271,6 +268,24 @@ public class Parser {
         }
         var operator = eat();
         return BinaryExpression.of(additive, RelationalExpression(), operator.getValue());
+    }
+
+    /**
+     * EQUALITY_OPERATOR: == !=
+     * x == y
+     * x != y
+     * EqualityExpression
+     * : RelationalExpression EQUALITY_OPERATOR EqualityExpression
+     * | RelationalExpression
+     * ;
+     */
+    private Expression EqualityExpression() {
+        var relationalExpression = RelationalExpression();
+        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Equality_Operator)) {
+            return relationalExpression;
+        }
+        var operator = eat();
+        return BinaryExpression.of(relationalExpression, EqualityExpression(), operator.getValue());
     }
 
     /**
@@ -355,6 +370,7 @@ public class Parser {
                 eat();
                 yield AssignmentExpression();
             }
+            case Equality_Operator -> Literal();
             case Number, String -> {
                 eat();
                 yield Literal();
@@ -368,9 +384,10 @@ public class Parser {
     /**
      * LeftHandSideExpression
      * : Identifier
+     * | Literal
      */
     private Expression LeftHandSideExpression() {
-        return Identifier();
+        return lookAhead().isLiteral() ? Literal() : Identifier();
     }
 
     /**
@@ -395,13 +412,33 @@ public class Parser {
         return res;
     }
 
+    /**
+     * Literal
+     * : NumericLiteral
+     * | BooleanLiteral
+     * | StringLiteral
+     * | NullLiteral
+     * ;
+     */
     private Expression Literal() {
         return switch (current.getType()) {
-            case Identifier -> new Identifier(current.getValue());
+            case Equality_Operator -> BooleanLiteral();
+            case Null -> NullLiteral.of();
             case Number -> new NumericLiteral(current.getValue());
             case String -> new StringLiteral(current.getValue());
             default -> new ErrorExpression(current.getValue());
         };
+    }
+
+    /**
+     * BooleanLiteral
+     * : 'true'
+     * | 'false'
+     * ;
+     */
+    private Expression BooleanLiteral() {
+        var literal = eat();
+        return BooleanLiteral.of(literal.getValue());
     }
 
     private Token lookAhead() {

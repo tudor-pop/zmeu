@@ -192,7 +192,7 @@ public class TokenizerTest {
     @Test
     void testNotEquals() {
         var result = tokenizer.tokenizeLiteral("!=");
-        Assertions.assertEquals(TokenType.Bang_Equal, result.getType());
+        Assertions.assertEquals(TokenType.Equality_Operator, result.getType());
         Assertions.assertEquals("!=", result.getValue());
         log.info(result);
     }
@@ -200,7 +200,7 @@ public class TokenizerTest {
     @Test
     void testEqualsEquals() {
         var result = tokenizer.tokenizeLiteral("==");
-        Assertions.assertEquals(TokenType.Equal_Equal, result.getType());
+        Assertions.assertEquals(TokenType.Equality_Operator, result.getType());
         Assertions.assertEquals("==", result.getValue());
         log.info(result);
     }

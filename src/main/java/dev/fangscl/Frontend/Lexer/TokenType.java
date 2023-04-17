@@ -16,13 +16,12 @@ public enum TokenType {
     /******   Expressions   ******/
     Equal,
     Equal_Complex,
-    Equal_Equal,
     Greater,
     Greater_Equal,
     Less,
     Less_Equal,
     Bang,
-    Bang_Equal,
+    Equality_Operator,
     /***********   Keywords   ******************/
     And, Or, Schema, Return, For, While, ReadOnly, If, Else, False, True, Fun,
     Var,
@@ -143,6 +142,10 @@ public enum TokenType {
 
     public static boolean isKeyword(String keyword) {
         return toKeyword(keyword) != Unknown;
+    }
+
+    public static boolean isLiteral(TokenType keyword) {
+        return isAny(keyword, TokenType.String, TokenType.True, TokenType.False, TokenType.Null, TokenType.Number);
     }
 
 

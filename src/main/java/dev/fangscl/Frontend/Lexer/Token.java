@@ -50,6 +50,10 @@ public class Token {
         return is(TokenType.Equal, TokenType.Equal_Complex);
     }
 
+    public boolean isLiteral() {
+        return TokenType.isLiteral(this.type);
+    }
+
     public static Token of(Object value, TokenType type, Object raw, int line) {
         return new Token(value, type, raw, line);
     }
