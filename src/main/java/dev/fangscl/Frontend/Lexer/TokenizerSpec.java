@@ -43,10 +43,7 @@ class TokenizerSpec {
             new Entry("^\\*", TokenType.Multiply),
             //todo add exponentiation ^
             new Entry("^-", TokenType.Minus),
-            new Entry("^<=", TokenType.Less_Equal),
-            new Entry("^>=", TokenType.Greater_Equal),
-            new Entry("^<", TokenType.Less),
-            new Entry("^>", TokenType.Greater),
+            new Entry("^[<>]=?", TokenType.RelationalOperator),
             // match / only if not followed by another /
             new Entry("^/(?!/)", TokenType.Division),
 

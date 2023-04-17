@@ -16,10 +16,7 @@ public enum TokenType {
     /******   Expressions   ******/
     Equal,
     Equal_Complex,
-    Greater,
-    Greater_Equal,
-    Less,
-    Less_Equal,
+    RelationalOperator,
     Bang,
     Equality_Operator,
     /***********   Keywords   ******************/

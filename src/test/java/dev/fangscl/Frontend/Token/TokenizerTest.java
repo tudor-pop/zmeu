@@ -208,7 +208,7 @@ public class TokenizerTest {
     @Test
     void testLessEquals() {
         var result = tokenizer.tokenizeLiteral("<=");
-        Assertions.assertEquals(TokenType.Less_Equal, result.getType());
+        Assertions.assertEquals(TokenType.RelationalOperator, result.getType());
         Assertions.assertEquals("<=", result.getValue());
         log.info(result);
     }
@@ -216,7 +216,7 @@ public class TokenizerTest {
     @Test
     void testLess() {
         var result = tokenizer.tokenizeLiteral("<");
-        Assertions.assertEquals(TokenType.Less, result.getType());
+        Assertions.assertEquals(TokenType.RelationalOperator, result.getType());
         Assertions.assertEquals("<", result.getValue());
         log.info(result);
     }
@@ -224,7 +224,7 @@ public class TokenizerTest {
     @Test
     void testGreater() {
         var result = tokenizer.tokenizeLiteral(">");
-        Assertions.assertEquals(TokenType.Greater, result.getType());
+        Assertions.assertEquals(TokenType.RelationalOperator, result.getType());
         Assertions.assertEquals(">", result.getValue());
         log.info(result);
     }
@@ -232,7 +232,7 @@ public class TokenizerTest {
     @Test
     void testGreaterEquals() {
         var result = tokenizer.tokenizeLiteral(">=");
-        Assertions.assertEquals(TokenType.Greater_Equal, result.getType());
+        Assertions.assertEquals(TokenType.RelationalOperator, result.getType());
         Assertions.assertEquals(">=", result.getValue());
         log.info(result);
     }

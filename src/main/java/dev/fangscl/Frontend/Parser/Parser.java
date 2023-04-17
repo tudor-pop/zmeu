@@ -263,7 +263,7 @@ public class Parser {
      */
     private Expression RelationalExpression() {
         var additive = AdditiveExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Less_Equal, TokenType.Greater_Equal, TokenType.Less, TokenType.Greater)) {
+        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.RelationalOperator)) {
             return additive;
         }
         var operator = eat();
