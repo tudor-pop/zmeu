@@ -102,6 +102,8 @@ public class Parser {
      * | IfStatement
      * | IterationStatement
      * | ForStatement
+     * | FunctionDeclarationStatement
+     * | ReturnStatement
      * ;
      */
     @Nullable
@@ -110,6 +112,8 @@ public class Parser {
             case NewLine -> new EmptyStatement();
             case OpenBraces -> BlockStatement();
             case If -> IfStatement();
+            case Fun -> FunctionDeclarationStatement();
+            case Return -> ReturnStatement();
             case While, For -> IterationStatement();
             case Var -> VariableStatement();
             case EOF -> null;
@@ -296,8 +300,8 @@ public class Parser {
 
     /**
      * IfStatement
-     * : 'if' '(' Expression ')' '{'? Statement '}'?
-     * : 'if' '(' Expression ')' '{'? Statement '}'? 'else' '{'? Statement '}'?
+     * : 'if' '(' Expression ')' BlockStatement?
+     * : 'if' '(' Expression ')' BlockStatement? 'else' BlockStatement?
      * ;
      */
     private Statement IfStatement() {
@@ -319,6 +323,57 @@ public class Parser {
             alternate = Statement();
         }
         return IfStatement.of(test, consequent, alternate);
+    }
+
+    /**
+     * FunctionDeclarationStatement
+     * : 'fun' Identifier '(' OptParameterList ')' BlockStatement?
+     * ;
+     */
+    private Statement FunctionDeclarationStatement() {
+        eat(TokenType.Fun);
+        var test = Identifier();
+        eat(TokenType.OpenParenthesis);
+        var params = OptParameterList();
+        eat(TokenType.CloseParenthesis);
+
+        Statement body = BlockStatement();
+        return FunctionDeclarationStatement.of(test, params, body);
+    }
+
+    private List<Identifier> OptParameterList() {
+        return lookAhead().is(TokenType.CloseParenthesis) ? Collections.emptyList() : ParameterList();
+    }
+
+    /**
+     * ParameterList
+     * : Identifier
+     * | ParameterList, Identifier
+     * ;
+     */
+    private List<Identifier> ParameterList() {
+        var params = new ArrayList<Identifier>();
+        do {
+            params.add(Identifier());
+        } while (IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
+
+        return params;
+    }
+
+    /**
+     * ReturnStatement
+     * : 'return' OptExpression '\n'
+     * ;
+     */
+    private Statement ReturnStatement() {
+        eat(TokenType.Return);
+        var arg = OptExpression();
+        eat(TokenType.lineTerminator());
+        return ReturnStatement.of(arg);
+    }
+
+    private Expression OptExpression() {
+        return IsLookAhead(TokenType.lineTerminator()) ? null : Expression();
     }
 
     private boolean IsLookAhead(TokenType type) {
@@ -544,7 +599,7 @@ public class Parser {
      * : IDENTIFIER
      * ;
      */
-    private Expression Identifier() {
+    private Identifier Identifier() {
         var id = eat(TokenType.Identifier);
         return new Identifier(id.getValue());
     }

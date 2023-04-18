@@ -236,7 +236,7 @@ public class IfStatementTest extends StatementTest {
                 """));
         var expected = Program.of(
                 IfStatement.of(
-                        BinaryExpression.of(Identifier.of("x"), Literal.of(1), ">"),
+                        BinaryExpression.of("x", 1, ">"),
                         BlockStatement.of(ExpressionStatement.of(
                                 AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "="))
                         ),

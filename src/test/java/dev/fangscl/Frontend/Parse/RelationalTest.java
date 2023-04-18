@@ -1,8 +1,5 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.LogicalExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
@@ -18,8 +15,7 @@ public class RelationalTest extends StatementTest {
     @Test
     void testGreaterThan() {
         var res = parser.produceAST(tokenizer.tokenize("x>2"));
-        var expected = Program.of(ExpressionStatement.of(
-                BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(2), ">")));
+        var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, ">")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -27,8 +23,7 @@ public class RelationalTest extends StatementTest {
     @Test
     void testGreaterThanEq() {
         var res = parser.produceAST(tokenizer.tokenize("x>=2"));
-        var expected = Program.of(ExpressionStatement.of(
-                BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(2), ">=")));
+        var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, ">=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -36,8 +31,7 @@ public class RelationalTest extends StatementTest {
     @Test
     void testLessThan() {
         var res = parser.produceAST(tokenizer.tokenize("x<2"));
-        var expected = Program.of(ExpressionStatement.of(
-                BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(2), "<")));
+        var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, "<")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -45,8 +39,7 @@ public class RelationalTest extends StatementTest {
     @Test
     void testLessThanEq() {
         var res = parser.produceAST(tokenizer.tokenize("x<=2"));
-        var expected = Program.of(ExpressionStatement.of(
-                BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(2), "<=")));
+        var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, "<=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -55,9 +48,7 @@ public class RelationalTest extends StatementTest {
     void testLessLowerPrecedenceThanAdditive() {
         var res = parser.produceAST(tokenizer.tokenize("x+2 > 10"));
         var expected = Program.of(ExpressionStatement.of(
-                BinaryExpression.of(
-                        BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(2), "+"), NumericLiteral.of(10),
-                        ">")
+                BinaryExpression.of(BinaryExpression.of("x", 2, "+"), 10, ">")
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -68,10 +59,7 @@ public class RelationalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 2 == true"));
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(2), ">"),
-                        BooleanLiteral.of(true),
-                        "==")
+                        BinaryExpression.of("x", 2, ">"), true, "==")
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -82,10 +70,7 @@ public class RelationalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 2 == false"));
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(2), ">"),
-                        BooleanLiteral.of(false),
-                        "==")
+                        BinaryExpression.of("x", 2, ">"), false, "==")
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -96,10 +81,7 @@ public class RelationalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 2 != false"));
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(2), ">"),
-                        BooleanLiteral.of(false),
-                        "!=")
+                        BinaryExpression.of("x", 2, ">"), false, "!=")
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -110,10 +92,7 @@ public class RelationalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 2 != true"));
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(2), ">"),
-                        BooleanLiteral.of(true),
-                        "!=")
+                        BinaryExpression.of("x", 2, ">"), true, "!=")
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -124,10 +103,8 @@ public class RelationalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 0 && y < 0"));
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("&&",
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(0), ">"),
-                        BinaryExpression.of(
-                                Identifier.of("y"), NumericLiteral.of(0), "<")
+                        BinaryExpression.of("x", 0, ">"),
+                        BinaryExpression.of("y", 0, "<")
                 )
         ));
         log.info(gson.toJson(res));
@@ -139,10 +116,8 @@ public class RelationalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 0 || y < 0"));
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("||",
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(0), ">"),
-                        BinaryExpression.of(
-                                Identifier.of("y"), NumericLiteral.of(0), "<")
+                        BinaryExpression.of("x", 0, ">"),
+                        BinaryExpression.of("y", 0, "<")
                 )
         ));
         log.info(gson.toJson(res));

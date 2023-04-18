@@ -61,6 +61,8 @@ class TokenizerSpec {
             new Entry("^\\btrue\\b", TokenType.True),
             new Entry("^\\bfalse\\b", TokenType.False),
             new Entry("^\\bnull\\b", TokenType.Null),
+            new Entry("^\\bfun\\b", TokenType.Fun),
+            new Entry("^\\breturn\\b", TokenType.Return),
             new Entry("^\\w+", TokenType.Identifier)
     );
 

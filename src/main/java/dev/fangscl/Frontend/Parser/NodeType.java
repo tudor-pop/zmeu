@@ -5,6 +5,8 @@ public enum NodeType {
     ExpressionStatement,
     BlockStatement,
     IfStatement,
+    FunctionDeclarationStatement,
+    ReturnStatement,
     WhileStatement,
     ForStatement,
 

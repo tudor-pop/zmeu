@@ -1,7 +1,5 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
 import dev.fangscl.Runtime.TypeSystem.Expressions.LogicalExpression;
 import dev.fangscl.Runtime.TypeSystem.Program;
@@ -19,10 +17,8 @@ public class LogicalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 0 && y < 0"));
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("&&",
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(0), ">"),
-                        BinaryExpression.of(
-                                Identifier.of("y"), NumericLiteral.of(0), "<")
+                        BinaryExpression.of("x", 0, ">"),
+                        BinaryExpression.of("y", 0, "<")
                 )
         ));
         log.info(gson.toJson(res));
@@ -34,10 +30,8 @@ public class LogicalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 0 || y < 0"));
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("||",
-                        BinaryExpression.of(
-                                Identifier.of("x"), NumericLiteral.of(0), ">"),
-                        BinaryExpression.of(
-                                Identifier.of("y"), NumericLiteral.of(0), "<")
+                        BinaryExpression.of("x", 0, ">"),
+                        BinaryExpression.of("y", 0, "<")
                 )
         ));
         log.info(gson.toJson(res));
@@ -49,10 +43,10 @@ public class LogicalTest extends StatementTest {
         var res = parser.produceAST(tokenizer.tokenize("x > 0 || y < 0 && z < 0"));
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("||",
-                        BinaryExpression.of(">", Identifier.of("x"), NumericLiteral.of(0)),
+                        BinaryExpression.of(">", "x", 0),
                         LogicalExpression.of("&&",
-                                BinaryExpression.of("<", Identifier.of("y"), NumericLiteral.of(0)),
-                                BinaryExpression.of("<", Identifier.of("z"), NumericLiteral.of(0)))
+                                BinaryExpression.of("<", "y", 0),
+                                BinaryExpression.of("<", "z", 0))
                 )));
         log.info(gson.toJson(res));
         assertEquals(expected, res);

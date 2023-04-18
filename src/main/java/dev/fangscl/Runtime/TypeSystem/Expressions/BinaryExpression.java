@@ -1,5 +1,7 @@
 package dev.fangscl.Runtime.TypeSystem.Expressions;
 
+import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -51,6 +53,10 @@ public class BinaryExpression extends Expression {
         return of(left, Literal.of(right), operator);
     }
 
+    public static Expression of(Expression left, boolean right, Object operator) {
+        return of(left, BooleanLiteral.of(right), operator);
+    }
+
     public static Expression of(double left, Expression right, Object operator) {
         return of(Literal.of(left), right, operator);
     }
@@ -65,6 +71,18 @@ public class BinaryExpression extends Expression {
 
     public static Expression of(double left, double right, Object operator) {
         return of(Literal.of(left), Literal.of(right), operator);
+    }
+
+    public static Expression of(String operator, String left, String right) {
+        return of(operator, Identifier.of(left), Identifier.of(right));
+    }
+
+    public static Expression of(String operator, String left, int right) {
+        return of(operator, Identifier.of(left), Literal.of(right));
+    }
+
+    public static Expression of(String identifier, int left, String operator) {
+        return of(operator, Identifier.of(identifier), Literal.of(left));
     }
 
     @Override
