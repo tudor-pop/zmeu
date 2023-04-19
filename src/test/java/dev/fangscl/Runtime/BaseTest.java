@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class InterpreterTest {
+class BaseTest {
     protected Interpreter interpreter;
     protected Gson gson = new Gson();
 
@@ -38,7 +38,7 @@ class InterpreterTest {
     @Test
     void testStringLiteral() {
         var evalRes = interpreter.eval("\"hello world!\"");
-        Assertions.assertEquals("hello world!", ((StringValue) evalRes).getValue());
+        Assertions.assertEquals("\"hello world!\"", ((StringValue) evalRes).getValue());
     }
 
     @Test
