@@ -27,5 +27,6 @@ public enum NodeType {
     LogicalExpression,
     UnaryExpression,
     AssignmentExpression,
-    MemberExpression
+    MemberExpression,
+    CallExpression
 }

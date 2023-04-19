@@ -591,12 +591,66 @@ public class Parser {
 
     /**
      * LeftHandSideExpression
-     * : PrimaryExpression
-     * | MemberExpression
+     * : CallExpression
      * ;
      */
     private Expression LeftHandSideExpression() {
-        return MemberExpression();
+        return CallMemberExpression();
+    }
+    /**
+     * CallMemberExpression
+     * : MemberExpression
+     * | CallExpression
+     * ;
+     */
+    private Expression CallMemberExpression() {
+        var member =  MemberExpression();
+        if (IsLookAhead(TokenType.OpenParenthesis)) {
+            return CallExpression(member);
+        }
+        return member;
+    }
+    /**
+     * CallExpression
+     * : Callee Arguments
+     * ;
+     * Callee
+     * : MemberExpression
+     * | CallExpression
+     * ;
+     */
+    private Expression CallExpression(Expression member) {
+        var res = CallExpression.of(member, Arguments());
+        if (IsLookAhead(TokenType.OpenParenthesis)) {
+            res = CallExpression(res);
+        }
+        return res;
+    }
+
+    /**
+     * Arguments
+     * : '(' OptArgumentsList ')'
+     * ;
+     */
+    private List<Expression> Arguments() {
+        eat(TokenType.OpenParenthesis);
+        var list = IsLookAhead(TokenType.CloseParenthesis) ? Collections.<Expression>emptyList() : ArgumentList();
+        eat(TokenType.CloseParenthesis);
+        return list;
+    }
+
+    /**
+     * ArgumentList
+     * : AssignmentExpression
+     * | ArgumentList ',' AssignmentExpression
+     */
+    private List<Expression> ArgumentList() {
+        var arguments = new ArrayList<Expression>();
+        do {
+            arguments.add(AssignmentExpression());
+        } while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
+
+        return arguments;
     }
 
     /**
@@ -609,13 +663,17 @@ public class Parser {
     private Expression MemberExpression() {
         var object = PrimaryExpression();
         for (var next = lookAhead(); IsLookAhead(TokenType.Dot) || IsLookAhead(TokenType.OpenBrackets); next = lookAhead()) {
-            if (next.is(TokenType.Dot)) {
-                var property = MemberProperty();
-                object = MemberExpression.of(false, object, property);
-            } else if (next.is(TokenType.OpenBrackets)) {
-                var property = MemberPropertyIndex();
-                object = MemberExpression.of(true, object, property);
-            }
+            object = switch (next.getType()) {
+                case Dot -> {
+                    var property = MemberProperty();
+                    yield MemberExpression.of(false, object, property);
+                }
+                case OpenBrackets -> {
+                    var property = MemberPropertyIndex();
+                    yield MemberExpression.of(true, object, property);
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + next.getType());
+            };
         }
         return object;
     }

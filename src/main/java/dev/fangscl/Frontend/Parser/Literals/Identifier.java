@@ -5,6 +5,9 @@ import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Identifier extends Expression {
@@ -39,4 +42,9 @@ public class Identifier extends Expression {
     public static Identifier of(String left) {
         return new Identifier(left);
     }
+
+    public static List<Identifier> of(String... left) {
+        return Arrays.stream(left).map(Identifier::of).toList();
+    }
+
 }
