@@ -21,6 +21,7 @@ class TokenizerSpec {
             new Entry("^\\[", TokenType.OpenBrackets),
             new Entry("^\\]", TokenType.CloseBrackets),
             new Entry("^,", TokenType.Comma),
+            new Entry("^\\.", TokenType.Dot),
 // ---------------------------------- Literals ----------------------------------------------
             // match string: " str ", ' str '
             new Entry("^(\"|')[^(\"|')]*(\"|')", TokenType.String),

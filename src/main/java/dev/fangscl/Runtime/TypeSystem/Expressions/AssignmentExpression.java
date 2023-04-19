@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime.TypeSystem.Expressions;
 
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,8 +31,14 @@ public class AssignmentExpression extends Expression {
     public static Expression of(Expression left, Expression right, Object operator) {
         return new AssignmentExpression(left, right, operator);
     }
+    public static Expression of(Expression left, int right, Object operator) {
+        return new AssignmentExpression(left, NumericLiteral.of(right), operator);
+    }
     public static Expression of(Object operator, Expression left, Expression right) {
         return new AssignmentExpression(left, right, operator);
+    }
+    public static Expression of(Object operator, Expression left, int right) {
+        return new AssignmentExpression(left, NumericLiteral.of(right), operator);
     }
 
 

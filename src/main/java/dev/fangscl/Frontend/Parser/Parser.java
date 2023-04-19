@@ -376,7 +376,7 @@ public class Parser {
         return IsLookAhead(TokenType.lineTerminator()) ? null : Expression();
     }
 
-    private boolean IsLookAhead(TokenType type) {
+    private boolean IsLookAhead(TokenType... type) {
         if (!iterator.hasNext()) {
             return false;
         }
@@ -391,7 +391,7 @@ public class Parser {
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
-        if (!lookAhead().isAssignment()) {
+        if (!IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
             return left;
         }
         var operator = AssignmentOperator().getValue();
@@ -408,7 +408,7 @@ public class Parser {
      */
     private Expression OrExpression() {
         var expression = AndExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Logical_Or)) {
+        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Logical_Or)) {
             return expression;
         }
         var operator = eat();
@@ -426,7 +426,7 @@ public class Parser {
      */
     private Expression AndExpression() {
         var expression = EqualityExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.Logical_And)) {
+        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Logical_And)) {
             return expression;
         }
         var operator = eat();
@@ -464,7 +464,7 @@ public class Parser {
      */
     private Expression RelationalExpression() {
         var expression = AdditiveExpression();
-        if (IsLookAhead(TokenType.EOF) || !lookAhead().is(TokenType.RelationalOperator)) {
+        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.RelationalOperator)) {
             return expression;
         }
         var operator = eat();
@@ -486,7 +486,7 @@ public class Parser {
     }
 
     private Expression isValidAssignment(Expression target, Object operator) {
-        if (target.is(NodeType.Identifier)) {
+        if (target.is(NodeType.Identifier, NodeType.MemberExpression)) {
             return target;
         }
         if (target instanceof Literal n)
@@ -570,6 +570,10 @@ public class Parser {
                 eat();
                 yield ParanthesizedExpression();
             }
+            case OpenBrackets -> {
+//                eat();
+                yield ParanthesizedExpression();
+            }
             case Equal -> {
                 eat();
                 yield AssignmentExpression();
@@ -588,10 +592,44 @@ public class Parser {
     /**
      * LeftHandSideExpression
      * : PrimaryExpression
+     * | MemberExpression
      * ;
      */
     private Expression LeftHandSideExpression() {
-        return PrimaryExpression();
+        return MemberExpression();
+    }
+
+    /**
+     * MemberExpression
+     * : PrimaryExpression
+     * | MemberExpression '.' MemberExpression
+     * | MemberExpression '[' Expression ']'
+     * ;
+     */
+    private Expression MemberExpression() {
+        var object = PrimaryExpression();
+        for (var next = lookAhead(); IsLookAhead(TokenType.Dot) || IsLookAhead(TokenType.OpenBrackets); next = lookAhead()) {
+            if (next.is(TokenType.Dot)) {
+                var property = MemberProperty();
+                object = MemberExpression.of(false, object, property);
+            } else if (next.is(TokenType.OpenBrackets)) {
+                var property = MemberPropertyIndex();
+                object = MemberExpression.of(true, object, property);
+            }
+        }
+        return object;
+    }
+
+    private Expression MemberPropertyIndex() {
+        eat(TokenType.OpenBrackets);
+        var property = Expression();
+        eat(TokenType.CloseBrackets);
+        return property;
+    }
+
+    private Expression MemberProperty() {
+        eat(TokenType.Dot);
+        return Identifier();
     }
 
     /**
