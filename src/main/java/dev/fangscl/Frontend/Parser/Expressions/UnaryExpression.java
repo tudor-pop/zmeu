@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.TypeSystem.Expressions;
+package dev.fangscl.Frontend.Parser.Expressions;
 
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;

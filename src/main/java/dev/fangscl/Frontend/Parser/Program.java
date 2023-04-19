@@ -1,7 +1,6 @@
-package dev.fangscl.Runtime.TypeSystem;
+package dev.fangscl.Frontend.Parser;
 
-import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
+import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

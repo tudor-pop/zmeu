@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Runtime.Interpreter;
-import dev.fangscl.Runtime.TypeSystem.Program;
+import dev.fangscl.Frontend.Parser.Program;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

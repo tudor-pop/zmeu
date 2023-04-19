@@ -1,7 +1,7 @@
-package dev.fangscl.Runtime.TypeSystem.Statements;
+package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

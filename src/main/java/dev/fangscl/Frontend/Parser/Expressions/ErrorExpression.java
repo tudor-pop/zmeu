@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.TypeSystem.Expressions;
+package dev.fangscl.Frontend.Parser.Expressions;
 
 public class ErrorExpression extends Expression {
     private String msg;

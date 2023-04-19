@@ -1,9 +1,9 @@
-package dev.fangscl.Runtime.TypeSystem.Statements;
+package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;

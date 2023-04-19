@@ -1,11 +1,11 @@
 package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
-import dev.fangscl.Runtime.TypeSystem.Program;
-import dev.fangscl.Runtime.TypeSystem.Statements.BlockStatement;
-import dev.fangscl.Runtime.TypeSystem.Statements.FunctionDeclarationStatement;
-import dev.fangscl.Runtime.TypeSystem.Statements.ReturnStatement;
+import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.FunctionDeclarationStatement;
+import dev.fangscl.Frontend.Parser.Statements.ReturnStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 

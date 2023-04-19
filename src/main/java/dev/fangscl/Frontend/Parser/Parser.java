@@ -2,10 +2,9 @@ package dev.fangscl.Frontend.Parser;
 
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
+import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
-import dev.fangscl.Runtime.TypeSystem.Expressions.*;
-import dev.fangscl.Runtime.TypeSystem.Program;
-import dev.fangscl.Runtime.TypeSystem.Statements.*;
+import dev.fangscl.Frontend.Parser.Statements.*;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;

@@ -2,9 +2,9 @@ package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Runtime.TypeSystem.Expressions.VariableDeclaration;
-import dev.fangscl.Runtime.TypeSystem.Program;
-import dev.fangscl.Runtime.TypeSystem.Statements.VariableStatement;
+import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
+import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 

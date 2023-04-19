@@ -1,12 +1,12 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.TypeSystem.Expressions.Expression;
-import dev.fangscl.Runtime.TypeSystem.Statements.Statement;
-import dev.fangscl.Runtime.TypeSystem.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
+import dev.fangscl.Frontend.Parser.Statements.Statement;
+import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
-import dev.fangscl.Runtime.TypeSystem.Program;
+import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
 

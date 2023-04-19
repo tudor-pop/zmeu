@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.TypeSystem.Statements;
+package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
