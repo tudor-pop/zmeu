@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class AssignmentTest extends StatementTest {
+public class AssignmentTest extends BaseTest {
 
     @Test
     void testAssignment() {

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class OperatorsTest extends StatementTest {
+public class OperatorsTest extends BaseTest {
 
 
     @Test

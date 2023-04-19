@@ -11,7 +11,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class BlockStatementTest extends StatementTest {
+public class BlockBaseTest extends BaseTest {
 
     @Test
     void testInteger() {

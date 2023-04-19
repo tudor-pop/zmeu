@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 
-class StatementTest {
+class BaseTest {
     protected Parser parser;
     protected Tokenizer tokenizer;
     protected Gson gson = new Gson().newBuilder().setPrettyPrinting().create();

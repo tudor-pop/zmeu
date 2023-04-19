@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class RelationalTest extends StatementTest {
+public class RelationalTest extends BaseTest {
 
     @Test
     void testGreaterThan() {

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class UnaryTest extends StatementTest {
+public class UnaryTest extends BaseTest {
 
     @Test
     void testLogicalUnary() {
