@@ -1,5 +1,7 @@
 package dev.fangscl.Runtime.Values;
 
+import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
+import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,6 +16,12 @@ public class BooleanValue extends RuntimeValue<Boolean> {
     }
     public static RuntimeValue of(boolean statement) {
         return new BooleanValue(statement);
+    }
+
+    public static RuntimeValue of(Statement statement) {
+        if (statement instanceof BooleanLiteral s)
+            return new BooleanValue(s.isValue());
+        throw new IllegalStateException();
     }
 
     @Override

@@ -1,9 +1,6 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.DecimalValue;
-import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
-import dev.fangscl.Runtime.Values.StringValue;
+import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
 import dev.fangscl.Runtime.exceptions.VarNotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -24,8 +21,26 @@ public class Environment {
         this.variables = new HashMap<>(32);
     }
 
+    public Environment(@Nullable Environment parent, Map<String, RuntimeValue<?>> variables) {
+        this.parent = parent;
+        this.variables = variables;
+    }
+
+    public Environment(Map<String, RuntimeValue<?>> variables) {
+        this.parent = null;
+        this.variables = variables;
+    }
+
+    public Environment(Map.Entry<String, RuntimeValue<?>>... variables) {
+        this.parent = null;
+        this.variables = new HashMap<>();
+        for (var variable : variables) {
+            this.variables.put(variable.getKey(), variable.getValue());
+        }
+    }
+
     public Environment() {
-        this(null);
+        this(new HashMap<>());
     }
 
     /**
@@ -57,6 +72,10 @@ public class Environment {
         return init(name, StringValue.of(value));
     }
 
+    public RuntimeValue init(String name, boolean value) {
+        return init(name, BooleanValue.of(value));
+    }
+
     /**
      * Assign a value to an existing variable
      * x = 10
@@ -73,6 +92,10 @@ public class Environment {
         }
         return resolve(varName) // search the scope
                 .get(varName); // return the value
+    }
+
+    public RuntimeValue evaluateVar(@Nullable RuntimeValue<String> varName) {
+        return evaluateVar(varName.getRuntimeValue());
     }
 
     /**

@@ -22,7 +22,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void integerLiteral() {
         var evalRes = interpreter.eval(NumericLiteral.of(10));
-        Assertions.assertEquals(10, ((IntegerValue) evalRes).getValue());
+        Assertions.assertEquals(10, evalRes.getRuntimeValue());
     }
 
     @Test

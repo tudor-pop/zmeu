@@ -1,6 +1,8 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
@@ -13,13 +15,10 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class Interpreter {
-    private final Environment global;
+    private Environment global;
 
     public Interpreter(Environment global) {
-        this.global = global;
-        this.global.init("null", new NullValue());
-        this.global.init("true", BooleanValue.of(true));
-        this.global.init("false", BooleanValue.of(false));
+        this.set(global);
     }
 
     public Interpreter() {
@@ -36,21 +35,36 @@ public class Interpreter {
         return lastEval;
     }
 
-    public RuntimeValue eval(Statement expression) {
+    public <R> RuntimeValue<R> eval(Statement expression) {
         return this.eval(expression, this.global);
     }
 
-    public RuntimeValue eval(Statement statement, Environment env) {
+    public <R> RuntimeValue<R> eval(Statement statement, Environment env) {
         return switch (statement.getKind()) {
             case Program -> eval((Program) statement, env);
             case StringLiteral -> StringValue.of(statement);
+            case BooleanLiteral -> BooleanValue.of(statement);
             case IntegerLiteral -> IntegerValue.of(statement);
             case DecimalLiteral -> DecimalValue.of(statement);
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getExpression(), env);
             case BinaryExpression -> eval((BinaryExpression) statement, env);
-            case Identifier, VariableDeclaration -> env.evaluateVar(((Identifier) statement).getSymbol());
+            case VariableDeclaration -> eval((VariableDeclaration) statement, env);
+            case AssignmentExpression -> eval((AssignmentExpression) statement, env);
+            case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
             default -> throw new RuntimeException("error");
         };
+    }
+
+    public <R> RuntimeValue<R> eval(AssignmentExpression expression, Environment env) {
+        RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
+        RuntimeValue right = eval(expression.getRight(), env);
+        return env.assign(left.getRuntimeValue(), right);
+    }
+
+    public RuntimeValue eval(VariableDeclaration expression, Environment env) {
+        String symbol = expression.getId().getSymbol();
+        RuntimeValue value = eval(expression.getInit());
+        return env.init(symbol, value);
     }
 
     public RuntimeValue eval(int expression) {
@@ -92,5 +106,12 @@ public class Interpreter {
             return new IntegerValue(res);
         }
         return null;
+    }
+
+    public void set(Environment environment) {
+        this.global = environment;
+        this.global.init("null", new NullValue());
+        this.global.init("true", BooleanValue.of(true));
+        this.global.init("false", BooleanValue.of(false));
     }
 }
