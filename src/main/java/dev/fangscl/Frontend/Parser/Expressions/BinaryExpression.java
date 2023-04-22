@@ -65,6 +65,10 @@ public class BinaryExpression extends Expression {
         return of(Literal.of(left), Literal.of(right), operator);
     }
 
+    public static Expression of(Object operator, int left, int right) {
+        return of(Literal.of(left), Literal.of(right), operator);
+    }
+
     public static Expression of(float left, float right, Object operator) {
         return of(Literal.of(left), Literal.of(right), operator);
     }

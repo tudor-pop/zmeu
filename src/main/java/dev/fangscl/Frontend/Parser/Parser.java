@@ -233,7 +233,7 @@ public class Parser {
      * ;
      */
     private Statement ExpressionStatement() {
-        return new ExpressionStatement(Expression());
+        return ExpressionStatement.of(Expression());
     }
 
     /**
