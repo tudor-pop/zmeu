@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class StringValue extends RuntimeValue {
+public class StringValue extends RuntimeValue<String> {
     private String value;
 
     public StringValue(String value) {
@@ -38,4 +38,9 @@ public class StringValue extends RuntimeValue {
         return new StringValue(statement);
     }
 
+
+    @Override
+    public String getRuntimeValue() {
+        return value;
+    }
 }

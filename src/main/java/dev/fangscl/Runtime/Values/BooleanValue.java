@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BooleanValue extends RuntimeValue {
+public class BooleanValue extends RuntimeValue<Boolean> {
     private boolean value;
 
     public BooleanValue(boolean value) {
@@ -14,5 +14,10 @@ public class BooleanValue extends RuntimeValue {
     }
     public static RuntimeValue of(boolean statement) {
         return new BooleanValue(statement);
+    }
+
+    @Override
+    public Boolean getRuntimeValue() {
+        return value;
     }
 }

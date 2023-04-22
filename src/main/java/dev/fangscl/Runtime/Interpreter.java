@@ -14,9 +14,9 @@ public class Interpreter {
 
     public Interpreter(Environment global) {
         this.global = global;
-        this.global.declareVar("null", new NullValue());
-        this.global.declareVar("true",  BooleanValue.of(true));
-        this.global.declareVar("false", BooleanValue.of(false));
+        this.global.init("null", new NullValue());
+        this.global.init("true",  BooleanValue.of(true));
+        this.global.init("false", BooleanValue.of(false));
     }
 
     public Interpreter() {

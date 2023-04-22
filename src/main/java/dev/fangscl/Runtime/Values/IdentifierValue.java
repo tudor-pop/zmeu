@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IdentifierValue extends RuntimeValue {
+public class IdentifierValue extends RuntimeValue<String> {
     private String value;
 
     public IdentifierValue(String value) {
@@ -16,5 +16,10 @@ public class IdentifierValue extends RuntimeValue {
 
     public IdentifierValue(Identifier e) {
         this(e.getSymbol());
+    }
+
+    @Override
+    public String getRuntimeValue() {
+        return value;
     }
 }

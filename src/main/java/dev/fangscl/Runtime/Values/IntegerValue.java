@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IntegerValue extends RuntimeValue {
+public class IntegerValue extends RuntimeValue<Integer> {
     private int value;
 
     public IntegerValue(int number) {
@@ -28,5 +28,10 @@ public class IntegerValue extends RuntimeValue {
 
     public static RuntimeValue of(int value) {
         return new IntegerValue(value);
+    }
+
+    @Override
+    public Integer getRuntimeValue() {
+        return value;
     }
 }

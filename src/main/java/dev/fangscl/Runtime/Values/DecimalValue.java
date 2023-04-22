@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DecimalValue extends RuntimeValue {
+public class DecimalValue extends RuntimeValue<Double> {
     private double value;
 
     public DecimalValue(double number) {
@@ -31,5 +31,10 @@ public class DecimalValue extends RuntimeValue {
 
     public static RuntimeValue of(double value) {
         return new DecimalValue(value);
+    }
+
+    @Override
+    public Double getRuntimeValue() {
+        return value;
     }
 }
