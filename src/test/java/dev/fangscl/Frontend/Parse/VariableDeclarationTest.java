@@ -57,5 +57,34 @@ public class VariableDeclarationTest extends BaseTest {
         log.info(gson.toJson(res));
     }
 
+    @Test
+    void testInitWithValues() {
+        var res = parser.produceAST(tokenizer.tokenize("var x=3,y=2"));
+        var expected = Program.of(
+                VariableStatement.of(
+                        VariableDeclaration.of(Identifier.of("x"),NumericLiteral.of(3)),
+                        VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
+                ));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void multiVarInitWithValues() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                var x=3
+                var y=2
+                """));
+        var expected = Program.of(
+                VariableStatement.of(
+                        VariableDeclaration.of(Identifier.of("x"),NumericLiteral.of(3))),
+                VariableStatement.of(
+                        VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
 
 }

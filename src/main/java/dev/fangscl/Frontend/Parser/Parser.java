@@ -222,7 +222,7 @@ public class Parser {
 //        eat(TokenType.Var); // # no need to eat as it is already current
         var statement = VariableStatementInit();
         if (IsLookAhead(TokenType.lineTerminator())) {
-            eat(TokenType.lineTerminator());
+//            eat(TokenType.lineTerminator());
         }
         return statement;
     }
