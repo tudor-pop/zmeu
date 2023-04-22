@@ -50,9 +50,9 @@ public class Interpreter {
             case DecimalLiteral -> DecimalValue.of(statement);
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getExpression(), env);
             case BinaryExpression -> eval((BinaryExpression) statement, env);
-            case BlockStatement -> eval((BlockStatement) statement, env);
+            case BlockStatement -> eval((BlockStatement) statement, new Environment(env));
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
-            case VariableStatement -> eval((VariableStatement) statement);
+            case VariableStatement -> eval((VariableStatement) statement, env);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
             case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
             default -> throw new RuntimeException("error");
@@ -79,10 +79,10 @@ public class Interpreter {
         return env.init(symbol, value);
     }
 
-    public RuntimeValue eval(VariableStatement statement) {
+    public RuntimeValue eval(VariableStatement statement, Environment env) {
         RuntimeValue res = new NullValue();
         for (var it : statement.getDeclarations()) {
-            res = eval(it);
+            res = eval(it, env);
         }
         return res;
     }
