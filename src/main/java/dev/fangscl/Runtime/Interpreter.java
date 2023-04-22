@@ -8,6 +8,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
@@ -49,6 +50,7 @@ public class Interpreter {
             case DecimalLiteral -> DecimalValue.of(statement);
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getExpression(), env);
             case BinaryExpression -> eval((BinaryExpression) statement, env);
+            case BlockStatement -> eval((BlockStatement) statement, env);
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
             case VariableStatement -> eval((VariableStatement) statement);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
@@ -63,6 +65,14 @@ public class Interpreter {
         return env.assign(left.getRuntimeValue(), right);
     }
 
+    public <R> RuntimeValue<R> eval(BlockStatement expression, Environment env) {
+        RuntimeValue res = new NullValue();
+        for (var it : expression.getExpression()) {
+            res = eval(it, env);
+        }
+        return res;
+    }
+
     public RuntimeValue eval(VariableDeclaration expression, Environment env) {
         String symbol = expression.getId().getSymbol();
         RuntimeValue value = eval(expression.getInit());
@@ -70,12 +80,11 @@ public class Interpreter {
     }
 
     public RuntimeValue eval(VariableStatement statement) {
-        var declarations = statement.getDeclarations();
-        return eval(declarations.get(0));
-//        for (var it : declarations) {
-//            var res = eval(it);
-//            return res;
-//        }
+        RuntimeValue res = new NullValue();
+        for (var it : statement.getDeclarations()) {
+            res = eval(it);
+        }
+        return res;
     }
 
     public RuntimeValue eval(int expression) {
