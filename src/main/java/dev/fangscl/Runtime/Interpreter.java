@@ -2,9 +2,8 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
@@ -16,8 +15,8 @@ public class Interpreter {
     public Interpreter(Environment global) {
         this.global = global;
         this.global.declareVar("null", new NullValue());
-        this.global.declareVar("true", new BooleanValue(true));
-        this.global.declareVar("false", new BooleanValue(false));
+        this.global.declareVar("true",  BooleanValue.of(true));
+        this.global.declareVar("false", BooleanValue.of(false));
     }
 
     public Interpreter() {
@@ -41,25 +40,26 @@ public class Interpreter {
     public RuntimeValue eval(Statement statement, Environment env) {
         return switch (statement.getKind()) {
             case Program -> eval((Program) statement, env);
-            case StringLiteral -> new StringValue((StringLiteral) statement);
-            case IntegerLiteral -> new IntegerValue((NumericLiteral) statement);
-            case DecimalLiteral -> new DecimalValue((NumericLiteral) statement);
-            case BooleanLiteral -> eval((BinaryExpression) statement, env);
+            case StringLiteral-> StringValue.of(statement);
+            case IntegerLiteral -> IntegerValue.of(statement);
+            case DecimalLiteral -> DecimalValue.of(statement);
+            case ExpressionStatement -> eval(((ExpressionStatement)statement).getExpression(), env);
+            case BinaryExpression -> eval((BinaryExpression) statement, env);
             case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
             default -> throw new RuntimeException("error");
         };
     }
 
     public RuntimeValue eval(int expression) {
-        return new IntegerValue(expression);
+        return IntegerValue.of(expression);
     }
 
     public RuntimeValue eval(String expression) {
-        return new StringValue(expression);
+        return StringValue.of(expression);
     }
 
     public RuntimeValue eval(boolean expression) {
-        return new BooleanValue(expression);
+        return BooleanValue.of(expression);
     }
 
     public RuntimeValue eval(float value) {
@@ -67,7 +67,7 @@ public class Interpreter {
     }
 
     public RuntimeValue eval(double expression) {
-        return new DecimalValue(expression);
+        return DecimalValue.of(expression);
     }
 
     private RuntimeValue eval(BinaryExpression expression, Environment environment) {

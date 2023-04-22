@@ -1,6 +1,7 @@
 package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,6 +26,16 @@ public class StringValue extends RuntimeValue {
 
     public StringValue(StringLiteral literal) {
         this(literal.getValue());
+    }
+
+    public static RuntimeValue of(Statement statement) {
+        if (statement instanceof StringLiteral s)
+            return new StringValue(s.getValue());
+        throw new IllegalStateException();
+    }
+
+    public static RuntimeValue of(String statement) {
+        return new StringValue(statement);
     }
 
 }
