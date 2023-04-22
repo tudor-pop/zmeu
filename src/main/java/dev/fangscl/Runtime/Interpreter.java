@@ -10,6 +10,7 @@ import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
+import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -49,6 +50,7 @@ public class Interpreter {
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getExpression(), env);
             case BinaryExpression -> eval((BinaryExpression) statement, env);
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
+            case VariableStatement -> eval((VariableStatement) statement);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
             case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
             default -> throw new RuntimeException("error");
@@ -65,6 +67,15 @@ public class Interpreter {
         String symbol = expression.getId().getSymbol();
         RuntimeValue value = eval(expression.getInit());
         return env.init(symbol, value);
+    }
+
+    public RuntimeValue eval(VariableStatement statement) {
+        var declarations = statement.getDeclarations();
+        return eval(declarations.get(0));
+//        for (var it : declarations) {
+//            var res = eval(it);
+//            return res;
+//        }
     }
 
     public RuntimeValue eval(int expression) {

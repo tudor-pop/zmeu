@@ -29,7 +29,7 @@ public class NumericLiteral extends Literal {
     }
 
     private void setDecimal(float value) {
-        setDecimal((double) value);
+        setDecimal(Double.parseDouble(String.valueOf(value)));
     }
 
     private void setDecimal(double value) {
