@@ -2,6 +2,7 @@ package dev.fangscl.Runtime;
 
 import com.google.gson.Gson;
 import dev.fangscl.Runtime.Values.IntegerValue;
+import dev.fangscl.Runtime.exceptions.VarNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,11 @@ public class EnvironmentTest {
         var expected = IntegerValue.of(1);
         Assertions.assertEquals(expected, res);
         Assertions.assertEquals(expected, environment.get("x"));
+    }
+
+    @Test
+    void lookupVar() {
+        Assertions.assertThrows(VarNotFoundException.class, () -> environment.evaluateVar("y"));
     }
 
 }

@@ -5,6 +5,7 @@ import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.RuntimeValue;
 import dev.fangscl.Runtime.Values.StringValue;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
+import dev.fangscl.Runtime.exceptions.VarNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +86,7 @@ public class Environment {
             return this;
         }
         if (parent == null) {
-            throw new RuntimeException("Variable not found: " + varname);
+            throw new VarNotFoundException(varname);
         }
         return this.parent.resolve(varname);
     }
