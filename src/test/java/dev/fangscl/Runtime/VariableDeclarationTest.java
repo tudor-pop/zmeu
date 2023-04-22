@@ -37,4 +37,58 @@ public class VariableDeclarationTest extends BaseTest {
     }
 
 
+    @Test
+    void varExpressionPlus() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2+2")));
+        var expected = IntegerValue.of(4);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void varExpressionMinus() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2-2")));
+        var expected = IntegerValue.of(0);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+    @Test
+    void varExpressionMultiplication() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2*2")));
+        var expected = IntegerValue.of(4);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void varExpressionDivision() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2/2")));
+        var expected = IntegerValue.of(1);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+    @Test
+    void varExpressionBoolean() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==2")));
+        var expected = BooleanValue.of(true);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void varExpressionBooleanFalse() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==1")));
+        var expected = BooleanValue.of(false);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+//
+//    @Test
+//    void varMultiDeclaration() {
+//        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var y,x = 2")));
+//        var expected = IntegerValue.of(false);
+//        assertEquals(expected, res);
+//        log.info(gson.toJson(res));
+//    }
+
 }

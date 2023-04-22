@@ -105,16 +105,18 @@ public class Interpreter {
     }
 
     private RuntimeValue eval(RuntimeValue lhs, RuntimeValue rhs, Object operator) {
-        if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn && operator instanceof String op) {
-            var res = switch (op) {
-                case "+" -> lhsn.getValue() + rhsn.getValue();
-                case "-" -> lhsn.getValue() - rhsn.getValue();
-                case "/" -> lhsn.getValue() / rhsn.getValue();
-                case "*" -> lhsn.getValue() * rhsn.getValue();
-                case "%" -> lhsn.getValue() % rhsn.getValue();
-                default -> throw new RuntimeException("Operator could not be evaluated");
-            };
-            return new IntegerValue(res);
+        if (operator instanceof String op) {
+            if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn) {
+                return switch (op) {
+                    case "+" -> IntegerValue.of(lhsn.getValue() + rhsn.getValue());
+                    case "-" -> IntegerValue.of(lhsn.getValue() - rhsn.getValue());
+                    case "/" -> IntegerValue.of(lhsn.getValue() / rhsn.getValue());
+                    case "*" -> IntegerValue.of(lhsn.getValue() * rhsn.getValue());
+                    case "%" -> IntegerValue.of(lhsn.getValue() % rhsn.getValue());
+                    case "==" -> BooleanValue.of(lhsn.getValue() == rhsn.getValue());
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
+            }
         }
         return null;
     }

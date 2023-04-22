@@ -17,7 +17,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testGlobalVarInt() {
+    void GlobalVarInt() {
         setGlobalVar(IntegerValue.of(2));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
@@ -27,7 +27,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testGlobalBool() {
+    void GlobalBool() {
         setGlobalVar(BooleanValue.of(false));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
@@ -37,7 +37,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testGlobalBoolTrue() {
+    void GlobalBoolTrue() {
         setGlobalVar(BooleanValue.of(true));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
@@ -47,7 +47,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testDecimal() {
+    void Decimal() {
         setGlobalVar(DecimalValue.of(1.1));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
@@ -58,7 +58,7 @@ public class AssignmentTest extends BaseTest {
 
 
     @Test
-    void testNull() {
+    void Null() {
         setGlobalVar(new NullValue());
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
@@ -68,7 +68,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testAssignmentInt() {
+    void AssignmentInt() {
         setGlobalVar(IntegerValue.of(1));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=2")));
@@ -78,7 +78,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testAssignmentIntSame() {
+    void AssignmentIntSame() {
         setGlobalVar(IntegerValue.of(1));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1")));
@@ -88,7 +88,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testAssignmentBool() {
+    void AssignmentBool() {
         setGlobalVar(BooleanValue.of(true));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=true")));
@@ -98,7 +98,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testAssignmentBoolDifferent() {
+    void AssignmentBoolDifferent() {
         setGlobalVar(BooleanValue.of(true));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=false")));
@@ -108,7 +108,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testAssignmentDecimalSame() {
+    void AssignmentDecimalSame() {
         setGlobalVar(DecimalValue.of(1.1));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.1")));
@@ -118,7 +118,7 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
-    void testAssignmentDecimalDifferent() {
+    void AssignmentDecimalDifferent() {
         setGlobalVar(DecimalValue.of(1.1));
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.2")));
