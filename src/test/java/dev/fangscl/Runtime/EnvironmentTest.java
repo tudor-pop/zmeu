@@ -28,7 +28,7 @@ public class EnvironmentTest {
 
     @Test
     void lookupVar() {
-        Assertions.assertThrows(VarNotFoundException.class, () -> environment.evaluateVar("y"));
+        Assertions.assertThrows(VarNotFoundException.class, () -> environment.lookup("y"));
     }
 
     @Test

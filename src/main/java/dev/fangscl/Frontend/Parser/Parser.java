@@ -297,7 +297,6 @@ public class Parser {
         return switch (lookAhead().getType()) {
             case OpenBraces -> BlockExpression();
             case OpenParenthesis -> LambdaExpression();
-//            case Lambda -> LambdaExpression();
             default -> AssignmentExpression();
         };
     }
@@ -409,6 +408,10 @@ public class Parser {
     /**
      * LambdaStatement
      * : AssignmentExpression*
+     * ;
+     * The lookahead logic might needed to be changed as I don't think this one scales.
+     * The problem is that the lambda has this form (a,b,c) -> {} while there could be some expressions
+     * like (1+2 + (3-4))
      */
     private Expression LambdaExpression() {
         if (IsLookAhead(2, TokenType.Number)) {
@@ -638,13 +641,14 @@ public class Parser {
      * : MemberExpression
      * | CallExpression
      * ;
+     * a.b()
      */
     private Expression CallMemberExpression() {
-        var member = MemberExpression();
+        var funBeingCalled = MemberExpression();
         if (IsLookAhead(TokenType.OpenParenthesis)) {
-            return CallExpression(member);
+            return CallExpression(funBeingCalled);
         }
-        return member;
+        return funBeingCalled;
     }
 
     /**
@@ -671,20 +675,24 @@ public class Parser {
      */
     private List<Expression> Arguments() {
         eat(TokenType.OpenParenthesis);
-        var list = IsLookAhead(TokenType.CloseParenthesis) ? Collections.<Expression>emptyList() : ArgumentList();
+        var list = IsLookAhead(TokenType.CloseParenthesis)
+                ? Collections.<Expression>emptyList()
+                : ArgumentList();
         eat(TokenType.CloseParenthesis);
         return list;
     }
 
     /**
      * ArgumentList
-     * : AssignmentExpression
-     * | ArgumentList , AssignmentExpression
+     * : Expression
+     * | ArgumentList , Expression
+     * ;
+     * Expression because the argument list could be a Lambda that needs to be evaluated
      */
     private List<Expression> ArgumentList() {
         var arguments = new ArrayList<Expression>();
         do {
-            arguments.add(AssignmentExpression());
+            arguments.add(Expression());
         } while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
 
         return arguments;

@@ -8,6 +8,7 @@ import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
+import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
@@ -47,7 +48,9 @@ public class Interpreter {
             case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
             case FunctionDeclarationStatement -> eval((FunctionDeclarationStatement) statement, env);
+
             case CallExpression -> eval((CallExpression) statement, env);
+            case LambdaExpression -> eval((LambdaExpression) statement, env);
 
             case StringLiteral -> StringValue.of(statement);
             case BooleanLiteral -> BooleanValue.of(statement);
@@ -59,8 +62,8 @@ public class Interpreter {
             case UnaryExpression -> eval((UnaryExpression) statement, env);
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
-            case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
-            default -> throw new RuntimeException("error");
+            case Identifier -> env.lookup(((Identifier) statement).getSymbol());
+            default -> throw new OperationNotImplementedException(statement);
         };
     }
 
@@ -77,6 +80,13 @@ public class Interpreter {
         return env.init(name.getSymbol(), FunValue.of(name, params, body, env));
     }
 
+    public RuntimeValue eval(LambdaExpression expression, Environment env) {
+        var args = expression.getParams();
+
+        var activationRecord = new Environment(env);
+        return FunValue.of(null, args, expression.getBody(), activationRecord);
+    }
+
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
         var name = (Identifier) expression.getCallee();
         var args = expression.getArguments()
@@ -84,7 +94,7 @@ public class Interpreter {
                 .map(it -> eval(it, env))
                 .toList();
 
-        FunValue declared = (FunValue) env.get(name.getSymbol());
+        FunValue declared = (FunValue) env.lookup(name.getSymbol());
         if (declared == null) {
             throw new RuntimeException("Function not declared: " + name.getSymbol());
         }

@@ -183,6 +183,20 @@ public class OperatorsTest extends BaseTest {
     }
 
     @Test
+    void testAddSubWithParenthesis() {
+        var res = parser.produceAST(tokenizer.tokenize("(1+2 + (3-4))"));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        BinaryExpression.of(
+                                BinaryExpression.of(1, 2, "+"),
+                                BinaryExpression.of(3, 4, "-"),
+                                "+"))
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
     void testDivisionWithParanthesis() {
         var res = parser.produceAST(tokenizer.tokenize("1 / 2 - (3/4)"));
         var expected = Program.of(

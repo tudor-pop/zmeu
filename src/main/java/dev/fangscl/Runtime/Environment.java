@@ -86,7 +86,7 @@ public class Environment {
         return value;
     }
 
-    public RuntimeValue evaluateVar(@Nullable String varName) {
+    public RuntimeValue lookup(@Nullable String varName) {
         if (varName == null) {
             varName = "null";
         }
@@ -94,8 +94,8 @@ public class Environment {
                 .get(varName); // return the value
     }
 
-    public RuntimeValue evaluateVar(@Nullable RuntimeValue<String> varName) {
-        return evaluateVar(varName.getRuntimeValue());
+    public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
+        return lookup(varName.getRuntimeValue());
     }
 
     /**
