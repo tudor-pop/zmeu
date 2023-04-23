@@ -34,4 +34,37 @@ public class BlockTest extends BaseTest{
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
+
+    @Test
+    void nestedBlockAccess() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                {
+                    var outer=10
+                    var res = {
+                        var x = 2*outer
+                        x
+                    }
+                    res
+                }
+                """)));
+        var expected = IntegerValue.of(20);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void nestedBlockSet() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                {
+                    var outer=10
+                     {
+                        outer =  20
+                    }
+                    outer
+                }
+                """)));
+        var expected = IntegerValue.of(20);
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
 }
