@@ -550,7 +550,8 @@ public class Parser {
     private Expression UnaryExpression() {
         var operator = switch (lookAhead().getType()) {
             case Minus -> eat(TokenType.Minus);
-            case Plus -> eat(TokenType.Plus);
+            case Increment -> eat(TokenType.Increment);
+            case Decrement -> eat(TokenType.Decrement);
             case Logical_Not -> eat(TokenType.Logical_Not);
             default -> null;
         };

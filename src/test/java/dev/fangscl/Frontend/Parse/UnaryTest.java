@@ -35,20 +35,40 @@ public class UnaryTest extends BaseTest {
     }
 
     @Test
-    void testLogicalUnaryDouble() {
+    void prefixDecrement() {
         var res = parser.produceAST(tokenizer.tokenize("--x"));
         var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("-", UnaryExpression.of("-", Identifier.of("x")))
+                UnaryExpression.of("--", Identifier.of("x")))
+        );
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void postfixDecrement() {
+        var res = parser.produceAST(tokenizer.tokenize("x--"));
+        var expected = Program.of(ExpressionStatement.of(
+                UnaryExpression.of("--", Identifier.of("x")))
+        );
+        log.info(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void prefixIncrement() {
+        var res = parser.produceAST(tokenizer.tokenize("++x"));
+        var expected = Program.of(ExpressionStatement.of(
+                UnaryExpression.of("++", Identifier.of("x"))
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
     }
 
     @Test
-    void testLogicalUnaryDoublePlus() {
-        var res = parser.produceAST(tokenizer.tokenize("++x"));
+    void postfixIncrement() {
+        var res = parser.produceAST(tokenizer.tokenize("x++"));
         var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("+", UnaryExpression.of("+", Identifier.of("x")))
+                UnaryExpression.of("++", Identifier.of("x"))
         ));
         log.info(gson.toJson(res));
         assertEquals(expected, res);

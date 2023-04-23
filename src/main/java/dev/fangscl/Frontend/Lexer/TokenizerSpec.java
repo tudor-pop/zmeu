@@ -40,9 +40,11 @@ class TokenizerSpec {
             new Entry("^[\\+\\-\\*\\/]=", TokenType.Equal_Complex),
 
 // --------------------------------- Operators --------------------------------------------------------
+            new Entry("^\\++", TokenType.Increment),
             new Entry("^\\+", TokenType.Plus),
             new Entry("^\\*", TokenType.Multiply),
             //todo add exponentiation ^
+            new Entry("^--", TokenType.Decrement),
             new Entry("^-", TokenType.Minus),
 // --------------------------------- Relational Operators: <,>, <=, >= --------------------------------------------------------
             new Entry("^[<>]=?", TokenType.RelationalOperator),
