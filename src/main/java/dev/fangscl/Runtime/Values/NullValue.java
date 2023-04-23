@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class NullValue extends RuntimeValue<Object> {
-    private final String value = null;
+    private static final NullValue value = new NullValue();
 
     public NullValue() {
         this.type = ValueType.Null;
@@ -16,6 +16,10 @@ public class NullValue extends RuntimeValue<Object> {
     @Override
     @Nullable
     public Object getRuntimeValue() {
-        return null;
+        return value;
+    }
+
+    public static NullValue of() {
+        return value;
     }
 }

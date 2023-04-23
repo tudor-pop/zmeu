@@ -23,7 +23,7 @@ public class WhileStatement extends Statement {
     private Statement body;
 
     public WhileStatement(Expression test, @Nullable Statement body) {
-        this.kind = NodeType.IfStatement;
+        this.kind = NodeType.WhileStatement;
         this.test = test;
         this.body = body;
     }

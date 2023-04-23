@@ -43,6 +43,7 @@ public class Interpreter {
             case Program -> eval((Program) statement, env);
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
             case IfStatement -> eval((IfStatement) statement, env);
+            case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
 
             case StringLiteral -> StringValue.of(statement);
@@ -72,6 +73,15 @@ public class Interpreter {
         } else {
             return eval(statement.getAlternate(), env);
         }
+    }
+
+    public RuntimeValue eval(WhileStatement statement, Environment env) {
+        RuntimeValue<Object> result = NullValue.of();
+
+        while ((Boolean) eval(statement.getTest(), env).getRuntimeValue()) {
+            result = eval(statement.getBody(), env);
+        }
+        return result;
     }
 
     public <R> RuntimeValue<R> eval(BlockExpression expression, Environment env) {
