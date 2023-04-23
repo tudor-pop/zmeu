@@ -1,9 +1,6 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
-import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
-import dev.fangscl.Frontend.Parser.Expressions.UnaryExpression;
-import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
+import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
@@ -14,6 +11,7 @@ import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Log4j2
 public class Interpreter {
@@ -49,6 +47,7 @@ public class Interpreter {
             case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
             case FunctionDeclarationStatement -> eval((FunctionDeclarationStatement) statement, env);
+            case CallExpression -> eval((CallExpression) statement, env);
 
             case StringLiteral -> StringValue.of(statement);
             case BooleanLiteral -> BooleanValue.of(statement);
@@ -75,7 +74,30 @@ public class Interpreter {
         var name = expression.getName();
         var params = expression.getParams();
         var body = expression.getBody();
-        return env.init(name.getSymbol(), FunValue.of(name, params, body));
+        return env.init(name.getSymbol(), FunValue.of(name, params, body, env));
+    }
+
+    public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
+        var name = (Identifier) expression.getCallee();
+        var args = expression.getArguments()
+                .stream()
+                .map(it -> eval(it, env))
+                .toList();
+
+        FunValue declared = (FunValue) env.get(name.getSymbol());
+        if (declared == null) {
+            throw new RuntimeException("Function not declared: " + name.getSymbol());
+        }
+
+        // for function execution, use the clojured environment from the declared scope
+        var activationRecord = new Environment(declared.getEnvironment());
+        List<Expression> params = declared.getParams();
+        for (var i = 0; i < params.size(); i++) {
+            // for each named parameter, we save the argument into the activation record(env that the function uses to execute)
+            var paramName = ((Identifier) params.get(i)).getSymbol();
+            activationRecord.init(paramName, args.get(i));
+        }
+        return eval(declared.getBody(), activationRecord);
     }
 
     public <R> RuntimeValue<R> eval(IfStatement statement, Environment env) {

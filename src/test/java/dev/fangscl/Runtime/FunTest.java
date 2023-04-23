@@ -7,6 +7,7 @@ import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import dev.fangscl.Runtime.Values.FunValue;
+import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,31 @@ public class FunTest extends BaseTest {
         assertEquals(environment.get("myFun"), res);
     }
 
+    @Test
+    void funEvaluateBlock() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                fun myFun(x){
+                   x
+                }
+                myFun(2)
+                """)));
+        var expected = IntegerValue.of(2);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void funFunctionBody() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                fun sqrt(x){
+                   x*x
+                }
+                sqrt(2)
+                """)));
+        var expected = IntegerValue.of(4);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
 
 
 }
