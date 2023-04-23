@@ -2,6 +2,7 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Expressions.UnaryExpression;
 import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
@@ -11,6 +12,8 @@ import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
+
+import java.math.BigDecimal;
 
 @Log4j2
 public class Interpreter {
@@ -53,6 +56,7 @@ public class Interpreter {
 
             case BlockExpression -> eval((BlockExpression) statement, new Environment(env));
             case BinaryExpression -> eval((BinaryExpression) statement, env);
+            case UnaryExpression -> eval((UnaryExpression) statement, env);
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
             case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
@@ -130,6 +134,45 @@ public class Interpreter {
         var lhs = eval(expression.getLeft(), environment);
         var rhs = eval(expression.getRight(), environment);
         return eval(lhs, rhs, expression.getOperator());
+    }
+
+    private RuntimeValue eval(UnaryExpression expression, Environment env) {
+        Object operator = expression.getOperator();
+        if (operator instanceof String op) {
+            return switch (op) {
+                case "++" -> {
+                    RuntimeValue res = eval(expression.getValue(), env);
+                    if (res instanceof IntegerValue r) {
+                        yield IntegerValue.of(1 + r.getRuntimeValue());
+                    } else if (res instanceof DecimalValue r) {
+                        yield DecimalValue.of(1 + r.getRuntimeValue());
+                    } else {
+                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                    }
+                }
+                case "--" -> {
+                    RuntimeValue res = eval(expression.getValue(), env);
+                    if (res instanceof IntegerValue r) {
+                        yield IntegerValue.of(r.getRuntimeValue() - 1);
+                    } else if (res instanceof DecimalValue r) {
+                        yield DecimalValue.of(
+                                BigDecimal.valueOf(r.getRuntimeValue()).subtract(BigDecimal.ONE)
+                                        .doubleValue());
+                    } else {
+                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                    }
+                }
+                case "!" -> {
+                    RuntimeValue res = eval(expression.getValue(), env);
+                    if (res instanceof BooleanValue r) {
+                        yield BooleanValue.of(!r.isValue());
+                    }
+                    throw new RuntimeException("Invalid not operator: " + res.getRuntimeValue());
+                }
+                default -> throw new RuntimeException("Operator could not be evaluated");
+            };
+        }
+        throw new RuntimeException("Operator could not be evaluated");
     }
 
     private RuntimeValue eval(RuntimeValue lhs, RuntimeValue rhs, Object operator) {
