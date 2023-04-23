@@ -205,7 +205,7 @@ public class Parser {
 
     /**
      * VariableStatementInit
-     * : var VariableStatementList
+     * : var VariableStatements
      */
     private Statement VariableStatementInit() {
         eat(TokenType.Var);
@@ -215,7 +215,7 @@ public class Parser {
 
     /**
      * VariableStatement
-     * : var VariableDeclarationList \n?
+     * : var VariableDeclarations \n?
      * ;
      */
     private Statement VariableStatement() {
@@ -281,7 +281,7 @@ public class Parser {
 
     /**
      * VariableInitializer
-     * : SIMPLE_ASSIGN AssignmentExpression
+     * : SIMPLE_ASSIGN Expression
      */
     private Expression VariableInitializer() {
         if (lookAhead().is(TokenType.Equal, TokenType.Equal_Complex)) {
@@ -293,6 +293,7 @@ public class Parser {
     /**
      * Expression
      * : AssignmentExpression
+     * | BlockExpression
      * ;
      */
     private Expression Expression() {
@@ -576,10 +577,6 @@ public class Parser {
             }
             case OpenBrackets -> {
 //                eat();
-                yield ParanthesizedExpression();
-            }
-            case OpenBraces -> {
-                eat();
                 yield ParanthesizedExpression();
             }
             case Equal -> {

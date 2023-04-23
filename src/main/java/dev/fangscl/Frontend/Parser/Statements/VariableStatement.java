@@ -13,9 +13,12 @@ import java.util.List;
 
 /**
  * <p>
- * BlockStatement
- * : 'var' Identity [, Identity] Assignment Expression
+ * VariableStatement
+ * : var Identity (, Identity)* Assignment Expression
  * ;
+ * Expression
+ * : AssignmentExpression
+ * | BlockExpression
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -23,12 +26,12 @@ import java.util.List;
 public class VariableStatement extends Statement {
     private List<VariableDeclaration> declarations;
 
-    public VariableStatement(@Nullable List<VariableDeclaration> declarations) {
+    private VariableStatement(@Nullable List<VariableDeclaration> declarations) {
         this.kind = NodeType.VariableStatement;
         this.declarations = declarations;
     }
 
-    public VariableStatement() {
+    private VariableStatement() {
         this(Collections.emptyList());
     }
 

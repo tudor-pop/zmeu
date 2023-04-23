@@ -75,7 +75,7 @@ public class Interpreter {
 
     public RuntimeValue eval(VariableDeclaration expression, Environment env) {
         String symbol = expression.getId().getSymbol();
-        RuntimeValue value = eval(expression.getInit());
+        RuntimeValue value = eval(expression.getInit(), env);
         return env.init(symbol, value);
     }
 
