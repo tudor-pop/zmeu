@@ -8,10 +8,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
-import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
-import dev.fangscl.Frontend.Parser.Statements.Statement;
-import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
+import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -44,15 +41,18 @@ public class Interpreter {
     public <R> RuntimeValue<R> eval(Statement statement, Environment env) {
         return switch (statement.getKind()) {
             case Program -> eval((Program) statement, env);
+            case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
+            case IfStatement -> eval((IfStatement) statement, env);
+            case VariableStatement -> eval((VariableStatement) statement, env);
+
             case StringLiteral -> StringValue.of(statement);
             case BooleanLiteral -> BooleanValue.of(statement);
             case IntegerLiteral -> IntegerValue.of(statement);
             case DecimalLiteral -> DecimalValue.of(statement);
-            case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
-            case BinaryExpression -> eval((BinaryExpression) statement, env);
+
             case BlockExpression -> eval((BlockExpression) statement, new Environment(env));
+            case BinaryExpression -> eval((BinaryExpression) statement, env);
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
-            case VariableStatement -> eval((VariableStatement) statement, env);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
             case Identifier -> env.evaluateVar(((Identifier) statement).getSymbol());
             default -> throw new RuntimeException("error");
@@ -63,6 +63,15 @@ public class Interpreter {
         RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
         RuntimeValue right = eval(expression.getRight(), env);
         return env.assign(left.getRuntimeValue(), right);
+    }
+
+    public <R> RuntimeValue<R> eval(IfStatement statement, Environment env) {
+        RuntimeValue<Boolean> eval = eval(statement.getTest(), env);
+        if (eval.getRuntimeValue()) {
+            return eval(statement.getConsequent(), env);
+        } else {
+            return eval(statement.getAlternate(), env);
+        }
     }
 
     public <R> RuntimeValue<R> eval(BlockExpression expression, Environment env) {
@@ -87,7 +96,7 @@ public class Interpreter {
         return res;
     }
 
-    public RuntimeValue eval(int expression) {
+    public RuntimeValue<IntegerValue> eval(int expression) {
         return eval(NumericLiteral.of(expression));
     }
 
@@ -95,15 +104,15 @@ public class Interpreter {
         return eval(StringLiteral.of(expression));
     }
 
-    public RuntimeValue eval(boolean expression) {
+    public RuntimeValue<Boolean> eval(boolean expression) {
         return eval(BooleanLiteral.of(expression));
     }
 
-    public RuntimeValue eval(float value) {
+    public RuntimeValue<DecimalValue> eval(float value) {
         return eval(NumericLiteral.of(value));
     }
 
-    public RuntimeValue eval(double expression) {
+    public RuntimeValue<DecimalValue> eval(double expression) {
         return eval(NumericLiteral.of(expression));
     }
 
@@ -123,6 +132,10 @@ public class Interpreter {
                     case "*" -> IntegerValue.of(lhsn.getValue() * rhsn.getValue());
                     case "%" -> IntegerValue.of(lhsn.getValue() % rhsn.getValue());
                     case "==" -> BooleanValue.of(lhsn.getValue() == rhsn.getValue());
+                    case "<" -> BooleanValue.of(lhsn.getValue() < rhsn.getValue());
+                    case "<=" -> BooleanValue.of(lhsn.getValue() <= rhsn.getValue());
+                    case ">" -> BooleanValue.of(lhsn.getValue() > rhsn.getValue());
+                    case ">=" -> BooleanValue.of(lhsn.getValue() >= rhsn.getValue());
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             }

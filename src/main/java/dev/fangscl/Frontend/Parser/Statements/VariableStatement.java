@@ -16,9 +16,6 @@ import java.util.List;
  * VariableStatement
  * : var Identity (, Identity)* Assignment Expression
  * ;
- * Expression
- * : AssignmentExpression
- * | BlockExpression
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
