@@ -20,7 +20,6 @@ public class StringValue extends RuntimeValue<String> {
 //            this.value = Optional.ofNullable(StringUtils.substringBetween(value, "\"", "\""))
 //                    .orElse(value);
 //        }
-        this.type = ValueType.String;
         this.value = value;
     }
 

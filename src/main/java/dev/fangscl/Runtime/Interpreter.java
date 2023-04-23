@@ -48,6 +48,7 @@ public class Interpreter {
             case IfStatement -> eval((IfStatement) statement, env);
             case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
+            case FunctionDeclarationStatement -> eval((FunctionDeclarationStatement) statement, env);
 
             case StringLiteral -> StringValue.of(statement);
             case BooleanLiteral -> BooleanValue.of(statement);
@@ -68,6 +69,13 @@ public class Interpreter {
         RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
         RuntimeValue right = eval(expression.getRight(), env);
         return env.assign(left.getRuntimeValue(), right);
+    }
+
+    public <R> RuntimeValue<R> eval(FunctionDeclarationStatement expression, Environment env) {
+        var name = expression.getName();
+        var params = expression.getParams();
+        var body = expression.getBody();
+        return env.init(name.getSymbol(), FunValue.of(name, params, body));
     }
 
     public <R> RuntimeValue<R> eval(IfStatement statement, Environment env) {

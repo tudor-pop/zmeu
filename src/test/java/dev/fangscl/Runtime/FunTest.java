@@ -1,0 +1,55 @@
+package dev.fangscl.Runtime;
+
+import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
+import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
+import dev.fangscl.Runtime.Values.FunValue;
+import dev.fangscl.Runtime.Values.RuntimeValue;
+import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Log4j2
+public class FunTest extends BaseTest {
+
+    @Test
+    void funDeclaration() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                fun myFun(){
+                    var x = 1
+                }
+                """)));
+        var expected = FunValue.of(Identifier.of("myFun"), BlockExpression.of(VariableStatement.of(
+                VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)
+                ))));
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+        assertEquals(environment.get("myFun"), res);
+    }
+
+    @Test
+    void funReturn() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                fun myFun(){
+                   var x = 1
+                   x
+                }
+                """)));
+        var expected = FunValue.of(Identifier.of("myFun"), BlockExpression.of(
+                VariableStatement.of(
+                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))
+                ),
+                ExpressionStatement.of(Identifier.of("x"))
+        ));
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+        assertEquals(environment.get("myFun"), res);
+    }
+
+
+
+}

@@ -1,9 +1,9 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
@@ -27,7 +27,7 @@ public class IfBaseTest extends BaseTest {
                 IfStatement.of(Identifier.of("x"),
                         BlockExpression.of(
                                 ExpressionStatement.of(
-                                        AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")
+                                        AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(1), "=")
                                 )
                         )
                 )
@@ -44,7 +44,7 @@ public class IfBaseTest extends BaseTest {
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(1), "=")
                         )
                 )
         );
@@ -61,7 +61,7 @@ public class IfBaseTest extends BaseTest {
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "="))));
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(1), "="))));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -77,8 +77,8 @@ public class IfBaseTest extends BaseTest {
                 """));
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
-                        BlockExpression.of(ExpressionStatement.of(Literal.of(1))),
-                        BlockExpression.of(ExpressionStatement.of(Literal.of(2)))));
+                        BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(1))),
+                        BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2)))));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -96,7 +96,7 @@ public class IfBaseTest extends BaseTest {
                                 IfStatement.of(
                                         Identifier.of("y"),
                                         ExpressionStatement.of(
-                                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "="))
+                                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(1), "="))
                                 )
                         )
                 )
@@ -116,7 +116,7 @@ public class IfBaseTest extends BaseTest {
                         IfStatement.of(
                                 Identifier.of("y"),
                                 ExpressionStatement.of(
-                                        AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "="))
+                                        AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(1), "="))
                         )
                 )
         );
@@ -136,7 +136,7 @@ public class IfBaseTest extends BaseTest {
                                 Identifier.of("y"),
                                 BlockExpression.of(
                                         ExpressionStatement.of(
-                                                AssignmentExpression.of(Identifier.of("x"), Literal.of(1), "=")
+                                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(1), "=")
                                         )
                                 )
                         )
@@ -217,7 +217,7 @@ public class IfBaseTest extends BaseTest {
                                 BlockExpression.of()
                         ),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "=")
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "=")
                         ))
                 )
         );
@@ -238,10 +238,10 @@ public class IfBaseTest extends BaseTest {
                 IfStatement.of(
                         BinaryExpression.of("x", 1, ">"),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "="))
                         ),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "+="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "+="))
                         )));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -258,12 +258,12 @@ public class IfBaseTest extends BaseTest {
                 """));
         var expected = Program.of(
                 IfStatement.of(
-                        BinaryExpression.of(Identifier.of("x"), Literal.of(1), ">="),
+                        BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(1), ">="),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "="))
                         ),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "+="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "+="))
                         )));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -280,12 +280,12 @@ public class IfBaseTest extends BaseTest {
                 """));
         var expected = Program.of(
                 IfStatement.of(
-                        BinaryExpression.of(Identifier.of("x"), Literal.of(1), "<"),
+                        BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(1), "<"),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "="))
                         ),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "+="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "+="))
                         )));
         log.info(gson.toJson(res));
         assertEquals(expected, res);
@@ -302,12 +302,12 @@ public class IfBaseTest extends BaseTest {
                 """));
         var expected = Program.of(
                 IfStatement.of(
-                        BinaryExpression.of(Identifier.of("x"), Literal.of(1), "<="),
+                        BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(1), "<="),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "="))
                         ),
                         BlockExpression.of(ExpressionStatement.of(
-                                AssignmentExpression.of(Identifier.of("x"), Literal.of(2), "+="))
+                                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "+="))
                         )));
         log.info(gson.toJson(res));
         assertEquals(expected, res);

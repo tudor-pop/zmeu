@@ -12,7 +12,6 @@ public class IdentifierValue extends RuntimeValue<String> {
 
     public IdentifierValue(String value) {
         this.value = value;
-        this.type = ValueType.Identifier;
     }
 
     public IdentifierValue(Identifier e) {

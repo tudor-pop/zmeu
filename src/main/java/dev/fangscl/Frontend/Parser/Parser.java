@@ -339,14 +339,14 @@ public class Parser {
         eat(TokenType.Fun);
         var test = Identifier();
         eat(TokenType.OpenParenthesis);
-        var params = OptParameterList();
+        List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
         Statement body = BlockExpression();
         return FunctionDeclarationStatement.of(test, params, body);
     }
 
-    private List<Identifier> OptParameterList() {
+    private List<Expression> OptParameterList() {
         return lookAhead().is(TokenType.CloseParenthesis) ? Collections.emptyList() : ParameterList();
     }
 
@@ -356,8 +356,8 @@ public class Parser {
      * | ParameterList, Identifier
      * ;
      */
-    private List<Identifier> ParameterList() {
-        var params = new ArrayList<Identifier>();
+    private List<Expression> ParameterList() {
+        var params = new ArrayList<Expression>();
         do {
             params.add(Identifier());
         } while (IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
@@ -637,7 +637,7 @@ public class Parser {
 
     /**
      * Arguments
-     * : ( OptArgumentsList )
+     * : ( Arguments* )
      * ;
      */
     private List<Expression> Arguments() {
@@ -736,7 +736,7 @@ public class Parser {
         return switch (current.getType()) {
             case True, False -> BooleanLiteral();
             case Null -> NullLiteral.of();
-            case Number -> new NumericLiteral(current.getValue());
+            case Number -> NumericLiteral.of(current.getValue());
             case String -> new StringLiteral(current.getValue());
             default -> new ErrorExpression(current.getValue());
         };

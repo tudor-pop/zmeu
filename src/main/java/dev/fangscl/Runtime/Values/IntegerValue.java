@@ -12,7 +12,6 @@ public class IntegerValue extends RuntimeValue<Integer> {
 
     public IntegerValue(int number) {
         this.value = number;
-        this.type = ValueType.Integer;
     }
 
     public IntegerValue(NumericLiteral number) {

@@ -4,7 +4,6 @@ import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.Literal;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
@@ -31,7 +30,7 @@ public class LoopBaseTest extends BaseTest {
                         .body(BlockExpression
                                 .of(ExpressionStatement
                                         .of(AssignmentExpression
-                                                .of("+=", Identifier.of("x"), Literal.of(1))
+                                                .of("+=", Identifier.of("x"), NumericLiteral.of(1))
                                         )
                                 )
                         ).build()
@@ -57,7 +56,7 @@ public class LoopBaseTest extends BaseTest {
                         .update(AssignmentExpression.of("+=", Identifier.of("i"), NumericLiteral.of(1)))
                         .body(BlockExpression.of(
                                 ExpressionStatement.of(
-                                        AssignmentExpression.of("+=", Identifier.of("x"), Literal.of(1))
+                                        AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(1))
                                 )
                         ))
                         .build()
@@ -81,7 +80,7 @@ public class LoopBaseTest extends BaseTest {
                 .update(null)
                 .body(BlockExpression.of(
                         ExpressionStatement.of(
-                                AssignmentExpression.of("+=", Identifier.of("x"), Literal.of(1))
+                                AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(1))
                         )
                 ))
                 .build()

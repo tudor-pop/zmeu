@@ -1,9 +1,9 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
-import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,11 +41,11 @@ public class WhileStatement extends Statement {
     }
 
     public static Statement of(Expression test, int value) {
-        return new WhileStatement(test,Literal.of(value));
+        return new WhileStatement(test, NumericLiteral.of(value));
     }
 
     public static Statement of(Expression test, double value) {
-        return new WhileStatement(test,Literal.of(value));
+        return new WhileStatement(test,NumericLiteral.of(value));
     }
 
     public static Statement of() {
@@ -53,7 +53,7 @@ public class WhileStatement extends Statement {
     }
 
     public static Statement of(Expression test, float value) {
-        return new WhileStatement(test,Literal.of(value));
+        return new WhileStatement(test,NumericLiteral.of(value));
     }
 
     public static Statement of(Expression test, String value) {

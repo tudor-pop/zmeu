@@ -1,9 +1,9 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.Literal;
-import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +84,7 @@ public class OperatorsTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
                         BinaryExpression.of(1, 1, "+"),
-                        Literal.of(1),
+                        NumericLiteral.of(1),
                         "+"))
         );
         assertEquals(expected, res);

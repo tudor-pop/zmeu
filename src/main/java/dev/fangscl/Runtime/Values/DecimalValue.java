@@ -12,7 +12,6 @@ public class DecimalValue extends RuntimeValue<Double> {
 
     public DecimalValue(double number) {
         this.value = number;
-        this.type = ValueType.Decimal;
     }
 
     public DecimalValue(float number) {

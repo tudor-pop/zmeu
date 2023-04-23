@@ -10,7 +10,6 @@ public class NullValue extends RuntimeValue<Object> {
     private static final NullValue value = new NullValue();
 
     public NullValue() {
-        this.type = ValueType.Null;
     }
 
     @Override

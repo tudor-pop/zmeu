@@ -1,9 +1,9 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
-import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,15 +33,15 @@ public class ExpressionStatement extends Statement {
     }
 
     public static Statement of(int value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new ExpressionStatement(NumericLiteral.of(value));
     }
 
     public static Statement of(double value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new ExpressionStatement(NumericLiteral.of(value));
     }
 
     public static Statement of(float value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new ExpressionStatement(NumericLiteral.of(value));
     }
 
     public static Statement of(String value) {

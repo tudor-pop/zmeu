@@ -1,8 +1,8 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.Literal;
-import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void testInteger() {
         var res = parser.produceAST(tokenizer.tokenize("1"));
-        var expected = Program.of(ExpressionStatement.of(Literal.of(1)));
+        var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1)));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -22,7 +22,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void testDecimal() {
         var res = parser.produceAST(tokenizer.tokenize("1.11"));
-        var expected = Program.of(ExpressionStatement.of(Literal.of(1.11)));
+        var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1.11)));
         assertEquals(expected, res);
     }
 

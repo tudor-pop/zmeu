@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,11 +21,11 @@ public class NumericLiteral extends Literal {
     private NumericLiteral() {
     }
 
-    public NumericLiteral(double value) {
+    private NumericLiteral(double value) {
         setDecimal(value);
     }
 
-    public NumericLiteral(float value) {
+    private NumericLiteral(float value) {
         setDecimal(value);
     }
 
@@ -37,7 +38,7 @@ public class NumericLiteral extends Literal {
         this.value = Double.valueOf(df.format(value));
     }
 
-    public NumericLiteral(int value) {
+    private NumericLiteral(int value) {
         setInteger(value);
     }
 
@@ -46,11 +47,11 @@ public class NumericLiteral extends Literal {
         this.value = value;
     }
 
-    public NumericLiteral(String value) {
+    private NumericLiteral(String value) {
         setValue(value);
     }
 
-    public NumericLiteral(Object value) {
+    private NumericLiteral(Object value) {
         if (value instanceof String s) {
             setValue(s);
         } else if (value instanceof Integer i) {
@@ -62,11 +63,19 @@ public class NumericLiteral extends Literal {
         }
     }
 
-    public static NumericLiteral of(Object value) {
+    public static Expression of(Object value) {
         return new NumericLiteral(value);
     }
 
-    public static NumericLiteral of(int value) {
+    public static Expression of(int value) {
+        return new NumericLiteral(value);
+    }
+
+    public static Literal of(float value) {
+        return new NumericLiteral(value);
+    }
+
+    public static Literal of(double value) {
         return new NumericLiteral(value);
     }
 

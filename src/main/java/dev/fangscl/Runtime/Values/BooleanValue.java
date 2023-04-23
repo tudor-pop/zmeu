@@ -12,7 +12,6 @@ public class BooleanValue extends RuntimeValue<Boolean> {
 
     public BooleanValue(boolean value) {
         this.value = value;
-        this.type = ValueType.Boolean;
     }
     public static RuntimeValue of(boolean statement) {
         return new BooleanValue(statement);

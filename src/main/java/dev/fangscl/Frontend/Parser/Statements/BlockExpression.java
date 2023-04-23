@@ -1,9 +1,9 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
-import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -55,11 +55,11 @@ public class BlockExpression extends Expression {
     }
 
     public static Expression of(int value) {
-        return new BlockExpression(Literal.of(value));
+        return new BlockExpression(NumericLiteral.of(value));
     }
 
     public static Expression of(double value) {
-        return new BlockExpression(Literal.of(value));
+        return new BlockExpression(NumericLiteral.of(value));
     }
 
     public static Expression of() {
@@ -67,7 +67,7 @@ public class BlockExpression extends Expression {
     }
 
     public static Expression of(float value) {
-        return new BlockExpression(Literal.of(value));
+        return new BlockExpression(NumericLiteral.of(value));
     }
 
     public static Expression of(String value) {

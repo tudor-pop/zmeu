@@ -1,10 +1,10 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -21,10 +21,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class FunctionDeclarationStatement extends Statement {
     private Identifier name;
-    private List<Identifier> params;
+    private List<Expression> params;
     private Statement body;
 
-    public FunctionDeclarationStatement(Identifier name, List<Identifier> params, @Nullable Statement body) {
+    public FunctionDeclarationStatement(Identifier name, List<Expression> params, @Nullable Statement body) {
         this();
         this.params = params;
         this.name = name;
@@ -35,31 +35,31 @@ public class FunctionDeclarationStatement extends Statement {
         this.kind = NodeType.FunctionDeclarationStatement;
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, Expression body) {
+    public static Statement of(Identifier test, List<Expression> params, Expression body) {
         return new FunctionDeclarationStatement(test, params, body);
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, Statement body) {
+    public static Statement of(Identifier test, List<Expression> params, Statement body) {
         return new FunctionDeclarationStatement(test, params, body);
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, int value) {
-        return new FunctionDeclarationStatement(test, params, Literal.of(value));
+    public static Statement of(Identifier test, List<Expression> params, int value) {
+        return new FunctionDeclarationStatement(test, params, NumericLiteral.of(value));
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, double value) {
-        return new FunctionDeclarationStatement(test, params, Literal.of(value));
+    public static Statement of(Identifier test, List<Expression> params, double value) {
+        return new FunctionDeclarationStatement(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of() {
         return new FunctionDeclarationStatement();
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, float value) {
-        return new FunctionDeclarationStatement(test, params, Literal.of(value));
+    public static Statement of(Identifier test, List<Expression> params, float value) {
+        return new FunctionDeclarationStatement(test, params, NumericLiteral.of(value));
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, String value) {
+    public static Statement of(Identifier test, List<Expression> params, String value) {
         return new FunctionDeclarationStatement(test, params, StringLiteral.of(value));
     }
 

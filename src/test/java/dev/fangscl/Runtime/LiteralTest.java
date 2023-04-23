@@ -2,6 +2,7 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Runtime.Values.NullValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +54,6 @@ public class LiteralTest extends BaseTest {
     @Test
     void NullTest() {
         var evalRes = interpreter.eval(new Identifier());
-        Assertions.assertNull(evalRes.getRuntimeValue());
+        Assertions.assertEquals(NullValue.of(), evalRes.getRuntimeValue());
     }
 }
