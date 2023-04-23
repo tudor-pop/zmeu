@@ -84,7 +84,7 @@ public class Parser {
             statementList.add(statement);
             if (IsLookAhead(endTokenType)) {
                 // after some work is done, before calling iterator.next(),
-                // we must check for EOF again or else we risk going outside the iterator's bounds
+                // we must check for EOF again or else we risk going outside the iterators bounds
                 break;
             }
         }
@@ -96,6 +96,7 @@ public class Parser {
      * Statement
      * : ExpressionStatement
      * | EmptyStatement
+     * | BlockExpression
      * | VariableStatement
      * | IfStatement
      * | IterationStatement
@@ -138,7 +139,7 @@ public class Parser {
 
     /**
      * WhileStatement
-     * : while '(' Expression ')' '{'? StatementList '}'?
+     * : while ( Expression ) {? StatementList }?
      * ;
      */
     private Statement WhileStatement() {
@@ -159,7 +160,7 @@ public class Parser {
 
     /**
      * ForStatement
-     * : for '(' OptStatementInit ';' OptExpression ';' OptExpression ')' Statement
+     * : for ( OptStatementInit ; OptExpression ; OptExpression ) Statement
      * ;
      */
     private Statement ForStatement() {
@@ -214,7 +215,7 @@ public class Parser {
 
     /**
      * VariableStatement
-     * : 'var' VariableDeclarationList '\n'?
+     * : var VariableDeclarationList \n?
      * ;
      */
     private Statement VariableStatement() {
@@ -228,7 +229,7 @@ public class Parser {
 
     /**
      * ExpressionStatement
-     * : Expression '\n'
+     * : Expression \n
      * ;
      */
     private Statement ExpressionStatement() {
@@ -237,14 +238,16 @@ public class Parser {
 
     /**
      * BlockExpression
-     * : '{' StatementList? '}'
+     * : { Statements? }
      * ;
+     * Statements
+     * : Statement* Expression
      */
-    private Statement BlockExpression() {
+    private Expression BlockExpression() {
         eat(TokenType.OpenBraces);
-        var res = IsLookAhead(TokenType.CloseBraces) ?
-                BlockExpression.of(Collections.emptyList()) :
-                BlockExpression.of(StatementList(TokenType.CloseBraces));
+        var res = IsLookAhead(TokenType.CloseBraces)
+                ? BlockExpression.of(Collections.emptyList())
+                : BlockExpression.of(StatementList(TokenType.CloseBraces));
         if (IsLookAhead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
             eat(TokenType.CloseBraces, "Error");
         }
@@ -254,7 +257,7 @@ public class Parser {
     /**
      * VariableDeclarationList
      * : VariableDeclaration
-     * | VariableDeclarationList ',' VariableDeclaration
+     * | VariableDeclarationList , VariableDeclaration
      * ;
      */
     private List<VariableDeclaration> VariableDeclarationList() {
@@ -293,13 +296,16 @@ public class Parser {
      * ;
      */
     private Expression Expression() {
-        return AssignmentExpression();
+        return switch (lookAhead().getType()) {
+            case OpenBraces -> BlockExpression();
+            default -> AssignmentExpression();
+        };
     }
 
     /**
      * IfStatement
-     * : 'if' '(' Expression ')' BlockStatement?
-     * : 'if' '(' Expression ')' BlockStatement? 'else' BlockStatement?
+     * : if ( Expression ) BlockStatement?
+     * : if ( Expression ) BlockStatement? else BlockStatement?
      * ;
      */
     private Statement IfStatement() {
@@ -325,7 +331,7 @@ public class Parser {
 
     /**
      * FunctionDeclarationStatement
-     * : 'fun' Identifier '(' OptParameterList ')' BlockStatement?
+     * : fun Identifier ( OptParameterList ) BlockStatement?
      * ;
      */
     private Statement FunctionDeclarationStatement() {
@@ -360,7 +366,7 @@ public class Parser {
 
     /**
      * ReturnStatement
-     * : 'return' OptExpression '\n'
+     * : return OptExpression \n
      * ;
      */
     private Statement ReturnStatement() {
@@ -385,7 +391,7 @@ public class Parser {
     /**
      * AssignmentExpression
      * : LogicalExpression
-     * | LeftHandSideExpression AssignmentOperator AssignmentExpression
+     * | LeftHandSideExpression AssignmentOperator Expression
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
@@ -393,7 +399,7 @@ public class Parser {
             return left;
         }
         var operator = AssignmentOperator().getValue();
-        return AssignmentExpression.of(isValidAssignment(left, operator), AssignmentExpression(), operator);
+        return AssignmentExpression.of(isValidAssignment(left, operator), Expression(), operator);
     }
 
     /**
@@ -585,10 +591,6 @@ public class Parser {
                 eat();
                 yield Literal();
             }
-            case NewLine -> {
-                eat();
-                yield Expression();
-            }
             case Identifier -> Identifier();
             case EOF -> null;
             default -> LeftHandSideExpression();
@@ -603,6 +605,7 @@ public class Parser {
     private Expression LeftHandSideExpression() {
         return CallMemberExpression();
     }
+
     /**
      * CallMemberExpression
      * : MemberExpression
@@ -610,12 +613,13 @@ public class Parser {
      * ;
      */
     private Expression CallMemberExpression() {
-        var member =  MemberExpression();
+        var member = MemberExpression();
         if (IsLookAhead(TokenType.OpenParenthesis)) {
             return CallExpression(member);
         }
         return member;
     }
+
     /**
      * CallExpression
      * : Callee Arguments
@@ -635,7 +639,7 @@ public class Parser {
 
     /**
      * Arguments
-     * : '(' OptArgumentsList ')'
+     * : ( OptArgumentsList )
      * ;
      */
     private List<Expression> Arguments() {
@@ -648,7 +652,7 @@ public class Parser {
     /**
      * ArgumentList
      * : AssignmentExpression
-     * | ArgumentList ',' AssignmentExpression
+     * | ArgumentList , AssignmentExpression
      */
     private List<Expression> ArgumentList() {
         var arguments = new ArrayList<Expression>();
@@ -662,8 +666,8 @@ public class Parser {
     /**
      * MemberExpression
      * : PrimaryExpression
-     * | MemberExpression '.' MemberExpression
-     * | MemberExpression '[' Expression ']'
+     * | MemberExpression . MemberExpression
+     * | MemberExpression [ Expression ]
      * ;
      */
     private Expression MemberExpression() {
@@ -708,7 +712,7 @@ public class Parser {
 
     /**
      * ParanthesizedExpression
-     * : '(' Expression ')'
+     * : ( Expression )
      * ;
      */
     private Expression ParanthesizedExpression() {
@@ -742,8 +746,8 @@ public class Parser {
 
     /**
      * BooleanLiteral
-     * : 'true'
-     * | 'false'
+     * : true
+     * | false
      * ;
      */
     private Expression BooleanLiteral() {

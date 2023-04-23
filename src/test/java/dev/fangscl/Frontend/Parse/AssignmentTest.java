@@ -30,7 +30,7 @@ public class AssignmentTest extends BaseTest {
     void testAssignmentBlock() {
         var res = parser.produceAST(tokenizer.tokenize("x={2}"));
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of(Identifier.of("x"), BlockExpression.of(NumericLiteral.of(2)), "=")));
+                AssignmentExpression.of(Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2))), "=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }

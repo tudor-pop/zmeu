@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 
 /**
  * BlockExpression
- * : '{' OptionalStatementList '}'
+ * : { Statements? }
  * ;
+ * Statements
+ * : Statement* Expression
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
