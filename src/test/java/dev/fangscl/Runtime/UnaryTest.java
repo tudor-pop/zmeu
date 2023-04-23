@@ -62,6 +62,31 @@ public class UnaryTest extends BaseTest {
         log.warn(gson.toJson(res));
         assertEquals(expected, res);
     }
+    @Test
+    void unaryMinus() {
+        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                {
+                    var x = 1
+                    -x
+                }
+                """)));
+        var expected = IntegerValue.of(-1);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void unaryMinusDecimal() {
+        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                {
+                    var x = 1.5
+                    -x
+                }
+                """)));
+        var expected = DecimalValue.of(-1.5);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
 
     @Test
     void notFalse() {

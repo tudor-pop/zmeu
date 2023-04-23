@@ -162,6 +162,16 @@ public class Interpreter {
                         throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
                     }
                 }
+                case "-" -> {
+                    RuntimeValue res = eval(expression.getValue(), env);
+                    if (res instanceof IntegerValue r) {
+                        yield IntegerValue.of(-r.getRuntimeValue());
+                    } else if (res instanceof DecimalValue r) {
+                        yield DecimalValue.of(BigDecimal.valueOf(r.getRuntimeValue()).negate().doubleValue());
+                    } else {
+                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                    }
+                }
                 case "!" -> {
                     RuntimeValue res = eval(expression.getValue(), env);
                     if (res instanceof BooleanValue r) {
@@ -169,7 +179,7 @@ public class Interpreter {
                     }
                     throw new RuntimeException("Invalid not operator: " + res.getRuntimeValue());
                 }
-                default -> throw new RuntimeException("Operator could not be evaluated");
+                default -> throw new RuntimeException("Operator could not be evaluated: " + expression.getOperator());
             };
         }
         throw new RuntimeException("Operator could not be evaluated");
