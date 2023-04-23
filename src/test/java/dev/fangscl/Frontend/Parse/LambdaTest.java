@@ -17,15 +17,49 @@ public class LambdaTest extends BaseTest {
     @Test
     void lambda() {
         var res = parser.produceAST(tokenizer.tokenize("""
-                lambda (x) { x*x }
+                (x) -> x*x
                 """));
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockExpression.of(ExpressionStatement.of(BinaryExpression.of("*","x","x")))
+                                BinaryExpression.of("*", "x", "x")
                         )
                 )
         );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void lambdaTwoArgs() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                (x,y) -> x*y
+                """));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
+                                BinaryExpression.of("*", "x", "y")
+                        )
+                )
+        );
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void lambdaBlock() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                (x,y) -> { x*y }
+                """));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
+                                BlockExpression.of(
+                                        ExpressionStatement.of(
+                                                BinaryExpression.of("*", "x", "y")
+                                        )
+                                )
+                        )));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -33,20 +67,19 @@ public class LambdaTest extends BaseTest {
     @Test
     void testWith2Args() {
         var res = parser.produceAST(tokenizer.tokenize("""
-                (x,y) -> { 
-                    return x*y
+                (x) -> { 
+                    return x*x
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
-                        List.of(Identifier.of("x"), Identifier.of("y")),
-                        BlockExpression.of(
-                                ReturnStatement.of(
-                                        BinaryExpression.of("*", "x", "y")
+                ExpressionStatement.of(
+                        LambdaExpression.of(List.of(Identifier.of("x")),
+                                BlockExpression.of(
+                                        ReturnStatement.of(
+                                                BinaryExpression.of("*", "x", "x")
+                                        )
                                 )
-                        )
-                )
-        );
+                        )));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -54,18 +87,17 @@ public class LambdaTest extends BaseTest {
     @Test
     void testWithoutReturn() {
         var res = parser.produceAST(tokenizer.tokenize("""
-                fun square(x) { 
+                (x) -> { 
                     return
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
-                        List.of(Identifier.of("x")),
-                        BlockExpression.of(
-                                ReturnStatement.of()
-                        )
-                )
-        );
+                ExpressionStatement.of(
+                        LambdaExpression.of(List.of(Identifier.of("x")),
+                                BlockExpression.of(
+                                        ReturnStatement.of()
+                                )
+                        )));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -73,37 +105,16 @@ public class LambdaTest extends BaseTest {
     @Test
     void testWithoutParamsAndReturn() {
         var res = parser.produceAST(tokenizer.tokenize("""
-                fun square() { 
-                    return
+                () -> { 
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
-                        List.of(),
-                        BlockExpression.of(
-                                ReturnStatement.of()
-                        )
-                )
-        );
+                ExpressionStatement.of(
+                        LambdaExpression.of(List.of(),
+                                BlockExpression.of()
+                        )));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
-
-    @Test
-    void testEmptyBody() {
-        var res = parser.produceAST(tokenizer.tokenize("""
-                fun square() { 
-                }
-                """));
-        var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
-                        List.of(),
-                        BlockExpression.of()
-                )
-        );
-        assertEquals(expected, res);
-        log.info(gson.toJson(res));
-    }
-
 
 }

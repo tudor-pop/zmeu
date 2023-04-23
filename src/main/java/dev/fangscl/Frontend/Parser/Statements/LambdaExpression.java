@@ -36,6 +36,10 @@ public class LambdaExpression extends Expression {
         return new LambdaExpression(params, body);
     }
 
+    public static Expression of(List<Expression> params, Statement body) {
+        return new LambdaExpression(params, body);
+    }
+
     public static Expression of(List<Expression> params, int value) {
         return new LambdaExpression(params, NumericLiteral.of(value));
     }
