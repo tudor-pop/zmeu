@@ -35,7 +35,7 @@ public class ForStatement extends Statement {
     }
 
     public ForStatement() {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
     }
 
     public static Statement of() {

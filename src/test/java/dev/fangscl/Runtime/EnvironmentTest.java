@@ -1,6 +1,6 @@
 package dev.fangscl.Runtime;
 
-import com.google.gson.Gson;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.exceptions.VarNotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 @Log4j2
 public class EnvironmentTest {
-    private Gson gson = new Gson();
     private Environment environment;
 
     @BeforeEach
@@ -34,10 +33,10 @@ public class EnvironmentTest {
 
     @Test
     void lookupGlobalVar() {
-        Environment global = new Environment();
+        var global = new Environment();
         global.init("VERSION", 10);
-        Interpreter interpreter = new Interpreter(global);
-        Assertions.assertEquals(IntegerValue.of(10),  interpreter.eval("VERSION"));
+        var interpreter = new Interpreter(global);
+        Assertions.assertEquals(IntegerValue.of(10), interpreter.eval(Identifier.of("VERSION")));
     }
 
 }

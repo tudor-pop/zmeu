@@ -15,9 +15,5 @@ public abstract class Literal extends Expression {
         return new NumericLiteral(value);
     }
 
-    public static StringLiteral of(String value) {
-        return new StringLiteral(value);
-    }
-
     abstract public Object getVal();
 }

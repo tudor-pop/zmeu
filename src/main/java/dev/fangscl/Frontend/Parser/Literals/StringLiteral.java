@@ -27,6 +27,10 @@ public class StringLiteral extends Literal {
         setValue(value);
     }
 
+    public static StringLiteral of(String value) {
+        return new StringLiteral(value);
+    }
+
     private void setValue(String value) {
         if (StringUtils.isBlank(value)) {
             this.value = value;
@@ -43,6 +47,7 @@ public class StringLiteral extends Literal {
             setValue(s);
         }
     }
+
     @Override
     public String toSExpression() {
         return value;

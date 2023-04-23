@@ -270,7 +270,7 @@ public class Parser {
 
     /**
      * VariableDeclaration
-     * : Identifier OptVariableInitialization
+     * : Identifier VariableInitialization?
      * ;
      */
     private VariableDeclaration VariableDeclaration() {
@@ -287,7 +287,7 @@ public class Parser {
         if (lookAhead().is(TokenType.Equal, TokenType.Equal_Complex)) {
             eat(TokenType.Equal);
         }
-        return AssignmentExpression();
+        return Expression();
     }
 
     /**

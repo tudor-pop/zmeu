@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Builder;
@@ -28,7 +29,7 @@ public class WhileStatement extends Statement {
     }
 
     public WhileStatement() {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
     }
 
     public static Statement of(Expression test, Expression consequent) {
@@ -56,7 +57,7 @@ public class WhileStatement extends Statement {
     }
 
     public static Statement of(Expression test, String value) {
-        return new WhileStatement(test,Literal.of(value));
+        return new WhileStatement(test, StringLiteral.of(value));
     }
 
     @Override

@@ -27,8 +27,10 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void stringLiteral() {
-        var evalRes = interpreter.eval("\"hello world!\"");
-        Assertions.assertEquals("\"hello world!\"", ((StringValue) evalRes).getValue());
+        var evalRes = interpreter.eval("""
+                "hello world!"
+                """);
+        Assertions.assertEquals("hello world!", evalRes.getRuntimeValue());
     }
 
     @Test

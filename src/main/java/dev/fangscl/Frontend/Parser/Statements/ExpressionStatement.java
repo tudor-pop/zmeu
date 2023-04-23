@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
@@ -44,7 +45,7 @@ public class ExpressionStatement extends Statement {
     }
 
     public static Statement of(String value) {
-        return new ExpressionStatement(Literal.of(value));
+        return new ExpressionStatement(StringLiteral.of(value));
     }
 
     @Override

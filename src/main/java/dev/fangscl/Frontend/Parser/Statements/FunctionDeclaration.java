@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class FunctionDeclaration extends Statement {
     private Statement expression;
 
     public FunctionDeclaration(Statement expression) {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
         this.expression = expression;
     }
 
@@ -39,7 +40,7 @@ public class FunctionDeclaration extends Statement {
     }
 
     public static Statement of(String value) {
-        return new FunctionDeclaration(Literal.of(value));
+        return new FunctionDeclaration(StringLiteral.of(value));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class IfStatement extends Statement {
     }
 
     public IfStatement() {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
     }
 
     public static Statement of(Expression test, Expression consequent, Expression alternate) {
@@ -59,7 +60,7 @@ public class IfStatement extends Statement {
     }
 
     public static Statement of(Expression test, String value) {
-        return new IfStatement(test,Literal.of(value), null);
+        return new IfStatement(test, StringLiteral.of(value), null);
     }
 
     @Override

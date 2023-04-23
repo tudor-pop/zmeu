@@ -50,7 +50,7 @@ public class Interpreter {
             case DecimalLiteral -> DecimalValue.of(statement);
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
             case BinaryExpression -> eval((BinaryExpression) statement, env);
-            case BlockStatement -> eval((BlockExpression) statement, new Environment(env));
+            case BlockExpression -> eval((BlockExpression) statement, new Environment(env));
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);

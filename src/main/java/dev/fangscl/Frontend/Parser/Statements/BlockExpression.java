@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
@@ -24,17 +25,17 @@ public class BlockExpression extends Expression {
     private List<Statement> expression;
 
     public BlockExpression(@Nullable Statement... expression) {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
         this.expression = List.of(expression);
     }
 
     public BlockExpression(@Nullable List<Statement> expression) {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
         this.expression = expression;
     }
 
     public BlockExpression() {
-        this.kind = NodeType.BlockStatement;
+        this.kind = NodeType.BlockExpression;
     }
 
     public static Expression of(Expression expression) {
@@ -70,7 +71,7 @@ public class BlockExpression extends Expression {
     }
 
     public static Expression of(String value) {
-        return new BlockExpression(Literal.of(value));
+        return new BlockExpression(StringLiteral.of(value));
     }
 
     @Override

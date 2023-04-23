@@ -2,6 +2,7 @@ package dev.fangscl.Frontend.Parser.Statements;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.Literal;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
@@ -59,7 +60,7 @@ public class FunctionDeclarationStatement extends Statement {
     }
 
     public static Statement of(Identifier test, List<Identifier> params, String value) {
-        return new FunctionDeclarationStatement(test, params, Literal.of(value));
+        return new FunctionDeclarationStatement(test, params, StringLiteral.of(value));
     }
 
     @Override
