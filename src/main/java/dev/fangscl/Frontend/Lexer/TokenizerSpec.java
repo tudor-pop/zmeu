@@ -56,6 +56,7 @@ class TokenizerSpec {
             new Entry("^!", TokenType.Logical_Not),
 
 // --------------------------------- Keywords --------------------------------------------------------
+            new Entry("^\\blambda\\b", TokenType.Lambda),
             new Entry("^\\bvar\\b", TokenType.Var),
             new Entry("^\\bif\\b", TokenType.If),
             new Entry("^\\belse\\b", TokenType.Else),

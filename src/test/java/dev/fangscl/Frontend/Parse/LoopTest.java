@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class LoopBaseTest extends BaseTest {
+public class LoopTest extends BaseTest {
 
     @Test
     void test() {

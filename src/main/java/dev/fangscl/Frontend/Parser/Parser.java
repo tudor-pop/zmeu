@@ -116,10 +116,7 @@ public class Parser {
             case While, For -> IterationStatement();
             case Var -> VariableStatement();
             case EOF -> null;
-            default -> {
-                var res = ExpressionStatement();
-                yield res;
-            }
+            default -> ExpressionStatement();
         };
     }
 
@@ -299,6 +296,7 @@ public class Parser {
     private Expression Expression() {
         return switch (lookAhead().getType()) {
             case OpenBraces -> BlockExpression();
+            case Lambda -> LambdaExpression();
             default -> AssignmentExpression();
         };
     }
@@ -347,7 +345,7 @@ public class Parser {
     }
 
     private List<Expression> OptParameterList() {
-        return lookAhead().is(TokenType.CloseParenthesis) ? Collections.emptyList() : ParameterList();
+        return IsLookAhead(TokenType.CloseParenthesis) ? Collections.emptyList() : ParameterList();
     }
 
     /**
@@ -387,6 +385,34 @@ public class Parser {
         }
         Token token = lookAhead();
         return token != null && token.is(type);
+    }
+
+    private boolean IsLookAhead(int k, TokenType... type) {
+        for (int i = 0; i < k && iterator.hasNext(); i++, iterator.next()) {
+            Token token = lookAhead();
+            if (token == null || token.is(type)) {
+                while (k >= 0) {
+                    iterator.previous();
+                    k--;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * LambdaStatement
+     * : AssignmentExpression*
+     */
+    private Expression LambdaExpression() {
+        eat(TokenType.Lambda);
+        eat(TokenType.OpenParenthesis);
+        List<Expression> params = OptParameterList();
+        eat(TokenType.CloseParenthesis);
+//        var op = eat(TokenType.Lambda);
+
+        return LambdaExpression.of(params, Expression());
     }
 
     /**

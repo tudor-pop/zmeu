@@ -69,7 +69,7 @@ public enum TokenType {
     /*****   Operators   ******/
     TernaryOperator,
     OptionalOperator,
-    Plus, Increment, Decrement, Minus, Multiply, Division, Modulo,
+    Plus, Increment, Decrement, Minus,Lambda, Multiply, Division, Modulo,
     Null,
     EOF,
     Unknown;

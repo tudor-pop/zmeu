@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class FunBaseTest extends BaseTest {
+public class FunTest extends BaseTest {
 
     @Test
     void testWithArgs() {
