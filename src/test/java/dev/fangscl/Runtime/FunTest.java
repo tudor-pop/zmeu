@@ -65,7 +65,7 @@ public class FunTest extends BaseTest {
     }
 
     @Test
-    void funFunctionBody() {
+    void funBody() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x){
                    x*x
@@ -73,6 +73,40 @@ public class FunTest extends BaseTest {
                 sqrt(2)
                 """)));
         var expected = IntegerValue.of(4);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void funBodyMultiParams() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                fun sqrt(x,y){
+                   var z = 1
+                   x*y+z
+                }
+                sqrt(2,3)
+                """)));
+        var expected = IntegerValue.of(7);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+    @Test
+    void funClojure() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                {
+                    var a = 100
+                    fun calc(x,y){
+                        var z = x+y
+                        fun inner(b){
+                            b+z+a
+                        }
+                        inner
+                    }
+                    var fn = calc(10,20)
+                    fn(30)
+                }
+                """)));
+        var expected = IntegerValue.of(160);
         log.warn(gson.toJson(res));
         assertEquals(expected, res);
     }
