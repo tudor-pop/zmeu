@@ -23,7 +23,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
         var expected = IntegerValue.of(2);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
         var expected = BooleanValue.of(false);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
         var expected = BooleanValue.of(true);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
         var expected = DecimalValue.of(1.1);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
 
@@ -64,7 +64,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
         var expected = new NullValue();
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=2")));
         var expected = IntegerValue.of(2);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1")));
         var expected = IntegerValue.of(1);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=true")));
         var expected = BooleanValue.of(true);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=false")));
         var expected = BooleanValue.of(false);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -114,7 +114,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.1")));
         var expected = DecimalValue.of(1.1);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class AssignmentTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.2")));
         var expected = DecimalValue.of(1.2);
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.warn(gson.toJson(res));
     }
 
 
