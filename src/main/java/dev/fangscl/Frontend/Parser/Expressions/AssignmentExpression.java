@@ -17,7 +17,7 @@ public class AssignmentExpression extends Expression {
     private Expression right;
     private Object operator;
 
-    public AssignmentExpression() {
+    private AssignmentExpression() {
         this.kind = NodeType.AssignmentExpression;
     }
 

@@ -7,31 +7,27 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Order of preccedence
- * AssignmentExpression
- * MemberExpression
- * FunctionCall
- * LogicalExpression
- * ComparisonExpression
- * AdditiveExpression
- * MultiplicativeExpression
- * LiteralExpression - Identity, integer, decimal
- * <p>
+ * An expression statement is one that evaluates an expression and ignores its result.
+ * As a rule, an expression statement's purpose is to trigger the effects of evaluating its expression.
  * ExpressionStatement
  * : Expression '\n'
+ * | Statement
  * ;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ExpressionStatement extends Statement {
-    private Statement expression;
+    private Statement statement;
 
-    public ExpressionStatement(Statement expression) {
+    private ExpressionStatement(Statement statement) {
         this.kind = NodeType.ExpressionStatement;
-        this.expression = expression;
+        this.statement = statement;
     }
 
     public static Statement of(Expression expression) {
+        return new ExpressionStatement(expression);
+    }
+    public static Statement of(Statement expression) {
         return new ExpressionStatement(expression);
     }
 
@@ -53,6 +49,6 @@ public class ExpressionStatement extends Statement {
 
     @Override
     public String toSExpression() {
-        return expression.toSExpression();
+        return statement.toSExpression();
     }
 }

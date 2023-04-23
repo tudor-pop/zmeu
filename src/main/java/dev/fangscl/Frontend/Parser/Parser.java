@@ -95,7 +95,6 @@ public class Parser {
     /**
      * Statement
      * : ExpressionStatement
-     * | BlockStatement
      * | EmptyStatement
      * | VariableStatement
      * | IfStatement
@@ -109,7 +108,7 @@ public class Parser {
     private Statement Statement() {
         return switch (lookAhead().getType()) {
             case NewLine -> new EmptyStatement();
-            case OpenBraces -> BlockStatement();
+            case OpenBraces -> BlockExpression();
             case If -> IfStatement();
             case Fun -> FunctionDeclarationStatement();
             case Return -> ReturnStatement();
@@ -237,15 +236,15 @@ public class Parser {
     }
 
     /**
-     * BlockStatement
+     * BlockExpression
      * : '{' StatementList? '}'
      * ;
      */
-    private Statement BlockStatement() {
+    private Statement BlockExpression() {
         eat(TokenType.OpenBraces);
         var res = IsLookAhead(TokenType.CloseBraces) ?
-                BlockStatement.of(Collections.emptyList()) :
-                BlockStatement.of(StatementList(TokenType.CloseBraces));
+                BlockExpression.of(Collections.emptyList()) :
+                BlockExpression.of(StatementList(TokenType.CloseBraces));
         if (IsLookAhead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
             eat(TokenType.CloseBraces, "Error");
         }
@@ -336,7 +335,7 @@ public class Parser {
         var params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
-        Statement body = BlockStatement();
+        Statement body = BlockExpression();
         return FunctionDeclarationStatement.of(test, params, body);
     }
 
@@ -573,6 +572,10 @@ public class Parser {
 //                eat();
                 yield ParanthesizedExpression();
             }
+            case OpenBraces -> {
+                eat();
+                yield ParanthesizedExpression();
+            }
             case Equal -> {
                 eat();
                 yield AssignmentExpression();
@@ -581,6 +584,10 @@ public class Parser {
             case Number, String, True, False, Null -> /* literals */{
                 eat();
                 yield Literal();
+            }
+            case NewLine -> {
+                eat();
+                yield Expression();
             }
             case Identifier -> Identifier();
             case EOF -> null;
@@ -707,7 +714,11 @@ public class Parser {
     private Expression ParanthesizedExpression() {
 //        eat(TokenType.OpenParenthesis);
         var res = Expression();
-        eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        if (lookAhead().is(TokenType.CloseParenthesis)) {
+            eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        } else if (lookAhead().is(TokenType.CloseBraces)) {
+            eat(TokenType.CloseBraces, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        }
         return res;
     }
 

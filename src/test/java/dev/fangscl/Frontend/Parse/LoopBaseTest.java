@@ -28,7 +28,7 @@ public class LoopBaseTest extends BaseTest {
         var expected = Program.of(
                 WhileStatement.builder()
                         .test(BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(10), ">"))
-                        .body(BlockStatement
+                        .body(BlockExpression
                                 .of(ExpressionStatement
                                         .of(AssignmentExpression
                                                 .of("+=", Identifier.of("x"), Literal.of(1))
@@ -55,7 +55,7 @@ public class LoopBaseTest extends BaseTest {
                                 .build())
                         .test(BinaryExpression.of(Identifier.of("i"), NumericLiteral.of(10), "<"))
                         .update(AssignmentExpression.of("+=", Identifier.of("i"), NumericLiteral.of(1)))
-                        .body(BlockStatement.of(
+                        .body(BlockExpression.of(
                                 ExpressionStatement.of(
                                         AssignmentExpression.of("+=", Identifier.of("x"), Literal.of(1))
                                 )
@@ -79,7 +79,7 @@ public class LoopBaseTest extends BaseTest {
         var expected = Program.of(ForStatement.builder()
                 .init(null)
                 .update(null)
-                .body(BlockStatement.of(
+                .body(BlockExpression.of(
                         ExpressionStatement.of(
                                 AssignmentExpression.of("+=", Identifier.of("x"), Literal.of(1))
                         )

@@ -2,6 +2,7 @@ package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.SyntaxError;
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
@@ -21,6 +22,15 @@ public class AssignmentTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("x=2"));
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "=")));
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
+    void testAssignmentBlock() {
+        var res = parser.produceAST(tokenizer.tokenize("x={2}"));
+        var expected = Program.of(ExpressionStatement.of(
+                AssignmentExpression.of(Identifier.of("x"), BlockExpression.of(NumericLiteral.of(2)), "=")));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }

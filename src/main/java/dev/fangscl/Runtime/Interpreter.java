@@ -8,7 +8,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
@@ -48,9 +48,9 @@ public class Interpreter {
             case BooleanLiteral -> BooleanValue.of(statement);
             case IntegerLiteral -> IntegerValue.of(statement);
             case DecimalLiteral -> DecimalValue.of(statement);
-            case ExpressionStatement -> eval(((ExpressionStatement) statement).getExpression(), env);
+            case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
             case BinaryExpression -> eval((BinaryExpression) statement, env);
-            case BlockStatement -> eval((BlockStatement) statement, new Environment(env));
+            case BlockStatement -> eval((BlockExpression) statement, new Environment(env));
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
             case AssignmentExpression -> eval((AssignmentExpression) statement, env);
@@ -65,7 +65,7 @@ public class Interpreter {
         return env.assign(left.getRuntimeValue(), right);
     }
 
-    public <R> RuntimeValue<R> eval(BlockStatement expression, Environment env) {
+    public <R> RuntimeValue<R> eval(BlockExpression expression, Environment env) {
         RuntimeValue res = new NullValue();
         for (var it : expression.getExpression()) {
             res = eval(it, env);
