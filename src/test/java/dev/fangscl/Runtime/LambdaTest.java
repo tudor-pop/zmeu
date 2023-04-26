@@ -27,4 +27,27 @@ public class LambdaTest extends BaseTest {
         assertEquals(expected, res);
     }
 
+    @Test
+    void lambdaAssignToVar() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var f = (x) -> x*x
+                f(2)
+                """)));
+
+        var expected = IntegerValue.of(4);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void lambdaInvoke() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                ((x) -> x*x)(2)
+                """)));
+
+        var expected = IntegerValue.of(4);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
 }

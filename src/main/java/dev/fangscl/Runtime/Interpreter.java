@@ -57,7 +57,7 @@ public class Interpreter {
             case IntegerLiteral -> IntegerValue.of(statement);
             case DecimalLiteral -> DecimalValue.of(statement);
 
-            case BlockExpression -> eval((BlockExpression) statement, new Environment(env));
+            case BlockStatement -> eval((BlockStatement) statement, new Environment(env));
             case BinaryExpression -> eval((BinaryExpression) statement, env);
             case UnaryExpression -> eval((UnaryExpression) statement, env);
             case VariableDeclaration -> eval((VariableDeclaration) statement, env);
@@ -88,15 +88,16 @@ public class Interpreter {
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
-        var name = (Identifier) expression.getCallee();
+        Identifier name = (Identifier) expression.getCallee();
         var args = expression.getArguments()
                 .stream()
                 .map(it -> eval(it, env))
                 .toList();
 
-        FunValue declared = (FunValue) env.lookup(name.getSymbol());
+        String symbol = name.getSymbol();
+        FunValue declared = (FunValue) env.lookup(symbol);
         if (declared == null) {
-            throw new RuntimeException("Function not declared: " + name.getSymbol());
+            throw new RuntimeException("Function not declared: " + symbol);
         }
 
         // for function execution, use the clojured environment from the declared scope
@@ -128,7 +129,7 @@ public class Interpreter {
         return result;
     }
 
-    public <R> RuntimeValue<R> eval(BlockExpression expression, Environment env) {
+    public <R> RuntimeValue<R> eval(BlockStatement expression, Environment env) {
         RuntimeValue res = new NullValue();
         for (var it : expression.getExpression()) {
             res = eval(it, env);

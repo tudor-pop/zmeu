@@ -9,10 +9,7 @@ import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /*
  * Responsability: It does lexical analisys and source code validation.
@@ -296,7 +293,6 @@ public class Parser {
     private Expression Expression() {
         return switch (lookAhead().getType()) {
             case OpenBraces -> BlockStatement();
-            case OpenParenthesis -> LambdaExpression();
             default -> AssignmentExpression();
         };
     }
@@ -388,43 +384,50 @@ public class Parser {
     }
 
     private boolean IsLookAhead(int k, TokenType... type) {
-        int i = 0;
-        try {
-            for (; i < k && iterator.hasNext(); i++, iterator.next()) {
-                Token token = lookAhead();
-                if (token == null || token.is(type)) {
+        var iterator = this.tokens.listIterator(this.iterator.previousIndex() + 1);
+        for (var i = 0; i < k && iterator.hasNext(); i++, iterator.next()) {
+            Token token = lookAhead();
+            if (token == null || token.is(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean IsLookAheadAfter(TokenType after, TokenType... type) {
+        int index = this.iterator.previousIndex() + 1;
+        var iterator = this.tokens.listIterator(index);
+        while (iterator.hasNext()) {
+            var token = iterator.next();
+            if (token.is(TokenType.EOF)) {
+                break;
+            }
+            if (token.is(after)) {
+                token = iterator.next();
+                if (token.is(type)) {
                     return true;
                 }
-            }
-        } finally {
-            while (i > 0) {
-                iterator.previous();
-                i--;
             }
         }
         return false;
     }
 
     /**
-     * LambdaStatement
-     * : AssignmentExpression*
+     * LambdaExpression
+     * : ( OptParameterList ) -> LambdaBody
      * ;
-     * The lookahead logic might needed to be changed as I don't think this one scales.
-     * The problem is that the lambda has this form (a,b,c) -> {} while there could be some expressions
-     * like (1+2 + (3-4))
      */
     private Expression LambdaExpression() {
-        if (IsLookAhead(2, TokenType.Number)) {
-            return AssignmentExpression();
-        }
         eat(TokenType.OpenParenthesis);
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
-        if (IsLookAhead(TokenType.Lambda)) {
-            eat(TokenType.Lambda);
-        }
+        eat(TokenType.Lambda, "Expected -> but got: " + lookAhead().getValue());
 
-        return LambdaExpression.of(params, Expression());
+        return LambdaExpression.of(params, LambdaBody());
+    }
+
+    private Statement LambdaBody() {
+        return IsLookAhead(TokenType.OpenBraces) ? Statement() : Expression();
     }
 
     /**
@@ -610,8 +613,7 @@ public class Parser {
             return null;
         }
         return switch (lookAhead().getType()) {
-            case OpenParenthesis -> ParanthesizedExpression();
-            case OpenBrackets -> ParanthesizedExpression();
+            case OpenParenthesis, OpenBrackets -> ParanthesizedExpression();
             case Equal -> {
                 eat();
                 yield AssignmentExpression();
@@ -751,6 +753,9 @@ public class Parser {
      * ;
      */
     private Expression ParanthesizedExpression() {
+        if (IsLookAheadAfter(TokenType.CloseParenthesis, TokenType.Lambda)) {
+            return LambdaExpression();
+        }
         eat(TokenType.OpenParenthesis);
         var res = Expression();
         if (IsLookAhead(TokenType.CloseParenthesis)) {
