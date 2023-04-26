@@ -375,10 +375,17 @@ public class Parser {
     /**
      * LambdaExpression
      * : ( OptParameterList ) -> LambdaBody
+     * | (( OptParameterList ) -> LambdaBody)()()
      * ;
      */
     private Expression LambdaExpression() {
         eat(TokenType.OpenParenthesis);
+        if (IsLookAhead(TokenType.OpenParenthesis)) {
+            var expression = LambdaExpression();
+            eat(TokenType.CloseParenthesis); // eat CloseParenthesis after lambda body
+            return CallExpression.of(expression, Arguments());
+        }
+
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
         eat(TokenType.Lambda, "Expected -> but got: " + lookAhead().getValue());

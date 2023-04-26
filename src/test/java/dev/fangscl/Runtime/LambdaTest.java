@@ -42,7 +42,7 @@ public class LambdaTest extends BaseTest {
     @Test
     void lambdaInvoke() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                ((x) -> x*x)(2)
+                ((x) -> x*x) (2)
                 """)));
 
         var expected = IntegerValue.of(4);

@@ -2,6 +2,7 @@ package dev.fangscl.Frontend.Parser.Expressions;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Builder;
@@ -49,6 +50,9 @@ public class CallExpression<E extends Expression> extends Expression {
 
     public static Expression of(Expression callee, String arguments) {
         return new CallExpression(callee, List.of(Identifier.of(arguments)));
+    }
+    public static Expression of(Expression callee, StringLiteral arguments) {
+        return new CallExpression(callee, List.of(arguments));
     }
 
     public static Expression of(String callee, int arguments) {

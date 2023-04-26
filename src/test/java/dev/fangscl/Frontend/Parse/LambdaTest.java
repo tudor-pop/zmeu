@@ -1,12 +1,18 @@
 package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Expressions.CallExpression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.*;
+import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
+import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
+import dev.fangscl.Frontend.Parser.Statements.ReturnStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -115,6 +121,63 @@ public class LambdaTest extends BaseTest {
                         )));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void callExpression() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                ((x) -> x*x)(2) 
+                                
+                """));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        CallExpression.of(
+                                LambdaExpression.of(
+                                        List.of(Identifier.of("x")), BinaryExpression.of("*", "x", "x")
+                                ),
+                                2
+                        )));
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void callExpressionEmpty() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                ((x) -> x*x)(2)()
+                                
+                """));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        CallExpression.of(
+                                CallExpression.of(
+                                        LambdaExpression.of(
+                                                List.of(Identifier.of("x")), BinaryExpression.of("*", "x", "x")
+                                        ),
+                                        2
+                                ), Collections.emptyList())
+                ));
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void callExpressionHi() {
+        var res = parser.produceAST(tokenizer.tokenize("""
+                ((x) -> x*x)(2)("hi")
+                """));
+        var expected = Program.of(
+                ExpressionStatement.of(
+                        CallExpression.of(
+                                CallExpression.of(
+                                        LambdaExpression.of(
+                                                List.of(Identifier.of("x")), BinaryExpression.of("*", "x", "x")
+                                        ),
+                                        2
+                                ), StringLiteral.of("hi"))
+                ));
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
     }
 
 }
