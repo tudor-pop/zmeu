@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Parser.Statements.Statement;
 /**
  * Expression
  * : AssignmentExpression
- * | BlockExpression
+ * | BlockStatement
  * ;
  */
 public abstract class Expression extends Statement {

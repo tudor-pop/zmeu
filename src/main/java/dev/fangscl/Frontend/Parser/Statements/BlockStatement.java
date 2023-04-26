@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * BlockExpression
+ * BlockStatement
  * : { Statements? }
  * ;
  * Statements
@@ -21,57 +21,57 @@ import java.util.stream.Collectors;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BlockExpression extends Expression {
+public class BlockStatement extends Expression {
     private List<Statement> expression;
 
-    public BlockExpression(@Nullable Statement... expression) {
-        this.kind = NodeType.BlockExpression;
+    public BlockStatement(@Nullable Statement... expression) {
+        this.kind = NodeType.BlockStatement;
         this.expression = List.of(expression);
     }
 
-    public BlockExpression(@Nullable List<Statement> expression) {
-        this.kind = NodeType.BlockExpression;
+    public BlockStatement(@Nullable List<Statement> expression) {
+        this.kind = NodeType.BlockStatement;
         this.expression = expression;
     }
 
-    public BlockExpression() {
-        this.kind = NodeType.BlockExpression;
+    public BlockStatement() {
+        this.kind = NodeType.BlockStatement;
     }
 
     public static Expression of(Expression expression) {
-        return new BlockExpression(expression);
+        return new BlockStatement(expression);
     }
 
     public static Expression of(Statement expression) {
-        return new BlockExpression(expression);
+        return new BlockStatement(expression);
     }
 
     public static Expression of(Statement... expression) {
-        return new BlockExpression(expression);
+        return new BlockStatement(expression);
     }
 
     public static Expression of(List<Statement> expression) {
-        return new BlockExpression(expression);
+        return new BlockStatement(expression);
     }
 
     public static Expression of(int value) {
-        return new BlockExpression(NumericLiteral.of(value));
+        return new BlockStatement(NumericLiteral.of(value));
     }
 
     public static Expression of(double value) {
-        return new BlockExpression(NumericLiteral.of(value));
+        return new BlockStatement(NumericLiteral.of(value));
     }
 
     public static Expression of() {
-        return new BlockExpression(Collections.emptyList());
+        return new BlockStatement(Collections.emptyList());
     }
 
     public static Expression of(float value) {
-        return new BlockExpression(NumericLiteral.of(value));
+        return new BlockStatement(NumericLiteral.of(value));
     }
 
     public static Expression of(String value) {
-        return new BlockExpression(StringLiteral.of(value));
+        return new BlockStatement(StringLiteral.of(value));
     }
 
     @Override

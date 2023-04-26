@@ -3,7 +3,7 @@ package dev.fangscl.Frontend.Parser;
 public enum NodeType {
     Program,
     ExpressionStatement,
-    BlockExpression,
+    BlockStatement,
     IfStatement,
     FunctionDeclarationStatement,
     LambdaExpression,

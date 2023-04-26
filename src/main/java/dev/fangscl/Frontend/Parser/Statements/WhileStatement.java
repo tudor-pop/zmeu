@@ -29,7 +29,7 @@ public class WhileStatement extends Statement {
     }
 
     public WhileStatement() {
-        this.kind = NodeType.BlockExpression;
+        this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of(Expression test, Expression consequent) {

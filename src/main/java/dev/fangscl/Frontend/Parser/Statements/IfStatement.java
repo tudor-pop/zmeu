@@ -29,7 +29,7 @@ public class IfStatement extends Statement {
     }
 
     public IfStatement() {
-        this.kind = NodeType.BlockExpression;
+        this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of(Expression test, Expression consequent, Expression alternate) {

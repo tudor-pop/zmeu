@@ -2,7 +2,7 @@ package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
+import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
@@ -27,7 +27,7 @@ public class FunValue extends RuntimeValue<Identifier> {
     }
 
     private FunValue(Identifier e) {
-        this(e, Collections.emptyList(), BlockExpression.of(), new Environment());
+        this(e, Collections.emptyList(), BlockStatement.of(), new Environment());
     }
 
     @Override

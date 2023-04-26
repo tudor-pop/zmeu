@@ -19,7 +19,7 @@ public class FunctionDeclaration extends Statement {
     private Statement expression;
 
     public FunctionDeclaration(Statement expression) {
-        this.kind = NodeType.BlockExpression;
+        this.kind = NodeType.BlockStatement;
         this.expression = expression;
     }
 

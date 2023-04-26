@@ -54,7 +54,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
-                                BlockExpression.of(
+                                BlockStatement.of(
                                         ExpressionStatement.of(
                                                 BinaryExpression.of("*", "x", "y")
                                         )
@@ -74,7 +74,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockExpression.of(
+                                BlockStatement.of(
                                         ReturnStatement.of(
                                                 BinaryExpression.of("*", "x", "x")
                                         )
@@ -94,7 +94,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockExpression.of(
+                                BlockStatement.of(
                                         ReturnStatement.of()
                                 )
                         )));
@@ -111,7 +111,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(),
-                                BlockExpression.of()
+                                BlockStatement.of()
                         )));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));

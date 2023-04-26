@@ -96,7 +96,7 @@ public class Parser {
      * Statement
      * : ExpressionStatement
      * | EmptyStatement
-     * | BlockExpression
+     * | BlockStatement
      * | VariableStatement
      * | IfStatement
      * | IterationStatement
@@ -109,7 +109,7 @@ public class Parser {
     private Statement Statement() {
         return switch (lookAhead().getType()) {
             case NewLine -> new EmptyStatement();
-            case OpenBraces -> BlockExpression();
+            case OpenBraces -> BlockStatement();
             case If -> IfStatement();
             case Fun -> FunctionDeclarationStatement();
             case Return -> ReturnStatement();
@@ -234,17 +234,17 @@ public class Parser {
     }
 
     /**
-     * BlockExpression
+     * BlockStatement
      * : { Statements? }
      * ;
      * Statements
      * : Statement* Expression
      */
-    private Expression BlockExpression() {
+    private Expression BlockStatement() {
         eat(TokenType.OpenBraces);
         var res = IsLookAhead(TokenType.CloseBraces)
-                ? BlockExpression.of(Collections.emptyList())
-                : BlockExpression.of(StatementList(TokenType.CloseBraces));
+                ? BlockStatement.of(Collections.emptyList())
+                : BlockStatement.of(StatementList(TokenType.CloseBraces));
         if (IsLookAhead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
             eat(TokenType.CloseBraces, "Error");
         }
@@ -290,12 +290,12 @@ public class Parser {
     /**
      * Expression
      * : AssignmentExpression
-     * | BlockExpression
+     * | BlockStatement
      * ;
      */
     private Expression Expression() {
         return switch (lookAhead().getType()) {
-            case OpenBraces -> BlockExpression();
+            case OpenBraces -> BlockStatement();
             case OpenParenthesis -> LambdaExpression();
             default -> AssignmentExpression();
         };
@@ -340,7 +340,7 @@ public class Parser {
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
-        Statement body = BlockExpression();
+        Statement body = BlockStatement();
         return FunctionDeclarationStatement.of(test, params, body);
     }
 
