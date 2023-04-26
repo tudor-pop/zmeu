@@ -34,9 +34,7 @@ import java.util.*;
 @Data
 @Log4j2
 public class Parser {
-    private List<Token> tokens;
-    private ListIterator<Token> iterator;
-    private Token current;
+    private ParserIterator iterator;
     private Program program = new Program();
 
     public Parser(List<Token> tokens) {
@@ -47,8 +45,7 @@ public class Parser {
     }
 
     private void setTokens(List<Token> tokens) {
-        this.tokens = tokens;
-        this.iterator = tokens.listIterator();
+        iterator = new ParserIterator(tokens);
     }
 
     public Program produceAST(List<Token> tokens) {
@@ -70,7 +67,7 @@ public class Parser {
      */
     private List<Statement> StatementList(TokenType endTokenType) {
         var statementList = new ArrayList<Statement>();
-        for (; iterator.hasNext(); current = iterator.next()) {
+        for (; iterator.hasNext(); iterator.next()) {
             if (IsLookAhead(endTokenType)) { // need to check for EOF before doing any work
                 break;
             }
@@ -375,43 +372,6 @@ public class Parser {
         return IsLookAhead(TokenType.lineTerminator()) ? null : Expression();
     }
 
-    private boolean IsLookAhead(TokenType... type) {
-        if (!iterator.hasNext()) {
-            return false;
-        }
-        Token token = lookAhead();
-        return token != null && token.is(type);
-    }
-
-    private boolean IsLookAhead(int k, TokenType... type) {
-        var iterator = this.tokens.listIterator(this.iterator.previousIndex() + 1);
-        for (var i = 0; i < k && iterator.hasNext(); i++, iterator.next()) {
-            Token token = lookAhead();
-            if (token == null || token.is(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean IsLookAheadAfter(TokenType after, TokenType... type) {
-        int index = this.iterator.previousIndex() + 1;
-        var iterator = this.tokens.listIterator(index);
-        while (iterator.hasNext()) {
-            var token = iterator.next();
-            if (token.is(TokenType.EOF)) {
-                break;
-            }
-            if (token.is(after)) {
-                token = iterator.next();
-                if (token.is(type)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * LambdaExpression
      * : ( OptParameterList ) -> LambdaBody
@@ -525,8 +485,7 @@ public class Parser {
     private Token AssignmentOperator() {
         Token token = lookAhead();
         if (token.isAssignment()) {
-            current = eat(token.getType());
-            return current;
+            return eat(token.getType());
         }
         throw new RuntimeException("Unrecognized token");
     }
@@ -535,10 +494,11 @@ public class Parser {
         if (target.is(NodeType.Identifier, NodeType.MemberExpression)) {
             return target;
         }
+        Object value = iterator.getCurrent().getValue();
         if (target instanceof Literal n)
-            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, current.getValue()));
+            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, value));
         else
-            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(target, operator, current.getValue()));
+            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(target, operator, value));
     }
 
 
@@ -775,6 +735,7 @@ public class Parser {
      * ;
      */
     private Expression Literal() {
+        Token current = iterator.getCurrent();
         return switch (current.getType()) {
             case True, False -> BooleanLiteral();
             case Null -> NullLiteral.of();
@@ -792,37 +753,30 @@ public class Parser {
      */
     private Expression BooleanLiteral() {
 //        var literal = eat();
-        return BooleanLiteral.of(current.getValue());
+        return BooleanLiteral.of(iterator.getCurrent().getValue());
     }
 
-    private Token lookAhead() {
-        if (!iterator.hasNext()) {
-            return null;
-        }
-        return tokens.get(iterator.nextIndex());
+    boolean IsLookAheadAfter(TokenType after, TokenType... type) {
+        return iterator.IsLookAheadAfter(after, type);
     }
 
-    private Token eat(TokenType type, String error) {
-        Token lookAhead = lookAhead();
-        if (lookAhead == null || lookAhead.is(TokenType.EOF)) {
-            log.debug("EndOfFile reached ");
-            throw new RuntimeException("Parser error." + error);
-        }
-        if (!lookAhead.is(type)) {
-            var err = "%s %s \n".formatted(error, current);
-            log.debug(err);
-            throw new SyntaxError(err);
-        }
-        return eat();
+    Token lookAhead() {
+        return iterator.lookAhead();
     }
 
-    private Token eat(TokenType type) {
-        return eat(type, "Unexpected token found");
+    Token eat() {
+        return iterator.eat();
     }
 
-    private Token eat() {
-        current = iterator.next();
-        return current;
+    Token eat(TokenType type) {
+        return iterator.eat(type);
     }
 
+    Token eat(TokenType type, String error) {
+        return iterator.eat(type, error);
+    }
+
+    private boolean IsLookAhead(TokenType... type) {
+        return iterator.IsLookAhead(type);
+    }
 }
