@@ -35,28 +35,39 @@ public class CallExpression<E extends Expression> extends Expression {
         this.arguments = arguments;
     }
 
-    public static Expression of(Expression object, int arguments) {
-        return new CallExpression(object, java.util.List.of(NumericLiteral.of(arguments)));
+    public static Expression of(Expression callee, int arguments) {
+        return new CallExpression(callee, List.of(NumericLiteral.of(arguments)));
     }
 
-    public static Expression of(Expression object, String arguments) {
-        return new CallExpression(object, java.util.List.of(Identifier.of(arguments)));
+    public static Expression of(Expression callee, double arguments) {
+        return new CallExpression(callee, List.of(NumericLiteral.of(arguments)));
     }
 
-    public static Expression of(String object, int arguments) {
-        return new CallExpression(Identifier.of(object), java.util.List.of(NumericLiteral.of(arguments)));
+    public static Expression of(Expression callee, float arguments) {
+        return new CallExpression(callee, List.of(NumericLiteral.of(arguments)));
     }
 
-    public static Expression of(int object, int arguments) {
-        return new CallExpression(NumericLiteral.of(object), java.util.List.of(NumericLiteral.of(arguments)));
+    public static Expression of(Expression callee, String arguments) {
+        return new CallExpression(callee, List.of(Identifier.of(arguments)));
     }
 
-    public static Expression of(String object, String... arguments) {
-        return new CallExpression(Identifier.of(object), Identifier.of(arguments));
+    public static Expression of(String callee, int arguments) {
+        return new CallExpression(Identifier.of(callee), List.of(NumericLiteral.of(arguments)));
+    }
+    public static Expression of(String callee, double arguments) {
+        return new CallExpression(Identifier.of(callee), List.of(NumericLiteral.of(arguments)));
     }
 
-    public static <E extends Expression> Expression of(Expression object, List<E> arguments) {
-        return new CallExpression(object, arguments);
+    public static Expression of(int callee, int arguments) {
+        return new CallExpression(NumericLiteral.of(callee), List.of(NumericLiteral.of(arguments)));
+    }
+
+    public static Expression of(String callee, String... arguments) {
+        return new CallExpression(Identifier.of(callee), Identifier.of(arguments));
+    }
+
+    public static <E extends Expression> Expression of(Expression callee, List<E> arguments) {
+        return new CallExpression(callee, arguments);
     }
 
 

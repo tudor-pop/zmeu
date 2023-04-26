@@ -603,11 +603,11 @@ public class Parser {
      * : MemberExpression
      * | CallExpression
      * ;
-     * a.b()
+     * bird.fly()
      */
     private Expression CallMemberExpression() {
-        var funBeingCalled = MemberExpression();
-        if (IsLookAhead(TokenType.OpenParenthesis)) {
+        var funBeingCalled = MemberExpression(); // .fly
+        if (IsLookAhead(TokenType.OpenParenthesis)) { // fly(
             return CallExpression(funBeingCalled);
         }
         return funBeingCalled;
@@ -623,8 +623,8 @@ public class Parser {
      * ;
      */
     private Expression CallExpression(Expression member) {
-        var res = CallExpression.of(member, Arguments());
-        if (IsLookAhead(TokenType.OpenParenthesis)) {
+        var res = CallExpression.of(member, Arguments()); // fly()
+        if (IsLookAhead(TokenType.OpenParenthesis)) { // fly()()
             res = CallExpression(res);
         }
         return res;
@@ -669,7 +669,7 @@ public class Parser {
      */
     private Expression MemberExpression() {
         var object = PrimaryExpression();
-        for (var next = lookAhead(); IsLookAhead(TokenType.Dot) || IsLookAhead(TokenType.OpenBrackets); next = lookAhead()) {
+        for (var next = lookAhead(); IsLookAhead(TokenType.Dot, TokenType.OpenBrackets); next = lookAhead()) {
             object = switch (next.getType()) {
                 case Dot -> {
                     var property = MemberProperty();
@@ -708,7 +708,7 @@ public class Parser {
     }
 
     /**
-     * ParanthesizedExpression
+     * ParenthesizedExpression
      * : ( Expression )
      * ;
      */
