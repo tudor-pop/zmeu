@@ -38,9 +38,6 @@ public class FunValue extends RuntimeValue<Identifier> {
     public static RuntimeValue<Identifier> of(Identifier name, List<Expression> params, Statement body, Environment environment) {
         return new FunValue(name, params, body, environment);
     }
-    public static RuntimeValue<Identifier> of(Identifier name, Statement body) {
-        return new FunValue(name, Collections.emptyList(), body, new Environment());
-    }
 
     public static RuntimeValue<Identifier> of(Identifier string) {
         return new FunValue(string);

@@ -50,7 +50,7 @@ public class LambdaTest extends BaseTest {
         assertEquals(expected, res);
     }
     @Test
-    void lambdaInvokeUseClojure() {
+    void lambdaInvokeClojure() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                 var y = 3
@@ -59,6 +59,44 @@ public class LambdaTest extends BaseTest {
                     x*y+z
                     }) (2)
                 }""")));
+
+        var expected = IntegerValue.of(9);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+    @Test
+    void lambdaInvokeClojure2() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                {
+                var y = 3
+                ((x) ->{ 
+                    var z=3 
+                    var y=4
+                    x*y+z
+                    }) (2)
+                }""")));
+
+        var expected = IntegerValue.of(11);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
+
+    @Test
+    void lambdaInvokeClojureWithingFunction() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                
+                var y = 3
+                fun foo(a) {
+                    var z=3 
+                    (x) -> { 
+                        var y=4
+                        x*y+z+a
+                    }
+                }
+                var cloj = foo(2)
+                cloj(1)
+                
+                """)));
 
         var expected = IntegerValue.of(9);
         log.warn(gson.toJson(res));
