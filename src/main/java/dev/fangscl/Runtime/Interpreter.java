@@ -10,10 +10,8 @@ import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Log4j2
 public class Interpreter {
@@ -88,38 +86,29 @@ public class Interpreter {
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
-        RuntimeValue function = eval(expression.getCallee(), env);
-        FunValue funValue = (FunValue) function;
+        RuntimeValue<Identifier> eval = eval(expression.getCallee(), env);
+        FunValue function = (FunValue) eval;
+
         var args = expression.getArguments()
                 .stream()
                 .map(it -> eval(it, env))
                 .toList();
 
-        if (funValue.getName() == null) { // execute lambda
-            Environment activationRecord = getActivationRecord(args, funValue.getEnvironment(), funValue.getParams());
-            return eval(funValue.getBody(), activationRecord);
+        if (function.getName() == null) { // execute lambda
+            Environment activationRecord = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
+            return eval(function.getBody(), activationRecord);
         }
 
-        String symbol = funValue.getName().getSymbol();
-        var declared = (FunValue) funValue.getEnvironment().lookup(symbol);
+        String symbol = function.getName().getSymbol();
+        var declared = (FunValue) function.getEnvironment().lookup(symbol);
         if (declared == null) {
             throw new RuntimeException("Function not declared: " + symbol);
         }
 
         // for function execution, use the clojured environment from the declared scope
-        Environment activationRecord = getActivationRecord(args, declared.getEnvironment(), declared.getParams());
-        return eval(declared.getBody(), activationRecord);
-    }
 
-    @NotNull
-    private Environment getActivationRecord(List<RuntimeValue<Object>> args, Environment environment, List<Expression> params) {
-        var activationRecord = new Environment(environment);
-        for (var i = 0; i < params.size(); i++) {
-            // for each named parameter, we save the argument into the activation record(env that the function uses to execute)
-            var paramName = ((Identifier) params.get(i)).getSymbol();
-            activationRecord.init(paramName, args.get(i));
-        }
-        return activationRecord;
+        Environment activationRecord = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
+        return eval(declared.getBody(), activationRecord);
     }
 
     public <R> RuntimeValue<R> eval(IfStatement statement, Environment env) {

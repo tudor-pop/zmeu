@@ -102,5 +102,23 @@ public class LambdaTest extends BaseTest {
         log.warn(gson.toJson(res));
         assertEquals(expected, res);
     }
+    @Test
+    void lambdaInvokeStaticClojure() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                
+                var x = 10
+                fun foo(){ x }
+                fun bar() {
+                    var x=20
+                    foo() + x
+                    
+                }
+                bar()
+                """)));
+
+        var expected = IntegerValue.of(30);
+        log.warn(gson.toJson(res));
+        assertEquals(expected, res);
+    }
 
 }
