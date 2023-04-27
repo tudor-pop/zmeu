@@ -84,8 +84,7 @@ public class Interpreter {
     public RuntimeValue eval(LambdaExpression expression, Environment env) {
         var args = expression.getParams();
 
-        var activationRecord = new Environment(env);
-        return FunValue.of(null, args, expression.getBody(), activationRecord);
+        return FunValue.of(null, args, expression.getBody(), env);
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
@@ -97,7 +96,7 @@ public class Interpreter {
                 .toList();
 
         if (funValue.getName() == null) { // execute lambda
-            Environment activationRecord = getActivationRecord(args, global, funValue.getParams());
+            Environment activationRecord = getActivationRecord(args, funValue.getEnvironment(), funValue.getParams());
             return eval(funValue.getBody(), activationRecord);
         }
 
