@@ -5,6 +5,7 @@ import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
@@ -95,8 +96,8 @@ public class Interpreter {
                 .toList();
 
         if (function.getName() == null) { // execute lambda
-            Environment activationRecord = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
-            return eval(function.getBody(), activationRecord);
+            Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
+            return eval(function.getBody(), activationEnvironment);
         }
 
         String symbol = function.getName().getSymbol();
@@ -107,8 +108,19 @@ public class Interpreter {
 
         // for function execution, use the clojured environment from the declared scope
 
-        Environment activationRecord = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
-        return eval(declared.getBody(), activationRecord);
+        Environment activationEnvironment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
+        return evalBody(declared.getBody(), activationEnvironment);
+    }
+
+
+    /**
+     * Activation environment was already created so we don't need to create a new environment when we use a BlockStatement
+     */
+    public <R> RuntimeValue<R> evalBody(Statement statement, Environment env) {
+        if (statement.is(NodeType.BlockStatement)) {
+            return eval((BlockStatement) statement, env);
+        }
+        return eval(statement, env);
     }
 
     public <R> RuntimeValue<R> eval(IfStatement statement, Environment env) {

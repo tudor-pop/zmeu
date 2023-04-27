@@ -12,6 +12,13 @@ import java.util.List;
  * It iterates over the list of parameters and assign an argument value on each iteration
  */
 public class ActivationEnvironment extends Environment {
+
+    /**
+     * @param parent Set to the environment from where we're being called to obtain dynamic scope.
+     *               Set to the environment where the function was declared to obtain the static scope
+     * @param params
+     * @param args
+     */
     public ActivationEnvironment(@Nullable Environment parent, List<Expression> params, List<RuntimeValue<Object>> args) {
         super(parent);
         for (var i = 0; i < params.size(); i++) {
