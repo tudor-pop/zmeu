@@ -5,7 +5,9 @@ public enum NodeType {
     ExpressionStatement,
     BlockStatement,
     IfStatement,
-    FunctionDeclarationStatement,
+    FunctionDeclaration,
+    InitDeclaration,
+    SchemaDeclaration,
     LambdaExpression,
     ReturnStatement,
     WhileStatement,
@@ -28,6 +30,8 @@ public enum NodeType {
     LogicalExpression,
     UnaryExpression,
     AssignmentExpression,
+    ThisExpression,
+    ResourceExpression,
     MemberExpression,
     CallExpression
 }

@@ -32,7 +32,7 @@ public class FunctionDeclarationStatement extends Statement {
     }
 
     public FunctionDeclarationStatement() {
-        this.kind = NodeType.FunctionDeclarationStatement;
+        this.kind = NodeType.FunctionDeclaration;
     }
 
     public static Statement of(Identifier test, List<Expression> params, Expression body) {

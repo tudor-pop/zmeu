@@ -48,7 +48,7 @@ public class Interpreter {
             case IfStatement -> eval((IfStatement) statement, env);
             case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
-            case FunctionDeclarationStatement -> eval((FunctionDeclarationStatement) statement, env);
+            case FunctionDeclaration -> eval((FunctionDeclarationStatement) statement, env);
 
             case CallExpression -> eval((CallExpression) statement, env);
             case LambdaExpression -> eval((LambdaExpression) statement, env);

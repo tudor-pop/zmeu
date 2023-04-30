@@ -20,7 +20,7 @@ public enum TokenType {
     RelationalOperator,
     Equality_Operator,
     /***********   Keywords   ******************/
-    Logical_And, Logical_Or, Logical_Not, Schema, Return, For, While, ReadOnly, If, Else, False, True, Fun,
+    Logical_And, Logical_Or, Logical_Not, Schema, Return, Init, For, While, ReadOnly, If, Else, False, True, Fun,
     Var,
     Param,
     This,
@@ -69,7 +69,7 @@ public enum TokenType {
     /*****   Operators   ******/
     TernaryOperator,
     OptionalOperator,
-    Plus, Increment, Decrement, Minus,Lambda, Multiply, Division, Modulo,
+    Plus, Increment, Decrement, Minus, Lambda, Multiply, Division, Modulo,
     Null,
     EOF,
     Unknown;

@@ -21,7 +21,7 @@ public class AssignmentTest extends BaseTest {
     void testAssignment() {
         var res = parser.produceAST(tokenizer.tokenize("x=2"));
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of(Identifier.of("x"), NumericLiteral.of(2), "=")));
+                AssignmentExpression.of("=", Identifier.of("x"), NumericLiteral.of(2))));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));
     }
@@ -30,10 +30,11 @@ public class AssignmentTest extends BaseTest {
     void testAssignmentBlock() {
         var res = parser.produceAST(tokenizer.tokenize("x={2}"));
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of(Identifier.of("x"), BlockStatement.of(ExpressionStatement.of(NumericLiteral.of(2))), "=")));
+                AssignmentExpression.of("=", Identifier.of("x"), BlockStatement.of(ExpressionStatement.of(NumericLiteral.of(2))))));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));
     }
+
     @Test
     void testAssignmentBlockWithStatements() {
         var res = parser.produceAST(tokenizer.tokenize("""
@@ -44,7 +45,7 @@ public class AssignmentTest extends BaseTest {
                 """));
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
-                        BlockStatement.of(ExpressionStatement.of(AssignmentExpression.of(Identifier.of("y"), NumericLiteral.of(2), "=")),
+                        BlockStatement.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))),
                                 ExpressionStatement.of(NumericLiteral.of(2))))));
         log.warn(gson.toJson(res));
         assertEquals(expected, res);
@@ -54,10 +55,9 @@ public class AssignmentTest extends BaseTest {
     void testMultipleAssignments() {
         var res = parser.produceAST(tokenizer.tokenize("x=y=2"));
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of(Identifier.of("x"),
-                        AssignmentExpression.of(Identifier.of("y"), NumericLiteral.of(2),
-                                "="),
-                        "=")));
+                AssignmentExpression.of("=", Identifier.of("x"),
+                        AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))
+                )));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));
     }
@@ -67,10 +67,9 @@ public class AssignmentTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("x=y=z=2"));
         var expected = Program.of(
                 ExpressionStatement.of(
-                        AssignmentExpression.of(Identifier.of("x"),
-                                AssignmentExpression.of(Identifier.of("y"),
-                                        AssignmentExpression.of(Identifier.of("z"), NumericLiteral.of(2), "="), "="),
-                                "="
+                        AssignmentExpression.of("=", Identifier.of("x"),
+                                AssignmentExpression.of("=", Identifier.of("y"),
+                                        AssignmentExpression.of("=", Identifier.of("z"), NumericLiteral.of(2)))
                         )
                 )
         );

@@ -96,6 +96,7 @@ public class Parser {
      * | IterationStatement
      * | ForStatement
      * | FunctionDeclarationStatement
+     * | SchemaDeclarationStatement
      * | ReturnStatement
      * ;
      */
@@ -106,6 +107,8 @@ public class Parser {
             case OpenBraces -> BlockStatement();
             case If -> IfStatement();
             case Fun -> FunctionDeclarationStatement();
+            case Schema -> SchemaDeclaration();
+            case Init -> InitStatement();
             case Return -> ReturnStatement();
             case While, For -> IterationStatement();
             case Var -> VariableStatement();
@@ -335,6 +338,33 @@ public class Parser {
 
         Statement body = BlockStatement();
         return FunctionDeclarationStatement.of(test, params, body);
+    }
+
+    /**
+     * SchemaDeclaration
+     * : schema Identifier BlockStatement
+     * ;
+     */
+    private Statement SchemaDeclaration() {
+        eat(TokenType.Schema);
+        var test = Identifier();
+
+        Statement body = BlockStatement();
+        return SchemaDeclaration.of(test, body);
+    }
+    /**
+     * InitStatement
+     * : init  ( OptParameterList ) BlockStatement?
+     * ;
+     */
+    private Statement InitStatement() {
+        eat(TokenType.Init);
+        eat(TokenType.OpenParenthesis);
+        List<Expression> params = OptParameterList();
+        eat(TokenType.CloseParenthesis);
+
+        Statement body = BlockStatement();
+        return InitStatement.of(params, body);
     }
 
     private List<Expression> OptParameterList() {
@@ -574,13 +604,22 @@ public class Parser {
         return iterator.hasNext() && lookAhead().is(strings);
     }
 
+    /**
+     * PrimaryExpression
+     * : Literal
+     * | ParenthesizedExpression
+     * | Identifier
+     * | ThisExpression
+     * | ResourceExpression
+     * ;
+     */
     @Nullable
     private Expression PrimaryExpression() {
         if (lookAhead() == null) {
             return null;
         }
         return switch (lookAhead().getType()) {
-            case OpenParenthesis, OpenBrackets -> ParanthesizedExpression();
+            case OpenParenthesis, OpenBrackets -> ParenthesizedExpression();
             case Equal -> {
                 eat();
                 yield AssignmentExpression();
@@ -591,9 +630,38 @@ public class Parser {
                 yield Literal();
             }
             case Identifier -> Identifier();
+            case This -> ThisExpression();
+            case Resource -> ResourceExpression();
             case EOF -> null;
             default -> LeftHandSideExpression();
         };
+    }
+
+    /**
+     * ThisExpression
+     * : this
+     * ;
+     */
+    private Expression ThisExpression() {
+        eat(TokenType.This);
+        return ThisExpression.of();
+    }
+
+    /**
+     * ResourceExpression
+     * : resource Identifier Identifier? BlockStatement
+     * ;
+     */
+    private Expression ResourceExpression() {
+        eat(TokenType.Resource);
+        Identifier type = Identifier();
+        Identifier name = null;
+        if (IsLookAhead(TokenType.Identifier)) {
+            name = Identifier();
+        }
+        var body = BlockStatement();
+
+        return ResourceExpression.of(type, name, (BlockStatement) body);
     }
 
     /**
@@ -719,7 +787,7 @@ public class Parser {
      * : ( Expression )
      * ;
      */
-    private Expression ParanthesizedExpression() {
+    private Expression ParenthesizedExpression() {
         if (IsLookAheadAfter(TokenType.CloseParenthesis, TokenType.Lambda)) {
             return LambdaExpression();
         }
