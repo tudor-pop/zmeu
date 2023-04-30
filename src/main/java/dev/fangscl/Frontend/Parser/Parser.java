@@ -106,7 +106,7 @@ public class Parser {
             case NewLine -> new EmptyStatement();
             case OpenBraces -> BlockStatement();
             case If -> IfStatement();
-            case Fun -> FunctionDeclarationStatement();
+            case Fun -> FunctionDeclaration();
             case Schema -> SchemaDeclaration();
             case Init -> InitStatement();
             case Return -> ReturnStatement();
@@ -329,7 +329,7 @@ public class Parser {
      * : fun Identifier ( OptParameterList ) BlockStatement?
      * ;
      */
-    private Statement FunctionDeclarationStatement() {
+    private Statement FunctionDeclaration() {
         eat(TokenType.Fun);
         var test = Identifier();
         eat(TokenType.OpenParenthesis);
@@ -337,7 +337,7 @@ public class Parser {
         eat(TokenType.CloseParenthesis);
 
         Statement body = BlockStatement();
-        return FunctionDeclarationStatement.of(test, params, body);
+        return FunctionDeclaration.of(test, params, body);
     }
 
     /**

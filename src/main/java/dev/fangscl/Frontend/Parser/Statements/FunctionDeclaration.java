@@ -19,48 +19,48 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FunctionDeclarationStatement extends Statement {
+public class FunctionDeclaration extends Statement {
     private Identifier name;
     private List<Expression> params;
     private Statement body;
 
-    public FunctionDeclarationStatement(Identifier name, List<Expression> params, @Nullable Statement body) {
+    public FunctionDeclaration(Identifier name, List<Expression> params, @Nullable Statement body) {
         this();
         this.params = params;
         this.name = name;
         this.body = body;
     }
 
-    public FunctionDeclarationStatement() {
+    public FunctionDeclaration() {
         this.kind = NodeType.FunctionDeclaration;
     }
 
     public static Statement of(Identifier test, List<Expression> params, Expression body) {
-        return new FunctionDeclarationStatement(test, params, body);
+        return new FunctionDeclaration(test, params, body);
     }
 
     public static Statement of(Identifier test, List<Expression> params, Statement body) {
-        return new FunctionDeclarationStatement(test, params, body);
+        return new FunctionDeclaration(test, params, body);
     }
 
     public static Statement of(Identifier test, List<Expression> params, int value) {
-        return new FunctionDeclarationStatement(test, params, NumericLiteral.of(value));
+        return new FunctionDeclaration(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of(Identifier test, List<Expression> params, double value) {
-        return new FunctionDeclarationStatement(test, params, NumericLiteral.of(value));
+        return new FunctionDeclaration(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of() {
-        return new FunctionDeclarationStatement();
+        return new FunctionDeclaration();
     }
 
     public static Statement of(Identifier test, List<Expression> params, float value) {
-        return new FunctionDeclarationStatement(test, params, NumericLiteral.of(value));
+        return new FunctionDeclaration(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of(Identifier test, List<Expression> params, String value) {
-        return new FunctionDeclarationStatement(test, params, StringLiteral.of(value));
+        return new FunctionDeclaration(test, params, StringLiteral.of(value));
     }
 
     @Override

@@ -48,7 +48,7 @@ public class Interpreter {
             case IfStatement -> eval((IfStatement) statement, env);
             case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
-            case FunctionDeclaration -> eval((FunctionDeclarationStatement) statement, env);
+            case FunctionDeclaration -> eval((FunctionDeclaration) statement, env);
 
             case CallExpression -> eval((CallExpression) statement, env);
             case LambdaExpression -> eval((LambdaExpression) statement, env);
@@ -74,7 +74,7 @@ public class Interpreter {
         return env.assign(left.getRuntimeValue(), right);
     }
 
-    public <R> RuntimeValue<R> eval(FunctionDeclarationStatement expression, Environment env) {
+    public <R> RuntimeValue<R> eval(FunctionDeclaration expression, Environment env) {
         var name = expression.getName();
         var params = expression.getParams();
         var body = expression.getBody();

@@ -4,7 +4,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
-import dev.fangscl.Frontend.Parser.Statements.FunctionDeclarationStatement;
+import dev.fangscl.Frontend.Parser.Statements.FunctionDeclaration;
 import dev.fangscl.Frontend.Parser.Statements.ReturnStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class FunTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
+                FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
                         BlockStatement.of(
                                 ReturnStatement.of(
@@ -45,7 +45,7 @@ public class FunTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
+                FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x"), Identifier.of("y")),
                         BlockStatement.of(
                                 ReturnStatement.of(
@@ -66,7 +66,7 @@ public class FunTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
+                FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
                         BlockStatement.of(
                                 ReturnStatement.of()
@@ -85,7 +85,7 @@ public class FunTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
+                FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),
                         BlockStatement.of(
                                 ReturnStatement.of()
@@ -103,7 +103,7 @@ public class FunTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                FunctionDeclarationStatement.of(Identifier.of("square"),
+                FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),
                         BlockStatement.of()
                 )

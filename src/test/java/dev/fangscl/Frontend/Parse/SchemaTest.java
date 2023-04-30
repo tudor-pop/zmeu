@@ -49,7 +49,7 @@ public class SchemaTest extends BaseTest {
         var expected = Program.of(
                 SchemaDeclaration.of(Identifier.of("square"),
                         BlockStatement.of(
-                                FunctionDeclarationStatement.of(Identifier.of("test"), Collections.emptyList(), BlockStatement.of())
+                                FunctionDeclaration.of(Identifier.of("test"), Collections.emptyList(), BlockStatement.of())
                         )
                 )
         );
