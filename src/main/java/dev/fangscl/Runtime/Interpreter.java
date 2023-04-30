@@ -13,6 +13,7 @@ import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Log4j2
 public class Interpreter {
@@ -81,9 +82,9 @@ public class Interpreter {
     }
 
     public RuntimeValue eval(LambdaExpression expression, Environment env) {
-        var args = expression.getParams();
-
-        return FunValue.of(null, args, expression.getBody(), env);
+        List<Expression> params = expression.getParams();
+        Statement body = expression.getBody();
+        return FunValue.of(null, params, body, env);
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
