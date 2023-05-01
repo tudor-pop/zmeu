@@ -6,8 +6,7 @@ import dev.fangscl.Frontend.Parser.Expressions.ThisExpression;
 import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.*;
-import dev.fangscl.Runtime.Values.RuntimeValue;
-import dev.fangscl.Runtime.Values.SchemaValue;
+import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -22,36 +21,67 @@ public class SchemaTest extends BaseTest {
     void schemaDeclaration() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
+                    
+                }
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue actual = (SchemaValue) environment.get("Vm");
+
+        assertEquals(Identifier.of("Vm"), actual.getName());
+    }
+
+    @Test
+    void schemaDeclarationWithFunction() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
                     fun test(){
                     
                     }
                 }
                 """)));
-        var expected = SchemaValue.of(
-                Identifier.of("Vm"),
-                BlockStatement.of(FunctionDeclaration.of("test")),
-                environment
-        );
         log.warn(gson.toJson(res));
-        assertEquals(expected, res);
-        assertEquals(environment.get("Vm"), res);
+        SchemaValue actual = (SchemaValue) environment.get("Vm");
+
+        assertEquals(FunValue.of("test", actual.getEnvironment()), actual.getEnvironment().lookup("test"));
     }
 
     @Test
-    void schemaDeclarationWithVar() {
+    void schemaDeclarationWithVariable() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     var x
                 }
                 """)));
-        var expected = SchemaValue.of(
-                Identifier.of("Vm"),
-                BlockStatement.of(VariableStatement.of(VariableDeclaration.of("x"))),
-                environment
-        );
         log.warn(gson.toJson(res));
-        assertEquals(expected, res);
-        assertEquals(environment.get("Vm"), res);
+        SchemaValue actual = (SchemaValue) environment.get("Vm");
+
+        assertEquals(NullValue.of(), actual.getEnvironment().get("x"));
+    }
+
+    @Test
+    void schemaDeclarationWithVariableInit() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                    var x=20.2
+                }
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue actual = (SchemaValue) environment.get("Vm");
+
+        assertEquals(DecimalValue.of(20.2), actual.getEnvironment().get("x"));
+    }
+
+    @Test
+    void schemaDeclarationWithVariableInitString() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                    var x="hello"
+                }
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue actual = (SchemaValue) environment.get("Vm");
+
+        assertEquals(StringValue.of("hello"), actual.getEnvironment().get("x"));
     }
 
     @Test

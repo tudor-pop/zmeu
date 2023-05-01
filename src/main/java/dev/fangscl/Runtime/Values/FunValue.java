@@ -47,6 +47,10 @@ public class FunValue extends RuntimeValue<Identifier> {
         return FunValue.of(Identifier.of(string));
     }
 
+    public static RuntimeValue<Identifier> of(String string, Environment environment) {
+        return FunValue.of(Identifier.of(string), Collections.emptyList(), BlockStatement.of(), environment);
+    }
+
     public static RuntimeValue<Identifier> of(Expression string) {
         if (string instanceof Identifier s)
             return new FunValue(s);

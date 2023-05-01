@@ -28,5 +28,9 @@ public class SchemaValue extends RuntimeValue<Identifier> {
         return new SchemaValue(name, body, environment);
     }
 
+    public String getNameString() {
+        return name.getSymbol();
+    }
+
 
 }

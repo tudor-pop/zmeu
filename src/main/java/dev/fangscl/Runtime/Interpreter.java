@@ -87,8 +87,8 @@ public class Interpreter {
         var name = expression.getName();
         var schemaEnv = new Environment(env);
 
-        var body = evalBody(expression.getBody(), schemaEnv);
-        return env.init(name.getSymbol(), SchemaValue.of(name, (BlockStatement) expression.getBody(), schemaEnv));
+        evalBody(expression.getBody(), schemaEnv); // install properties/methods of a schema into the environment
+        return env.init(name.getSymbol(), SchemaValue.of(name, (BlockStatement) expression.getBody(), schemaEnv)); // install the schema into the global env
     }
 
     /**
@@ -184,7 +184,7 @@ public class Interpreter {
         String symbol = expression.getId().getSymbol();
         RuntimeValue value = NullValue.of();
         if (expression.hasInit()){
-            eval(expression.getInit(), env);
+            value = eval(expression.getInit(), env);
         }
         return env.init(symbol, value);
     }
