@@ -99,8 +99,7 @@ public class Interpreter {
         var name = expression.getName();
         var params = expression.getParams();
         var body1 = expression.getBody();
-        var body = eval(FunctionDeclaration.of(name, params, body1), env);
-        return env.init(name.getSymbol(), SchemaValue.of(name, (BlockStatement) expression.getBody(), env));
+        return eval(FunctionDeclaration.of(name, params, body1), env);
     }
 
     public RuntimeValue eval(LambdaExpression expression, Environment env) {
