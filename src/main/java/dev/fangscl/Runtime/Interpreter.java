@@ -172,18 +172,21 @@ public class Interpreter {
         return res;
     }
 
-    public RuntimeValue eval(VariableDeclaration expression, Environment env) {
-        String symbol = expression.getId().getSymbol();
-        RuntimeValue value = eval(expression.getInit(), env);
-        return env.init(symbol, value);
-    }
-
     public RuntimeValue eval(VariableStatement statement, Environment env) {
-        RuntimeValue res = new NullValue();
+        RuntimeValue res = NullValue.of();
         for (var it : statement.getDeclarations()) {
             res = eval(it, env);
         }
         return res;
+    }
+
+    public RuntimeValue eval(VariableDeclaration expression, Environment env) {
+        String symbol = expression.getId().getSymbol();
+        RuntimeValue value = NullValue.of();
+        if (expression.hasInit()){
+            eval(expression.getInit(), env);
+        }
+        return env.init(symbol, value);
     }
 
     public RuntimeValue<IntegerValue> eval(int expression) {

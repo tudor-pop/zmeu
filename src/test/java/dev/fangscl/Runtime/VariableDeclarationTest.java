@@ -3,6 +3,7 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.DecimalValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
+import dev.fangscl.Runtime.Values.NullValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +14,21 @@ public class VariableDeclarationTest extends BaseTest {
 
 
     @Test
+    void varNull() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x")));
+        var expected = NullValue.of();
+        assertEquals(expected, res);
+        log.info(gson.toJson(res));
+    }
+
+    @Test
     void varInt() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2")));
         var expected = IntegerValue.of(2);
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
+
 
     @Test
     void varDecimal() {

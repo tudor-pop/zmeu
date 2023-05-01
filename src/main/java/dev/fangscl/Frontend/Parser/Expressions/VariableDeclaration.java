@@ -40,6 +40,9 @@ public class VariableDeclaration extends Expression {
         return new VariableDeclaration(Identifier.of(id));
     }
 
+    public boolean hasInit() {
+        return init != null;
+    }
 
     @Override
     public String toSExpression() {
