@@ -105,7 +105,7 @@ public class Interpreter {
     public RuntimeValue eval(LambdaExpression expression, Environment env) {
         List<Expression> params = expression.getParams();
         Statement body = expression.getBody();
-        return FunValue.of(null, params, body, env);
+        return FunValue.of((Identifier) null,params, body, env);
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
@@ -117,7 +117,7 @@ public class Interpreter {
                 .map(it -> eval(it, env))
                 .toList();
 
-        if (function.getName() == null) { // execute lambda
+        if (function.name() == null) { // execute lambda
             Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
             return eval(function.getBody(), activationEnvironment);
         }
@@ -181,7 +181,7 @@ public class Interpreter {
 
     public RuntimeValue eval(VariableDeclaration expression, Environment env) {
         String symbol = expression.getId().getSymbol();
-        RuntimeValue value = NullValue.of();
+        RuntimeValue value = null;
         if (expression.hasInit()){
             value = eval(expression.getInit(), env);
         }

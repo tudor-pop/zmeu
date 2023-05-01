@@ -7,6 +7,7 @@ import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,6 +40,17 @@ public class FunValue extends RuntimeValue<Identifier> {
         return new FunValue(name, params, body, environment);
     }
 
+    public static RuntimeValue<Identifier> of(String name, List<Expression> params, Statement body, Environment environment) {
+        return FunValue.of(Identifier.of(name), params, body, environment);
+    }
+    public static RuntimeValue<Identifier> of(String name, List<Expression> params,  Environment environment) {
+        return FunValue.of(Identifier.of(name), params, BlockStatement.of(), environment);
+    }
+
+    public static RuntimeValue<Identifier> of(List<Expression> params, Statement body, Environment environment) {
+        return new FunValue(null, params, body, environment);
+    }
+
     public static RuntimeValue<Identifier> of(Identifier string) {
         return FunValue.of(string, Collections.emptyList(), BlockStatement.of(), new Environment());
     }
@@ -55,5 +67,11 @@ public class FunValue extends RuntimeValue<Identifier> {
         if (string instanceof Identifier s)
             return new FunValue(s);
         throw new RuntimeException("Invalid variable name: " + string.toSExpression());
+    }
+
+    @Nullable
+    public String name() {
+        if (name == null) return null ;
+        else return name.getSymbol();
     }
 }

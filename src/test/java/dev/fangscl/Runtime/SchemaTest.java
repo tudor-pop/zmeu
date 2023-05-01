@@ -5,7 +5,10 @@ import dev.fangscl.Runtime.Values.*;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Log4j2
 public class SchemaTest extends BaseTest {
@@ -48,7 +51,7 @@ public class SchemaTest extends BaseTest {
         log.warn(gson.toJson(res));
         SchemaValue actual = (SchemaValue) environment.get("Vm");
 
-        assertEquals(NullValue.of(), actual.getEnvironment().get("x"));
+        assertNull(actual.getEnvironment().get("x"));
     }
 
     @Test
@@ -91,6 +94,21 @@ public class SchemaTest extends BaseTest {
         SchemaValue actual = (SchemaValue) environment.get("Vm");
 
         assertEquals(FunValue.of("init", actual.getEnvironment()), actual.getEnvironment().lookup("init"));
+    }
+    @Test
+    void initDeclarationWithParams() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                    init(x){
+                       
+                    }
+                }
+                """)));
+
+        log.warn(gson.toJson(res));
+        SchemaValue actual = (SchemaValue) environment.get("Vm");
+
+        assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
 
 
