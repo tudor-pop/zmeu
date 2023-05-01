@@ -3,9 +3,12 @@ package dev.fangscl.Frontend.Parser.Expressions;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * AssignmentExpression
@@ -43,5 +46,9 @@ public class ResourceExpression extends Expression {
     @Override
     public String toSExpression() {
         return "(" + type + ")";
+    }
+
+    public List<Statement> getArguments() {
+        return block.getExpression();
     }
 }
