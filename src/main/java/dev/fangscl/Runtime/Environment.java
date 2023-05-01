@@ -2,7 +2,7 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
-import dev.fangscl.Runtime.exceptions.VarNotFoundException;
+import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,17 +101,21 @@ public class Environment {
     /**
      * Search in the current scope for a variable, if found, return it; if not found, search in the parent scope
      *
-     * @param varname
+     * @param symbol
      * @return
      */
-    private Environment resolve(String varname) {
-        if (variables.containsKey(varname)) {
+    private Environment resolve(String symbol, String error) {
+        if (variables.containsKey(symbol)) {
             return this;
         }
         if (parent == null) {
-            throw new VarNotFoundException(varname);
+            throw new NotFoundException(error);
         }
-        return this.parent.resolve(varname);
+        return this.parent.resolve(symbol, error);
+    }
+
+    private Environment resolve(String symbol) {
+        return resolve(symbol, "Variable not found: ");
     }
 
     private void put(String key, RuntimeValue value) {
@@ -121,5 +125,10 @@ public class Environment {
     @Nullable
     public RuntimeValue get(String key) {
         return this.variables.get(key);
+    }
+
+    public RuntimeValue lookup(String symbol, String error) {
+        return resolve(symbol, error) // search the scope
+                .get(symbol);
     }
 }

@@ -5,6 +5,8 @@ import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -32,5 +34,14 @@ public class SchemaValue extends RuntimeValue<Identifier> {
         return name.getSymbol();
     }
 
+    @NotNull
+    public FunValue getMethod(String methodName) {
+        return (FunValue) environment.lookup(methodName, "Method not found: " + methodName);
+    }
+
+    @Nullable
+    public FunValue getMethodOrNull(String methodName) {
+        return (FunValue) environment.get(methodName);
+    }
 
 }

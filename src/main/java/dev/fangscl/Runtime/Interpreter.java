@@ -14,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class Interpreter {
@@ -52,6 +53,7 @@ public class Interpreter {
             case SchemaDeclaration -> eval((SchemaDeclaration) statement, env);
             case InitDeclaration -> eval((InitStatement) statement, env);
 
+            case ResourceExpression -> eval((ResourceExpression) statement, env);
             case CallExpression -> eval((CallExpression) statement, env);
             case LambdaExpression -> eval((LambdaExpression) statement, env);
 
@@ -105,7 +107,23 @@ public class Interpreter {
     public RuntimeValue eval(LambdaExpression expression, Environment env) {
         List<Expression> params = expression.getParams();
         Statement body = expression.getBody();
-        return FunValue.of((Identifier) null,params, body, env);
+        return FunValue.of((Identifier) null, params, body, env);
+    }
+
+    public RuntimeValue eval(ResourceExpression expression, Environment env) {
+        var schemaEnvTmp = (RuntimeValue) eval(expression.getType(), env);
+        var schemaEnv = (SchemaValue) schemaEnvTmp;
+        var args = expression.getArguments()
+                .stream()
+                .map(it -> eval(it, env))
+                .toList();
+
+        var newEnv = new Environment(Optional.ofNullable(schemaEnv.getEnvironment()).orElse(env));
+        var init = schemaEnv.getMethodOrNull("init");
+        if (init != null) {
+            return functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), newEnv), args);
+        }
+        return ResourceValue.of(expression.getName(), expression.getArguments(), newEnv);
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
@@ -118,20 +136,23 @@ public class Interpreter {
                 .toList();
 
         if (function.name() == null) { // execute lambda
-            Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
-            return eval(function.getBody(), activationEnvironment);
+            return lambdaCall(function, args);
         }
 
-        String symbol = function.getName().getSymbol();
-        var declared = (FunValue) function.getEnvironment().lookup(symbol);
-        if (declared == null) {
-            throw new RuntimeException("Function not declared: " + symbol);
-        }
+        return functionCall(function, args);
+    }
 
+    private <R> RuntimeValue<R> functionCall(FunValue function, List<RuntimeValue<Object>> args) {
         // for function execution, use the clojured environment from the declared scope
+        var declared = (FunValue) function.getEnvironment().lookup(function.name(), "Function not declared: ");
 
         Environment activationEnvironment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
         return evalBody(declared.getBody(), activationEnvironment);
+    }
+
+    private <R> RuntimeValue<R> lambdaCall(FunValue function, List<RuntimeValue<Object>> args) {
+        Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
+        return eval(function.getBody(), activationEnvironment);
     }
 
 
@@ -182,7 +203,7 @@ public class Interpreter {
     public RuntimeValue eval(VariableDeclaration expression, Environment env) {
         String symbol = expression.getId().getSymbol();
         RuntimeValue value = null;
-        if (expression.hasInit()){
+        if (expression.hasInit()) {
             value = eval(expression.getInit(), env);
         }
         return env.init(symbol, value);
@@ -286,7 +307,7 @@ public class Interpreter {
 
     public void set(Environment environment) {
         this.global = environment;
-        this.global.init("null", new NullValue());
+        this.global.init("null", NullValue.of());
         this.global.init("true", BooleanValue.of(true));
         this.global.init("false", BooleanValue.of(false));
     }
