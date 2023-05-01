@@ -49,6 +49,8 @@ public class Interpreter {
             case WhileStatement -> eval((WhileStatement) statement, env);
             case VariableStatement -> eval((VariableStatement) statement, env);
             case FunctionDeclaration -> eval((FunctionDeclaration) statement, env);
+            case SchemaDeclaration -> eval((SchemaDeclaration) statement, env);
+            case InitDeclaration -> eval((InitStatement) statement, env);
 
             case CallExpression -> eval((CallExpression) statement, env);
             case LambdaExpression -> eval((LambdaExpression) statement, env);
@@ -79,6 +81,26 @@ public class Interpreter {
         var params = expression.getParams();
         var body = expression.getBody();
         return env.init(name.getSymbol(), FunValue.of(name, params, body, env));
+    }
+
+    public <R> RuntimeValue<R> eval(SchemaDeclaration expression, Environment env) {
+        var name = expression.getName();
+        var schemaEnv = new Environment(env);
+
+        var body = evalBody(expression.getBody(), schemaEnv);
+        return env.init(name.getSymbol(), SchemaValue.of(name, (BlockStatement) expression.getBody(), schemaEnv));
+    }
+
+    /**
+     * InitStatement
+     * Syntactic sugar for a function
+     */
+    public <R> RuntimeValue<R> eval(InitStatement expression, Environment env) {
+        var name = expression.getName();
+        var params = expression.getParams();
+        var body1 = expression.getBody();
+        var body = eval(FunctionDeclaration.of(name, params, body1), env);
+        return env.init(name.getSymbol(), SchemaValue.of(name, (BlockStatement) expression.getBody(), env));
     }
 
     public RuntimeValue eval(LambdaExpression expression, Environment env) {
@@ -143,7 +165,7 @@ public class Interpreter {
     }
 
     public <R> RuntimeValue<R> eval(BlockStatement expression, Environment env) {
-        RuntimeValue res = new NullValue();
+        RuntimeValue res = NullValue.of();
         for (var it : expression.getExpression()) {
             res = eval(it, env);
         }

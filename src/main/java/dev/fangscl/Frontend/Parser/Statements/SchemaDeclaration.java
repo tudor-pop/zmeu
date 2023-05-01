@@ -9,19 +9,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**
- * <p>
- * BlockStatement
- * : '{' OptionalStatementList '}'
+ * SchemaDeclaration
+ * : schema Identifier BlockStatement
  * ;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SchemaDeclaration extends Statement {
     private Identifier name;
-    private List<Expression> params;
     private Statement body;
 
     public SchemaDeclaration(Identifier name, @Nullable Statement body) {

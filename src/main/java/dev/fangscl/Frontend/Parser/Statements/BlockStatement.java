@@ -42,11 +42,11 @@ public class BlockStatement extends Expression {
         return new BlockStatement(expression);
     }
 
-    public static Expression of(Statement expression) {
+    public static BlockStatement of(Statement expression) {
         return new BlockStatement(expression);
     }
 
-    public static Expression of(Statement... expression) {
+    public static BlockStatement of(Statement... expression) {
         return new BlockStatement(expression);
     }
 

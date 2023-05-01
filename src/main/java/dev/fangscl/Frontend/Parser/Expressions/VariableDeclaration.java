@@ -36,6 +36,9 @@ public class VariableDeclaration extends Expression {
     public static VariableDeclaration of(Expression id) {
         return new VariableDeclaration(id);
     }
+    public static VariableDeclaration of(String id) {
+        return new VariableDeclaration(Identifier.of(id));
+    }
 
 
     @Override

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,16 +40,28 @@ public class FunctionDeclaration extends Statement {
         return new FunctionDeclaration(test, params, body);
     }
 
+    public static Statement of(String test, List<Expression> params, Expression body) {
+        return FunctionDeclaration.of(Identifier.of(test), params, body);
+    }
+
+    public static Statement of(String test, Expression body) {
+        return FunctionDeclaration.of(Identifier.of(test), Collections.emptyList(), body);
+    }
+
+    public static Statement of(String test) {
+        return FunctionDeclaration.of(Identifier.of(test), Collections.emptyList(), BlockStatement.of());
+    }
+
     public static Statement of(Identifier test, List<Expression> params, Statement body) {
         return new FunctionDeclaration(test, params, body);
     }
 
     public static Statement of(Identifier test, List<Expression> params, int value) {
-        return new FunctionDeclaration(test, params, NumericLiteral.of(value));
+        return FunctionDeclaration.of(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of(Identifier test, List<Expression> params, double value) {
-        return new FunctionDeclaration(test, params, NumericLiteral.of(value));
+        return FunctionDeclaration.of(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of() {
@@ -56,11 +69,11 @@ public class FunctionDeclaration extends Statement {
     }
 
     public static Statement of(Identifier test, List<Expression> params, float value) {
-        return new FunctionDeclaration(test, params, NumericLiteral.of(value));
+        return FunctionDeclaration.of(test, params, NumericLiteral.of(value));
     }
 
     public static Statement of(Identifier test, List<Expression> params, String value) {
-        return new FunctionDeclaration(test, params, StringLiteral.of(value));
+        return FunctionDeclaration.of(test, params, StringLiteral.of(value));
     }
 
     @Override
