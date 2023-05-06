@@ -58,4 +58,9 @@ public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
         return environment.lookup(varName);
     }
 
+    @Override
+    public @Nullable RuntimeValue get(String key) {
+        return environment.get(key);
+    }
+
 }

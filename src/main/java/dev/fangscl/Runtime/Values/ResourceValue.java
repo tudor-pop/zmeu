@@ -76,4 +76,9 @@ public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
     public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
         return environment.lookup(varName);
     }
+
+    @Override
+    public @Nullable RuntimeValue get(String key) {
+        return environment.get(key);
+    }
 }

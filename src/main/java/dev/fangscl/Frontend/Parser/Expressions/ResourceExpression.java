@@ -51,4 +51,8 @@ public class ResourceExpression extends Expression {
     public List<Statement> getArguments() {
         return block.getExpression();
     }
+
+    public String name() {
+        return name.getSymbol();
+    }
 }

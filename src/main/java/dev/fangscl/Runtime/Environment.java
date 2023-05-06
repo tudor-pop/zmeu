@@ -130,7 +130,7 @@ public class Environment implements IEnvironment {
             return this;
         }
         if (parent == null) {
-            throw new NotFoundException(error);
+            throw new NotFoundException(error, symbol);
         }
         return this.parent.resolve(symbol, error);
     }
@@ -143,7 +143,7 @@ public class Environment implements IEnvironment {
         this.variables.put(key, value);
     }
 
-    @Nullable
+    @Override
     public RuntimeValue get(String key) {
         return this.variables.get(key);
     }

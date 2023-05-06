@@ -9,4 +9,6 @@ public interface IEnvironment {
     RuntimeValue lookup(@Nullable String varName);
 
     RuntimeValue lookup(@Nullable RuntimeValue<String> varName);
+
+    @Nullable RuntimeValue get(String key);
 }

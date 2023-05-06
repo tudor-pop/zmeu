@@ -5,6 +5,7 @@ import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import dev.fangscl.Runtime.Values.RuntimeValue;
 import dev.fangscl.Runtime.Values.SchemaValue;
+import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ public class ResourceTest extends BaseTest {
                 schema Vm {
                    var x = 2
                 }
-                
+                                
                 resource Vm main {
                     
                 }
@@ -73,7 +74,7 @@ public class ResourceTest extends BaseTest {
                 schema Vm {
                    var x = 2
                 }
-                
+                                
                 resource Vm main {
                     
                 }
@@ -112,7 +113,7 @@ public class ResourceTest extends BaseTest {
                 schema Vm {
                    var x = 2
                 }
-                
+                                
                 resource Vm main {
                     
                 }
@@ -128,9 +129,48 @@ public class ResourceTest extends BaseTest {
         assertEquals(IntegerValue.of(2), schema.getEnvironment().get("x"));
 
         // x of main resource was updated with a new value
-        var x = resource.lookup("x");
+        var x = resource.get("x");
         assertEquals(IntegerValue.of(3), res);
         assertEquals(IntegerValue.of(3), x);
+    }
+
+    @Test
+    void resourceInit() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                   var x = 2
+                }
+                                
+                resource Vm main {
+                    x = 3
+                }
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue schema = (SchemaValue) global.get("Vm");
+
+        String main = "main";
+        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+
+        // default x in schema remains the same
+        assertEquals(IntegerValue.of(2), schema.getEnvironment().get("x"));
+
+        // x of main resource was updated with a new value
+        var x = resource.get("x");
+        assertEquals(IntegerValue.of(3), x);
+    }
+
+    @Test
+    void resourceThrows() {
+        assertThrows(NotFoundException.class, () -> {
+            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                    schema Vm {
+                    }
+                                    
+                    resource Vm main {
+                        x = 3
+                    }
+                    """)));
+        });
     }
 
 

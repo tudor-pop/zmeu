@@ -10,6 +10,7 @@ import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.InvalidInitException;
+import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
 import lombok.extern.log4j.Log4j2;
 
@@ -146,19 +147,23 @@ public class Interpreter {
         }
         var schemaValueTmp = (RuntimeValue) eval(expression.getType(), env);
         var schemaValue = (SchemaValue) schemaValueTmp;
-        var args = expression.getArguments()
-                .stream()
-                .map(it -> eval(it, env))
-                .toList();
 
         Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
         var resourceEnv = Environment.copyOf(schemaEnvironment);
-
-        var init = schemaValue.getMethodOrNull("init");
-        if (init != null) {
-            functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
+        try {
+            var args = expression.getArguments()
+                    .stream()
+                    .map(it -> eval(it, resourceEnv))
+                    .toList();
+            var init = schemaValue.getMethodOrNull("init");
+            if (init != null) {
+                functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
+            }
+            return schemaEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
         }
-        return schemaEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
+
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
