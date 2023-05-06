@@ -110,6 +110,10 @@ public class Interpreter {
         return FunValue.of((Identifier) null, params, body, env);
     }
 
+    /**
+     * An instance of a Schema is an Environment!
+     * the 'parent' component of the instance environment is set to the class environment making class members accessible
+     */
     public RuntimeValue eval(ResourceExpression expression, Environment env) {
         var schemaEnvTmp = (RuntimeValue) eval(expression.getType(), env);
         var schemaEnv = (SchemaValue) schemaEnvTmp;
@@ -118,12 +122,12 @@ public class Interpreter {
                 .map(it -> eval(it, env))
                 .toList();
 
-        var newEnv = new Environment(Optional.ofNullable(schemaEnv.getEnvironment()).orElse(env));
+        var resourceEnv = new Environment(Optional.ofNullable(schemaEnv.getEnvironment()).orElse(env));
         var init = schemaEnv.getMethodOrNull("init");
         if (init != null) {
-            return functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), newEnv), args);
+            return functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv), args);
         }
-        return ResourceValue.of(expression.getName(), expression.getArguments(), newEnv);
+        return ResourceValue.of(expression.getName(), expression.getArguments(), resourceEnv);
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {

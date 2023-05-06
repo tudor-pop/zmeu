@@ -20,9 +20,10 @@ public class ResourceTest extends BaseTest {
                 }
                 """)));
         log.warn(gson.toJson(res));
-        SchemaValue actual = (SchemaValue) environment.get("Vm");
+        SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(Identifier.of("Vm"), actual.getName());
+        assertEquals(Identifier.of("Vm"), actual.getEnvironment().get("Vm"));
     }
 
 

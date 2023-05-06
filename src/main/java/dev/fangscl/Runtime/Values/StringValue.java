@@ -3,14 +3,12 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * Receiving a StringLiteral
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class StringValue extends RuntimeValue<String> {
+public class StringValue implements RuntimeValue<String> {
     private String value;
 
     public StringValue(String value) {

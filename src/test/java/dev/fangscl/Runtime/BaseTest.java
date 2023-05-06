@@ -9,13 +9,13 @@ class BaseTest {
     protected Interpreter interpreter;
     protected Parser parser;
     protected Tokenizer tokenizer;
-    protected Environment environment;
+    protected Environment global;
     protected Gson gson = new Gson();
 
     @BeforeEach
     void reset() {
-        this.environment = new Environment();
-        this.interpreter = new Interpreter(environment);
+        this.global = new Environment();
+        this.interpreter = new Interpreter(global);
         this.parser = new Parser();
         this.tokenizer = new Tokenizer();
     }

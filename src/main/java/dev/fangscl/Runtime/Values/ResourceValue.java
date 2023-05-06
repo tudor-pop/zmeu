@@ -4,15 +4,13 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class ResourceValue extends RuntimeValue<Identifier> {
+public class ResourceValue implements RuntimeValue<Identifier> {
     private Environment environment;
     private Identifier name;
     private List<Statement> args;

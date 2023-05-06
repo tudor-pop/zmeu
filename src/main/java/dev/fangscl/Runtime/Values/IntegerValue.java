@@ -3,11 +3,9 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class IntegerValue extends RuntimeValue<Integer> {
+public class IntegerValue implements RuntimeValue<Integer> {
     private int value;
 
     public IntegerValue(int number) {

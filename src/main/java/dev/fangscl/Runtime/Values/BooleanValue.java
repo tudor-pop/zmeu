@@ -3,11 +3,9 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class BooleanValue extends RuntimeValue<Boolean> {
+public class BooleanValue implements RuntimeValue<Boolean> {
     private boolean value;
 
     public BooleanValue(boolean value) {

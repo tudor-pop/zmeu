@@ -3,11 +3,9 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class DecimalValue extends RuntimeValue<Double> {
+public class DecimalValue implements RuntimeValue<Double> {
     private double value;
 
     public DecimalValue(double number) {

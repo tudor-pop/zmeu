@@ -21,7 +21,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                     var x = 1
                 }
@@ -31,16 +31,16 @@ public class FunTest extends BaseTest {
                 List.of(),
                 BlockStatement.of(VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)))),
-                environment
+                global
         );
         log.warn(gson.toJson(res));
         assertEquals(expected, res);
-        assertEquals(environment.get("myFun"), res);
+        assertEquals(global.get("myFun"), res);
     }
 
     @Test
     void funReturn() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                    var x = 1
                    x
@@ -53,17 +53,17 @@ public class FunTest extends BaseTest {
                                 VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))
                         ),
                         ExpressionStatement.of(Identifier.of("x"))),
-                environment
+                global
         );
 
         log.warn(gson.toJson(res));
         assertEquals(expected, res);
-        assertEquals(environment.get("myFun"), res);
+        assertEquals(global.get("myFun"), res);
     }
 
     @Test
     void funEvaluateBlock() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(x){
                    x
                 }
@@ -76,7 +76,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBody() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x){
                    x*x
                 }
@@ -89,7 +89,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBodyMultiParams() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x,y){
                    var z = 1
                    x*y+z
@@ -103,7 +103,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funClojure() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var a = 100
                     fun calc(x,y){

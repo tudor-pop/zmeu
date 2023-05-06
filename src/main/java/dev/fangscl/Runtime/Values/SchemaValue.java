@@ -4,13 +4,11 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class SchemaValue extends RuntimeValue<Identifier> {
+public class SchemaValue implements RuntimeValue<Identifier> {
     private Environment environment;
     private Identifier name;
     private BlockStatement body;

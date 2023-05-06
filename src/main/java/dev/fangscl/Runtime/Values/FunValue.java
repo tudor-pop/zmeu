@@ -6,15 +6,13 @@ import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class FunValue extends RuntimeValue<Identifier> {
+public class FunValue implements RuntimeValue<Identifier> {
     private Environment environment;
     private Identifier name;
     private List<Expression> params;

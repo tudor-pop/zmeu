@@ -3,11 +3,9 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class IdentifierValue extends RuntimeValue<String> {
+public class IdentifierValue implements RuntimeValue<String> {
     private String value;
 
     public IdentifierValue(String value) {
