@@ -41,6 +41,31 @@ public class ResourceTest extends BaseTest {
 
 
         String main = "main";
+        ResourceValue resource = (ResourceValue) actual.getEnvironment().get(main);
+
+        assertNotNull(resource);
+        assertEquals(Identifier.of(main), resource.getName());
+    }
+
+    @Test
+    void resourceNewSchema() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                     
+                }
+                
+                resource Vm main {
+                    
+                }
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue actual = (SchemaValue) global.get("Vm");
+
+        assertNotNull(actual);
+        assertEquals(Identifier.of("Vm"), actual.getName());
+
+
+        String main = "main";
         ResourceValue resource = (ResourceValue) global.get(main);
 
         assertNotNull(resource);

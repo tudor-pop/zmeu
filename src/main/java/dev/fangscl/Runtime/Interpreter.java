@@ -119,20 +119,21 @@ public class Interpreter {
         if (expression.getName() == null) {
             throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
         }
-        var schemaEnvTmp = (RuntimeValue) eval(expression.getType(), env);
-        var schemaEnv = (SchemaValue) schemaEnvTmp;
+        var schemaValueTmp = (RuntimeValue) eval(expression.getType(), env);
+        var schemaValue = (SchemaValue) schemaValueTmp;
         var args = expression.getArguments()
                 .stream()
                 .map(it -> eval(it, env))
                 .toList();
 
-        var resourceEnv = new Environment(Optional.ofNullable(schemaEnv.getEnvironment()).orElse(env));
+        Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
+        var resourceEnv = new Environment(schemaEnvironment);
 
-        var init = schemaEnv.getMethodOrNull("init");
+        var init = schemaValue.getMethodOrNull("init");
         if (init != null) {
             functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
         }
-        return env.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
+        return schemaEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
