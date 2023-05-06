@@ -53,6 +53,7 @@ public class Interpreter {
             case FunctionDeclaration -> eval((FunctionDeclaration) statement, env);
             case SchemaDeclaration -> eval((SchemaDeclaration) statement, env);
             case InitDeclaration -> eval((InitStatement) statement, env);
+            case MemberExpression -> eval((MemberExpression) statement, env);
 
             case ResourceExpression -> eval((ResourceExpression) statement, env);
             case CallExpression -> eval((CallExpression) statement, env);
@@ -103,6 +104,23 @@ public class Interpreter {
         var params = expression.getParams();
         var body1 = expression.getBody();
         return eval(FunctionDeclaration.of(name, params, body1), env);
+    }
+
+    /**
+     * Property access: instance.property.property
+     */
+    public <R> RuntimeValue<R> eval(MemberExpression expression, Environment env) {
+        if (expression.getProperty() instanceof Identifier resourceName) {
+            RuntimeValue value = eval(expression.getObject(), env);
+
+            String symbol = resourceName.getSymbol();
+            if (value instanceof SchemaValue schemaValue) {
+                return schemaValue.getEnvironment().lookup(symbol);
+            } else if (value instanceof ResourceValue memberExpression) {
+                return memberExpression.getEnvironment().lookup(symbol);
+            }
+        }
+        throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getKind());
     }
 
     public RuntimeValue eval(LambdaExpression expression, Environment env) {

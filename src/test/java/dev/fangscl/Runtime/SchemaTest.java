@@ -111,5 +111,19 @@ public class SchemaTest extends BaseTest {
         assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
 
+    @Test
+    void initDeclarationWithParamsAssignment() {
+        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                    var x = 1;
+                }
+                """)));
+
+        log.warn(gson.toJson(res));
+        SchemaValue actual = (SchemaValue) global.get("Vm");
+
+        assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
+    }
+
 
 }
