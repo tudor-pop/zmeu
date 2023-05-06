@@ -8,6 +8,7 @@ import dev.fangscl.Runtime.Values.SchemaValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Log4j2
 public class ResourceTest extends BaseTest {
     @Test
-    void resourceNewNoName() {
+    void newResourceThrowsIfNoNameIsSpecified() {
         Assertions.assertThrows(RuntimeException.class, () -> {
             interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                     schema Vm { }
@@ -26,8 +27,16 @@ public class ResourceTest extends BaseTest {
         });
     }
 
+    /**
+     * This checks for the following syntax
+     * Vm.main
+     * All resources are defined in the schema
+     * global env{
+     *     Vm : SchemaValue -> variables{ main -> resource Vm}
+     * }
+     */
     @Test
-    void resourceNew() {
+     void resourceIsDefinedInSchemaEnv() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm { }
                 resource Vm main {
@@ -35,21 +44,37 @@ public class ResourceTest extends BaseTest {
                 }
                 """)));
         log.warn(gson.toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        SchemaValue schema = (SchemaValue) global.get("Vm");
 
-        assertNotNull(actual);
-        assertEquals(Identifier.of("Vm"), actual.getName());
+        assertNotNull(schema);
+        assertEquals(Identifier.of("Vm"), schema.getName());
 
 
         String main = "main";
-        ResourceValue resource = (ResourceValue) actual.getEnvironment().get(main);
+        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
 
         assertNotNull(resource);
         assertEquals(Identifier.of(main), resource.getName());
     }
 
     @Test
-    void resourceAccessSchemaValue() {
+    @DisplayName("throw if a resource uses a field not defined in the schema")
+    void resourceThrowsIfFieldNotDefinedInSchema() {
+        assertThrows(NotFoundException.class, () -> {
+            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                    schema Vm {
+                    }
+                                    
+                    resource Vm main {
+                        x = 3
+                    }
+                    """)));
+        });
+    }
+
+
+    @Test
+    void resourceInheritsDefaultSchemaValue() {
         RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
@@ -103,7 +128,7 @@ public class ResourceTest extends BaseTest {
     }
 
     /**
-     * Test weather changing a value in the instance works
+     * Change a value in the resource instance works
      * It should not change the schema default values
      * It should only change the member of the resource
      */
@@ -157,20 +182,6 @@ public class ResourceTest extends BaseTest {
         // x of main resource was updated with a new value
         var x = resource.get("x");
         assertEquals(IntegerValue.of(3), x);
-    }
-
-    @Test
-    void resourceThrows() {
-        assertThrows(NotFoundException.class, () -> {
-            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                    schema Vm {
-                    }
-                                    
-                    resource Vm main {
-                        x = 3
-                    }
-                    """)));
-        });
     }
 
 
