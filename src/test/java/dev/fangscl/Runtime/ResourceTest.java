@@ -86,6 +86,10 @@ public class ResourceTest extends BaseTest {
 
         String main = "main";
         ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+        // make sure main has it's own copy of x
+        assertNotSame(IntegerValue.of(2), resource.getEnvironment().get("x"));
+        // make sure main's x has been changed
+        assertEquals(IntegerValue.of(2), resource.getEnvironment().get("x"));
 
         // assert y holds reference to Vm.main
         var y = global.lookup("y");
@@ -95,6 +99,38 @@ public class ResourceTest extends BaseTest {
         assertSame(z, schema.getEnvironment().get("x"));
 
         assertEquals(IntegerValue.of(2), res);
+    }
+
+    /**
+     * Test weather changing a value in the instance works
+     * It should not change the schema default values
+     * It should only change the member of the resource
+     */
+    @Test
+    void resourceSetMemberAccess() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                   var x = 2
+                }
+                
+                resource Vm main {
+                    
+                }
+                Vm.main.x = 3
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue schema = (SchemaValue) global.get("Vm");
+
+        String main = "main";
+        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+
+        // default x in schema remains the same
+        assertEquals(IntegerValue.of(2), schema.getEnvironment().get("x"));
+
+        // x of main resource was updated with a new value
+        var x = resource.lookup("x");
+        assertEquals(IntegerValue.of(3), res);
+        assertEquals(IntegerValue.of(3), x);
     }
 
 

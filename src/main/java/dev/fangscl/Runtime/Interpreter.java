@@ -75,8 +75,19 @@ public class Interpreter {
     }
 
     public <R> RuntimeValue<R> eval(AssignmentExpression expression, Environment env) {
-        RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
         RuntimeValue right = eval(expression.getRight(), env);
+
+        if (expression.getLeft() instanceof MemberExpression memberExpression) {
+            var instanceEnv = (IEnvironment) eval(memberExpression.getObject(), env);
+            Expression property = memberExpression.getProperty();
+            if (property instanceof Identifier identifier) {
+                return instanceEnv.assign(identifier.getSymbol(), right);
+            } else {
+                throw new OperationNotImplementedException("Invalid assignment expression");
+            }
+        }
+
+        RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
         return env.assign(left.getRuntimeValue(), right);
     }
 
@@ -141,7 +152,7 @@ public class Interpreter {
                 .toList();
 
         Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
-        var resourceEnv = new Environment(schemaEnvironment);
+        var resourceEnv = Environment.copyOf(schemaEnvironment);
 
         var init = schemaValue.getMethodOrNull("init");
         if (init != null) {

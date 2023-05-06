@@ -4,6 +4,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,7 @@ public class Environment implements IEnvironment {
     @Nullable
     private final Environment parent;
 
+    @Getter
     private final Map<String, RuntimeValue<?>> variables;
 
     public Environment(@Nullable Environment parent) {
@@ -42,6 +44,17 @@ public class Environment implements IEnvironment {
 
     public Environment() {
         this(new HashMap<>());
+    }
+
+    /**
+     * Copy parent's variables into a new Environment
+     */
+    public static Environment copyOf(Environment parent) {
+        Map<String, RuntimeValue<?>> res = new HashMap<>(parent.getVariables().size() + 1);
+        for (var it : parent.getVariables().entrySet()) {
+            res.put(it.getKey(), it.getValue());
+        }
+        return new Environment(parent, res);
     }
 
     /**

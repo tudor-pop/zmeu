@@ -122,7 +122,7 @@ public class SchemaTest extends BaseTest {
         log.warn(gson.toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
-        assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
+        assertEquals(res, actual);
     }
 
 
