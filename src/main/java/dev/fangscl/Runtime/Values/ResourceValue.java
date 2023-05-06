@@ -2,6 +2,7 @@ package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Environment;
+import dev.fangscl.Runtime.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public class ResourceValue implements RuntimeValue<Identifier> {
+public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
     private Environment environment;
     private Identifier name;
     private List<RuntimeValue<Object>> args;
@@ -59,5 +60,20 @@ public class ResourceValue implements RuntimeValue<Identifier> {
     public String name() {
         if (name == null) return null ;
         else return name.getSymbol();
+    }
+
+    @Override
+    public RuntimeValue assign(String varName, RuntimeValue value) {
+        return environment.assign(varName, value);
+    }
+
+    @Override
+    public RuntimeValue lookup(@Nullable String varName) {
+        return environment.lookup(varName);
+    }
+
+    @Override
+    public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
+        return environment.lookup(varName);
     }
 }

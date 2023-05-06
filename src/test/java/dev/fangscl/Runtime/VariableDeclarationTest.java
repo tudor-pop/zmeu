@@ -91,13 +91,19 @@ public class VariableDeclarationTest extends BaseTest {
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
-//
-//    @Test
-//    void varMultiDeclaration() {
-//        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var y,x = 2")));
-//        var expected = IntegerValue.of(false);
-//        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
-//    }
+
+    @Test
+    void varMultiDeclaration() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        {
+            var y = 0
+            y=1
+        }
+        """)));
+
+        log.info(gson.toJson(res));
+        var expected = IntegerValue.of(1);
+        assertEquals(expected, res);
+    }
 
 }

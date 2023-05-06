@@ -111,14 +111,10 @@ public class Interpreter {
      */
     public <R> RuntimeValue<R> eval(MemberExpression expression, Environment env) {
         if (expression.getProperty() instanceof Identifier resourceName) {
-            RuntimeValue value = eval(expression.getObject(), env);
+            var value = (IEnvironment) eval(expression.getObject(), env);
 
             String symbol = resourceName.getSymbol();
-            if (value instanceof SchemaValue schemaValue) {
-                return schemaValue.getEnvironment().lookup(symbol);
-            } else if (value instanceof ResourceValue memberExpression) {
-                return memberExpression.getEnvironment().lookup(symbol);
-            }
+            return value.lookup(symbol);
         }
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getKind());
     }

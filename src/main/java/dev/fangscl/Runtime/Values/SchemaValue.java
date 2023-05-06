@@ -3,12 +3,13 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Runtime.Environment;
+import dev.fangscl.Runtime.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class SchemaValue implements RuntimeValue<Identifier> {
+public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
     private Environment environment;
     private Identifier name;
     private BlockStatement body;
@@ -40,6 +41,21 @@ public class SchemaValue implements RuntimeValue<Identifier> {
     @Nullable
     public FunValue getMethodOrNull(String methodName) {
         return (FunValue) environment.get(methodName);
+    }
+
+    @Override
+    public RuntimeValue assign(String varName, RuntimeValue value) {
+        return environment.assign(varName, value);
+    }
+
+    @Override
+    public RuntimeValue lookup(@Nullable String varName) {
+        return environment.lookup(varName);
+    }
+
+    @Override
+    public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
+        return environment.lookup(varName);
     }
 
 }

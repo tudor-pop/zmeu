@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Log4j2
-public class Environment {
+public class Environment implements IEnvironment {
     @Nullable
     private final Environment parent;
 
@@ -85,12 +85,14 @@ public class Environment {
      * Assign a value to an existing variable
      * x = 10
      */
+    @Override
     public RuntimeValue assign(String varName, RuntimeValue value) {
         var env = this.resolve(varName);
         env.put(varName, value);
         return value;
     }
 
+    @Override
     public RuntimeValue lookup(@Nullable String varName) {
         if (varName == null) {
             varName = "null";
@@ -99,6 +101,7 @@ public class Environment {
                 .get(varName); // return the value
     }
 
+    @Override
     public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
         return lookup(varName.getRuntimeValue());
     }
