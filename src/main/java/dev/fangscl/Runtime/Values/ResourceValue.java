@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
@@ -13,9 +12,9 @@ import java.util.List;
 public class ResourceValue implements RuntimeValue<Identifier> {
     private Environment environment;
     private Identifier name;
-    private List<Statement> args;
+    private List<RuntimeValue<Object>> args;
 
-    private ResourceValue(Identifier name, List<Statement> args, Environment environment) {
+    private ResourceValue(Identifier name, List<RuntimeValue<Object>> args, Environment environment) {
         this.name = name;
         this.args = args;
         this.environment = environment;
@@ -30,16 +29,16 @@ public class ResourceValue implements RuntimeValue<Identifier> {
         return name;
     }
 
-    public static RuntimeValue<Identifier> of(Identifier name, List<Statement> params, Environment environment) {
+    public static RuntimeValue<Identifier> of(Identifier name, List<RuntimeValue<Object>> params, Environment environment) {
         return new ResourceValue(name, params, environment);
     }
 
-    public static ResourceValue of(String name, List<Statement> params, Environment environment) {
+    public static ResourceValue of(String name, List<RuntimeValue<Object>> params, Environment environment) {
         return (ResourceValue) ResourceValue.of(Identifier.of(name), params, environment);
     }
 
 
-    public static RuntimeValue<Identifier> of(List<Statement> params, Environment environment) {
+    public static RuntimeValue<Identifier> of(List<RuntimeValue<Object>> params, Environment environment) {
         return new ResourceValue(null, params, environment);
     }
 

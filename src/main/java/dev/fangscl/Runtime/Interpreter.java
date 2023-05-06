@@ -9,6 +9,7 @@ import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
+import dev.fangscl.Runtime.exceptions.InvalidInitException;
 import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
 import lombok.extern.log4j.Log4j2;
 
@@ -115,6 +116,9 @@ public class Interpreter {
      * the 'parent' component of the instance environment is set to the class environment making class members accessible
      */
     public RuntimeValue eval(ResourceExpression expression, Environment env) {
+        if (expression.getName() == null) {
+            throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
+        }
         var schemaEnvTmp = (RuntimeValue) eval(expression.getType(), env);
         var schemaEnv = (SchemaValue) schemaEnvTmp;
         var args = expression.getArguments()
@@ -123,11 +127,12 @@ public class Interpreter {
                 .toList();
 
         var resourceEnv = new Environment(Optional.ofNullable(schemaEnv.getEnvironment()).orElse(env));
+
         var init = schemaEnv.getMethodOrNull("init");
         if (init != null) {
-            return functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv), args);
+            functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
         }
-        return ResourceValue.of(expression.getName(), expression.getArguments(), resourceEnv);
+        return env.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
     }
 
     public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {

@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -74,6 +75,10 @@ public class Environment {
 
     public RuntimeValue init(String name, boolean value) {
         return init(name, BooleanValue.of(value));
+    }
+
+    public RuntimeValue init(Identifier name, RuntimeValue value) {
+        return init(name.getSymbol(), value);
     }
 
     /**
