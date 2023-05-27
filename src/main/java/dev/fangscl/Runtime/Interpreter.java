@@ -5,7 +5,6 @@ import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
-import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
@@ -184,10 +183,14 @@ public class Interpreter {
 
     private <R> RuntimeValue<R> functionCall(FunValue function, List<RuntimeValue<Object>> args) {
         // for function execution, use the clojured environment from the declared scope
-        var declared = (FunValue) function.getEnvironment().lookup(function.name(), "Function not declared: ");
+        var declared = (FunValue) function.getEnvironment()
+                .lookup(function.name(), "Function not declared: " + function.name());
 
-        Environment activationEnvironment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
-        return evalBody(declared.getBody(), activationEnvironment);
+
+
+        var environment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
+        RuntimeValue<R> res = evalBody(declared.getBody(), environment);
+        return res;
     }
 
     private <R> RuntimeValue<R> lambdaCall(FunValue function, List<RuntimeValue<Object>> args) {
@@ -200,8 +203,8 @@ public class Interpreter {
      * Activation environment was already created so we don't need to create a new environment when we use a BlockStatement
      */
     public <R> RuntimeValue<R> evalBody(Statement statement, Environment env) {
-        if (statement.is(NodeType.BlockStatement)) {
-            return eval((BlockStatement) statement, env);
+        if (statement instanceof BlockStatement blockStatement) {
+            return eval(blockStatement, env);
         }
         return eval(statement, env);
     }

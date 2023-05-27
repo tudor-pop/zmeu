@@ -1,11 +1,15 @@
 package dev.fangscl.Runtime;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import dev.fangscl.Runtime.Values.RuntimeValue;
 import dev.fangscl.Runtime.Values.SchemaValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -182,6 +186,28 @@ public class ResourceTest extends BaseTest {
         // x of main resource was updated with a new value
         var x = resource.get("x");
         assertEquals(IntegerValue.of(3), x);
+    }
+    @SneakyThrows
+    @Test
+    void resourceInitJson() {
+        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                schema Vm {
+                   var x = 2
+                }
+                                
+                resource Vm main {
+                    x = 3
+                }
+                """)));
+        log.warn(gson.toJson(res));
+        SchemaValue schema = (SchemaValue) global.get("Vm");
+
+        String main = "main";
+        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+
+        var mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
+        log.warn(mapper.writeValueAsString(resource.asData()));
+
     }
 
 

@@ -7,7 +7,9 @@ import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
@@ -81,4 +83,17 @@ public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
     public @Nullable RuntimeValue get(String key) {
         return environment.get(key);
     }
+
+    public record Data(String name, Map<String, Object> args) {
+    }
+
+    public Data asData() {
+        var entries = environment.getVariables().entrySet();
+        var args = new HashMap<String, Object>(entries.size());
+        for (var it : entries) {
+            args.put(it.getKey(), it.getValue().getRuntimeValue());
+        }
+        return new Data(this.name(), args);
+    }
+
 }
