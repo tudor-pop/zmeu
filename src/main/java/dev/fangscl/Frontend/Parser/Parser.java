@@ -11,26 +11,43 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-/*
- * Responsability: It does lexical analisys and source code validation.
- * Take the tokens from the lexer and create an AST.
- * Evaluation does not happen at this step only in the interpreter
- *  Main entry point:
- *  Program
- *      : StatementList
- *      ;
- *  NumericLiteral
- *      : NUMBER
- *      ;
- *  StringLiteral
- *      : STRING
- *      ;
- *  StatementList
- *      : Statement
- *      | StatementList
- *      ;
- *
- * */
+
+/**
+ * Name         Operators       Associates
+ * Equality     == !=           Left
+ * Comparison   < >= < <=       Left
+ * Term         - +             Left
+ * Factor       * /             Left
+ * Unary        ! -             Right
+ * Each rule here only matches expressions at its precedence level or higher.
+ * For example, unary matches a unary expression like !negated or a primary expression like 1234
+ * And term can match 1 + 2 but also 3 * 4 / 5. The final primary rule covers the highest-precedence
+ * forms—literals and parenthesized expressions.
+ * <p>
+ * Expression -> Equality
+ * Equality -> Comparison ( ("==" | "!=") Comparison)* ;
+ * Comparison -> Term ( ( "!=" | "==" ) Term )* ;
+ * Term -> Factor ( ( "-" | "+" ) Factor )* ;
+ * Factor -> Unary ( ( "/" | "*" ) Unary )* ;
+ * Unary -> ( "!" | "-" ) Unary
+ * | Primary ;
+ * Primary -> NUMBER
+ * | STRING
+ * | "true"
+ * | "false"
+ * | "null"
+ * | "(" Expression ")"
+ * <p>
+ * ----------------------------------------------------------
+ * Grammar notation         Code representation
+ * -----------------------------------------------------------
+ * Terminal                 Code to match and consume a token
+ * Nonterminal              Call to that rule’s function
+ * |                        if or switch statement
+ * + or *                   while or for loop
+ * ?                        if statement
+ * ------------------------------------------------------------
+ */
 @Data
 @Log4j2
 public class Parser {
@@ -352,6 +369,7 @@ public class Parser {
         Statement body = BlockStatement();
         return SchemaDeclaration.of(test, body);
     }
+
     /**
      * InitStatement
      * : init  ( OptParameterList ) BlockStatement?
@@ -434,11 +452,12 @@ public class Parser {
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
-        if (!IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
-            return left;
+        while (IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
+            var operator = AssignmentOperator().getValue();
+            Expression expression = Expression();
+            left = AssignmentExpression.of(isValidAssignment(left, operator), expression, operator);
         }
-        var operator = AssignmentOperator().getValue();
-        return AssignmentExpression.of(isValidAssignment(left, operator), Expression(), operator);
+        return left;
     }
 
     /**
@@ -451,17 +470,17 @@ public class Parser {
      */
     private Expression OrExpression() {
         var expression = AndExpression();
-        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Logical_Or)) {
-            return expression;
+        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Logical_Or)) {
+            var operator = eat();
+            Expression right = OrExpression();
+            expression = LogicalExpression.of(operator.getValue().toString(), expression, right);
         }
-        var operator = eat();
-        return LogicalExpression.of(operator.getValue().toString(), expression, OrExpression());
+        return expression;
     }
 
     /**
-     * Logical LOGICAL_OPERATOR Expressions: &&, ||
+     * Logical LOGICAL_OPERATOR Expressions: &&
      * x && y
-     * x || y
      * AndExpression
      * : EqualityExpression LOGICAL_OPERATOR AndExpression
      * | EqualityExpression
@@ -469,11 +488,12 @@ public class Parser {
      */
     private Expression AndExpression() {
         var expression = EqualityExpression();
-        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Logical_And)) {
-            return expression;
+        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Logical_And)) {
+            var operator = eat();
+            Expression right = AndExpression();
+            expression = LogicalExpression.of(operator.getValue(), expression, right);
         }
-        var operator = eat();
-        return LogicalExpression.of(operator.getValue(), expression, AndExpression());
+        return expression;
     }
 
     /**
@@ -487,11 +507,12 @@ public class Parser {
      */
     private Expression EqualityExpression() {
         var expression = RelationalExpression();
-        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.Equality_Operator)) {
-            return expression;
+        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Equality_Operator)) {
+            var operator = eat();
+            Expression right = EqualityExpression();
+            expression = BinaryExpression.of(expression, right, operator.getValue().toString());
         }
-        var operator = eat();
-        return BinaryExpression.of(expression, EqualityExpression(), operator.getValue().toString());
+        return expression;
     }
 
     /**
@@ -507,11 +528,12 @@ public class Parser {
      */
     private Expression RelationalExpression() {
         var expression = AdditiveExpression();
-        if (IsLookAhead(TokenType.EOF) || !IsLookAhead(TokenType.RelationalOperator)) {
-            return expression;
+        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.RelationalOperator)) {
+            var operator = eat();
+            Expression right = RelationalExpression();
+            expression = BinaryExpression.of(expression, right, operator.getValue().toString());
         }
-        var operator = eat();
-        return BinaryExpression.of(expression, RelationalExpression(), operator.getValue().toString());
+        return expression;
     }
 
     /**
