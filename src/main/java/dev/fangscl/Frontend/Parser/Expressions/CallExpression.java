@@ -76,6 +76,12 @@ public class CallExpression<E extends Expression> extends Expression {
 
 
     @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
+
+
+    @Override
     public String toSExpression() {
         return "(" + callee.toSExpression() + " " +
                arguments.stream()

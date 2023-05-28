@@ -25,6 +25,10 @@ public class UnaryExpression extends Expression {
     }
 
     @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
+    @Override
     public String toSExpression() {
         return "(" + operator + " " + value.toSExpression() + ")";
     }

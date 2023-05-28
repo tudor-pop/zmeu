@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
+import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
@@ -47,4 +48,8 @@ public class Identifier extends Expression {
         return Arrays.stream(left).map(Identifier::of).toList();
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

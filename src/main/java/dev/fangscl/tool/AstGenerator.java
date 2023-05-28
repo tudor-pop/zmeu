@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 public class AstGenerator {
@@ -18,12 +17,13 @@ public class AstGenerator {
         }
         String outputDir = args[0];
 
-        defineAst(outputDir + "/Expressions", "dev.fangscl.Frontend.Parser.Expressions", "Expr", Arrays.asList(
-                "Binary   : Expr left, Token operator, Expr right",
-                "Grouping : Expr expression",
-                "Literal  : Object value",
-                "Unary    : Token operator, Expr right"
-        ));
+//        defineAst(outputDir + "/Expressions", "dev.fangscl.Frontend.Parser.Expressions", "Expr", Arrays.asList(
+//                "Binary   : Expr left, Token operator, Expr right",
+//                "Grouping : Expr expression",
+//                "Literal  : Object value",
+//                "Unary    : Token operator, Expr right"
+//        ));
+
     }
 
     private static void defineAst(String outputDir, String packageName, String baseName, List<String> types)

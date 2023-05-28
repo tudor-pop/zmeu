@@ -491,7 +491,7 @@ public class Parser {
             return expression;
         }
         var operator = eat();
-        return BinaryExpression.of(expression, EqualityExpression(), operator.getValue());
+        return BinaryExpression.of(expression, EqualityExpression(), operator.getValue().toString());
     }
 
     /**
@@ -511,7 +511,7 @@ public class Parser {
             return expression;
         }
         var operator = eat();
-        return BinaryExpression.of(expression, RelationalExpression(), operator.getValue());
+        return BinaryExpression.of(expression, RelationalExpression(), operator.getValue().toString());
     }
 
     /**
@@ -553,7 +553,7 @@ public class Parser {
         while (match("+", "-")) {
             var operator = eat();
             Expression right = this.MultiplicativeExpression();
-            left = BinaryExpression.of(left, right, operator.getValue());
+            left = BinaryExpression.of(left, right, operator.getValue().toString());
         }
 
         return left;
@@ -572,7 +572,7 @@ public class Parser {
         while (match("*", "/", "%")) {
             var operator = eat();
             Expression right = UnaryExpression();
-            left = new BinaryExpression(left, right, operator.getValue());
+            left = new BinaryExpression(left, right, operator.getValue().toString());
         }
 
         return left;

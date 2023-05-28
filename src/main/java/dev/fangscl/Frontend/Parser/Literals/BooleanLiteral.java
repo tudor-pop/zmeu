@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
+import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.SyntaxError;
 import lombok.Data;
@@ -42,5 +43,10 @@ public class BooleanLiteral extends Literal {
     @Override
     public Object getVal() {
         return value;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

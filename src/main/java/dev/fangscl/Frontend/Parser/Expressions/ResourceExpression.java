@@ -42,6 +42,10 @@ public class ResourceExpression extends Expression {
         return new ResourceExpression();
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 
     @Override
     public String toSExpression() {

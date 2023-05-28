@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
+import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -56,5 +57,10 @@ public class StringLiteral extends Literal {
     @Override
     public Object getVal() {
         return value;
+    }
+
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
     }
 }

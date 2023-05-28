@@ -56,6 +56,10 @@ public class MemberExpression extends Expression {
         return new MemberExpression(false, object, property);
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 
     @Override
     public String toSExpression() {
