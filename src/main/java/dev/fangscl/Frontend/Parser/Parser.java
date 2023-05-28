@@ -455,7 +455,7 @@ public class Parser {
             return expression;
         }
         var operator = eat();
-        return LogicalExpression.of(operator.getValue(), expression, OrExpression());
+        return LogicalExpression.of(operator.getValue().toString(), expression, OrExpression());
     }
 
     /**

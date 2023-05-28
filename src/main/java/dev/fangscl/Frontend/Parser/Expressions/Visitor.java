@@ -1,7 +1,20 @@
 package dev.fangscl.Frontend.Parser.Expressions;
 
+import dev.fangscl.Frontend.Parser.Literals.*;
+import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
+
 public interface Visitor<R> {
     R visit(Expression expression);
+
+    R visit(NumericLiteral expression);
+    R visit(BooleanLiteral expression);
+    R visit(Identifier expression);
+    R visit(NullLiteral expression);
+    R visit(StringLiteral expression);
+    R visit(BlockStatement expression);
+    R visit(LambdaExpression expression);
+
     R visit(BinaryExpression expression);
     R visit(CallExpression expression);
     R visit(ErrorExpression expression);

@@ -1,8 +1,11 @@
 package dev.fangscl.Frontend.visitors;
 
 import dev.fangscl.Frontend.Parser.Expressions.*;
+import dev.fangscl.Frontend.Parser.Literals.*;
+import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
 
-class AstPrinter implements Visitor<String> {
+public class AstPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
         return expr.accept(this);
@@ -10,13 +13,12 @@ class AstPrinter implements Visitor<String> {
 
     @Override
     public String visit(Expression expression) {
-        return null;
+        return expression.accept(this);
     }
 
     @Override
     public String visit(BinaryExpression expression) {
-        return parenthesize(expression.getOperator().toString(),
-                expression.getLeft(), expression.getRight());
+        return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
     }
 
     @Override
@@ -31,7 +33,7 @@ class AstPrinter implements Visitor<String> {
 
     @Override
     public String visit(LogicalExpression expression) {
-        return null;
+        return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
     }
 
     @Override
@@ -41,7 +43,7 @@ class AstPrinter implements Visitor<String> {
 
     @Override
     public String visit(ResourceExpression expression) {
-        return null;
+        return parenthesize("resource", expression.getName(), expression.getBlock());
     }
 
     @Override
@@ -61,6 +63,44 @@ class AstPrinter implements Visitor<String> {
 
     @Override
     public String visit(AssignmentExpression expression) {
+        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
+    }
+
+    @Override
+    public String visit(NumericLiteral expression) {
+        if (expression.getVal() == null) {
+            return "null";
+        }
+        return expression.getVal().toString();
+    }
+
+    @Override
+    public String visit(BooleanLiteral expression) {
+        return expression.getVal().toString();
+    }
+
+    @Override
+    public String visit(Identifier expression) {
+        return expression.getSymbol();
+    }
+
+    @Override
+    public String visit(NullLiteral expression) {
+        return "null";
+    }
+
+    @Override
+    public String visit(StringLiteral expression) {
+        return expression.getValue();
+    }
+
+    @Override
+    public String visit(BlockStatement expression) {
+        return null;
+    }
+
+    @Override
+    public String visit(LambdaExpression expression) {
         return null;
     }
 

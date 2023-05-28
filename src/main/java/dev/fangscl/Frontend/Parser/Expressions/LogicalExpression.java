@@ -9,13 +9,13 @@ import lombok.EqualsAndHashCode;
 public class LogicalExpression extends Expression {
     private Expression left;
     private Expression right;
-    private Object operator;
+    private String operator;
 
     public LogicalExpression() {
         this.kind = NodeType.LogicalExpression;
     }
 
-    public LogicalExpression(Expression left, Expression right, Object operator) {
+    public LogicalExpression(Expression left, Expression right, String operator) {
         this();
         this.left = left;
         this.right = right;
@@ -23,7 +23,7 @@ public class LogicalExpression extends Expression {
     }
 
     public static Expression of(Object operator, Expression left, Expression right) {
-        return new LogicalExpression(left, right, operator);
+        return new LogicalExpression(left, right, operator.toString());
     }
 
     @Override
