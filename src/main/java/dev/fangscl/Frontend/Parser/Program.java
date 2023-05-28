@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -41,8 +40,4 @@ public class Program extends Statement {
         return body.listIterator().next();
     }
 
-    @Override
-    public String toSExpression() {
-        return body.stream().map(Statement::toSExpression).collect(Collectors.joining());
-    }
 }

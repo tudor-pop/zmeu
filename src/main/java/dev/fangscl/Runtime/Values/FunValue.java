@@ -64,7 +64,7 @@ public class FunValue implements RuntimeValue<Identifier> {
     public static RuntimeValue<Identifier> of(Expression string) {
         if (string instanceof Identifier s)
             return new FunValue(s);
-        throw new RuntimeException("Invalid variable name: " + string.toSExpression());
+        throw new RuntimeException("Invalid variable name: " + string.toString());
     }
 
     @Nullable

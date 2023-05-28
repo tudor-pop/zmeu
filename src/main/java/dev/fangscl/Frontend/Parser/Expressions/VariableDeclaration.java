@@ -49,8 +49,4 @@ public class VariableDeclaration extends Expression {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toSExpression() {
-        return "(" + id.toSExpression() + " " + init.toSExpression() + ")";
-    }
 }

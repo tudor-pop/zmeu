@@ -80,12 +80,4 @@ public class CallExpression<E extends Expression> extends Expression {
         return visitor.visit(this);
     }
 
-
-    @Override
-    public String toSExpression() {
-        return "(" + callee.toSExpression() + " " +
-               arguments.stream()
-                       .map(Statement::toSExpression)
-                       .collect(Collectors.joining()) + ")";
-    }
 }

@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * BlockStatement
@@ -73,11 +72,6 @@ public class BlockStatement extends Expression {
 
     public static Expression of(String value) {
         return new BlockStatement(StringLiteral.of(value));
-    }
-
-    @Override
-    public String toSExpression() {
-        return expression.stream().map(Statement::toSExpression).collect(Collectors.joining());
     }
 
     @Override

@@ -61,8 +61,4 @@ public class MemberExpression extends Expression {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toSExpression() {
-        return "(" + object.toSExpression() + " " + property.toSExpression() + ")";
-    }
 }

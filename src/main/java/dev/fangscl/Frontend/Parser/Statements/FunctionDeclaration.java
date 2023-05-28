@@ -76,8 +76,4 @@ public class FunctionDeclaration extends Statement {
         return FunctionDeclaration.of(test, params, StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return name.toSExpression() + body.toSExpression();
-    }
 }

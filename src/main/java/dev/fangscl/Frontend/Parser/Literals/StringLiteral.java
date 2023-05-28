@@ -50,11 +50,6 @@ public class StringLiteral extends Literal {
     }
 
     @Override
-    public String toSExpression() {
-        return value;
-    }
-
-    @Override
     public Object getVal() {
         return value;
     }

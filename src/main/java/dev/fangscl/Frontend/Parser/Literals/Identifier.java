@@ -35,11 +35,6 @@ public class Identifier extends Expression {
         this.symbol = String.valueOf(symbol);
     }
 
-    @Override
-    public String toSExpression() {
-        return symbol;
-    }
-
     public static Identifier of(String left) {
         return new Identifier(left);
     }

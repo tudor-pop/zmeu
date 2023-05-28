@@ -36,8 +36,4 @@ public class ThisExpression extends Expression {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toSExpression() {
-        return "(" + instance + ")";
-    }
 }

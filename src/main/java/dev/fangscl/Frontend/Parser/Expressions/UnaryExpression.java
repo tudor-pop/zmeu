@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class UnaryExpression extends Expression {
     private Expression value;
-    private Object operator;
+    private String operator;
 
     public UnaryExpression() {
         this.kind = NodeType.UnaryExpression;
@@ -17,7 +17,7 @@ public class UnaryExpression extends Expression {
     public UnaryExpression(Expression left, Object operator) {
         this();
         this.value = left;
-        this.operator = operator;
+        this.operator = operator.toString();
     }
 
     public static Expression of(Object operator, Expression left) {
@@ -27,9 +27,5 @@ public class UnaryExpression extends Expression {
     @Override
     public <R> R accept(Visitor<R> visitor) {
         return visitor.visit(this);
-    }
-    @Override
-    public String toSExpression() {
-        return "(" + operator + " " + value.toSExpression() + ")";
     }
 }

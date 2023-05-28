@@ -61,10 +61,6 @@ public class LambdaExpression extends Expression {
         return new LambdaExpression(params, StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return params.stream().map(Statement::toSExpression).toList() + body.toSExpression();
-    }
 
     @Override
     public <R> R accept(Visitor<R> visitor) {

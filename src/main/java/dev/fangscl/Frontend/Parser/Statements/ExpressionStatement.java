@@ -48,8 +48,4 @@ public class ExpressionStatement extends Statement {
         return new ExpressionStatement(StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return statement.toSExpression();
-    }
 }

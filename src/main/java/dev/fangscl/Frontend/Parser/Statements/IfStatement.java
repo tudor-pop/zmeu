@@ -63,8 +63,4 @@ public class IfStatement extends Statement {
         return new IfStatement(test, StringLiteral.of(value), null);
     }
 
-    @Override
-    public String toSExpression() {
-        return test.toSExpression() + consequent.toSExpression();
-    }
 }

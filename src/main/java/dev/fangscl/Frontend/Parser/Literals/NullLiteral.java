@@ -23,13 +23,6 @@ public class NullLiteral extends Literal {
         return new NullLiteral();
     }
 
-
-    @Override
-    public String toSExpression() {
-        return value;
-    }
-
-
     @Override
     public Object getVal() {
         return value;

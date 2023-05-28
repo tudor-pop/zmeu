@@ -34,8 +34,4 @@ public class ErrorExpression extends Expression {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toSExpression() {
-        return String.valueOf(position);
-    }
 }

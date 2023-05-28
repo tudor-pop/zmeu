@@ -60,8 +60,4 @@ public class WhileStatement extends Statement {
         return new WhileStatement(test, StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return test.toSExpression() + body.toSExpression();
-    }
 }

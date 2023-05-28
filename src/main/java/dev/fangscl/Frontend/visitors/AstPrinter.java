@@ -53,7 +53,7 @@ public class AstPrinter implements Visitor<String> {
 
     @Override
     public String visit(UnaryExpression expression) {
-        return null;
+        return parenthesize(expression.getOperator(), expression.getValue());
     }
 
     @Override
@@ -97,6 +97,11 @@ public class AstPrinter implements Visitor<String> {
     @Override
     public String visit(BlockStatement expression) {
         return null;
+    }
+
+    @Override
+    public String visit(GroupExpression expression) {
+        return parenthesize("group", expression.getExpression());
     }
 
     @Override

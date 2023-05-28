@@ -22,8 +22,4 @@ public class EmptyStatement extends Statement {
         return new EmptyStatement();
     }
 
-    @Override
-    public String toSExpression() {
-        return  "" ;
-    }
 }

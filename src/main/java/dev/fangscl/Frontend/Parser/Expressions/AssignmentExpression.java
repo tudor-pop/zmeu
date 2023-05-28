@@ -45,12 +45,6 @@ public class AssignmentExpression extends Expression {
         return new AssignmentExpression(left, NumericLiteral.of(right), operator);
     }
 
-
-    @Override
-    public String toSExpression() {
-        return "(" + operator + " " + left.toSExpression() + " " + right.toSExpression() + ")";
-    }
-
     @Override
     public <R> R accept(Visitor<R> visitor) {
         return visitor.visit(this);

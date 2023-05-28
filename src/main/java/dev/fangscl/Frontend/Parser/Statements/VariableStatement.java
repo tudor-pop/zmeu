@@ -1,11 +1,10 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
-import dev.fangscl.Frontend.Parser.NodeType;
 import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
+import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -43,8 +42,4 @@ public class VariableStatement extends Statement {
         return new VariableStatement();
     }
 
-    @Override
-    public String toSExpression() {
-        return ArrayUtils.toString(declarations.stream().map(Statement::toSExpression).toList());
-    }
 }

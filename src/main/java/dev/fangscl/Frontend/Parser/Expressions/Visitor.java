@@ -12,9 +12,10 @@ public interface Visitor<R> {
     R visit(Identifier expression);
     R visit(NullLiteral expression);
     R visit(StringLiteral expression);
-    R visit(BlockStatement expression);
     R visit(LambdaExpression expression);
 
+    R visit(BlockStatement expression);
+    R visit(GroupExpression expression);
     R visit(BinaryExpression expression);
     R visit(CallExpression expression);
     R visit(ErrorExpression expression);

@@ -47,10 +47,6 @@ public class ResourceExpression extends Expression {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toSExpression() {
-        return "(" + type + ")";
-    }
 
     public List<Statement> getArguments() {
         return block.getExpression();

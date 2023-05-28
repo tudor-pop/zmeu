@@ -58,8 +58,4 @@ public class ReturnStatement extends Statement {
         return new ReturnStatement(StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return name.toSExpression() + argument.toSExpression();
-    }
 }

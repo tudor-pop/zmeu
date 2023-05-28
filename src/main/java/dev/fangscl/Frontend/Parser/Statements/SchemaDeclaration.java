@@ -58,8 +58,4 @@ public class SchemaDeclaration extends Statement {
         return new SchemaDeclaration(test, StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return name.toSExpression() + body.toSExpression();
-    }
 }

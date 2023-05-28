@@ -42,8 +42,4 @@ public class ForStatement extends Statement {
         return new ForStatement();
     }
 
-    @Override
-    public String toSExpression() {
-        return test.toSExpression() + body.toSExpression();
-    }
 }

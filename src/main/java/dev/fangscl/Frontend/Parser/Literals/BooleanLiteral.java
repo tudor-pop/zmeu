@@ -35,10 +35,6 @@ public class BooleanLiteral extends Literal {
         }
     }
 
-    @Override
-    public String toSExpression() {
-        return String.valueOf(value);
-    }
 
     @Override
     public Object getVal() {

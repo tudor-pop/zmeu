@@ -6,7 +6,7 @@ package dev.fangscl.Frontend;
                | binary
                | grouping ;
 
-literal        → NUMBER | STRING | "true" | "false" | "nil" ;
+literal        → NUMBER | STRING | "true" | "false" | "null" ;
 grouping       → "(" expression ")" ;
 unary          → ( "-" | "!" ) expression ;
 binary         → expression operator expression ;

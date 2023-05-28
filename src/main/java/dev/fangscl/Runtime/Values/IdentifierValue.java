@@ -30,6 +30,6 @@ public class IdentifierValue implements RuntimeValue<String> {
     public static RuntimeValue<String> of(Expression string) {
         if (string instanceof Identifier s)
             return new IdentifierValue(s);
-        throw new RuntimeException("Invalid variable name: " + string.toSExpression());
+        throw new RuntimeException("Invalid variable name: " + string.toString());
     }
 }

@@ -62,8 +62,4 @@ public class InitStatement extends Statement {
         return new InitStatement(params, StringLiteral.of(value));
     }
 
-    @Override
-    public String toSExpression() {
-        return name.toSExpression() + body.toSExpression();
-    }
 }

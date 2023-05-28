@@ -94,8 +94,4 @@ public class BinaryExpression extends Expression {
         return visitor.visit(this);
     }
 
-    @Override
-    public String toSExpression() {
-        return "(" + operator + " " + left.toSExpression() + " " + right.toSExpression() + ")";
-    }
 }
