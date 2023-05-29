@@ -47,4 +47,9 @@ public class Identifier extends Expression {
     public <R> R accept(Visitor<R> visitor) {
         return visitor.visit(this);
     }
+
+    @Override
+    public <R> R accept(dev.fangscl.Frontend.Parser.Statements.Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

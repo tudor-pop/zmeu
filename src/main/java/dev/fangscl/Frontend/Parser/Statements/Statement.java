@@ -33,6 +33,8 @@ public abstract class Statement {
         return ArrayUtils.contains(type, kind);
     }
 
-    public <R> R accept(Visitor<R> visitor){return null;};
-}
+    public <R> R accept(Visitor<R> visitor) {
+        throw new RuntimeException("not implemented: " + visitor);
+    }
 
+}

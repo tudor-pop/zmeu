@@ -42,4 +42,8 @@ public class VariableStatement extends Statement {
         return new VariableStatement();
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

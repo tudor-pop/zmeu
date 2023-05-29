@@ -48,4 +48,8 @@ public class ExpressionStatement extends Statement {
         return new ExpressionStatement(StringLiteral.of(value));
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

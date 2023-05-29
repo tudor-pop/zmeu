@@ -1,6 +1,7 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Expressions.*;
+import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
@@ -37,10 +38,10 @@ public class Interpreter implements
     public <R> RuntimeValue<R> eval(Statement statement, Environment env) {
         return switch (statement.getKind()) {
             case Program -> (RuntimeValue<R>) visit(statement);
-            case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
+            case ExpressionStatement -> (RuntimeValue<R>) visit(((ExpressionStatement) statement).getStatement());
             case IfStatement -> eval((IfStatement) statement, env);
             case WhileStatement -> eval((WhileStatement) statement, env);
-            case VariableStatement -> eval((VariableStatement) statement, env);
+            case VariableStatement -> (RuntimeValue<R>) visit((VariableStatement) statement);
             case FunctionDeclaration -> eval((FunctionDeclaration) statement, env);
             case SchemaDeclaration -> eval((SchemaDeclaration) statement, env);
             case InitDeclaration -> eval((InitStatement) statement, env);
@@ -55,31 +56,14 @@ public class Interpreter implements
             case IntegerLiteral -> IntegerValue.of(statement);
             case DecimalLiteral -> DecimalValue.of(statement);
 
-            case BlockStatement -> eval((BlockStatement) statement, new Environment(env));
-            case BinaryExpression -> eval((BinaryExpression) statement, env);
-            case UnaryExpression -> eval((UnaryExpression) statement, env);
-            case VariableDeclaration -> eval((VariableDeclaration) statement, env);
-            case AssignmentExpression -> eval((AssignmentExpression) statement, env);
-            case Identifier -> env.lookup(((Identifier) statement).getSymbol());
+            case BlockStatement ->(RuntimeValue<R>) visit((BlockStatement) statement);
+            case BinaryExpression -> (RuntimeValue<R>) visit(statement);
+            case UnaryExpression -> (RuntimeValue<R>) visit((UnaryExpression) statement);
+            case VariableDeclaration -> (RuntimeValue<R>) visit((VariableDeclaration) statement);
+            case AssignmentExpression -> (RuntimeValue<R>) visit(statement);
+            case Identifier -> (RuntimeValue<R>) visit((Identifier) statement);
             default -> throw new OperationNotImplementedException(statement);
         };
-    }
-
-    public <R> RuntimeValue<R> eval(AssignmentExpression expression, Environment env) {
-        RuntimeValue right = eval(expression.getRight(), env);
-
-        if (expression.getLeft() instanceof MemberExpression memberExpression) {
-            var instanceEnv = (IEnvironment) eval(memberExpression.getObject(), env);
-            Expression property = memberExpression.getProperty();
-            if (property instanceof Identifier identifier) {
-                return instanceEnv.assign(identifier.getSymbol(), right);
-            } else {
-                throw new OperationNotImplementedException("Invalid assignment expression");
-            }
-        }
-
-        RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
-        return env.assign(left.getRuntimeValue(), right);
     }
 
     public <R> RuntimeValue<R> eval(FunctionDeclaration expression, Environment env) {
@@ -218,31 +202,6 @@ public class Interpreter implements
         return result;
     }
 
-    public <R> RuntimeValue<R> eval(BlockStatement expression, Environment env) {
-        RuntimeValue res = NullValue.of();
-        for (var it : expression.getExpression()) {
-            res = eval(it, env);
-        }
-        return res;
-    }
-
-    public RuntimeValue eval(VariableStatement statement, Environment env) {
-        RuntimeValue res = NullValue.of();
-        for (var it : statement.getDeclarations()) {
-            res = eval(it, env);
-        }
-        return res;
-    }
-
-    public RuntimeValue eval(VariableDeclaration expression, Environment env) {
-        String symbol = expression.getId().getSymbol();
-        RuntimeValue value = null;
-        if (expression.hasInit()) {
-            value = eval(expression.getInit(), env);
-        }
-        return env.init(symbol, value);
-    }
-
     public RuntimeValue eval(String expression) {
         return (RuntimeValue) visit(expression);
     }
@@ -279,82 +238,6 @@ public class Interpreter implements
         return (RuntimeValue<DecimalValue>) visit(expression);
     }
 
-    private RuntimeValue eval(BinaryExpression expression, Environment environment) {
-        var lhs = eval(expression.getLeft(), environment);
-        var rhs = eval(expression.getRight(), environment);
-        return eval(lhs, rhs, expression.getOperator());
-    }
-
-    private RuntimeValue eval(UnaryExpression expression, Environment env) {
-        Object operator = expression.getOperator();
-        if (operator instanceof String op) {
-            return switch (op) {
-                case "++" -> {
-                    RuntimeValue res = eval(expression.getValue(), env);
-                    if (res instanceof IntegerValue r) {
-                        yield IntegerValue.of(1 + r.getRuntimeValue());
-                    } else if (res instanceof DecimalValue r) {
-                        yield DecimalValue.of(1 + r.getRuntimeValue());
-                    } else {
-                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
-                    }
-                }
-                case "--" -> {
-                    RuntimeValue res = eval(expression.getValue(), env);
-                    if (res instanceof IntegerValue r) {
-                        yield IntegerValue.of(r.getRuntimeValue() - 1);
-                    } else if (res instanceof DecimalValue r) {
-                        yield DecimalValue.of(
-                                BigDecimal.valueOf(r.getRuntimeValue()).subtract(BigDecimal.ONE)
-                                        .doubleValue());
-                    } else {
-                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
-                    }
-                }
-                case "-" -> {
-                    RuntimeValue res = eval(expression.getValue(), env);
-                    if (res instanceof IntegerValue r) {
-                        yield IntegerValue.of(-r.getRuntimeValue());
-                    } else if (res instanceof DecimalValue r) {
-                        yield DecimalValue.of(BigDecimal.valueOf(r.getRuntimeValue()).negate().doubleValue());
-                    } else {
-                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
-                    }
-                }
-                case "!" -> {
-                    RuntimeValue res = eval(expression.getValue(), env);
-                    if (res instanceof BooleanValue r) {
-                        yield BooleanValue.of(!r.isValue());
-                    }
-                    throw new RuntimeException("Invalid not operator: " + res.getRuntimeValue());
-                }
-                default -> throw new RuntimeException("Operator could not be evaluated: " + expression.getOperator());
-            };
-        }
-        throw new RuntimeException("Operator could not be evaluated");
-    }
-
-    private RuntimeValue eval(RuntimeValue lhs, RuntimeValue rhs, Object operator) {
-        if (operator instanceof String op) {
-            if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn) {
-                return switch (op) {
-                    case "+" -> IntegerValue.of(lhsn.getValue() + rhsn.getValue());
-                    case "-" -> IntegerValue.of(lhsn.getValue() - rhsn.getValue());
-                    case "/" -> IntegerValue.of(lhsn.getValue() / rhsn.getValue());
-                    case "*" -> IntegerValue.of(lhsn.getValue() * rhsn.getValue());
-                    case "%" -> IntegerValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> BooleanValue.of(lhsn.getValue() == rhsn.getValue());
-                    case "<" -> BooleanValue.of(lhsn.getValue() < rhsn.getValue());
-                    case "<=" -> BooleanValue.of(lhsn.getValue() <= rhsn.getValue());
-                    case ">" -> BooleanValue.of(lhsn.getValue() > rhsn.getValue());
-                    case ">=" -> BooleanValue.of(lhsn.getValue() >= rhsn.getValue());
-                    default -> throw new RuntimeException("Operator could not be evaluated");
-                };
-            }
-        }
-        return null;
-    }
-
     public void set(Environment environment) {
         this.environment = environment;
         this.environment.init("null", NullValue.of());
@@ -374,17 +257,17 @@ public class Interpreter implements
 
     @Override
     public Object visit(NumericLiteral expression) {
-        return expression.getValue();
+        return IntegerValue.of(expression);
     }
 
     @Override
     public Object visit(BooleanLiteral expression) {
-        return null;
+        return BooleanValue.of(expression);
     }
 
     @Override
     public Object visit(Identifier expression) {
-        return null;
+        return environment.lookup(expression.getSymbol());
     }
 
     @Override
@@ -404,7 +287,25 @@ public class Interpreter implements
 
     @Override
     public Object visit(BlockStatement expression) {
-        return null;
+        RuntimeValue res = NullValue.of();
+        var env = new Environment(environment);
+        for (var it : expression.getExpression()) {
+            if (it instanceof BlockStatement blockStatement) {
+                res = (RuntimeValue) executeBlock(blockStatement.getExpression(), environment);
+            }else {
+                res = (RuntimeValue) executeBlock(it, env);
+            }
+        }
+        return res;
+    }
+
+    @Override
+    public Object visit(VariableStatement statement) {
+        RuntimeValue res = NullValue.of();
+        for (var it : statement.getDeclarations()) {
+            res = (RuntimeValue) executeBlock(it, environment);
+        }
+        return res;
     }
 
     @Override
@@ -414,6 +315,25 @@ public class Interpreter implements
 
     @Override
     public Object visit(BinaryExpression expression) {
+        var lhs = eval(expression.getLeft(), environment);
+        var rhs = eval(expression.getRight(), environment);
+        if ((Object) expression.getOperator() instanceof String op) {
+            if ((RuntimeValue) lhs instanceof IntegerValue lhsn && (RuntimeValue) rhs instanceof IntegerValue rhsn) {
+                return switch (op) {
+                    case "+" -> IntegerValue.of(lhsn.getValue() + rhsn.getValue());
+                    case "-" -> IntegerValue.of(lhsn.getValue() - rhsn.getValue());
+                    case "/" -> IntegerValue.of(lhsn.getValue() / rhsn.getValue());
+                    case "*" -> IntegerValue.of(lhsn.getValue() * rhsn.getValue());
+                    case "%" -> IntegerValue.of(lhsn.getValue() % rhsn.getValue());
+                    case "==" -> BooleanValue.of(lhsn.getValue() == rhsn.getValue());
+                    case "<" -> BooleanValue.of(lhsn.getValue() < rhsn.getValue());
+                    case "<=" -> BooleanValue.of(lhsn.getValue() <= rhsn.getValue());
+                    case ">" -> BooleanValue.of(lhsn.getValue() > rhsn.getValue());
+                    case ">=" -> BooleanValue.of(lhsn.getValue() >= rhsn.getValue());
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
+            }
+        }
         return null;
     }
 
@@ -449,17 +369,81 @@ public class Interpreter implements
 
     @Override
     public Object visit(UnaryExpression expression) {
-        return null;
+        Object operator = expression.getOperator();
+        if (operator instanceof String op) {
+            return switch (op) {
+                case "++" -> {
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    if (res instanceof IntegerValue r) {
+                        yield IntegerValue.of(1 + r.getRuntimeValue());
+                    } else if (res instanceof DecimalValue r) {
+                        yield DecimalValue.of(1 + r.getRuntimeValue());
+                    } else {
+                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                    }
+                }
+                case "--" -> {
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    if (res instanceof IntegerValue r) {
+                        yield IntegerValue.of(r.getRuntimeValue() - 1);
+                    } else if (res instanceof DecimalValue r) {
+                        yield DecimalValue.of(
+                                BigDecimal.valueOf(r.getRuntimeValue()).subtract(BigDecimal.ONE)
+                                        .doubleValue());
+                    } else {
+                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                    }
+                }
+                case "-" -> {
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    if (res instanceof IntegerValue r) {
+                        yield IntegerValue.of(-r.getRuntimeValue());
+                    } else if (res instanceof DecimalValue r) {
+                        yield DecimalValue.of(BigDecimal.valueOf(r.getRuntimeValue()).negate().doubleValue());
+                    } else {
+                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                    }
+                }
+                case "!" -> {
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    if (res instanceof BooleanValue r) {
+                        yield BooleanValue.of(!r.isValue());
+                    }
+                    throw new RuntimeException("Invalid not operator: " + res.getRuntimeValue());
+                }
+                default -> throw new RuntimeException("Operator could not be evaluated: " + expression.getOperator());
+            };
+        }
+        throw new RuntimeException("Operator could not be evaluated");
     }
 
     @Override
     public Object visit(VariableDeclaration expression) {
-        return null;
+        String symbol = expression.getId().getSymbol();
+        RuntimeValue value = null;
+//        var env = new Environment(environment);
+        if (expression.hasInit()) {
+            value = (RuntimeValue) executeBlock(expression.getInit(), environment);
+        }
+        return environment.init(symbol, value);
     }
 
     @Override
     public Object visit(AssignmentExpression expression) {
-        return null;
+        RuntimeValue right = eval(expression.getRight(), environment);
+
+        if (expression.getLeft() instanceof MemberExpression memberExpression) {
+            var instanceEnv = (IEnvironment) eval(memberExpression.getObject(), environment);
+            Expression property = memberExpression.getProperty();
+            if (property instanceof Identifier identifier) {
+                return instanceEnv.assign(identifier.getSymbol(), right);
+            } else {
+                throw new OperationNotImplementedException("Invalid assignment expression");
+            }
+        }
+
+        RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
+        return environment.assign(left.getRuntimeValue(), right);
     }
 
     @Override
@@ -478,11 +462,16 @@ public class Interpreter implements
         return execute(statement);
     }
 
+    @Override
+    public Object visit(ExpressionStatement statement) {
+        return executeBlock(statement.getStatement(), environment);
+    }
+
     Object interpret(List<Statement> statements) {
         try {
-            Object res = null;
+            RuntimeValue res = null;
             for (Statement statement : statements) {
-                res = execute(statement);
+                res = (RuntimeValue) execute(statement);
             }
             return res;
         } catch (RuntimeError error) {
@@ -491,8 +480,46 @@ public class Interpreter implements
         }
     }
 
+    Object executeBlock(List<Statement> statements, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            Object res = null;
+            for (Statement statement : statements) {
+                res = execute(statement);
+            }
+            return res;
+        } finally {
+            this.environment = previous;
+        }
+    }
+
+    Object executeBlock(Expression statement, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            return execute(statement);
+        } finally {
+            this.environment = previous;
+        }
+    }
+
+    Object executeBlock(Statement statement, Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+            return execute(statement);
+        } finally {
+            this.environment = previous;
+        }
+    }
+
     private Object execute(Statement stmt) {
         return stmt.accept(this);
+    }
+
+    private Object execute(Expression stmt) {
+        return stmt.accept((Visitor<Object>) this);
     }
 
     static void runtimeError(RuntimeError error) {
