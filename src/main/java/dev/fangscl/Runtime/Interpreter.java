@@ -8,6 +8,7 @@ import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.InvalidInitException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
+import dev.fangscl.Runtime.exceptions.RuntimeError;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
@@ -15,34 +16,27 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
-public class Interpreter implements Visitor<Object>{
-    private Environment global;
+public class Interpreter implements
+        dev.fangscl.Frontend.Parser.Expressions.Visitor<Object>,
+        dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
+    private static boolean hadRuntimeError;
+    private Environment environment;
 
-    public Interpreter(Environment global) {
-        this.set(global);
+    public Interpreter(Environment environment) {
+        this.set(environment);
     }
 
     public Interpreter() {
         this(new Environment());
     }
 
-    public RuntimeValue eval(Program program, Environment environment) {
-        RuntimeValue lastEval = new NullValue();
-
-        for (Statement i : program.getBody()) {
-            lastEval = eval(i, environment);
-        }
-
-        return lastEval;
-    }
-
     public <R> RuntimeValue<R> eval(Statement expression) {
-        return this.eval(expression, this.global);
+        return this.eval(expression, this.environment);
     }
 
     public <R> RuntimeValue<R> eval(Statement statement, Environment env) {
         return switch (statement.getKind()) {
-            case Program -> eval((Program) statement, env);
+            case Program -> (RuntimeValue<R>) visit(statement);
             case ExpressionStatement -> eval(((ExpressionStatement) statement).getStatement(), env);
             case IfStatement -> eval((IfStatement) statement, env);
             case WhileStatement -> eval((WhileStatement) statement, env);
@@ -56,7 +50,7 @@ public class Interpreter implements Visitor<Object>{
             case CallExpression -> eval((CallExpression) statement, env);
             case LambdaExpression -> eval((LambdaExpression) statement, env);
 
-            case StringLiteral -> StringValue.of(statement);
+            case StringLiteral -> (RuntimeValue<R>) visit(statement);
             case BooleanLiteral -> BooleanValue.of(statement);
             case IntegerLiteral -> IntegerValue.of(statement);
             case DecimalLiteral -> DecimalValue.of(statement);
@@ -362,10 +356,10 @@ public class Interpreter implements Visitor<Object>{
     }
 
     public void set(Environment environment) {
-        this.global = environment;
-        this.global.init("null", NullValue.of());
-        this.global.init("true", BooleanValue.of(true));
-        this.global.init("false", BooleanValue.of(false));
+        this.environment = environment;
+        this.environment.init("null", NullValue.of());
+        this.environment.init("true", BooleanValue.of(true));
+        this.environment.init("false", BooleanValue.of(false));
     }
 
     @Override
@@ -466,5 +460,43 @@ public class Interpreter implements Visitor<Object>{
     @Override
     public Object visit(AssignmentExpression expression) {
         return null;
+    }
+
+    @Override
+    public Object visit(Program program) {
+        RuntimeValue lastEval = new NullValue();
+
+        for (Statement i : program.getBody()) {
+            lastEval = evalBody(i, environment);
+        }
+
+        return lastEval;
+    }
+
+    @Override
+    public Object visit(Statement statement) {
+        return execute(statement);
+    }
+
+    Object interpret(List<Statement> statements) {
+        try {
+            Object res = null;
+            for (Statement statement : statements) {
+                res = execute(statement);
+            }
+            return res;
+        } catch (RuntimeError error) {
+            runtimeError(error);
+            return null;
+        }
+    }
+
+    private Object execute(Statement stmt) {
+        return stmt.accept(this);
+    }
+
+    static void runtimeError(RuntimeError error) {
+        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().getLine());
+        hadRuntimeError = true;
     }
 }

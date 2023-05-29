@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parser;
 
 import dev.fangscl.Frontend.Parser.Statements.Statement;
+import dev.fangscl.Frontend.Parser.Statements.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,4 +41,8 @@ public class Program extends Statement {
         return body.listIterator().next();
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

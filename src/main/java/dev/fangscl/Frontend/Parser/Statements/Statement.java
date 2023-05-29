@@ -32,5 +32,7 @@ public abstract class Statement {
     public boolean is(NodeType... type) {
         return ArrayUtils.contains(type, kind);
     }
+
+    public <R> R accept(Visitor<R> visitor){return null;};
 }
 
