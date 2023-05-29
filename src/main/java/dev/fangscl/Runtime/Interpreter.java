@@ -1,10 +1,7 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Expressions.*;
-import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Values.*;
@@ -18,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
-public class Interpreter {
+public class Interpreter implements Visitor<Object>{
     private Environment global;
 
     public Interpreter(Environment global) {
@@ -252,24 +249,40 @@ public class Interpreter {
         return env.init(symbol, value);
     }
 
-    public RuntimeValue<IntegerValue> eval(int expression) {
-        return eval(NumericLiteral.of(expression));
-    }
-
     public RuntimeValue eval(String expression) {
-        return eval(StringLiteral.of(expression));
+        return (RuntimeValue) visit(expression);
     }
 
     public RuntimeValue<Boolean> eval(boolean expression) {
-        return eval(BooleanLiteral.of(expression));
+        return (RuntimeValue<Boolean>) visit(expression);
     }
 
     public RuntimeValue<DecimalValue> eval(float value) {
-        return eval(NumericLiteral.of(value));
+        return (RuntimeValue<DecimalValue>) visit(value);
+    }
+
+    @Override
+    public Object visit(int expression) {
+        return IntegerValue.of(expression);
+    }
+
+    @Override
+    public Object visit(boolean expression) {
+        return BooleanValue.of(expression);
+    }
+
+    @Override
+    public Object visit(String expression) {
+        return StringValue.of(expression);
+    }
+
+    @Override
+    public Object visit(double expression) {
+        return DecimalValue.of(expression);
     }
 
     public RuntimeValue<DecimalValue> eval(double expression) {
-        return eval(NumericLiteral.of(expression));
+        return (RuntimeValue<DecimalValue>) visit(expression);
     }
 
     private RuntimeValue eval(BinaryExpression expression, Environment environment) {
@@ -353,5 +366,105 @@ public class Interpreter {
         this.global.init("null", NullValue.of());
         this.global.init("true", BooleanValue.of(true));
         this.global.init("false", BooleanValue.of(false));
+    }
+
+    @Override
+    public Object visit(float expression) {
+        return DecimalValue.of(expression);
+    }
+
+    @Override
+    public Object visit(Expression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(NumericLiteral expression) {
+        return expression.getValue();
+    }
+
+    @Override
+    public Object visit(BooleanLiteral expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(Identifier expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(NullLiteral expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(StringLiteral expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(LambdaExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(BlockStatement expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(GroupExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(BinaryExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(CallExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(ErrorExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(LogicalExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(MemberExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(ResourceExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(ThisExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(UnaryExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(VariableDeclaration expression) {
+        return null;
+    }
+
+    @Override
+    public Object visit(AssignmentExpression expression) {
+        return null;
     }
 }

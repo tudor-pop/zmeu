@@ -26,4 +26,9 @@ public interface Visitor<R> {
     R visit(UnaryExpression expression);
     R visit(VariableDeclaration expression);
     R visit(AssignmentExpression expression);
+    R visit(float expression);
+    R visit(double expression);
+    R visit(int expression);
+    R visit(boolean expression);
+    R visit(String expression);
 }

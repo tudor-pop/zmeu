@@ -3,6 +3,9 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Optional;
 
 /**
  * Receiving a StringLiteral
@@ -12,13 +15,13 @@ public class StringValue implements RuntimeValue<String> {
     private String value;
 
     public StringValue(String value) {
-//        if (StringUtils.isBlank(value)) {
-//            this.value = value;
-//        } else {
-//            this.value = Optional.ofNullable(StringUtils.substringBetween(value, "\"", "\""))
-//                    .orElse(value);
-//        }
-        this.value = value;
+        if (StringUtils.isBlank(value)) {
+            this.value = value;
+        } else {
+            this.value = Optional.ofNullable(StringUtils.substringBetween(value, "\"", "\""))
+                    .orElse(value);
+        }
+//        this.value = value;
     }
 
     public StringValue(StringLiteral literal) {

@@ -67,6 +67,31 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(float expression) {
+        return String.valueOf(expression);
+    }
+
+    @Override
+    public String visit(double expression) {
+        return String.valueOf(expression);
+    }
+
+    @Override
+    public String visit(int expression) {
+        return String.valueOf(expression);
+    }
+
+    @Override
+    public String visit(boolean expression) {
+        return String.valueOf(expression);
+    }
+
+    @Override
+    public String visit(String expression) {
+        return String.valueOf(expression);
+    }
+
+    @Override
     public String visit(NumericLiteral expression) {
         if (expression.getVal() == null) {
             return "null";

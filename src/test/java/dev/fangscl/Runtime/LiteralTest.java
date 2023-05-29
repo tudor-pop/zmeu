@@ -10,7 +10,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void literal() {
         var evalRes = interpreter.eval(10);
-        Assertions.assertEquals(10, evalRes.getRuntimeValue());
+        Assertions.assertEquals(10.0, evalRes.getRuntimeValue());
     }
 
     @Test
