@@ -368,7 +368,6 @@ public class Interpreter implements
     public Object visit(VariableDeclaration expression) {
         String symbol = expression.getId().getSymbol();
         RuntimeValue value = null;
-//        var env = new Environment(environment);
         if (expression.hasInit()) {
             value = (RuntimeValue) executeBlock(expression.getInit(), env);
         }
