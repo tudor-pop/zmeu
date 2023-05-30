@@ -101,7 +101,7 @@ public class LambdaTest extends BaseTest {
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
                                 BlockStatement.of(
-                                        ReturnStatement.of()
+                                        ReturnStatement.of(ExpressionStatement.of())
                                 )
                         )));
         assertEquals(expected, res);

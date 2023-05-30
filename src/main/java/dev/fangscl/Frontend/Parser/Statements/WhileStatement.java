@@ -27,13 +27,16 @@ public class WhileStatement extends Statement {
         this.test = test;
         this.body = body;
     }
+    public WhileStatement(Expression test, @Nullable Expression body) {
+        this(test, ExpressionStatement.of(body));
+    }
 
     public WhileStatement() {
         this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of(Expression test, Expression consequent) {
-        return new WhileStatement(test,consequent);
+        return new WhileStatement(test, consequent);
     }
 
     public static Statement of(Expression test, Statement consequent) {
@@ -60,4 +63,8 @@ public class WhileStatement extends Statement {
         return new WhileStatement(test, StringLiteral.of(value));
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

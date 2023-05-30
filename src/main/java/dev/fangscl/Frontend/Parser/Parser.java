@@ -121,7 +121,7 @@ public class Parser {
     private Statement Statement() {
         return switch (lookAhead().getType()) {
             case NewLine -> new EmptyStatement();
-            case OpenBraces -> BlockStatement();
+//            case OpenBraces -> BlockStatement();
             case If -> IfStatement();
             case Fun -> FunctionDeclaration();
             case Schema -> SchemaDeclaration();
@@ -211,7 +211,7 @@ public class Parser {
         if (IsLookAhead(TokenType.Var)) {
             return VariableStatementInit();
         }
-        return Expression();
+        return ExpressionStatement();
     }
 
     /**
@@ -353,7 +353,7 @@ public class Parser {
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
-        Statement body = BlockStatement();
+        Statement body = ExpressionStatement.of(BlockStatement());
         return FunctionDeclaration.of(test, params, body);
     }
 
@@ -366,7 +366,7 @@ public class Parser {
         eat(TokenType.Schema);
         var test = Identifier();
 
-        Statement body = BlockStatement();
+        Statement body = ExpressionStatement.of(BlockStatement());
         return SchemaDeclaration.of(test, body);
     }
 
@@ -381,7 +381,7 @@ public class Parser {
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
-        Statement body = BlockStatement();
+        Statement body = ExpressionStatement.of(BlockStatement());
         return InitStatement.of(params, body);
     }
 
@@ -442,7 +442,7 @@ public class Parser {
     }
 
     private Statement LambdaBody() {
-        return IsLookAhead(TokenType.OpenBraces) ? Statement() : Expression();
+        return IsLookAhead(TokenType.OpenBraces) ? Statement() : ExpressionStatement();
     }
 
     /**

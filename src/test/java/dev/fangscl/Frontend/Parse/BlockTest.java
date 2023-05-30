@@ -16,7 +16,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testInteger() {
         var res = parser.produceAST(tokenizer.tokenize("{ 42 }"));
-        var expected = Program.of(BlockStatement.of(ExpressionStatement.of(42)));
+        var expected = Program.of(ExpressionStatement.of(BlockStatement.of(ExpressionStatement.of(42))));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -24,14 +24,14 @@ public class BlockTest extends BaseTest {
     @Test
     void testString() {
         var res = parser.produceAST(tokenizer.tokenize("{ \"hello\" }"));
-        var expected = Program.of(BlockStatement.of(ExpressionStatement.of("hello")));
+        var expected = Program.of(ExpressionStatement.of(BlockStatement.of(ExpressionStatement.of("hello"))));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
     @Test
     void testEmptyBlock() {
         var res = parser.produceAST(tokenizer.tokenize("{ }    "));
-        var expected = Program.of(BlockStatement.of(Collections.emptyList()));
+        var expected = Program.of(ExpressionStatement.of(BlockStatement.of(Collections.emptyList())));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -40,7 +40,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testNestedBlocksString() {
         var res = parser.produceAST(tokenizer.tokenize("{ { \"hello\" } }"));
-        var expected = Program.of(BlockStatement.of(BlockStatement.of(ExpressionStatement.of("hello"))));
+        var expected = Program.of(ExpressionStatement.of(BlockStatement.of(BlockStatement.of(ExpressionStatement.of("hello")))));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }
@@ -57,7 +57,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testEmptyStatementInBlock() {
         var res = parser.produceAST(tokenizer.tokenize("{ \n }"));
-        var expected = Program.of(BlockStatement.of(Collections.emptyList()));
+        var expected = Program.of(ExpressionStatement.of(BlockStatement.of(Collections.emptyList())));
         assertEquals(expected, res);
         log.info(gson.toJson(res));
     }

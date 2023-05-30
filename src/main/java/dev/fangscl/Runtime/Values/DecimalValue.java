@@ -1,7 +1,7 @@
 package dev.fangscl.Runtime.Values;
 
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 
 @Data
@@ -20,7 +20,7 @@ public class DecimalValue implements RuntimeValue<Double> {
         this(decimalLiteral.getValue().doubleValue());
     }
 
-    public static RuntimeValue of(Statement statement) {
+    public static RuntimeValue of(Expression statement) {
         if (statement instanceof NumericLiteral s)
             return new DecimalValue(s.getValue().doubleValue());
         throw new IllegalStateException();

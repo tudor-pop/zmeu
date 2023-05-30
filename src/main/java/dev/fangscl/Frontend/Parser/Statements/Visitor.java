@@ -9,11 +9,28 @@ public interface Visitor<R> {
 
     R visit(Statement statement);
 
+    R visit(InitStatement statement);
+
+    /**
+     * InitStatement
+     * Syntactic sugar for a function
+     */
+    R visit(FunctionDeclaration statement);
+
     R visit(ExpressionStatement statement);
 
     R visit(VariableStatement statement);
 
+    R visit(IfStatement statement);
+
+    R visit(WhileStatement statement);
+
+    R visit(ForStatement statement);
+
+    R visit(SchemaDeclaration statement);
+
     R visit(VariableDeclaration statement);
+
     R visit(Identifier statement);
 
 }

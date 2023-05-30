@@ -29,8 +29,8 @@ public class FunTest extends BaseTest {
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
-                BlockStatement.of(VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)))),
+                ExpressionStatement.of(BlockStatement.of(VariableStatement.of(
+                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))))),
                 global
         );
         log.warn(gson.toJson(res));
@@ -49,10 +49,10 @@ public class FunTest extends BaseTest {
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
-                BlockStatement.of(VariableStatement.of(
+                ExpressionStatement.of(BlockStatement.of(VariableStatement.of(
                                 VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))
                         ),
-                        ExpressionStatement.of(Identifier.of("x"))),
+                        ExpressionStatement.of(Identifier.of("x")))),
                 global
         );
 

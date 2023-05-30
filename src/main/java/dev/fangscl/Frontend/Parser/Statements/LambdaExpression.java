@@ -29,6 +29,10 @@ public class LambdaExpression extends Expression {
         this.body = body;
     }
 
+    private LambdaExpression(List<Expression> params, @Nullable Expression body) {
+        this(params,ExpressionStatement.of(body));
+    }
+
     private LambdaExpression() {
         this.kind = NodeType.LambdaExpression;
     }

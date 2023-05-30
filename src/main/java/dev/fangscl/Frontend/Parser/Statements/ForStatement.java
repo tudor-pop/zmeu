@@ -42,4 +42,8 @@ public class ForStatement extends Statement {
         return new ForStatement();
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

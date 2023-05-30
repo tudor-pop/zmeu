@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Expressions.*;
-import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
@@ -13,6 +12,7 @@ import dev.fangscl.Runtime.exceptions.RuntimeError;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +21,7 @@ public class Interpreter implements
         dev.fangscl.Frontend.Parser.Expressions.Visitor<Object>,
         dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
-    private Environment environment;
+    private Environment env;
 
     public Interpreter(Environment environment) {
         this.set(environment);
@@ -31,175 +31,26 @@ public class Interpreter implements
         this(new Environment());
     }
 
-    public <R> RuntimeValue<R> eval(Statement expression) {
-        return this.eval(expression, this.environment);
+
+    public <R> RuntimeValue<R> eval(Expression expression) {
+        return (RuntimeValue<R>) this.visit(expression);
     }
 
-    public <R> RuntimeValue<R> eval(Statement statement, Environment env) {
-        return switch (statement.getKind()) {
-            case Program -> (RuntimeValue<R>) visit(statement);
-            case ExpressionStatement -> (RuntimeValue<R>) visit(((ExpressionStatement) statement).getStatement());
-            case IfStatement -> eval((IfStatement) statement, env);
-            case WhileStatement -> eval((WhileStatement) statement, env);
-            case VariableStatement -> (RuntimeValue<R>) visit((VariableStatement) statement);
-            case FunctionDeclaration -> eval((FunctionDeclaration) statement, env);
-            case SchemaDeclaration -> eval((SchemaDeclaration) statement, env);
-            case InitDeclaration -> eval((InitStatement) statement, env);
-            case MemberExpression -> eval((MemberExpression) statement, env);
-
-            case ResourceExpression -> eval((ResourceExpression) statement, env);
-            case CallExpression -> eval((CallExpression) statement, env);
-            case LambdaExpression -> eval((LambdaExpression) statement, env);
-
-            case StringLiteral -> (RuntimeValue<R>) visit(statement);
-            case BooleanLiteral -> BooleanValue.of(statement);
-            case IntegerLiteral -> IntegerValue.of(statement);
-            case DecimalLiteral -> DecimalValue.of(statement);
-
-            case BlockStatement ->(RuntimeValue<R>) visit((BlockStatement) statement);
-            case BinaryExpression -> (RuntimeValue<R>) visit(statement);
-            case UnaryExpression -> (RuntimeValue<R>) visit((UnaryExpression) statement);
-            case VariableDeclaration -> (RuntimeValue<R>) visit((VariableDeclaration) statement);
-            case AssignmentExpression -> (RuntimeValue<R>) visit(statement);
-            case Identifier -> (RuntimeValue<R>) visit((Identifier) statement);
-            default -> throw new OperationNotImplementedException(statement);
-        };
-    }
-
-    public <R> RuntimeValue<R> eval(FunctionDeclaration expression, Environment env) {
-        var name = expression.getName();
-        var params = expression.getParams();
-        var body = expression.getBody();
-        return env.init(name.getSymbol(), FunValue.of(name, params, body, env));
-    }
-
-    public <R> RuntimeValue<R> eval(SchemaDeclaration expression, Environment env) {
-        var name = expression.getName();
-        var schemaEnv = new Environment(env);
-
-        evalBody(expression.getBody(), schemaEnv); // install properties/methods of a schema into the environment
-        return env.init(name.getSymbol(), SchemaValue.of(name, (BlockStatement) expression.getBody(), schemaEnv)); // install the schema into the global env
-    }
-
-    /**
-     * InitStatement
-     * Syntactic sugar for a function
-     */
-    public <R> RuntimeValue<R> eval(InitStatement expression, Environment env) {
-        var name = expression.getName();
-        var params = expression.getParams();
-        var body1 = expression.getBody();
-        return eval(FunctionDeclaration.of(name, params, body1), env);
+    public <R> RuntimeValue<R> eval(Statement statement) {
+        return (RuntimeValue<R>) visit(statement);
     }
 
     /**
      * Property access: instance.property.property
      */
-    public <R> RuntimeValue<R> eval(MemberExpression expression, Environment env) {
+    public <R> RuntimeValue<R> eval(MemberExpression expression) {
         if (expression.getProperty() instanceof Identifier resourceName) {
-            var value = (IEnvironment) eval(expression.getObject(), env);
+            var value = (IEnvironment) executeBlock(expression.getObject(), env);
 
             String symbol = resourceName.getSymbol();
             return value.lookup(symbol);
         }
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getKind());
-    }
-
-    public RuntimeValue eval(LambdaExpression expression, Environment env) {
-        List<Expression> params = expression.getParams();
-        Statement body = expression.getBody();
-        return FunValue.of((Identifier) null, params, body, env);
-    }
-
-    /**
-     * An instance of a Schema is an Environment!
-     * the 'parent' component of the instance environment is set to the class environment making class members accessible
-     */
-    public RuntimeValue eval(ResourceExpression expression, Environment env) {
-        if (expression.getName() == null) {
-            throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
-        }
-        var schemaValueTmp = (RuntimeValue) eval(expression.getType(), env);
-        var schemaValue = (SchemaValue) schemaValueTmp;
-
-        Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
-        var resourceEnv = Environment.copyOf(schemaEnvironment);
-        try {
-            var args = expression.getArguments()
-                    .stream()
-                    .map(it -> eval(it, resourceEnv))
-                    .toList();
-            var init = schemaValue.getMethodOrNull("init");
-            if (init != null) {
-                functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
-            }
-            return schemaEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
-        } catch (NotFoundException e) {
-            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
-        }
-
-    }
-
-    public <R> RuntimeValue<R> eval(CallExpression<Expression> expression, Environment env) {
-        RuntimeValue<Identifier> eval = eval(expression.getCallee(), env);
-        FunValue function = (FunValue) eval;
-
-        var args = expression.getArguments()
-                .stream()
-                .map(it -> eval(it, env))
-                .toList();
-
-        if (function.name() == null) { // execute lambda
-            return lambdaCall(function, args);
-        }
-
-        return functionCall(function, args);
-    }
-
-    private <R> RuntimeValue<R> functionCall(FunValue function, List<RuntimeValue<Object>> args) {
-        // for function execution, use the clojured environment from the declared scope
-        var declared = (FunValue) function.getEnvironment()
-                .lookup(function.name(), "Function not declared: " + function.name());
-
-
-
-        var environment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
-        RuntimeValue<R> res = evalBody(declared.getBody(), environment);
-        return res;
-    }
-
-    private <R> RuntimeValue<R> lambdaCall(FunValue function, List<RuntimeValue<Object>> args) {
-        Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
-        return eval(function.getBody(), activationEnvironment);
-    }
-
-
-    /**
-     * Activation environment was already created so we don't need to create a new environment when we use a BlockStatement
-     */
-    public <R> RuntimeValue<R> evalBody(Statement statement, Environment env) {
-        if (statement instanceof BlockStatement blockStatement) {
-            return eval(blockStatement, env);
-        }
-        return eval(statement, env);
-    }
-
-    public <R> RuntimeValue<R> eval(IfStatement statement, Environment env) {
-        RuntimeValue<Boolean> eval = eval(statement.getTest(), env);
-        if (eval.getRuntimeValue()) {
-            return eval(statement.getConsequent(), env);
-        } else {
-            return eval(statement.getAlternate(), env);
-        }
-    }
-
-    public RuntimeValue eval(WhileStatement statement, Environment env) {
-        RuntimeValue<Object> result = NullValue.of();
-
-        while ((Boolean) eval(statement.getTest(), env).getRuntimeValue()) {
-            result = eval(statement.getBody(), env);
-        }
-        return result;
     }
 
     public RuntimeValue eval(String expression) {
@@ -239,10 +90,10 @@ public class Interpreter implements
     }
 
     public void set(Environment environment) {
-        this.environment = environment;
-        this.environment.init("null", NullValue.of());
-        this.environment.init("true", BooleanValue.of(true));
-        this.environment.init("false", BooleanValue.of(false));
+        this.env = environment;
+        this.env.init("null", NullValue.of());
+        this.env.init("true", BooleanValue.of(true));
+        this.env.init("false", BooleanValue.of(false));
     }
 
     @Override
@@ -252,12 +103,16 @@ public class Interpreter implements
 
     @Override
     public Object visit(Expression expression) {
-        return null;
+        return executeBlock(expression, env);
     }
 
     @Override
     public Object visit(NumericLiteral expression) {
-        return IntegerValue.of(expression);
+        return switch (expression.getKind()) {
+            case IntegerLiteral -> IntegerValue.of(expression);
+            case DecimalLiteral -> DecimalValue.of(expression);
+            default -> throw new IllegalStateException("Unexpected value: " + expression.getKind());
+        };
     }
 
     @Override
@@ -267,7 +122,7 @@ public class Interpreter implements
 
     @Override
     public Object visit(Identifier expression) {
-        return environment.lookup(expression.getSymbol());
+        return env.lookup(expression.getSymbol());
     }
 
     @Override
@@ -277,24 +132,22 @@ public class Interpreter implements
 
     @Override
     public Object visit(StringLiteral expression) {
-        return null;
+        return StringValue.of(expression);
     }
 
     @Override
     public Object visit(LambdaExpression expression) {
-        return null;
+        List<Expression> params = expression.getParams();
+        Statement body = expression.getBody();
+        return FunValue.of((Identifier) null, params, body, env);
     }
 
     @Override
     public Object visit(BlockStatement expression) {
         RuntimeValue res = NullValue.of();
-        var env = new Environment(environment);
+        var env = new Environment(this.env);
         for (var it : expression.getExpression()) {
-            if (it instanceof BlockStatement blockStatement) {
-                res = (RuntimeValue) executeBlock(blockStatement.getExpression(), environment);
-            }else {
-                res = (RuntimeValue) executeBlock(it, env);
-            }
+            res = (RuntimeValue) executeBlock(it, env);
         }
         return res;
     }
@@ -303,7 +156,7 @@ public class Interpreter implements
     public Object visit(VariableStatement statement) {
         RuntimeValue res = NullValue.of();
         for (var it : statement.getDeclarations()) {
-            res = (RuntimeValue) executeBlock(it, environment);
+            res = (RuntimeValue) executeBlock(it, env);
         }
         return res;
     }
@@ -315,8 +168,8 @@ public class Interpreter implements
 
     @Override
     public Object visit(BinaryExpression expression) {
-        var lhs = eval(expression.getLeft(), environment);
-        var rhs = eval(expression.getRight(), environment);
+        var lhs = executeBlock(expression.getLeft(), env);
+        var rhs = executeBlock(expression.getRight(), env);
         if ((Object) expression.getOperator() instanceof String op) {
             if ((RuntimeValue) lhs instanceof IntegerValue lhsn && (RuntimeValue) rhs instanceof IntegerValue rhsn) {
                 return switch (op) {
@@ -338,8 +191,36 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(CallExpression expression) {
-        return null;
+    public Object visit(CallExpression<Expression> expression) {
+        RuntimeValue<Identifier> eval = (RuntimeValue<Identifier>) executeBlock(expression.getCallee(), env);
+        FunValue function = (FunValue) eval;
+
+        var args = expression.getArguments()
+                .stream()
+                .map(it -> (RuntimeValue<Object>) executeBlock(it, env))
+                .toList();
+
+        if (function.name() == null) { // execute lambda
+            return lambdaCall(function, args);
+        }
+
+        return functionCall(function, args);
+    }
+
+    private <R> RuntimeValue<R> functionCall(FunValue function, List<RuntimeValue<Object>> args) {
+        // for function execution, use the clojured environment from the declared scope
+        var declared = (FunValue) function.getEnvironment()
+                .lookup(function.name(), "Function not declared: " + function.name());
+
+
+        var environment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
+        RuntimeValue<R> res = (RuntimeValue<R>) executeBlock(declared.getBody(), environment);
+        return res;
+    }
+
+    private <R> RuntimeValue<R> lambdaCall(FunValue function, List<RuntimeValue<Object>> args) {
+        Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
+        return (RuntimeValue<R>) executeBlock(function.getBody(), activationEnvironment);
     }
 
     @Override
@@ -354,12 +235,40 @@ public class Interpreter implements
 
     @Override
     public Object visit(MemberExpression expression) {
-        return null;
+        if (expression.getProperty() instanceof Identifier resourceName) {
+            var value = (IEnvironment) executeBlock(expression.getObject(), env);
+
+            String symbol = resourceName.getSymbol();
+            return value.lookup(symbol);
+        }
+        throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
     }
+
 
     @Override
     public Object visit(ResourceExpression expression) {
-        return null;
+        if (expression.getName() == null) {
+            throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
+        }
+        var schemaValueTmp = (RuntimeValue) executeBlock(expression.getType(), env);
+        var schemaValue = (SchemaValue) schemaValueTmp;
+
+        Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
+        var resourceEnv = Environment.copyOf(schemaEnvironment);
+        try {
+            var args = new ArrayList<RuntimeValue<Object>>();
+            for (Statement it : expression.getArguments()) {
+                RuntimeValue<Object> objectRuntimeValue = (RuntimeValue<Object>) executeBlock(it, resourceEnv);
+                args.add(objectRuntimeValue);
+            }
+            var init = schemaValue.getMethodOrNull("init");
+            if (init != null) {
+                functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
+            }
+            return schemaEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
+        }
     }
 
     @Override
@@ -368,12 +277,50 @@ public class Interpreter implements
     }
 
     @Override
+    public Object visit(IfStatement statement) {
+        RuntimeValue<Boolean> eval = (RuntimeValue<Boolean>) executeBlock(statement.getTest(), env);
+        if (eval.getRuntimeValue()) {
+            return executeBlock(statement.getConsequent(), env);
+        } else {
+            return executeBlock(statement.getAlternate(), env);
+        }
+    }
+
+    @Override
+    public Object visit(WhileStatement statement) {
+        RuntimeValue<Object> result = NullValue.of();
+
+        while (((Boolean) ((RuntimeValue<Object>) executeBlock(statement.getTest(), env)).getRuntimeValue())) {
+            result = (RuntimeValue<Object>) executeBlock(statement.getBody(), env);
+        }
+        return result;
+    }
+
+    @Override
+    public Object visit(ForStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Object visit(SchemaDeclaration expression) {
+        var name = expression.getName();
+        var schemaEnv = new Environment(env);
+
+        Statement body = expression.getBody();
+        if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockStatement blockStatement) {
+            executeBlock(blockStatement.getExpression(), schemaEnv); // install properties/methods of a schema into the environment
+            return env.init(name.getSymbol(), SchemaValue.of(name, blockStatement, schemaEnv)); // install the schema into the global env
+        }
+        throw new RuntimeException("Invalid schema");
+    }
+
+    @Override
     public Object visit(UnaryExpression expression) {
         Object operator = expression.getOperator();
         if (operator instanceof String op) {
             return switch (op) {
                 case "++" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(1 + r.getRuntimeValue());
                     } else if (res instanceof DecimalValue r) {
@@ -383,7 +330,7 @@ public class Interpreter implements
                     }
                 }
                 case "--" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(r.getRuntimeValue() - 1);
                     } else if (res instanceof DecimalValue r) {
@@ -395,7 +342,7 @@ public class Interpreter implements
                     }
                 }
                 case "-" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(-r.getRuntimeValue());
                     } else if (res instanceof DecimalValue r) {
@@ -405,7 +352,7 @@ public class Interpreter implements
                     }
                 }
                 case "!" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), environment);
+                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
                     if (res instanceof BooleanValue r) {
                         yield BooleanValue.of(!r.isValue());
                     }
@@ -423,17 +370,17 @@ public class Interpreter implements
         RuntimeValue value = null;
 //        var env = new Environment(environment);
         if (expression.hasInit()) {
-            value = (RuntimeValue) executeBlock(expression.getInit(), environment);
+            value = (RuntimeValue) executeBlock(expression.getInit(), env);
         }
-        return environment.init(symbol, value);
+        return env.init(symbol, value);
     }
 
     @Override
     public Object visit(AssignmentExpression expression) {
-        RuntimeValue right = eval(expression.getRight(), environment);
+        RuntimeValue right = (RuntimeValue) executeBlock(expression.getRight(), env);
 
         if (expression.getLeft() instanceof MemberExpression memberExpression) {
-            var instanceEnv = (IEnvironment) eval(memberExpression.getObject(), environment);
+            var instanceEnv = (IEnvironment) executeBlock(memberExpression.getObject(), env);
             Expression property = memberExpression.getProperty();
             if (property instanceof Identifier identifier) {
                 return instanceEnv.assign(identifier.getSymbol(), right);
@@ -443,7 +390,7 @@ public class Interpreter implements
         }
 
         RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
-        return environment.assign(left.getRuntimeValue(), right);
+        return env.assign(left.getRuntimeValue(), right);
     }
 
     @Override
@@ -451,7 +398,7 @@ public class Interpreter implements
         RuntimeValue lastEval = new NullValue();
 
         for (Statement i : program.getBody()) {
-            lastEval = evalBody(i, environment);
+            lastEval = (RuntimeValue) executeBlock(i, env);
         }
 
         return lastEval;
@@ -463,8 +410,24 @@ public class Interpreter implements
     }
 
     @Override
+    public Object visit(InitStatement statement) {
+        var name = statement.getName();
+        var params = statement.getParams();
+        var body1 = statement.getBody();
+        return executeBlock(FunctionDeclaration.of(name, params, body1), env);
+    }
+
+    @Override
+    public Object visit(FunctionDeclaration declaration) {
+        var name = declaration.getName();
+        var params = declaration.getParams();
+        var body = declaration.getBody();
+        return env.init(name.getSymbol(), FunValue.of(name, params, body, env));
+    }
+
+    @Override
     public Object visit(ExpressionStatement statement) {
-        return executeBlock(statement.getStatement(), environment);
+        return executeBlock(statement.getStatement(), env);
     }
 
     Object interpret(List<Statement> statements) {
@@ -481,36 +444,36 @@ public class Interpreter implements
     }
 
     Object executeBlock(List<Statement> statements, Environment environment) {
-        Environment previous = this.environment;
+        Environment previous = this.env;
         try {
-            this.environment = environment;
+            this.env = environment;
             Object res = null;
             for (Statement statement : statements) {
                 res = execute(statement);
             }
             return res;
         } finally {
-            this.environment = previous;
+            this.env = previous;
         }
     }
 
     Object executeBlock(Expression statement, Environment environment) {
-        Environment previous = this.environment;
+        Environment previous = this.env;
         try {
-            this.environment = environment;
+            this.env = environment;
             return execute(statement);
         } finally {
-            this.environment = previous;
+            this.env = previous;
         }
     }
 
     Object executeBlock(Statement statement, Environment environment) {
-        Environment previous = this.environment;
+        Environment previous = this.env;
         try {
-            this.environment = environment;
+            this.env = environment;
             return execute(statement);
         } finally {
-            this.environment = previous;
+            this.env = previous;
         }
     }
 
@@ -519,7 +482,7 @@ public class Interpreter implements
     }
 
     private Object execute(Expression stmt) {
-        return stmt.accept((Visitor<Object>) this);
+        return stmt.accept(this);
     }
 
     static void runtimeError(RuntimeError error) {

@@ -4,6 +4,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.FunctionDeclaration;
 import dev.fangscl.Frontend.Parser.Statements.ReturnStatement;
 import lombok.extern.log4j.Log4j2;
@@ -69,7 +70,7 @@ public class FunTest extends BaseTest {
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
                         BlockStatement.of(
-                                ReturnStatement.of()
+                                ReturnStatement.of(ExpressionStatement.of())
                         )
                 )
         );
@@ -88,7 +89,7 @@ public class FunTest extends BaseTest {
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),
                         BlockStatement.of(
-                                ReturnStatement.of()
+                                ReturnStatement.of(ExpressionStatement.of())
                         )
                 )
         );

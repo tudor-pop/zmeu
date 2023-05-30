@@ -18,20 +18,22 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ExpressionStatement extends Statement {
-    private Statement statement;
+    private Expression statement;
 
-    private ExpressionStatement(Statement statement) {
+    private ExpressionStatement(Expression statement) {
         this.kind = NodeType.ExpressionStatement;
         this.statement = statement;
+    }
+    private ExpressionStatement() {
+        this(null);
     }
 
     public static Statement of(Expression expression) {
         return new ExpressionStatement(expression);
     }
-    public static Statement of(Statement expression) {
-        return new ExpressionStatement(expression);
+    public static Statement of() {
+        return new ExpressionStatement();
     }
-
     public static Statement of(int value) {
         return new ExpressionStatement(NumericLiteral.of(value));
     }

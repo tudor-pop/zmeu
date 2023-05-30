@@ -77,7 +77,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void unaryMinusDecimal() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1.5
                     -x
@@ -90,7 +90,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void notFalse() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = false
                     !x 

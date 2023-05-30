@@ -1,7 +1,7 @@
 package dev.fangscl.Runtime.Values;
 
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
-import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,7 +28,7 @@ public class StringValue implements RuntimeValue<String> {
         this(literal.getValue());
     }
 
-    public static RuntimeValue of(Statement statement) {
+    public static RuntimeValue of(Expression statement) {
         if (statement instanceof StringLiteral s)
             return new StringValue(s.getValue());
         throw new IllegalStateException();

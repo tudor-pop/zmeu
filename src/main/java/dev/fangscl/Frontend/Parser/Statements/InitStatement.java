@@ -30,6 +30,10 @@ public class InitStatement extends Statement {
         this.body = body;
     }
 
+    public InitStatement(List<Expression> params, @Nullable Expression body) {
+        this(params, ExpressionStatement.of(body));
+    }
+
     public InitStatement() {
         this.kind = NodeType.InitDeclaration;
     }
@@ -62,4 +66,8 @@ public class InitStatement extends Statement {
         return new InitStatement(params, StringLiteral.of(value));
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

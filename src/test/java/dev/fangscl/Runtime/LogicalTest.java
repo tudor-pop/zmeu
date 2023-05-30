@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void consequentLess() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     var y = 2
@@ -29,7 +28,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void consequentLessEq() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 2
                     var y = 2
@@ -46,7 +45,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void consequentGreat() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 3
                     var y = 2
@@ -63,7 +62,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void consequentGreatEq() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 2
                     var y = 2
@@ -80,7 +79,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void alternateGreat() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     var y = 2
@@ -99,7 +98,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void alternateGreatEq() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     var y = 2
@@ -118,7 +117,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void alternateEq() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 2
                     var y = 1
@@ -137,7 +136,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void alternate() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 2
                     var y = 1

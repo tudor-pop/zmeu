@@ -25,6 +25,9 @@ public class SchemaDeclaration extends Statement {
         this.name = name;
         this.body = body;
     }
+    public SchemaDeclaration(Identifier name, @Nullable Expression body) {
+        this(name,ExpressionStatement.of(body));
+    }
 
     public SchemaDeclaration() {
         this.kind = NodeType.SchemaDeclaration;
@@ -58,4 +61,8 @@ public class SchemaDeclaration extends Statement {
         return new SchemaDeclaration(test, StringLiteral.of(value));
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

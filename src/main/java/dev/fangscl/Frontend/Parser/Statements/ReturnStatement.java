@@ -25,6 +25,9 @@ public class ReturnStatement extends Statement {
         this();
         this.argument = argument;
     }
+    public ReturnStatement(@Nullable Expression argument) {
+        this(ExpressionStatement.of(argument));
+    }
 
     public ReturnStatement() {
         this.kind = NodeType.ReturnStatement;
@@ -58,4 +61,8 @@ public class ReturnStatement extends Statement {
         return new ReturnStatement(StringLiteral.of(value));
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

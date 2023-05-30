@@ -32,6 +32,10 @@ public class FunctionDeclaration extends Statement {
         this.body = body;
     }
 
+    public FunctionDeclaration(Identifier name, List<Expression> params, @Nullable Expression body) {
+        this(name,params,ExpressionStatement.of(body));
+    }
+
     public FunctionDeclaration() {
         this.kind = NodeType.FunctionDeclaration;
     }
@@ -76,4 +80,8 @@ public class FunctionDeclaration extends Statement {
         return FunctionDeclaration.of(test, params, StringLiteral.of(value));
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -33,6 +33,9 @@ public class BlockStatement extends Expression {
         this.kind = NodeType.BlockStatement;
         this.expression = expression;
     }
+    public BlockStatement(@Nullable Expression expression) {
+        this(ExpressionStatement.of(expression));
+    }
 
     public BlockStatement() {
         this.kind = NodeType.BlockStatement;

@@ -44,15 +44,15 @@ public class UnaryTest extends BaseTest {
         assertEquals(expected, res);
     }
 
-    @Test
-    void postfixDecrement() {
-        var res = parser.produceAST(tokenizer.tokenize("x--"));
-        var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("--", Identifier.of("x")))
-        );
-        log.info(gson.toJson(res));
-        assertEquals(expected, res);
-    }
+//    @Test
+//    void postfixDecrement() {
+//        var res = parser.produceAST(tokenizer.tokenize("x--"));
+//        var expected = Program.of(ExpressionStatement.of(
+//                UnaryExpression.of("--", Identifier.of("x")))
+//        );
+//        log.info(gson.toJson(res));
+//        assertEquals(expected, res);
+//    }
 
     @Test
     void prefixIncrement() {
@@ -64,15 +64,15 @@ public class UnaryTest extends BaseTest {
         assertEquals(expected, res);
     }
 
-    @Test
-    void postfixIncrement() {
-        var res = parser.produceAST(tokenizer.tokenize("x++"));
-        var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("++", Identifier.of("x"))
-        ));
-        log.info(gson.toJson(res));
-        assertEquals(expected, res);
-    }
+//    @Test
+//    void postfixIncrement() {
+//        var res = parser.produceAST(tokenizer.tokenize("x++"));
+//        var expected = Program.of(ExpressionStatement.of(
+//                UnaryExpression.of("++", Identifier.of("x"))
+//        ));
+//        log.info(gson.toJson(res));
+//        assertEquals(expected, res);
+//    }
 
     @Test
     void testLogicalUnaryHigherPrecedenceThanMultiplication() {

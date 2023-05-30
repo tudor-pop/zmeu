@@ -27,13 +27,16 @@ public class IfStatement extends Statement {
         this.consequent = consequent;
         this.alternate = alternate;
     }
+    public IfStatement(Expression test, @Nullable Expression consequent, Expression alternate) {
+        this(test, ExpressionStatement.of(consequent), ExpressionStatement.of(alternate));
+    }
 
     public IfStatement() {
         this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of(Expression test, Expression consequent, Expression alternate) {
-        return new IfStatement(test,consequent, alternate);
+        return new IfStatement(test, consequent, alternate);
     }
 
     public static Statement of(Expression test, Statement consequent, Statement alternate) {
@@ -63,4 +66,8 @@ public class IfStatement extends Statement {
         return new IfStatement(test, StringLiteral.of(value), null);
     }
 
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.visit(this);
+    }
 }

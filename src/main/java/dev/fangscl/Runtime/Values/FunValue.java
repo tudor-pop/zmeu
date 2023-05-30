@@ -3,6 +3,7 @@ package dev.fangscl.Runtime.Values;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Environment;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class FunValue implements RuntimeValue<Identifier> {
     }
 
     private FunValue(Identifier e) {
-        this(e, Collections.emptyList(), BlockStatement.of(), new Environment());
+        this(e, Collections.emptyList(), ExpressionStatement.of(BlockStatement.of()), new Environment());
     }
 
     @Override
@@ -42,7 +43,7 @@ public class FunValue implements RuntimeValue<Identifier> {
         return (FunValue) FunValue.of(Identifier.of(name), params, body, environment);
     }
     public static RuntimeValue<Identifier> of(String name, List<Expression> params,  Environment environment) {
-        return FunValue.of(Identifier.of(name), params, BlockStatement.of(), environment);
+        return FunValue.of(Identifier.of(name), params, ExpressionStatement.of(BlockStatement.of()), environment);
     }
 
     public static RuntimeValue<Identifier> of(List<Expression> params, Statement body, Environment environment) {
@@ -50,7 +51,7 @@ public class FunValue implements RuntimeValue<Identifier> {
     }
 
     public static RuntimeValue<Identifier> of(Identifier string) {
-        return FunValue.of(string, Collections.emptyList(), BlockStatement.of(), new Environment());
+        return FunValue.of(string, Collections.emptyList(), ExpressionStatement.of(BlockStatement.of()), new Environment());
     }
 
     public static RuntimeValue<Identifier> of(String string) {
@@ -58,7 +59,7 @@ public class FunValue implements RuntimeValue<Identifier> {
     }
 
     public static RuntimeValue<Identifier> of(String string, Environment environment) {
-        return FunValue.of(Identifier.of(string), Collections.emptyList(), BlockStatement.of(), environment);
+        return FunValue.of(Identifier.of(string), Collections.emptyList(), ExpressionStatement.of(BlockStatement.of()), environment);
     }
 
     public static RuntimeValue<Identifier> of(Expression string) {

@@ -4,14 +4,12 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * AssignmentExpression
@@ -77,7 +75,7 @@ public class CallExpression<E extends Expression> extends Expression {
 
     @Override
     public <R> R accept(Visitor<R> visitor) {
-        return visitor.visit(this);
+        return visitor.visit((CallExpression<Expression>) this);
     }
 
 }

@@ -1,7 +1,7 @@
 package dev.fangscl.Runtime.Values;
 
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 
 @Data
@@ -16,7 +16,7 @@ public class IntegerValue implements RuntimeValue<Integer> {
         this(number.getValue().intValue());
     }
 
-    public static RuntimeValue of(Statement value) {
+    public static RuntimeValue of(Expression value) {
         if (value instanceof NumericLiteral s) {
             return new IntegerValue(s.getValue().intValue());
         }
