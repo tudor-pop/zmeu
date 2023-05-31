@@ -15,7 +15,7 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void schemaDeclaration() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     
                 }
@@ -28,7 +28,7 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void schemaDeclarationWithFunction() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     fun test(){
                     
@@ -43,7 +43,8 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void schemaDeclarationWithVariable() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval
+                (parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     var x
                 }
@@ -56,7 +57,7 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void schemaDeclarationWithVariableInit() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     var x=20.2
                 }
@@ -69,7 +70,7 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void schemaDeclarationWithVariableInitString() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     var x="hello"
                 }
@@ -82,7 +83,7 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void initDeclaration() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     init(){
                        
@@ -97,7 +98,7 @@ public class SchemaTest extends BaseTest {
     }
     @Test
     void initDeclarationWithParams() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     init(x){
                        
@@ -113,7 +114,7 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void initDeclarationWithParamsAssignment() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                     var x = 1;
                 }

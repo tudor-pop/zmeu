@@ -12,7 +12,7 @@ public class LoopTest extends BaseTest {
 
     @Test
     void increment() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     while (x < 5){
@@ -28,7 +28,7 @@ public class LoopTest extends BaseTest {
 
     @Test
     void incrementEq() {
-        RuntimeValue<IntegerValue> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     while (x <= 5){

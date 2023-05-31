@@ -7,7 +7,7 @@ import dev.fangscl.Frontend.Parser.Program;
 public interface Visitor<R> {
     R visit(Program program);
 
-    R visit(Statement statement);
+    R eval(Statement statement);
 
     R visit(InitStatement statement);
 

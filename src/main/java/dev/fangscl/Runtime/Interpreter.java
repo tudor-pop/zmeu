@@ -32,14 +32,6 @@ public class Interpreter implements
     }
 
 
-    public <R> RuntimeValue<R> eval(Expression expression) {
-        return (RuntimeValue<R>) this.visit(expression);
-    }
-
-    public <R> RuntimeValue<R> eval(Statement statement) {
-        return (RuntimeValue<R>) visit(statement);
-    }
-
     /**
      * Property access: instance.property.property
      */
@@ -53,40 +45,24 @@ public class Interpreter implements
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getKind());
     }
 
-    public RuntimeValue eval(String expression) {
-        return (RuntimeValue) visit(expression);
-    }
-
-    public RuntimeValue<Boolean> eval(boolean expression) {
-        return (RuntimeValue<Boolean>) visit(expression);
-    }
-
-    public RuntimeValue<DecimalValue> eval(float value) {
-        return (RuntimeValue<DecimalValue>) visit(value);
-    }
-
     @Override
-    public Object visit(int expression) {
+    public Object eval(int expression) {
         return IntegerValue.of(expression);
     }
 
     @Override
-    public Object visit(boolean expression) {
+    public Object eval(boolean expression) {
         return BooleanValue.of(expression);
     }
 
     @Override
-    public Object visit(String expression) {
+    public Object eval(String expression) {
         return StringValue.of(expression);
     }
 
     @Override
-    public Object visit(double expression) {
+    public Object eval(double expression) {
         return DecimalValue.of(expression);
-    }
-
-    public RuntimeValue<DecimalValue> eval(double expression) {
-        return (RuntimeValue<DecimalValue>) visit(expression);
     }
 
     public void set(Environment environment) {
@@ -97,12 +73,12 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(float expression) {
+    public Object eval(float expression) {
         return DecimalValue.of(expression);
     }
 
     @Override
-    public Object visit(Expression expression) {
+    public Object eval(Expression expression) {
         return executeBlock(expression, env);
     }
 
@@ -131,7 +107,7 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(StringLiteral expression) {
+    public Object eval(StringLiteral expression) {
         return StringValue.of(expression);
     }
 
@@ -404,7 +380,7 @@ public class Interpreter implements
     }
 
     @Override
-    public Object visit(Statement statement) {
+    public Object eval(Statement statement) {
         return execute(statement);
     }
 

@@ -41,7 +41,7 @@ public class ResourceTest extends BaseTest {
      */
     @Test
      void resourceIsDefinedInSchemaEnv() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm { }
                 resource Vm main {
                     
@@ -79,7 +79,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInheritsDefaultSchemaValue() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -99,7 +99,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceMemberAccess() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -138,7 +138,7 @@ public class ResourceTest extends BaseTest {
      */
     @Test
     void resourceSetMemberAccess() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -165,7 +165,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInit() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -190,7 +190,7 @@ public class ResourceTest extends BaseTest {
     @SneakyThrows
     @Test
     void resourceInitJson() {
-        RuntimeValue res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }

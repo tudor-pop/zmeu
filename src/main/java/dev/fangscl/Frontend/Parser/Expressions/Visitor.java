@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
 import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
 
 public interface Visitor<R> {
-    R visit(Expression expression);
+    R eval(Expression expression);
 
     R visit(NumericLiteral expression);
 
@@ -15,7 +15,7 @@ public interface Visitor<R> {
 
     R visit(NullLiteral expression);
 
-    R visit(StringLiteral expression);
+    R eval(StringLiteral expression);
 
     R visit(LambdaExpression expression);
 
@@ -47,13 +47,13 @@ public interface Visitor<R> {
 
     R visit(AssignmentExpression expression);
 
-    R visit(float expression);
+    R eval(float expression);
 
-    R visit(double expression);
+    R eval(double expression);
 
-    R visit(int expression);
+    R eval(int expression);
 
-    R visit(boolean expression);
+    R eval(boolean expression);
 
-    R visit(String expression);
+    R eval(String expression);
 }

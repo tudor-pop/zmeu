@@ -21,7 +21,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                     var x = 1
                 }
@@ -40,7 +40,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funReturn() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                    var x = 1
                    x
@@ -63,7 +63,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funEvaluateBlock() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(x){
                    x
                 }
@@ -76,7 +76,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBody() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x){
                    x*x
                 }
@@ -89,7 +89,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBodyMultiParams() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x,y){
                    var z = 1
                    x*y+z
@@ -103,7 +103,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funClojure() {
-        RuntimeValue<Identifier> res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var a = 100
                     fun calc(x,y){

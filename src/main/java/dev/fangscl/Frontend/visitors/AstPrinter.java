@@ -12,7 +12,7 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(Expression expression) {
+    public String eval(Expression expression) {
         return expression.accept(this);
     }
 
@@ -67,27 +67,27 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(float expression) {
+    public String eval(float expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String visit(double expression) {
+    public String eval(double expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String visit(int expression) {
+    public String eval(int expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String visit(boolean expression) {
+    public String eval(boolean expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String visit(String expression) {
+    public String eval(String expression) {
         return String.valueOf(expression);
     }
 
@@ -115,7 +115,7 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(StringLiteral expression) {
+    public String eval(StringLiteral expression) {
         return expression.getValue();
     }
 
