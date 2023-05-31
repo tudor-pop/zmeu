@@ -93,14 +93,14 @@ public class VariableDeclarationTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("""
                 var x={
                     var y=2
-                    2
+                    3
                 }
                 """));
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), BlockStatement.of(
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))),
-                                ExpressionStatement.of(NumericLiteral.of(2)))))
+                                ExpressionStatement.of(NumericLiteral.of(3)))))
         );
         log.warn(gson.toJson(res));
         assertEquals(expected, res);

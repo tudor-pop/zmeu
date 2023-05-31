@@ -12,6 +12,9 @@ public enum TokenType {
     WhiteSpace,
     Comment,
     NewLine,
+    /**
+     * ;
+     */
     SemiColon,
 
     /******   Expressions   ******/
@@ -57,10 +60,27 @@ public enum TokenType {
      */
 
     /*****   Grouping   *****/
+
+    /**
+     * Braces: {}
+     * Brackets: []
+     * Parenthesis: ()
+     */
     OpenParenthesis,
     CloseParenthesis,
+
+    /**
+     * Braces: {}
+     * Brackets: []
+     * Parenthesis: ()
+     */
     OpenBraces,
     CloseBraces,
+    /**
+     * Braces: {}
+     * Brackets: []
+     * Parenthesis: ()
+     */
     OpenBrackets,
     CloseBrackets,
     Comma,

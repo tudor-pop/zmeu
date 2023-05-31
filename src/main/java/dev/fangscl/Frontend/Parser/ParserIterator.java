@@ -71,7 +71,7 @@ public class ParserIterator {
         return tokens.get(iterator.nextIndex());
     }
 
-    Token eat(TokenType type, String error) {
+    Token eat(String error, TokenType... type) {
         Token lookAhead = lookAhead();
         if (lookAhead == null || lookAhead.is(TokenType.EOF)) {
             log.debug("EndOfFile reached ");
@@ -85,17 +85,30 @@ public class ParserIterator {
         return eat();
     }
 
-    Token eat(TokenType type) {
-        return eat(type, "Unexpected token found");
+    Token eat(TokenType... type) {
+        return eat("Unexpected token found", type);
+    }
+
+    Token eat() {
+        current = next();
+        return current;
     }
 
     Token next() {
         return iterator.next();
     }
 
-    Token eat() {
-        current = iterator.next();
-        return current;
+    public Token eatIf(TokenType token) {
+        // if the line terminator was not eaten in parsing, we consume it here. LineTerminator could be consumed by some other rules
+        if (IsLookAhead(token)) {
+            return eat();
+        }
+        return null;
     }
 
+    public void eatLineTerminator() {
+        while (IsLookAhead(TokenType.lineTerminator(), TokenType.SemiColon)) {
+            eat();
+        }
+    }
 }

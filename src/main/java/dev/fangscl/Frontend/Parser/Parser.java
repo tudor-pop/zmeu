@@ -88,7 +88,7 @@ public class Parser {
             if (IsLookAhead(endTokenType)) { // need to check for EOF before doing any work
                 break;
             }
-            Statement statement = Statement();
+            Statement statement = Declaration();
             if (statement == null || statement.is(NodeType.EmptyStatement)) {
                 continue;
             }
@@ -103,9 +103,18 @@ public class Parser {
         return statementList;
     }
 
+    private Statement Declaration() {
+        return switch (lookAhead().getType()){
+            case Fun -> FunctionDeclaration();
+            case Schema -> SchemaDeclaration();
+            case Var -> VariableDeclarations();
+            default -> Statement();
+        };
+    }
+
     /**
-     * Statement
-     * : ExpressionStatement
+     * {@snippet :
+     * : Statement
      * | EmptyStatement
      * | BlockStatement
      * | VariableStatement
@@ -115,7 +124,9 @@ public class Parser {
      * | FunctionDeclarationStatement
      * | SchemaDeclarationStatement
      * | ReturnStatement
+     * | ExpressionStatement
      * ;
+     * }
      */
     @Nullable
     private Statement Statement() {
@@ -123,15 +134,23 @@ public class Parser {
             case NewLine -> new EmptyStatement();
 //            case OpenBraces -> BlockStatement();
             case If -> IfStatement();
-            case Fun -> FunctionDeclaration();
-            case Schema -> SchemaDeclaration();
+            case Else -> ElseStatement();
             case Init -> InitStatement();
             case Return -> ReturnStatement();
             case While, For -> IterationStatement();
-            case Var -> VariableStatement();
             case EOF -> null;
             default -> ExpressionStatement();
         };
+    }
+
+    private Statement ElseStatement() {
+        iterator.eatIf(TokenType.OpenBraces);
+        if (IsLookAhead(TokenType.Else)) {
+            eat(TokenType.Else);
+        }
+        var res = Statement();
+        iterator.eatIf(TokenType.CloseBraces);
+        return res;
     }
 
     /**
@@ -209,33 +228,33 @@ public class Parser {
      */
     private Statement ForStatementInit() {
         if (IsLookAhead(TokenType.Var)) {
+            eat(TokenType.Var);
             return VariableStatementInit();
         }
         return ExpressionStatement();
     }
 
     /**
-     * VariableStatementInit
-     * : var VariableStatements
+     * VariableStatement
+     * : var VariableDeclarations LineTerminator
+     * ;
      */
-    private Statement VariableStatementInit() {
+    private Statement VariableDeclarations() {
         eat(TokenType.Var);
-        var declarations = VariableDeclarationList();
-        return VariableStatement.of(declarations);
+        var statement = VariableStatementInit();
+        if (IsLookAhead(TokenType.lineTerminator())) {
+            eat(TokenType.lineTerminator());
+        }
+        return statement;
     }
 
     /**
-     * VariableStatement
-     * : var VariableDeclarations \n?
-     * ;
+     * VariableStatementInit
+     * : var VariableStatements ";"
      */
-    private Statement VariableStatement() {
-//        eat(TokenType.Var); // # no need to eat as it is already current
-        var statement = VariableStatementInit();
-        if (IsLookAhead(TokenType.lineTerminator())) {
-//            eat(TokenType.lineTerminator());
-        }
-        return statement;
+    private Statement VariableStatementInit() {
+        var declarations = VariableDeclarationList();
+        return VariableStatement.of(declarations);
     }
 
     /**
@@ -296,7 +315,7 @@ public class Parser {
      */
     private Expression VariableInitializer() {
         if (IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
-            eat(TokenType.Equal);
+            eat(TokenType.Equal, TokenType.Equal_Complex);
         }
         return Expression();
     }
@@ -446,9 +465,12 @@ public class Parser {
     }
 
     /**
+     * {@snippet :
      * AssignmentExpression
      * : LogicalExpression
-     * | LeftHandSideExpression AssignmentOperator Expression
+     * | LeftHandSideExpression AssignmentOperator Expression LineTerminator
+     * ;
+     * }
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
@@ -640,6 +662,7 @@ public class Parser {
         if (lookAhead() == null) {
             return null;
         }
+        iterator.eatLineTerminator();
         return switch (lookAhead().getType()) {
             case OpenParenthesis, OpenBrackets -> ParenthesizedExpression();
             case Equal -> {
@@ -865,12 +888,12 @@ public class Parser {
         return iterator.eat();
     }
 
-    Token eat(TokenType type) {
-        return iterator.eat(type);
+    Token eat(TokenType... type) {
+        return iterator.eat("Invalid token: " + Arrays.toString(type), type);
     }
 
     Token eat(TokenType type, String error) {
-        return iterator.eat(type, error);
+        return iterator.eat(error, type);
     }
 
     private boolean IsLookAhead(TokenType... type) {
