@@ -7,8 +7,7 @@ import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 public class VariableDeclarationTest extends BaseTest {
@@ -18,6 +17,8 @@ public class VariableDeclarationTest extends BaseTest {
     void varNull() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x")));
         assertNull(res);
+        assertTrue(global.hasVar("x"));
+        assertNull(global.get("x"));
         log.info(gson.toJson(res));
     }
 

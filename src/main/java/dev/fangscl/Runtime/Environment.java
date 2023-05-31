@@ -152,4 +152,8 @@ public class Environment implements IEnvironment {
         return resolve(symbol, error) // search the scope
                 .get(symbol);
     }
+
+    public boolean hasVar(String symbol) {
+        return getVariables().keySet().contains(symbol);
+    }
 }

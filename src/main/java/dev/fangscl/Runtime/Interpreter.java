@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
@@ -18,7 +19,7 @@ import java.util.Optional;
 
 @Log4j2
 public class Interpreter implements
-        dev.fangscl.Frontend.Parser.Expressions.Visitor<Object>,
+        Visitor<Object>,
         dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
@@ -29,6 +30,13 @@ public class Interpreter implements
 
     public Interpreter() {
         this(new Environment());
+    }
+
+    public void set(Environment environment) {
+        this.env = environment;
+        this.env.init("null", NullValue.of());
+        this.env.init("true", BooleanValue.of(true));
+        this.env.init("false", BooleanValue.of(false));
     }
 
     @Override
@@ -49,13 +57,6 @@ public class Interpreter implements
     @Override
     public Object eval(double expression) {
         return DecimalValue.of(expression);
-    }
-
-    public void set(Environment environment) {
-        this.env = environment;
-        this.env.init("null", NullValue.of());
-        this.env.init("true", BooleanValue.of(true));
-        this.env.init("false", BooleanValue.of(false));
     }
 
     @Override
