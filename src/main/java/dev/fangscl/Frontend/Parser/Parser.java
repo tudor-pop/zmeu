@@ -84,7 +84,7 @@ public class Parser {
      */
     private List<Statement> StatementList(TokenType endTokenType) {
         var statementList = new ArrayList<Statement>();
-        for (; iterator.hasNext(); iterator.next()) {
+        for (; iterator.hasNext();  eat()) {
             if (IsLookAhead(endTokenType)) { // need to check for EOF before doing any work
                 break;
             }
@@ -92,19 +92,23 @@ public class Parser {
             if (statement == null || statement.is(NodeType.EmptyStatement)) {
                 continue;
             }
+            if (iterator.getCurrent().isLineTerminator()) { // if we eat too much - going beyond lineTerminator -> go back 1 token
+                iterator.prev();
+            }
             statementList.add(statement);
             if (IsLookAhead(endTokenType)) {
                 // after some work is done, before calling iterator.next(),
                 // we must check for EOF again or else we risk going outside the iterators bounds
                 break;
             }
+
         }
 
         return statementList;
     }
 
     private Statement Declaration() {
-        return switch (lookAhead().getType()){
+        return switch (lookAhead().getType()) {
             case Fun -> FunctionDeclaration();
             case Schema -> SchemaDeclaration();
             case Var -> VariableDeclarations();
@@ -126,7 +130,7 @@ public class Parser {
      * | ReturnStatement
      * | ExpressionStatement
      * ;
-     * }
+     *}
      */
     @Nullable
     private Statement Statement() {
@@ -242,9 +246,8 @@ public class Parser {
     private Statement VariableDeclarations() {
         eat(TokenType.Var);
         var statement = VariableStatementInit();
-        if (IsLookAhead(TokenType.lineTerminator())) {
-            eat(TokenType.lineTerminator());
-        }
+        iterator.eatLineTerminator();
+//        iterator.prev();
         return statement;
     }
 
@@ -470,7 +473,7 @@ public class Parser {
      * : LogicalExpression
      * | LeftHandSideExpression AssignmentOperator Expression LineTerminator
      * ;
-     * }
+     *}
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();

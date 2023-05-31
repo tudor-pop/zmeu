@@ -97,6 +97,9 @@ public class ParserIterator {
     Token next() {
         return iterator.next();
     }
+    Token prev() {
+        return iterator.previous();
+    }
 
     public Token eatIf(TokenType token) {
         // if the line terminator was not eaten in parsing, we consume it here. LineTerminator could be consumed by some other rules
