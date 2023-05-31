@@ -5,32 +5,32 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Program;
 
 public interface Visitor<R> {
-    R visit(Program program);
+    R eval(Program program);
 
     R eval(Statement statement);
 
-    R visit(InitStatement statement);
+    R eval(InitStatement statement);
 
     /**
      * InitStatement
      * Syntactic sugar for a function
      */
-    R visit(FunctionDeclaration statement);
+    R eval(FunctionDeclaration statement);
 
-    R visit(ExpressionStatement statement);
+    R eval(ExpressionStatement statement);
 
-    R visit(VariableStatement statement);
+    R eval(VariableStatement statement);
 
-    R visit(IfStatement statement);
+    R eval(IfStatement statement);
 
-    R visit(WhileStatement statement);
+    R eval(WhileStatement statement);
 
-    R visit(ForStatement statement);
+    R eval(ForStatement statement);
 
-    R visit(SchemaDeclaration statement);
+    R eval(SchemaDeclaration statement);
 
-    R visit(VariableDeclaration statement);
+    R eval(VariableDeclaration statement);
 
-    R visit(Identifier statement);
+    R eval(Identifier statement);
 
 }

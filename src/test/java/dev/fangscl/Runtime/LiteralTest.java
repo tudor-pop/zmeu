@@ -55,7 +55,7 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void NullTest() {
-        var evalRes = (RuntimeValue) interpreter.visit(new Identifier());
+        var evalRes = (RuntimeValue) interpreter.eval(new Identifier());
         Assertions.assertEquals(NullValue.of(), evalRes.getRuntimeValue());
     }
 }

@@ -75,7 +75,7 @@ public class CallExpression<E extends Expression> extends Expression {
 
     @Override
     public <R> R accept(Visitor<R> visitor) {
-        return visitor.visit((CallExpression<Expression>) this);
+        return visitor.eval((CallExpression<Expression>) this);
     }
 
 }

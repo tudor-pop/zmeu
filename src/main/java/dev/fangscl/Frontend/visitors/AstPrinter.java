@@ -17,52 +17,52 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(BinaryExpression expression) {
+    public String eval(BinaryExpression expression) {
         return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
     }
 
     @Override
-    public String visit(CallExpression expression) {
+    public String eval(CallExpression expression) {
         return null;
     }
 
     @Override
-    public String visit(ErrorExpression expression) {
+    public String eval(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public String visit(LogicalExpression expression) {
+    public String eval(LogicalExpression expression) {
         return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
     }
 
     @Override
-    public String visit(MemberExpression expression) {
+    public String eval(MemberExpression expression) {
         return null;
     }
 
     @Override
-    public String visit(ResourceExpression expression) {
+    public String eval(ResourceExpression expression) {
         return parenthesize("resource", expression.getName(), expression.getBlock());
     }
 
     @Override
-    public String visit(ThisExpression expression) {
+    public String eval(ThisExpression expression) {
         return null;
     }
 
     @Override
-    public String visit(UnaryExpression expression) {
+    public String eval(UnaryExpression expression) {
         return parenthesize(expression.getOperator(), expression.getValue());
     }
 
     @Override
-    public String visit(VariableDeclaration expression) {
+    public String eval(VariableDeclaration expression) {
         return null;
     }
 
     @Override
-    public String visit(AssignmentExpression expression) {
+    public String eval(AssignmentExpression expression) {
         return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
     }
 
@@ -92,7 +92,7 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(NumericLiteral expression) {
+    public String eval(NumericLiteral expression) {
         if (expression.getVal() == null) {
             return "null";
         }
@@ -100,17 +100,17 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(BooleanLiteral expression) {
+    public String eval(BooleanLiteral expression) {
         return expression.getVal().toString();
     }
 
     @Override
-    public String visit(Identifier expression) {
+    public String eval(Identifier expression) {
         return expression.getSymbol();
     }
 
     @Override
-    public String visit(NullLiteral expression) {
+    public String eval(NullLiteral expression) {
         return "null";
     }
 
@@ -120,17 +120,17 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(BlockStatement expression) {
+    public String eval(BlockStatement expression) {
         return null;
     }
 
     @Override
-    public String visit(GroupExpression expression) {
+    public String eval(GroupExpression expression) {
         return parenthesize("group", expression.getExpression());
     }
 
     @Override
-    public String visit(LambdaExpression expression) {
+    public String eval(LambdaExpression expression) {
         return null;
     }
 
