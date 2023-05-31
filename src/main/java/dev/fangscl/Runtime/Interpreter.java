@@ -31,20 +31,6 @@ public class Interpreter implements
         this(new Environment());
     }
 
-
-    /**
-     * Property access: instance.property.property
-     */
-    public <R> RuntimeValue<R> eval(MemberExpression expression) {
-        if (expression.getProperty() instanceof Identifier resourceName) {
-            var value = (IEnvironment) executeBlock(expression.getObject(), env);
-
-            String symbol = resourceName.getSymbol();
-            return value.lookup(symbol);
-        }
-        throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getKind());
-    }
-
     @Override
     public Object eval(int expression) {
         return IntegerValue.of(expression);
