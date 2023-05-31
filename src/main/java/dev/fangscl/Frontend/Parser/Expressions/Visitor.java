@@ -1,7 +1,7 @@
 package dev.fangscl.Frontend.Parser.Expressions;
 
 import dev.fangscl.Frontend.Parser.Literals.*;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
 
 public interface Visitor<R> {
@@ -19,7 +19,7 @@ public interface Visitor<R> {
 
     R eval(LambdaExpression expression);
 
-    R eval(BlockStatement expression);
+    R eval(BlockExpression expression);
 
     R eval(GroupExpression expression);
 

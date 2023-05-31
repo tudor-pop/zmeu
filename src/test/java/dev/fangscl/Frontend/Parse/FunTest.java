@@ -3,7 +3,7 @@ package dev.fangscl.Frontend.Parse;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.FunctionDeclaration;
 import dev.fangscl.Frontend.Parser.Statements.ReturnStatement;
@@ -27,7 +27,7 @@ public class FunTest extends BaseTest {
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
-                        BlockStatement.of(
+                        BlockExpression.of(
                                 ReturnStatement.of(
                                         BinaryExpression.of("*", "x", "x")
                                 )
@@ -48,7 +48,7 @@ public class FunTest extends BaseTest {
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x"), Identifier.of("y")),
-                        BlockStatement.of(
+                        BlockExpression.of(
                                 ReturnStatement.of(
                                         BinaryExpression.of("*", "x", "y")
                                 )
@@ -69,7 +69,7 @@ public class FunTest extends BaseTest {
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
-                        BlockStatement.of(
+                        BlockExpression.of(
                                 ReturnStatement.of(ExpressionStatement.of())
                         )
                 )
@@ -88,7 +88,7 @@ public class FunTest extends BaseTest {
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),
-                        BlockStatement.of(
+                        BlockExpression.of(
                                 ReturnStatement.of(ExpressionStatement.of())
                         )
                 )
@@ -106,7 +106,7 @@ public class FunTest extends BaseTest {
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),
-                        BlockStatement.of()
+                        BlockExpression.of()
                 )
         );
         assertEquals(expected, res);

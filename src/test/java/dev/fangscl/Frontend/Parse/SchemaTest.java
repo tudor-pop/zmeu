@@ -28,7 +28,7 @@ public class SchemaTest extends BaseTest {
                 """));
         var expected = Program.of(
                 SchemaDeclaration.of(Identifier.of("square"),
-                        BlockStatement.of(
+                        BlockExpression.of(
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)))
                         )
                 )
@@ -48,8 +48,8 @@ public class SchemaTest extends BaseTest {
                 """));
         var expected = Program.of(
                 SchemaDeclaration.of(Identifier.of("square"),
-                        BlockStatement.of(
-                                FunctionDeclaration.of(Identifier.of("test"), Collections.emptyList(), BlockStatement.of())
+                        BlockExpression.of(
+                                FunctionDeclaration.of(Identifier.of("test"), Collections.emptyList(), BlockExpression.of())
                         )
                 )
         );
@@ -68,8 +68,8 @@ public class SchemaTest extends BaseTest {
                 """));
         var expected = Program.of(
                 SchemaDeclaration.of(Identifier.of("square"),
-                        BlockStatement.of(
-                                InitStatement.of(Collections.emptyList(), BlockStatement.of())
+                        BlockExpression.of(
+                                InitStatement.of(Collections.emptyList(), BlockExpression.of())
                         )
                 )
         );
@@ -89,9 +89,9 @@ public class SchemaTest extends BaseTest {
                 """));
         var expected = Program.of(
                 SchemaDeclaration.of(Identifier.of("square"),
-                        BlockStatement.of(
+                        BlockExpression.of(
                                 InitStatement.of(List.of(Identifier.of("x")),
-                                        BlockStatement.of(
+                                        BlockExpression.of(
                                                 ExpressionStatement.of(
                                                 AssignmentExpression.of("=",
                                                         MemberExpression.of(false, ThisExpression.of(), "x"), "x")))

@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Parser.Expressions.CallExpression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
 import dev.fangscl.Frontend.Parser.Statements.ReturnStatement;
@@ -60,7 +60,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
-                                BlockStatement.of(
+                                BlockExpression.of(
                                         ExpressionStatement.of(
                                                 BinaryExpression.of("*", "x", "y")
                                         )
@@ -80,7 +80,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockStatement.of(
+                                BlockExpression.of(
                                         ReturnStatement.of(
                                                 BinaryExpression.of("*", "x", "x")
                                         )
@@ -100,7 +100,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockStatement.of(
+                                BlockExpression.of(
                                         ReturnStatement.of(ExpressionStatement.of())
                                 )
                         )));
@@ -117,7 +117,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(),
-                                BlockStatement.of()
+                                BlockExpression.of()
                         )));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));

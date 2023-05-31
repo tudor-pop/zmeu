@@ -4,7 +4,7 @@ import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import lombok.extern.log4j.Log4j2;
@@ -81,7 +81,7 @@ public class VariableDeclarationTest extends BaseTest {
                 """));
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), BlockStatement.of(
+                        VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
                                 ExpressionStatement.of(NumericLiteral.of(2)))))
         );
         log.warn(gson.toJson(res));
@@ -98,7 +98,7 @@ public class VariableDeclarationTest extends BaseTest {
                 """));
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), BlockStatement.of(
+                        VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))),
                                 ExpressionStatement.of(NumericLiteral.of(3)))))
         );

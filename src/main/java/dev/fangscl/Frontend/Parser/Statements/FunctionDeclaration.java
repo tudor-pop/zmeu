@@ -53,7 +53,7 @@ public class FunctionDeclaration extends Statement {
     }
 
     public static Statement of(String test) {
-        return FunctionDeclaration.of(Identifier.of(test), Collections.emptyList(), BlockStatement.of());
+        return FunctionDeclaration.of(Identifier.of(test), Collections.emptyList(), BlockExpression.of());
     }
 
     public static Statement of(Identifier test, List<Expression> params, Statement body) {

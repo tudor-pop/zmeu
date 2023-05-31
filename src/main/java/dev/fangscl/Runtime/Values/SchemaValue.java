@@ -1,7 +1,7 @@
 package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Runtime.Environment;
 import dev.fangscl.Runtime.IEnvironment;
 import lombok.Data;
@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
     private Environment environment;
     private Identifier name;
-    private BlockStatement body;
+    private BlockExpression body;
 
-    private SchemaValue(Identifier name, BlockStatement body, Environment environment) {
+    private SchemaValue(Identifier name, BlockExpression body, Environment environment) {
         this.name = name;
         this.body = body;
         this.environment = environment;
@@ -25,7 +25,7 @@ public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
         return name;
     }
 
-    public static SchemaValue of(Identifier name, BlockStatement body, Environment environment) {
+    public static SchemaValue of(Identifier name, BlockExpression body, Environment environment) {
         return new SchemaValue(name, body, environment);
     }
 

@@ -3,7 +3,7 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import dev.fangscl.Runtime.Values.FunValue;
@@ -29,7 +29,7 @@ public class FunTest extends BaseTest {
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
-                ExpressionStatement.of(BlockStatement.of(VariableStatement.of(
+                ExpressionStatement.of(BlockExpression.of(VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))))),
                 global
         );
@@ -49,7 +49,7 @@ public class FunTest extends BaseTest {
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
-                ExpressionStatement.of(BlockStatement.of(VariableStatement.of(
+                ExpressionStatement.of(BlockExpression.of(VariableStatement.of(
                                 VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))
                         ),
                         ExpressionStatement.of(Identifier.of("x")))),

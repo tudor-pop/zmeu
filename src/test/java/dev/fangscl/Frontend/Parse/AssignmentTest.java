@@ -2,7 +2,7 @@ package dev.fangscl.Frontend.Parse;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.SyntaxError;
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
@@ -30,7 +30,7 @@ public class AssignmentTest extends BaseTest {
     void testAssignmentBlock() {
         var res = parser.produceAST(tokenizer.tokenize("x={2}"));
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of("=", Identifier.of("x"), BlockStatement.of(ExpressionStatement.of(NumericLiteral.of(2))))));
+                AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2))))));
         assertEquals(expected, res);
         log.warn(gson.toJson(res));
     }
@@ -45,7 +45,7 @@ public class AssignmentTest extends BaseTest {
                 """));
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
-                        BlockStatement.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))),
+                        BlockExpression.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))),
                                 ExpressionStatement.of(NumericLiteral.of(2))))));
         log.warn(gson.toJson(res));
         assertEquals(expected, res);

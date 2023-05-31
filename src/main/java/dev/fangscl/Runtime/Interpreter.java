@@ -106,7 +106,7 @@ public class Interpreter implements
     }
 
     @Override
-    public Object eval(BlockStatement expression) {
+    public Object eval(BlockExpression expression) {
         RuntimeValue res = NullValue.of();
         var env = new Environment(this.env);
         for (var it : expression.getExpression()) {
@@ -270,9 +270,9 @@ public class Interpreter implements
         var schemaEnv = new Environment(env);
 
         Statement body = expression.getBody();
-        if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockStatement blockStatement) {
-            executeBlock(blockStatement.getExpression(), schemaEnv); // install properties/methods of a schema into the environment
-            return env.init(name.getSymbol(), SchemaValue.of(name, blockStatement, schemaEnv)); // install the schema into the global env
+        if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
+            executeBlock(blockExpression.getExpression(), schemaEnv); // install properties/methods of a schema into the environment
+            return env.init(name.getSymbol(), SchemaValue.of(name, blockExpression, schemaEnv)); // install the schema into the global env
         }
         throw new RuntimeException("Invalid schema");
     }

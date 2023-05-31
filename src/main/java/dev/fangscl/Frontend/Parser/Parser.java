@@ -276,11 +276,11 @@ public class Parser {
      * Statements
      * : Statement* Expression
      */
-    private Expression BlockStatement() {
+    private Expression BlockExpression() {
         eat(TokenType.OpenBraces);
         var res = IsLookAhead(TokenType.CloseBraces)
-                ? BlockStatement.of(Collections.emptyList())
-                : BlockStatement.of(StatementList(TokenType.CloseBraces));
+                ? BlockExpression.of(Collections.emptyList())
+                : BlockExpression.of(StatementList(TokenType.CloseBraces));
         if (IsLookAhead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
             eat(TokenType.CloseBraces, "Error");
         }
@@ -331,7 +331,7 @@ public class Parser {
      */
     private Expression Expression() {
         return switch (lookAhead().getType()) {
-            case OpenBraces -> BlockStatement();
+            case OpenBraces -> BlockExpression();
             default -> AssignmentExpression();
         };
     }
@@ -375,7 +375,7 @@ public class Parser {
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
-        Statement body = ExpressionStatement.of(BlockStatement());
+        Statement body = ExpressionStatement.of(BlockExpression());
         return FunctionDeclaration.of(test, params, body);
     }
 
@@ -388,7 +388,7 @@ public class Parser {
         eat(TokenType.Schema);
         var test = Identifier();
 
-        Statement body = ExpressionStatement.of(BlockStatement());
+        Statement body = ExpressionStatement.of(BlockExpression());
         return SchemaDeclaration.of(test, body);
     }
 
@@ -403,7 +403,7 @@ public class Parser {
         List<Expression> params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
-        Statement body = ExpressionStatement.of(BlockStatement());
+        Statement body = ExpressionStatement.of(BlockExpression());
         return InitStatement.of(params, body);
     }
 
@@ -707,9 +707,9 @@ public class Parser {
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
-        var body = BlockStatement();
+        var body = BlockExpression();
 
-        return ResourceExpression.of(type, name, (BlockStatement) body);
+        return ResourceExpression.of(type, name, (BlockExpression) body);
     }
 
     /**

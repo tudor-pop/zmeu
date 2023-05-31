@@ -2,7 +2,7 @@ package dev.fangscl.Frontend.visitors;
 
 import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.LambdaExpression;
 
 public class AstPrinter implements Visitor<String> {
@@ -120,7 +120,7 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(BlockStatement expression) {
+    public String eval(BlockExpression expression) {
         return null;
     }
 

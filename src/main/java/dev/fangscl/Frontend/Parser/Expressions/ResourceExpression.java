@@ -2,7 +2,7 @@ package dev.fangscl.Frontend.Parser.Expressions;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Statements.BlockStatement;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,20 +21,20 @@ public class ResourceExpression extends Expression {
     private Identifier type;
     @Nullable
     private Identifier name;
-    private BlockStatement block;
+    private BlockExpression block;
 
     private ResourceExpression() {
         this.kind = NodeType.ResourceExpression;
     }
 
-    private ResourceExpression(Identifier type, Identifier name, BlockStatement block) {
+    private ResourceExpression(Identifier type, Identifier name, BlockExpression block) {
         this();
         this.type = type;
         this.name = name;
         this.block = block;
     }
 
-    public static Expression of(Identifier type, Identifier name, BlockStatement block) {
+    public static Expression of(Identifier type, Identifier name, BlockExpression block) {
         return new ResourceExpression(type, name, block);
     }
 
