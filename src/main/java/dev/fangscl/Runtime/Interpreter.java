@@ -341,7 +341,8 @@ public class Interpreter implements
     public Object eval(AssignmentExpression expression) {
         RuntimeValue right = (RuntimeValue) executeBlock(expression.getRight(), env);
 
-        if (expression.getLeft() instanceof MemberExpression memberExpression) {
+        Expression left = expression.getLeft();
+        if (left instanceof MemberExpression memberExpression) {
             var instanceEnv = (IEnvironment) executeBlock(memberExpression.getObject(), env);
             Expression property = memberExpression.getProperty();
             if (property instanceof Identifier identifier) {
@@ -349,10 +350,10 @@ public class Interpreter implements
             } else {
                 throw new OperationNotImplementedException("Invalid assignment expression");
             }
+        } else if (left instanceof Identifier identifier) {
+            return env.assign(identifier.getSymbol(), right);
         }
-
-        RuntimeValue<String> left = IdentifierValue.of(expression.getLeft());
-        return env.assign(left.getRuntimeValue(), right);
+        throw new RuntimeException("Invalid assignment");
     }
 
     @Override
