@@ -127,5 +127,148 @@ public class AssignmentTest extends BaseTest {
         log.warn(gson.toJson(res));
     }
 
+    @Test
+    void AssignAddition() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 1.1+2.2
+                """)));
+        var expected = DecimalValue.of(1.1 + 2.2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignMultiplication() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 1.1*2.2
+                """)));
+        var expected = DecimalValue.of(1.1 * 2.2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignDivision() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 2.1/2.2
+                """)));
+        var expected = DecimalValue.of(2.1 / 2.2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignBooleanFalse() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 1==2
+                """)));
+        var expected = BooleanValue.of(1 == 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignBooleanTrue() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 1==1
+                """)));
+        var expected = BooleanValue.of(1 == 1);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignLess() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 3 < 2
+                """)));
+        var expected = BooleanValue.of(3 < 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignGreater() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 3 > 2
+                """)));
+        var expected = BooleanValue.of(3 > 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignGreaterEq() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 3 >= 2
+                """)));
+        var expected = BooleanValue.of(3 >= 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignGreaterEqTrue() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 2 >= 2
+                """)));
+        var expected = BooleanValue.of(2 >= 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignGreaterEqFalse() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 1 >= 2
+                """)));
+        var expected = BooleanValue.of(1 >= 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignLessEq() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 3 <= 2
+                """)));
+        var expected = BooleanValue.of(3 <= 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignLessEqTrue() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 2 <= 2
+                """)));
+        var expected = BooleanValue.of(2 <= 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
+    @Test
+    void AssignLessEqFalse() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 1 <= 2
+                """)));
+        var expected = BooleanValue.of(1 <= 2);
+        assertEquals(expected, res);
+        log.warn(gson.toJson(res));
+    }
+
 
 }

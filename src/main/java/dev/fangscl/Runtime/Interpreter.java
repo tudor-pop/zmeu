@@ -131,10 +131,10 @@ public class Interpreter implements
 
     @Override
     public Object eval(BinaryExpression expression) {
-        var lhs = executeBlock(expression.getLeft(), env);
-        var rhs = executeBlock(expression.getRight(), env);
+        RuntimeValue lhs = (RuntimeValue) executeBlock(expression.getLeft(), env);
+        RuntimeValue rhs = (RuntimeValue) executeBlock(expression.getRight(), env);
         if ((Object) expression.getOperator() instanceof String op) {
-            if ((RuntimeValue) lhs instanceof IntegerValue lhsn && (RuntimeValue) rhs instanceof IntegerValue rhsn) {
+            if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn) {
                 return switch (op) {
                     case "+" -> IntegerValue.of(lhsn.getValue() + rhsn.getValue());
                     case "-" -> IntegerValue.of(lhsn.getValue() - rhsn.getValue());
@@ -146,6 +146,54 @@ public class Interpreter implements
                     case "<=" -> BooleanValue.of(lhsn.getValue() <= rhsn.getValue());
                     case ">" -> BooleanValue.of(lhsn.getValue() > rhsn.getValue());
                     case ">=" -> BooleanValue.of(lhsn.getValue() >= rhsn.getValue());
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
+            } else if (lhs instanceof DecimalValue lhsn && rhs instanceof DecimalValue rhsn) {
+                return switch (op) {
+                    case "+" -> DecimalValue.of(lhsn.getValue() + rhsn.getValue());
+                    case "-" -> DecimalValue.of(lhsn.getValue() - rhsn.getValue());
+                    case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
+                    case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
+                    case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
+                    case "==" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case "<" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0);
+                    case "<=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 ||
+                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case ">" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0);
+                    case ">=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 ||
+                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
+            } else if (lhs instanceof DecimalValue lhsn && rhs instanceof IntegerValue rhsn) {
+                return switch (op) {
+                    case "+" -> DecimalValue.of(lhsn.getValue() + rhsn.getValue());
+                    case "-" -> DecimalValue.of(lhsn.getValue() - rhsn.getValue());
+                    case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
+                    case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
+                    case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
+                    case "==" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case "<" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0);
+                    case "<=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 ||
+                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case ">" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0);
+                    case ">=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 ||
+                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
+            } else if (lhs instanceof IntegerValue lhsn && rhs instanceof DecimalValue rhsn) {
+                return switch (op) {
+                    case "+" -> DecimalValue.of(lhsn.getValue() + rhsn.getValue());
+                    case "-" -> DecimalValue.of(lhsn.getValue() - rhsn.getValue());
+                    case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
+                    case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
+                    case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
+                    case "==" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case "<" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0);
+                    case "<=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 ||
+                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case ">" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0);
+                    case ">=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 ||
+                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             }
