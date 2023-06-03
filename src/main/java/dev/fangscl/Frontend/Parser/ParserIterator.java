@@ -2,6 +2,8 @@ package dev.fangscl.Frontend.Parser;
 
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
+import dev.fangscl.Frontend.Parser.errors.ParseError;
+import dev.fangscl.Frontend.visitors.AstPrinter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -11,8 +13,10 @@ import java.util.ListIterator;
 
 @Log4j2
 public class ParserIterator {
-    private List<Token> tokens;
-    private ListIterator<Token> iterator;
+    private final List<Token> tokens;
+    private final ListIterator<Token> iterator;
+    private final AstPrinter astPrinter = new AstPrinter();
+
     @Getter
     @Setter
     private Token current;
@@ -73,14 +77,11 @@ public class ParserIterator {
 
     Token eat(String error, TokenType... type) {
         Token lookAhead = lookAhead();
-        if (lookAhead == null || lookAhead.is(TokenType.EOF)) {
-            log.debug("EndOfFile reached ");
-            throw new RuntimeException("Parser error." + error);
+        if (lookAhead.is(TokenType.EOF)) {
+            throw error(lookAhead, error);
         }
         if (!lookAhead.is(type)) {
-            var err = "%s %s \n".formatted(error, current);
-            log.debug(err);
-            throw new SyntaxError(err);
+            throw error(lookAhead, error);
         }
         return eat();
     }
@@ -97,6 +98,7 @@ public class ParserIterator {
     Token next() {
         return iterator.next();
     }
+
     Token prev() {
         return iterator.previous();
     }
@@ -114,4 +116,29 @@ public class ParserIterator {
             eat();
         }
     }
+
+    public void synchronize() {
+        while (hasNext()) {
+            var next = eat();
+            if (next.isLineTerminator() || next.is(TokenType.EOF)) {
+                return;
+            }
+
+            switch (next.getType()) {
+                case Resource, Fun, Var, For, While, Return -> {
+                    return;
+                }
+            }
+        }
+    }
+
+    public ParseError error(Token token, String message) {
+        if (token.is(TokenType.EOF)) {
+            log.error("Line: " + token.getLine() + " at end. " + message);
+        } else {
+            log.error("Line: " + token.getLine() + " at  " + token.getRaw() + ": " + message);
+        }
+        return new ParseError();
+    }
+
 }

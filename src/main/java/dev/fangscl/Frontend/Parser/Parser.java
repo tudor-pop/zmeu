@@ -5,6 +5,9 @@ import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Statements.*;
+import dev.fangscl.Frontend.Parser.errors.ParseError;
+import dev.fangscl.Frontend.visitors.AstPrinter;
+import dev.fangscl.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +56,7 @@ import java.util.*;
 public class Parser {
     private ParserIterator iterator;
     private Program program = new Program();
+    private SyntaxPrinter printer = new SyntaxPrinter();
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -84,13 +88,17 @@ public class Parser {
      */
     private List<Statement> StatementList(TokenType endTokenType) {
         var statementList = new ArrayList<Statement>();
-        for (; iterator.hasNext();  eat()) {
+        for (; iterator.hasNext(); eat()) {
             if (IsLookAhead(endTokenType)) { // need to check for EOF before doing any work
                 break;
             }
             Statement statement = Declaration();
             if (statement == null || statement.is(NodeType.EmptyStatement)) {
-                continue;
+                if (iterator.hasNext()) {
+                    continue;
+                } else {
+                    break;
+                }
             }
             if (iterator.getCurrent().isLineTerminator()) { // if we eat too much - going beyond lineTerminator -> go back 1 token
                 iterator.prev();
@@ -108,12 +116,17 @@ public class Parser {
     }
 
     private Statement Declaration() {
-        return switch (lookAhead().getType()) {
-            case Fun -> FunctionDeclaration();
-            case Schema -> SchemaDeclaration();
-            case Var -> VariableDeclarations();
-            default -> Statement();
-        };
+        try {
+            return switch (lookAhead().getType()) {
+                case Fun -> FunctionDeclaration();
+                case Schema -> SchemaDeclaration();
+                case Var -> VariableDeclarations();
+                default -> Statement();
+            };
+        } catch (ParseError error) {
+            iterator.synchronize();
+            return null;
+        }
     }
 
     /**
@@ -323,12 +336,6 @@ public class Parser {
         return Expression();
     }
 
-    /**
-     * Expression
-     * : AssignmentExpression
-     * | BlockStatement
-     * ;
-     */
     private Expression Expression() {
         return switch (lookAhead().getType()) {
             case OpenBraces -> BlockExpression();
@@ -468,19 +475,36 @@ public class Parser {
     }
 
     /**
+     * A single token lookahead recursive descent parser can’t see far enough to tell that it’s parsing an assignment
+     * until after it has gone through the left-hand side and stumbled onto the =.
+     * You might wonder why it even needs to. After all, we don’t know we’re parsing a + expression until
+     * after we’ve finished parsing the left operand.
+     * <p>
+     * The difference is that the left-hand side of an assignment isn’t an expression that evaluates to a value.
+     * It’s a sort of pseudo-expression that evaluates to a “thing” you can assign to. Consider:
      * {@snippet :
-     * AssignmentExpression
-     * : LogicalExpression
-     * | LeftHandSideExpression AssignmentOperator Expression LineTerminator
-     * ;
+     * var a = "before";
+     * a = "value";
+     *}
+     * On the second line, we don’t evaluate a (which would return the string “before”).
+     * We figure out what variable a refers to so we know where to store the right-hand side expression’s value.
+     * All of the expressions that we’ve seen so far that produce values are r-values.
+     * An l-value “evaluates” to a storage location that you can assign into.
+     * We want the syntax tree to reflect that an l-value isn’t evaluated like a normal expression.
+     * That’s why the Expr.Assign node has a Token for the left-hand side, not an Expr.
+     * The problem is that the parser doesn’t know it’s parsing an l-value until it hits the =.
+     * In a complex l-value, that may occur many tokens later.
+     * {@snippet :
+     *  makeList().head.next = node;
      *}
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
-        while (IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
+        if (IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
             var operator = AssignmentOperator().getValue();
-            Expression expression = Expression();
-            left = AssignmentExpression.of(isValidAssignment(left, operator), expression, operator);
+            Expression rhs = Expression();
+
+            left = AssignmentExpression.of(isValidAssignmentTarget(left, operator), rhs, operator);
         }
         return left;
     }
@@ -546,10 +570,6 @@ public class Parser {
      * x >= y
      * x < y
      * x <= y
-     * RelationalExpression
-     * : AdditiveExpression
-     * | AdditiveExpression RELATIONAL_OPERATOR RelationalExpression
-     * ;
      */
     private Expression RelationalExpression() {
         var expression = AdditiveExpression();
@@ -562,27 +582,34 @@ public class Parser {
     }
 
     /**
-     * AssignmentOperator
-     * : SIMPLE_ASSIGN
-     * | COMPLEX_ASSIGN
+     * AssignmentOperator: +, -=, +=, /=, *=
      */
     private Token AssignmentOperator() {
         Token token = lookAhead();
         if (token.isAssignment()) {
             return eat(token.getType());
         }
-        throw new RuntimeException("Unrecognized token");
+        throw Error(token, "Unrecognized token");
     }
 
-    private Expression isValidAssignment(Expression target, Object operator) {
+    private Expression isValidAssignmentTarget(Expression target, Object operator) {
         if (target.is(NodeType.Identifier, NodeType.MemberExpression)) {
             return target;
         }
         Object value = iterator.getCurrent().getValue();
-        if (target instanceof Literal n)
-            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, value));
-        else
-            throw new SyntaxError("Invalid left-hand side in assignment expression: %s %s %s".formatted(target, operator, value));
+        if (target instanceof Literal n) {
+            throw Error("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, value));
+        } else {
+            throw Error("Invalid left-hand side in assignment expression: %s %s %s".formatted(printer.eval(target), operator, value));
+        }
+    }
+
+    private ParseError Error(String message) {
+        return Error(iterator.lookAhead(), message);
+    }
+
+    private ParseError Error(Token token, String message) {
+        return iterator.error(token, message);
     }
 
 

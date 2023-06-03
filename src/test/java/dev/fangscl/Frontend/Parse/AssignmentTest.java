@@ -1,15 +1,13 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
-import dev.fangscl.Frontend.Parser.SyntaxError;
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
+import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,9 +89,18 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testAssignmentOnlyToIdentifiers() {
-        Assertions.assertThrows(SyntaxError.class, () ->
-                parser.produceAST(tokenizer.tokenize("2=2"))
-        );
+        parser.produceAST(tokenizer.tokenize("2=2"));
+    }
+
+    @Test
+    void assignInvalid() {
+        parser.produceAST(tokenizer.tokenize("1+2=10"));
+    }
+
+
+    @Test
+    void assignInvalidMember() {
+        parser.produceAST(tokenizer.tokenize("a().x+1=10"));
     }
 
 

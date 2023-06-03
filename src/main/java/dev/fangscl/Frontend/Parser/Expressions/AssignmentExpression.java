@@ -6,14 +6,12 @@ import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * AssignmentExpression
- * : AdditiveExpression
- * | LeftHandSideExpression AssignmentOperator AssignmentExpression
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AssignmentExpression extends Expression {
+    /**
+     * Must either be Identifier or MemberExpression
+     */
     private Expression left;
     private Expression right;
     private Object operator;

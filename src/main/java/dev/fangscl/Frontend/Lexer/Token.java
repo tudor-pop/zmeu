@@ -39,7 +39,7 @@ public class Token {
     }
 
     public boolean isLineTerminator() {
-        return this.type == TokenType.lineTerminator();
+        return this.is(TokenType.NewLine,TokenType.SemiColon);
     }
 
     public boolean is(@NotNull TokenType... type) {
