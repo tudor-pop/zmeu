@@ -23,7 +23,7 @@ public class LambdaTest extends BaseTest {
                 }""")));
 
         var expected = IntegerValue.of(300);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -35,7 +35,7 @@ public class LambdaTest extends BaseTest {
                 """)));
 
         var expected = IntegerValue.of(4);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -46,7 +46,7 @@ public class LambdaTest extends BaseTest {
                 """)));
 
         var expected = IntegerValue.of(4);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
     @Test
@@ -61,7 +61,7 @@ public class LambdaTest extends BaseTest {
                 }""")));
 
         var expected = IntegerValue.of(9);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
     @Test
@@ -77,7 +77,7 @@ public class LambdaTest extends BaseTest {
                 }""")));
 
         var expected = IntegerValue.of(11);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -99,7 +99,7 @@ public class LambdaTest extends BaseTest {
                 """)));
 
         var expected = IntegerValue.of(9);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
     @Test
@@ -117,7 +117,7 @@ public class LambdaTest extends BaseTest {
                 """)));
 
         var expected = IntegerValue.of(30);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 

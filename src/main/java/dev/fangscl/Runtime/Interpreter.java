@@ -106,10 +106,10 @@ public class Interpreter implements
     }
 
     @Override
-    public Object eval(BlockExpression expression) {
+    public Object eval(BlockExpression block) {
         RuntimeValue res = NullValue.of();
         var env = new Environment(this.env);
-        for (var it : expression.getExpression()) {
+        for (var it : block.getExpression()) {
             res = (RuntimeValue) executeBlock(it, env);
         }
         return res;

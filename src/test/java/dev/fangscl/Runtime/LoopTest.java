@@ -22,7 +22,7 @@ public class LoopTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(5);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -38,7 +38,7 @@ public class LoopTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(6);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 

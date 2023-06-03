@@ -133,7 +133,6 @@ public class Parser {
      * {@snippet :
      * : Statement
      * | EmptyStatement
-     * | BlockStatement
      * | VariableStatement
      * | IfStatement
      * | IterationStatement

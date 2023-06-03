@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Data
 public class FunValue implements RuntimeValue<Identifier> {
+    @JsonBackReference
     private Environment environment;
     private Identifier name;
     private List<Expression> params;

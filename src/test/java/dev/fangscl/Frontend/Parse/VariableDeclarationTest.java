@@ -22,7 +22,7 @@ public class VariableDeclarationTest extends BaseTest {
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -34,7 +34,7 @@ public class VariableDeclarationTest extends BaseTest {
                         VariableDeclaration.of(Identifier.of("y"))
                 ));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class VariableDeclarationTest extends BaseTest {
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(2))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class VariableDeclarationTest extends BaseTest {
                         VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
                 ));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class VariableDeclarationTest extends BaseTest {
                         VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
                 ));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 
@@ -84,7 +84,7 @@ public class VariableDeclarationTest extends BaseTest {
                         VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
                                 ExpressionStatement.of(NumericLiteral.of(2)))))
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -102,7 +102,7 @@ public class VariableDeclarationTest extends BaseTest {
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))),
                                 ExpressionStatement.of(NumericLiteral.of(3)))))
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -120,7 +120,7 @@ public class VariableDeclarationTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class VariableDeclarationTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 

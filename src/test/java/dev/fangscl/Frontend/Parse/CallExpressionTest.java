@@ -21,7 +21,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", "x")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -30,7 +30,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", 2)));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", 2.2)));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", "x","y")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of(CallExpression.of("foo", "x"), Collections.emptyList())));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of(CallExpression.of("foo", "x"), "y")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CallExpressionTest extends BaseTest {
         ));
 
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 

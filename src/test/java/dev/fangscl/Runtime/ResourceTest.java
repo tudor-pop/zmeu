@@ -47,7 +47,7 @@ public class ResourceTest extends BaseTest {
                     
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
         assertNotNull(schema);
@@ -88,7 +88,7 @@ public class ResourceTest extends BaseTest {
                     
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
         String main = "main";
@@ -111,7 +111,7 @@ public class ResourceTest extends BaseTest {
                 var z = Vm.main.x
                 z
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
         String main = "main";
@@ -148,7 +148,7 @@ public class ResourceTest extends BaseTest {
                 }
                 Vm.main.x = 3
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
         String main = "main";
@@ -174,7 +174,7 @@ public class ResourceTest extends BaseTest {
                     x = 3
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
         String main = "main";
@@ -199,7 +199,7 @@ public class ResourceTest extends BaseTest {
                     x = 3
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
         String main = "main";

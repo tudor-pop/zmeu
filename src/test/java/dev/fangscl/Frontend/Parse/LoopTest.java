@@ -36,7 +36,7 @@ public class LoopTest extends BaseTest {
                         )).build()
 
         );
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -64,7 +64,7 @@ public class LoopTest extends BaseTest {
 
         );
 
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -86,7 +86,7 @@ public class LoopTest extends BaseTest {
                 .build()
         );
 
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 

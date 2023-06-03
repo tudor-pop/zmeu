@@ -19,7 +19,7 @@ public class MemberExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 MemberExpression.of(false, "x", "y")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -30,7 +30,7 @@ public class MemberExpressionTest extends BaseTest {
                 1, "="))
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class MemberExpressionTest extends BaseTest {
                 1, "="))
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MemberExpressionTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class MemberExpressionTest extends BaseTest {
                         , 1)
         ));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 }

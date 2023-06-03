@@ -17,7 +17,7 @@ public class BlockTest extends BaseTest{
                 """)));
         var expected = IntegerValue.of(230);
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
     @Test
     void nestedBlock() {
@@ -32,7 +32,7 @@ public class BlockTest extends BaseTest{
                 """)));
         var expected = IntegerValue.of(10);
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class BlockTest extends BaseTest{
                 """)));
         var expected = IntegerValue.of(20);
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -65,6 +65,6 @@ public class BlockTest extends BaseTest{
                 """)));
         var expected = IntegerValue.of(20);
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 }

@@ -26,12 +26,12 @@ declaration    → variableDeclaration
 varDecl        → "var" IDENTIFIER ( "=" expression )? newLine ;
 
 statement      → exprStmt
-                | printStmt ;
+                | block ;
 
 expression     → assignment ;
 assignment     → IDENTIFIER "=" assignment
-                | block
                 | equality ; 
+block          → "{" declaration* "}" ;
 equality       → comparison ( ( "!=" | "==" ) comparison )* ;  
 comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;  
 term           → factor ( ( "-" | "+" ) factor )* ;  

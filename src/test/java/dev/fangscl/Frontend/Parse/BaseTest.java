@@ -1,6 +1,7 @@
 package dev.fangscl.Frontend.Parse;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import org.apache.logging.log4j.Level;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 class BaseTest {
     protected Parser parser;
     protected Tokenizer tokenizer;
-    protected Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
+    protected ObjectMapper gson = new ObjectMapper();
 
 
     @BeforeAll
@@ -27,5 +28,12 @@ class BaseTest {
         parser = new Parser();
     }
 
+    protected String toJson(Object o) {
+        try {
+            return gson.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

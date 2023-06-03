@@ -18,7 +18,7 @@ public class BlockTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("{ 42 }"));
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(ExpressionStatement.of(42))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -26,14 +26,14 @@ public class BlockTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("{ \"hello\" }"));
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(ExpressionStatement.of("hello"))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
     @Test
     void testEmptyBlock() {
         var res = parser.produceAST(tokenizer.tokenize("{ }    "));
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(Collections.emptyList())));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 
@@ -42,7 +42,7 @@ public class BlockTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("{ { \"hello\" } }"));
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(BlockExpression.of(ExpressionStatement.of("hello")))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 
@@ -51,7 +51,7 @@ public class BlockTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("\n"));
         var expected = Program.of();
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BlockTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("{ \n }"));
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(Collections.emptyList())));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 

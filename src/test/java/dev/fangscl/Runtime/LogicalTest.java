@@ -22,7 +22,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(2);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -39,7 +39,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(2);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -56,7 +56,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(2);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -73,7 +73,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(3);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -92,7 +92,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(3);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -111,7 +111,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(3);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -130,7 +130,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(3);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -149,7 +149,7 @@ public class LogicalTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(3);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 

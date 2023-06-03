@@ -21,7 +21,7 @@ public class LogicalTest extends BaseTest {
                         BinaryExpression.of("y", 0, "<")
                 )
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -34,7 +34,7 @@ public class LogicalTest extends BaseTest {
                         BinaryExpression.of("y", 0, "<")
                 )
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -48,7 +48,7 @@ public class LogicalTest extends BaseTest {
                                 BinaryExpression.of("<", "y", 0),
                                 BinaryExpression.of("<", "z", 0))
                 )));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 

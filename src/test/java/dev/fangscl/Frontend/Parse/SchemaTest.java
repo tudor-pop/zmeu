@@ -33,7 +33,7 @@ public class SchemaTest extends BaseTest {
                         )
                 )
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -53,7 +53,7 @@ public class SchemaTest extends BaseTest {
                         )
                 )
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -73,7 +73,7 @@ public class SchemaTest extends BaseTest {
                         )
                 )
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -99,7 +99,7 @@ public class SchemaTest extends BaseTest {
                         )
                 )
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 

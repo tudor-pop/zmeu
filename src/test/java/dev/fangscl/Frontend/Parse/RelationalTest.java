@@ -17,7 +17,7 @@ public class RelationalTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("x>2"));
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, ">")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -25,7 +25,7 @@ public class RelationalTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("x>=2"));
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, ">=")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -33,7 +33,7 @@ public class RelationalTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("x<2"));
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, "<")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class RelationalTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("x<=2"));
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, "<=")));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class RelationalTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(BinaryExpression.of("x", 2, "+"), 10, ">")
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -61,7 +61,7 @@ public class RelationalTest extends BaseTest {
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), true, "==")
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -72,7 +72,7 @@ public class RelationalTest extends BaseTest {
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), false, "==")
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -83,7 +83,7 @@ public class RelationalTest extends BaseTest {
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), false, "!=")
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -94,7 +94,7 @@ public class RelationalTest extends BaseTest {
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), true, "!=")
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -107,7 +107,7 @@ public class RelationalTest extends BaseTest {
                         BinaryExpression.of("y", 0, "<")
                 )
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -120,7 +120,7 @@ public class RelationalTest extends BaseTest {
                         BinaryExpression.of("y", 0, "<")
                 )
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 

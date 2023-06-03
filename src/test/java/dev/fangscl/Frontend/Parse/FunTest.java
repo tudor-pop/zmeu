@@ -35,7 +35,7 @@ public class FunTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class FunTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class FunTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -94,7 +94,7 @@ public class FunTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class FunTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 

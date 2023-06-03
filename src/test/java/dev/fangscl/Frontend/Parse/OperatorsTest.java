@@ -15,7 +15,7 @@ public class OperatorsTest extends BaseTest {
 //                        BinaryExpression.of(1, 1, "+")));
 //        assertEquals(expected, res);
 //        assertEquals("(+ 1 1)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -32,7 +32,7 @@ public class OperatorsTest extends BaseTest {
 //                        BinaryExpression.of(2, 2, "+")));
 //        assertEquals(expected, res);
 //        assertEquals("(+ 1 1)(+ 2 2)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -44,7 +44,7 @@ public class OperatorsTest extends BaseTest {
 //                        BinaryExpression.of(1, 1, "-")));
 //        assertEquals(expected, res);
 //        assertEquals("(- 1 1)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -56,7 +56,7 @@ public class OperatorsTest extends BaseTest {
 //                        BinaryExpression.of(1, 1, "*")));
 //        assertEquals(expected, res);
 //        assertEquals("(* 1 1)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -68,7 +68,7 @@ public class OperatorsTest extends BaseTest {
 //                        BinaryExpression.of(1, 1, "/")));
 //        assertEquals(expected, res);
 //        assertEquals("(/ 1 1)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -82,7 +82,7 @@ public class OperatorsTest extends BaseTest {
 //        );
 //        assertEquals(expected, res);
 //        assertEquals("(+ (+ 1 1) 1)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -96,7 +96,7 @@ public class OperatorsTest extends BaseTest {
 //        );
 //        assertEquals(expected, res);
 //        assertEquals("(- (+ 1 1) 11)", res.toSExpression());
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -111,7 +111,7 @@ public class OperatorsTest extends BaseTest {
 //        );
 //        assertEquals("(+ 1 (* 2 3))", res.toSExpression());
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -126,7 +126,7 @@ public class OperatorsTest extends BaseTest {
 //
 //        assertEquals("(* (+ 1 2) 3)", res.toSExpression());
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -141,7 +141,7 @@ public class OperatorsTest extends BaseTest {
 //
 //        assertEquals("(* 3 (+ 1 2))", res.toSExpression());
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -156,7 +156,7 @@ public class OperatorsTest extends BaseTest {
 //        );
 //        assertEquals("(- (+ 1 2) (* 3 4))", res.toSExpression());
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //
@@ -172,7 +172,7 @@ public class OperatorsTest extends BaseTest {
 //        );
 //        assertEquals("(- (* 1 2) (* 3 4))", res.toSExpression());
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -186,7 +186,7 @@ public class OperatorsTest extends BaseTest {
 //                                "+"))
 //        );
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 //
 //    @Test
@@ -201,7 +201,7 @@ public class OperatorsTest extends BaseTest {
 //        );
 //        assertEquals("(- (/ 1 2) (/ 3 4))", res.toSExpression());
 //        assertEquals(expected, res);
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //    }
 
 

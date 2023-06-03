@@ -33,7 +33,7 @@ public class LambdaTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class LambdaTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -67,7 +67,7 @@ public class LambdaTest extends BaseTest {
                                 )
                         )));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class LambdaTest extends BaseTest {
                                 )
                         )));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class LambdaTest extends BaseTest {
                                 )
                         )));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class LambdaTest extends BaseTest {
                                 BlockExpression.of()
                         )));
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -137,7 +137,7 @@ public class LambdaTest extends BaseTest {
                                 ),
                                 2
                         )));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -157,7 +157,7 @@ public class LambdaTest extends BaseTest {
                                         2
                                 ), Collections.emptyList())
                 ));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -176,7 +176,7 @@ public class LambdaTest extends BaseTest {
                                         2
                                 ), StringLiteral.of("hi"))
                 ));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 

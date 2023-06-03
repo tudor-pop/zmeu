@@ -21,7 +21,7 @@ public class AssignmentTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"), NumericLiteral.of(2))));
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -30,7 +30,7 @@ public class AssignmentTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2))))));
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -45,7 +45,7 @@ public class AssignmentTest extends BaseTest {
                 AssignmentExpression.of("=", Identifier.of("x"),
                         BlockExpression.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))),
                                 ExpressionStatement.of(NumericLiteral.of(2))))));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -57,7 +57,7 @@ public class AssignmentTest extends BaseTest {
                         AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))
                 )));
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class AssignmentTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class AssignmentTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
     }
 
     @Test

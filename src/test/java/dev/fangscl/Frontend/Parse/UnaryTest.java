@@ -20,7 +20,7 @@ public class UnaryTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("-", Identifier.of("x"))
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -30,7 +30,7 @@ public class UnaryTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("!", Identifier.of("x"))
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -40,7 +40,7 @@ public class UnaryTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("--", Identifier.of("x")))
         );
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -50,7 +50,7 @@ public class UnaryTest extends BaseTest {
 //        var expected = Program.of(ExpressionStatement.of(
 //                UnaryExpression.of("--", Identifier.of("x")))
 //        );
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //        assertEquals(expected, res);
 //    }
 
@@ -60,7 +60,7 @@ public class UnaryTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("++", Identifier.of("x"))
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -70,7 +70,7 @@ public class UnaryTest extends BaseTest {
 //        var expected = Program.of(ExpressionStatement.of(
 //                UnaryExpression.of("++", Identifier.of("x"))
 //        ));
-//        log.info(gson.toJson(res));
+//        log.info(toJson(res));
 //        assertEquals(expected, res);
 //    }
 
@@ -80,7 +80,7 @@ public class UnaryTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of("*", UnaryExpression.of("-", Identifier.of("x")), NumericLiteral.of(2))
         ));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 

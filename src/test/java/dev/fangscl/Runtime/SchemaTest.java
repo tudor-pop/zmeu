@@ -20,7 +20,7 @@ public class SchemaTest extends BaseTest {
                     
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(Identifier.of("Vm"), actual.getName());
@@ -35,7 +35,7 @@ public class SchemaTest extends BaseTest {
                     }
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(FunValue.of("test", actual.getEnvironment()), actual.getEnvironment().lookup("test"));
@@ -49,7 +49,7 @@ public class SchemaTest extends BaseTest {
                     var x
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertNull(actual.getEnvironment().get("x"));
@@ -62,7 +62,7 @@ public class SchemaTest extends BaseTest {
                     var x=20.2
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(DecimalValue.of(20.2), actual.getEnvironment().get("x"));
@@ -75,7 +75,7 @@ public class SchemaTest extends BaseTest {
                     var x="hello"
                 }
                 """)));
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(StringValue.of("hello"), actual.getEnvironment().get("x"));
@@ -91,7 +91,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """)));
 
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(FunValue.of("init", actual.getEnvironment()), actual.getEnvironment().lookup("init"));
@@ -106,7 +106,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """)));
 
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
@@ -120,7 +120,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """)));
 
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
         assertEquals(res, actual);

@@ -34,7 +34,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class IfBaseTest extends BaseTest {
                         ExpressionStatement.of(
                                 AssignmentExpression.of("=", Identifier.of("x"), NumericLiteral.of(1)))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -81,7 +81,7 @@ public class IfBaseTest extends BaseTest {
                         BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(1))),
                         BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2)))));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -183,7 +183,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -202,7 +202,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -223,7 +223,7 @@ public class IfBaseTest extends BaseTest {
                 )
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -244,7 +244,7 @@ public class IfBaseTest extends BaseTest {
                         BlockExpression.of(ExpressionStatement.of(
                                 AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(2)))
                         )));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -266,7 +266,7 @@ public class IfBaseTest extends BaseTest {
                         BlockExpression.of(ExpressionStatement.of(
                                 AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(2)))
                         )));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -288,7 +288,7 @@ public class IfBaseTest extends BaseTest {
                         BlockExpression.of(ExpressionStatement.of(
                                 AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(2)))
                         )));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -310,7 +310,7 @@ public class IfBaseTest extends BaseTest {
                         BlockExpression.of(ExpressionStatement.of(
                                 AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(2)))
                         )));
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
         assertEquals(expected, res);
     }
 

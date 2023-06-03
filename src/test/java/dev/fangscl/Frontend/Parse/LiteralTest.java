@@ -16,7 +16,7 @@ public class LiteralTest extends BaseTest {
         var res = parser.produceAST(tokenizer.tokenize("1"));
         var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1)));
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of("Hello")
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of(1)
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 
@@ -62,7 +62,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of("42")
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of("42")
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of("  42  ")
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of(42)
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class LiteralTest extends BaseTest {
                 ExpressionStatement.of("  42  ")
         );
         assertEquals(expected, res);
-        log.info(gson.toJson(res));
+        log.info(toJson(res));
     }
 
 }

@@ -33,7 +33,7 @@ public class FunTest extends BaseTest {
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))))),
                 global
         );
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
         assertEquals(global.get("myFun"), res);
     }
@@ -56,7 +56,7 @@ public class FunTest extends BaseTest {
                 global
         );
 
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
         assertEquals(global.get("myFun"), res);
     }
@@ -70,7 +70,7 @@ public class FunTest extends BaseTest {
                 myFun(2)
                 """)));
         var expected = IntegerValue.of(2);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -83,7 +83,7 @@ public class FunTest extends BaseTest {
                 sqrt(2)
                 """)));
         var expected = IntegerValue.of(4);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -97,7 +97,7 @@ public class FunTest extends BaseTest {
                 sqrt(2,3)
                 """)));
         var expected = IntegerValue.of(7);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
@@ -118,7 +118,7 @@ public class FunTest extends BaseTest {
                 }
                 """)));
         var expected = IntegerValue.of(160);
-        log.warn(gson.toJson(res));
+        log.warn(toJson(res));
         assertEquals(expected, res);
     }
 
