@@ -6,33 +6,46 @@ import org.apache.commons.lang3.ArrayUtils;
 // [VarToken, IdentifierToken, EqualsToken, IntegerToken]
 public enum TokenType {
     /*****   Literal types   *****/
-    Number,
-    Identifier,
-    String,
-    WhiteSpace,
-    Comment,
-    NewLine,
+    Number("number"),
+    Identifier("symbol"),
+    String("string"),
+    WhiteSpace("whitespace"),
+    Comment("//"),
+    NewLine("\n"),
     /**
      * ;
      */
-    SemiColon,
+    SemiColon(";"),
 
     /******   Expressions   ******/
-    Equal,
-    Equal_Complex,
-    RelationalOperator,
-    Equality_Operator,
+    Equal("="),
+    Equal_Complex("+="),
+    RelationalOperator("<>="),
+    Equality_Operator("=="),
     /***********   Keywords   ******************/
-    Logical_And, Logical_Or, Logical_Not, Schema, Return, Init, For, While, ReadOnly, If, Else, False, True, Fun,
-    Var,
-    Param,
-    This,
+    Logical_And("and"),
+    Logical_Or("or"),
+    Logical_Not("not"),
+    Schema("schema"),
+    Return("return"),
+    Init("init"),
+    For("for"),
+    While("while"),
+    ReadOnly("readonly"),
+    If("if"),
+    Else("else"),
+    False("false"),
+    True("true"),
+    Fun("fun"),
+    Var("var"),
+    Param("param"),
+    This("this"),
 
 
     /******   IAC   *****/
-    Resource,
-    Existing,
-    Module,
+    Resource("resource"),
+    Existing("existing"),
+    Module("module"),
 
     /******   Visibility *****/
      /* all properties are private by default. This means that:
@@ -40,19 +53,19 @@ public enum TokenType {
      2. the property/module won't be logged
      3. the property/module will appear in state file/deployment history
      */
-    Public,
+    Public("public"),
     /* all properties are private by default. This means that:
      1. the property/module won't be accessible from other files
      2. the property/module won't be logged
      3. the property/module will appear in state file/deployment history
      */
-    Private,
+    Private("private"),
     /* all properties are private by default. This means that:
      1. the property/module will be accessible from other files (access some secure password)
      2. the property/module won't be logged
      3. the property/module won't appear in state file/deployment history
      */
-    Secure,
+    Secure("secure"),
     /* all properties are private by default. This means that:
      1. the property/module will be accessible from other files
      2. the property/module will be logged
@@ -66,33 +79,48 @@ public enum TokenType {
      * Brackets: []
      * Parenthesis: ()
      */
-    OpenParenthesis,
-    CloseParenthesis,
+    OpenParenthesis("("),
+    CloseParenthesis(")"),
 
     /**
      * Braces: {}
      * Brackets: []
      * Parenthesis: ()
      */
-    OpenBraces,
-    CloseBraces,
+    OpenBraces("{"),
+    CloseBraces("}"),
     /**
      * Braces: {}
      * Brackets: []
      * Parenthesis: ()
      */
-    OpenBrackets,
-    CloseBrackets,
-    Comma,
-    Dot,
+    OpenBrackets("["),
+    CloseBrackets("]"),
+    Comma(","),
+    Dot("."),
 
     /*****   Operators   ******/
-    TernaryOperator,
-    OptionalOperator,
-    Plus, Increment, Decrement, Minus, Lambda, Multiply, Division, Modulo,
-    Null,
-    EOF,
-    Unknown;
+    OptionalOperator("?"),
+    Plus("+"), Increment("++"), Decrement("--"), Minus("-"),
+    Lambda("->"), Multiply("*"), Division("/"), Modulo("%"),
+    Null("null"),
+    EOF("EOF"),
+    Unknown("Unknown");
+
+    @Override
+    public java.lang.String toString() {
+        return field;
+    }
+
+    public java.lang.String getField() {
+        return field;
+    }
+
+    private String field;
+
+    TokenType(String field) {
+        this.field = field;
+    }
 
     public static TokenType toSymbol(char token) {
         return switch (token) {

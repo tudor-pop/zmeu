@@ -2,12 +2,15 @@ package dev.fangscl.Frontend.Parser;
 
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
+import dev.fangscl.Frontend.Parser.errors.ErrorList;
 import dev.fangscl.Frontend.Parser.errors.ParseError;
 import dev.fangscl.Frontend.visitors.AstPrinter;
+import dev.fangscl.Runtime.exceptions.RuntimeError;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -16,6 +19,10 @@ public class ParserIterator {
     private final List<Token> tokens;
     private final ListIterator<Token> iterator;
     private final AstPrinter astPrinter = new AstPrinter();
+    private static boolean hadError = false;
+    private static boolean hadRuntimeError = false;
+    @Getter
+    private final List<ParseError> errors = new ArrayList<>();
 
     @Getter
     @Setter
@@ -78,10 +85,10 @@ public class ParserIterator {
     Token eat(String error, TokenType... type) {
         Token lookAhead = lookAhead();
         if (lookAhead.is(TokenType.EOF)) {
-            throw error(lookAhead, error);
+            throw error(error, lookAhead, type);
         }
         if (!lookAhead.is(type)) {
-            throw error(lookAhead, error);
+            throw error(error, lookAhead, type);
         }
         return eat();
     }
@@ -132,13 +139,33 @@ public class ParserIterator {
         }
     }
 
-    public ParseError error(Token token, String message) {
+    void runtimeError(RuntimeError error) {
+        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().getLine());
+        hadRuntimeError = true;
+    }
+
+    public ParseError error(String message, Token token, TokenType type) {
         if (token.is(TokenType.EOF)) {
             log.error("Line: " + token.getLine() + " at end. " + message);
         } else {
             log.error("Line: " + token.getLine() + " at  " + token.getRaw() + ": " + message);
         }
-        return new ParseError();
+        hadError = true;
+        ParseError parseError = ParseError.builder()
+                .actual(token)
+                .message(message)
+                .expected(type)
+                .build();
+        errors.add(parseError);
+        return parseError;
+    }
+
+    public ErrorList error(String message, Token tokens, TokenType... type) {
+        var list = new ArrayList<ParseError>(type.length);
+        for (var it : type) {
+            list.add(error(message, tokens, it));
+        }
+        return ErrorList.builder().errors(list).build();
     }
 
 }

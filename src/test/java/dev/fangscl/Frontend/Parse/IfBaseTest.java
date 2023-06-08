@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parse;
 
+import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
@@ -8,7 +9,9 @@ import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.IfStatement;
+import dev.fangscl.Frontend.Parser.errors.ParseError;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -51,6 +54,24 @@ public class IfBaseTest extends BaseTest {
         );
         assertEquals(expected, res);
         log.info(toJson(res));
+    }
+
+    @Test
+    void MissingOpenParenthesisError() {
+        parser.produceAST(tokenizer.tokenize("""
+                if x) x=1
+                """));
+        ParseError parseError = parser.getIterator().getErrors().get(0);
+        Assertions.assertEquals(TokenType.OpenParenthesis, parseError.getExpected());
+    }
+
+    @Test
+    void MissingCloseParenthesisError() {
+        parser.produceAST(tokenizer.tokenize("""
+                if (x x=1
+                """));
+        ParseError parseError = parser.getIterator().getErrors().get(0);
+        Assertions.assertEquals(TokenType.CloseParenthesis, parseError.getExpected());
     }
 
     @Test

@@ -123,7 +123,7 @@ public class Parser {
                 case Var -> VariableDeclarations();
                 default -> Statement();
             };
-        } catch (ParseError error) {
+        } catch (RuntimeException error) {
             iterator.synchronize();
             return null;
         }
@@ -595,12 +595,12 @@ public class Parser {
         }
     }
 
-    private ParseError Error(String message) {
+    private RuntimeException Error(String message) {
         return Error(iterator.lookAhead(), message);
     }
 
-    private ParseError Error(Token token, String message) {
-        return iterator.error(token, message);
+    private RuntimeException Error(Token token, String message) {
+        return iterator.error(message, token);
     }
 
 
@@ -910,7 +910,7 @@ public class Parser {
     }
 
     Token eat(TokenType... type) {
-        return iterator.eat("Invalid token: " + Arrays.toString(type), type);
+        return iterator.eat("Expected token: %s but it was %s".formatted(Arrays.toString(type).replaceAll("\\]?\\[?",""), lookAhead().getRaw()), type);
     }
 
     Token eat(TokenType type, String error) {
