@@ -15,45 +15,63 @@ Code like this is weird, so C, Java, and friends all disallow it.
  Others allow only the “higher” precedence statements that don’t declare names.
  
  Each rule here only matches expressions at its precedence level or higher
- For example, unary matches a unary expression like !negated or a primary expression like 1234.
- And term can match 1 + 2 but also 3 * 4 / 5. The final primary rule covers the highest-precedence forms—literals and parenthesized expressions.
-program        → declaration* EOF ;
+ For example, unary matches a unary expression like !negated or 
+ a primary expression like 1234.
+ And term can match 1 + 2 but also 3 * 4 / 5. 
+ The final primary rule covers the highest-precedence forms—literals 
+ and parenthesized expressions.
+Program        → Declaration* EOF ;
 
 # Distinction rule for statements that declare names
-declaration    → variableDeclaration
-                | statement ;
+Declaration     → VarDeclaration
+                | Statement ;
                 
-varDecl        → "var" IDENTIFIER ( "=" expression )? newLine ;
+VarDeclaration  → "var" IDENTIFIER ( "=" expression )? newLine ;
 
-statement      → exprStmt
-                | block ;
+Statement       → ExpressionStatement
+                | IfStatement
+                | BlockExpression ;
 
-expression     → assignment ;
-assignment     → IDENTIFIER "=" assignment
-                | equality ; 
-block          → "{" declaration* "}" ;
-equality       → comparison ( ( "!=" | "==" ) comparison )* ;  
-comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;  
-term           → factor ( ( "-" | "+" ) factor )* ;  
-factor         → unary ( ( "/" | "*" ) unary )* ;  
-unary          → ( "!" | "-" ) unary  
-                | primary ;  
-primary        → NUMBER | STRING | "true" | "false" | "nil"  
+BlockExpression → "{" Declaration* "}" ;
+
+IfStatement     → "if" "(" Expression ")" Statement
+                ( "else" Statement )? ;
+                
+Expression      → Assignment ;
+
+Assignment      → IDENTIFIER "=" Assignment
+                | Equality ;
+                 
+Equality        → Comparison ( ( "!=" | "==" ) Comparison )* ;  
+
+Comparison      → Term ( ( ">" | ">=" | "<" | "<=" ) Term )* ;  
+
+Term            → Factor ( ( "-" | "+" ) Factor )* ;  
+
+Factor          → Unary ( ( "/" | "*" ) Unary )* ;  
+
+Unary           → ( "!" | "-" ) Unary  
+                | Primary ;  
+                
+Primary         → NUMBER | STRING | "true" | "false" | "nil"  
                 | "(" expression ")" ;
                 | IDENTIFIER
                 
-newLine        → ; | \n
+newLine         → ; | \n
 
 ```
 
 # Error handling
-We're using the **Panic Mode** as the error recovery mechanism. As soon as the parser detects an error, it enters panic mode. It knows at least one token doesn’t make sense given its current state in the middle of some stack of grammar productions.  
+
+We're using the **Panic Mode** as the error recovery mechanism. As soon as the parser detects an error, it enters panic
+mode. It knows at least one token doesn’t make sense given its current state in the middle of some stack of grammar
+productions.
 
 Before it can get back to parsing, it needs to get its state and the sequence of
-forthcoming tokens aligned such that the next token does match the rule being parsed. 
+forthcoming tokens aligned such that the next token does match the rule being parsed.
 This process is called **synchronization**.
 
-To do that, we select some rule in the grammar that will mark the synchronization point. 
+To do that, we select some rule in the grammar that will mark the synchronization point.
 The parser fixes its parsing state by jumping out of any nested productions until it gets
 back to that rule. Then it synchronizes the token stream by discarding tokens until it
 reaches one that can appear at that point in the rule.

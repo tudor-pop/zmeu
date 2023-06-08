@@ -21,17 +21,17 @@ public class IfStatement extends Statement {
     private Statement consequent;
     private Statement alternate;
 
-    public IfStatement(Expression test, @Nullable Statement consequent, Statement alternate) {
+    private IfStatement(Expression test, @Nullable Statement consequent, Statement alternate) {
         this.kind = NodeType.IfStatement;
         this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;
     }
-    public IfStatement(Expression test, @Nullable Expression consequent, Expression alternate) {
+    private IfStatement(Expression test, @Nullable Expression consequent, Expression alternate) {
         this(test, ExpressionStatement.of(consequent), ExpressionStatement.of(alternate));
     }
 
-    public IfStatement() {
+    private IfStatement() {
         this.kind = NodeType.BlockStatement;
     }
 

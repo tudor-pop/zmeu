@@ -150,8 +150,8 @@ public class IfBaseTest extends BaseTest {
     @Test
     void testNestedElse() {
         var res = parser.produceAST(tokenizer.tokenize("""
-                if (x) 
-                    if(y) {} else { }
+                if (x)
+                 if(y) {} else { }
                 """));
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),

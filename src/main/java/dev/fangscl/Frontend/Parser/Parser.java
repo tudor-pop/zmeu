@@ -150,23 +150,12 @@ public class Parser {
             case NewLine -> new EmptyStatement();
 //            case OpenBraces -> BlockStatement();
             case If -> IfStatement();
-            case Else -> ElseStatement();
             case Init -> InitStatement();
             case Return -> ReturnStatement();
             case While, For -> IterationStatement();
             case EOF -> null;
             default -> ExpressionStatement();
         };
-    }
-
-    private Statement ElseStatement() {
-        iterator.eatIf(TokenType.OpenBraces);
-        if (IsLookAhead(TokenType.Else)) {
-            eat(TokenType.Else);
-        }
-        var res = Statement();
-        iterator.eatIf(TokenType.CloseBraces);
-        return res;
     }
 
     /**
@@ -344,8 +333,7 @@ public class Parser {
 
     /**
      * IfStatement
-     * : if ( Expression ) BlockStatement?
-     * : if ( Expression ) BlockStatement? else BlockStatement?
+     * : if ( Expression ) Statement? (else Statement)?
      * ;
      */
     private Statement IfStatement() {
@@ -354,19 +342,23 @@ public class Parser {
         var test = Expression();
         eat(TokenType.CloseParenthesis);
         if (IsLookAhead(TokenType.NewLine)) {
-            /* if(x)
-             *   x=2
-             */
+            // if(x) x=2
             eat(TokenType.NewLine);
         }
 
-        Statement consequent = Statement();
-        Statement alternate = null;
+        Statement ifBlock = Statement();
+        Statement elseBlock = ElseStatement();
+        return IfStatement.of(test, ifBlock, elseBlock);
+    }
+
+    private Statement ElseStatement() {
         if (IsLookAhead(TokenType.Else)) {
             eat(TokenType.Else);
-            alternate = Statement();
+            Statement alternate = Statement();
+            iterator.eatIf(TokenType.CloseBraces);
+            return alternate;
         }
-        return IfStatement.of(test, consequent, alternate);
+        return null;
     }
 
     /**
