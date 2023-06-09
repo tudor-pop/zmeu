@@ -196,13 +196,13 @@ public class Parser {
         eat(TokenType.For);
         eat(TokenType.OpenParenthesis);
 
-        Statement init = IsLookAhead(TokenType.SemiColon) ? null : ForStatementInit();
+        Statement init = ForStatementInit();
         eat(TokenType.SemiColon);
 
-        var test = IsLookAhead(TokenType.SemiColon) ? null : Expression();
+        var test = ForStatementTest();
         eat(TokenType.SemiColon);
 
-        var update = IsLookAhead(TokenType.CloseParenthesis) ? null : Expression();
+        var update = ForStatementIncrement();
         eat(TokenType.CloseParenthesis);
         if (IsLookAhead(TokenType.NewLine)) {
             /* while(x)
@@ -220,17 +220,25 @@ public class Parser {
                 .build();
     }
 
-    /**
-     * ForStatementInit
-     * : VariableStatementInit
-     * | Expression
-     */
+    @Nullable
+    private Expression ForStatementIncrement() {
+        return IsLookAhead(TokenType.CloseParenthesis) ? null : Expression();
+    }
+
+    @Nullable
+    private Expression ForStatementTest() {
+        return IsLookAhead(TokenType.SemiColon) ? null : Expression();
+    }
+
     private Statement ForStatementInit() {
-        if (IsLookAhead(TokenType.Var)) {
-            eat(TokenType.Var);
-            return VariableStatementInit();
-        }
-        return ExpressionStatement();
+        return switch (lookAhead().getType()) {
+            case Var -> {
+                eat(TokenType.Var);
+                yield VariableStatementInit();
+            }
+            case SemiColon -> null;
+            default -> ExpressionStatement();
+        };
     }
 
     /**
@@ -884,7 +892,7 @@ public class Parser {
     }
 
     Token eat(TokenType... type) {
-        return iterator.eat("Expected token: %s but it was %s".formatted(Arrays.toString(type).replaceAll("\\]?\\[?",""), lookAhead().getRaw()), type);
+        return iterator.eat("Expected token: %s but it was %s".formatted(Arrays.toString(type).replaceAll("\\]?\\[?", ""), lookAhead().getRaw()), type);
     }
 
     Token eat(TokenType type, String error) {

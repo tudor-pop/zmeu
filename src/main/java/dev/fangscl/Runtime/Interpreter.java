@@ -247,7 +247,7 @@ public class Interpreter implements
             if (isTruthy(left)) {
                 return left;
             }
-        } else  {
+        } else {
             if (!isTruthy(left)) {
                 return left;
             }
@@ -332,7 +332,12 @@ public class Interpreter implements
 
     @Override
     public Object eval(ForStatement statement) {
-        return null;
+        Expression test = Optional.ofNullable(statement.getTest()).orElse(BooleanLiteral.of(true));
+        var whileStatement = WhileStatement.of(test, BlockExpression.of(statement.getBody(), ExpressionStatement.of(statement.getUpdate())));
+        if (statement.getInit() == null) {
+            return executeBlock(whileStatement, env);
+        }
+        return executeBlock(BlockExpression.of(statement.getInit(), whileStatement), env);
     }
 
     @Override
