@@ -8,7 +8,6 @@ import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import dev.fangscl.Runtime.Values.FunValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        FunValue res = (FunValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                     var x = 1
                 }
@@ -40,7 +39,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funReturn() {
-        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (FunValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                    var x = 1
                    x
@@ -63,7 +62,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funEvaluateBlock() {
-        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(x){
                    x
                 }
@@ -76,7 +75,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBody() {
-        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x){
                    x*x
                 }
@@ -89,7 +88,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBodyMultiParams() {
-        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x,y){
                    var z = 1
                    x*y+z
@@ -103,7 +102,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funClojure() {
-        RuntimeValue<Identifier> res = (RuntimeValue<Identifier>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var a = 100
                     fun calc(x,y){

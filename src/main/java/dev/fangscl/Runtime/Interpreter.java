@@ -107,19 +107,19 @@ public class Interpreter implements
 
     @Override
     public Object eval(BlockExpression block) {
-        RuntimeValue res = NullValue.of();
+        Object res = NullValue.of();
         var env = new Environment(this.env);
         for (var it : block.getExpression()) {
-            res = (RuntimeValue) executeBlock(it, env);
+            res = executeBlock(it, env);
         }
         return res;
     }
 
     @Override
     public Object eval(VariableStatement statement) {
-        RuntimeValue res = NullValue.of();
+        Object res = NullValue.of();
         for (var it : statement.getDeclarations()) {
-            res = (RuntimeValue) executeBlock(it, env);
+            res = executeBlock(it, env);
         }
         return res;
     }
@@ -131,8 +131,8 @@ public class Interpreter implements
 
     @Override
     public Object eval(BinaryExpression expression) {
-        RuntimeValue lhs = (RuntimeValue) executeBlock(expression.getLeft(), env);
-        RuntimeValue rhs = (RuntimeValue) executeBlock(expression.getRight(), env);
+        Object lhs = executeBlock(expression.getLeft(), env);
+        Object rhs = executeBlock(expression.getRight(), env);
         if ((Object) expression.getOperator() instanceof String op) {
             if (lhs instanceof IntegerValue lhsn && rhs instanceof IntegerValue rhsn) {
                 return switch (op) {
@@ -203,12 +203,12 @@ public class Interpreter implements
 
     @Override
     public Object eval(CallExpression<Expression> expression) {
-        RuntimeValue<Identifier> eval = (RuntimeValue<Identifier>) executeBlock(expression.getCallee(), env);
+        Object eval = executeBlock(expression.getCallee(), env);
         FunValue function = (FunValue) eval;
 
         var args = expression.getArguments()
                 .stream()
-                .map(it -> (RuntimeValue<Object>) executeBlock(it, env))
+                .map(it -> executeBlock(it, env))
                 .toList();
 
         if (function.name() == null) { // execute lambda
@@ -218,20 +218,19 @@ public class Interpreter implements
         return functionCall(function, args);
     }
 
-    private <R> RuntimeValue<R> functionCall(FunValue function, List<RuntimeValue<Object>> args) {
+    private Object functionCall(FunValue function, List<Object> args) {
         // for function execution, use the clojured environment from the declared scope
         var declared = (FunValue) function.getEnvironment()
                 .lookup(function.name(), "Function not declared: " + function.name());
 
 
         var environment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
-        RuntimeValue<R> res = (RuntimeValue<R>) executeBlock(declared.getBody(), environment);
-        return res;
+        return executeBlock(declared.getBody(), environment);
     }
 
-    private <R> RuntimeValue<R> lambdaCall(FunValue function, List<RuntimeValue<Object>> args) {
+    private Object lambdaCall(FunValue function, List<Object> args) {
         Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
-        return (RuntimeValue<R>) executeBlock(function.getBody(), activationEnvironment);
+        return executeBlock(function.getBody(), activationEnvironment);
     }
 
     @Override
@@ -261,15 +260,15 @@ public class Interpreter implements
         if (expression.getName() == null) {
             throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
         }
-        var schemaValueTmp = (RuntimeValue) executeBlock(expression.getType(), env);
+        var schemaValueTmp = executeBlock(expression.getType(), env);
         var schemaValue = (SchemaValue) schemaValueTmp;
 
         Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
         var resourceEnv = Environment.copyOf(schemaEnvironment);
         try {
-            var args = new ArrayList<RuntimeValue<Object>>();
+            var args = new ArrayList<>();
             for (Statement it : expression.getArguments()) {
-                RuntimeValue<Object> objectRuntimeValue = (RuntimeValue<Object>) executeBlock(it, resourceEnv);
+                Object objectRuntimeValue = executeBlock(it, resourceEnv);
                 args.add(objectRuntimeValue);
             }
             var init = schemaValue.getMethodOrNull("init");
@@ -289,8 +288,8 @@ public class Interpreter implements
 
     @Override
     public Object eval(IfStatement statement) {
-        RuntimeValue<Boolean> eval = (RuntimeValue<Boolean>) executeBlock(statement.getTest(), env);
-        if (eval.getRuntimeValue()) {
+        var eval = (BooleanValue) executeBlock(statement.getTest(), env);
+        if (eval.isValue()) {
             return executeBlock(statement.getConsequent(), env);
         } else {
             return executeBlock(statement.getAlternate(), env);
@@ -299,10 +298,10 @@ public class Interpreter implements
 
     @Override
     public Object eval(WhileStatement statement) {
-        RuntimeValue<Object> result = NullValue.of();
+        Object result = NullValue.of();
 
-        while (((Boolean) ((RuntimeValue<Object>) executeBlock(statement.getTest(), env)).getRuntimeValue())) {
-            result = (RuntimeValue<Object>) executeBlock(statement.getBody(), env);
+        while ((((BooleanValue) executeBlock(statement.getTest(), env)).isValue())) {
+            result = executeBlock(statement.getBody(), env);
         }
         return result;
     }
@@ -331,17 +330,17 @@ public class Interpreter implements
         if (operator instanceof String op) {
             return switch (op) {
                 case "++" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
+                    Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(1 + r.getRuntimeValue());
                     } else if (res instanceof DecimalValue r) {
                         yield DecimalValue.of(1 + r.getRuntimeValue());
                     } else {
-                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                        throw new RuntimeException("Invalid unary operator: " + res);
                     }
                 }
                 case "--" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
+                    Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(r.getRuntimeValue() - 1);
                     } else if (res instanceof DecimalValue r) {
@@ -349,25 +348,25 @@ public class Interpreter implements
                                 BigDecimal.valueOf(r.getRuntimeValue()).subtract(BigDecimal.ONE)
                                         .doubleValue());
                     } else {
-                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                        throw new RuntimeException("Invalid unary operator: " + res);
                     }
                 }
                 case "-" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
+                    Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(-r.getRuntimeValue());
                     } else if (res instanceof DecimalValue r) {
                         yield DecimalValue.of(BigDecimal.valueOf(r.getRuntimeValue()).negate().doubleValue());
                     } else {
-                        throw new RuntimeException("Invalid unary operator: " + res.getRuntimeValue());
+                        throw new RuntimeException("Invalid unary operator: " + res);
                     }
                 }
                 case "!" -> {
-                    RuntimeValue res = (RuntimeValue) executeBlock(expression.getValue(), env);
+                    Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof BooleanValue r) {
                         yield BooleanValue.of(!r.isValue());
                     }
-                    throw new RuntimeException("Invalid not operator: " + res.getRuntimeValue());
+                    throw new RuntimeException("Invalid not operator: " + res);
                 }
                 default -> throw new RuntimeException("Operator could not be evaluated: " + expression.getOperator());
             };
@@ -378,16 +377,16 @@ public class Interpreter implements
     @Override
     public Object eval(VariableDeclaration expression) {
         String symbol = expression.getId().getSymbol();
-        RuntimeValue value = null;
+        Object value = null;
         if (expression.hasInit()) {
-            value = (RuntimeValue) executeBlock(expression.getInit(), env);
+            value = executeBlock(expression.getInit(), env);
         }
         return env.init(symbol, value);
     }
 
     @Override
     public Object eval(AssignmentExpression expression) {
-        RuntimeValue right = (RuntimeValue) executeBlock(expression.getRight(), env);
+        Object right = executeBlock(expression.getRight(), env);
 
         Expression left = expression.getLeft();
         if (left instanceof MemberExpression memberExpression) {
@@ -406,10 +405,10 @@ public class Interpreter implements
 
     @Override
     public Object eval(Program program) {
-        RuntimeValue lastEval = new NullValue();
+        Object lastEval = new NullValue();
 
         for (Statement i : program.getBody()) {
-            lastEval = (RuntimeValue) executeBlock(i, env);
+            lastEval = executeBlock(i, env);
         }
 
         return lastEval;
@@ -443,9 +442,9 @@ public class Interpreter implements
 
     Object interpret(List<Statement> statements) {
         try {
-            RuntimeValue res = null;
+            Object res = null;
             for (Statement statement : statements) {
-                res = (RuntimeValue) execute(statement);
+                res = execute(statement);
             }
             return res;
         } catch (RuntimeError error) {

@@ -3,7 +3,6 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.DecimalValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -33,15 +32,15 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varDecimal() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2.1")));
-        var expected = DecimalValue.of(2.1);
+        DecimalValue res = (DecimalValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2.1")));
+        var expected = (DecimalValue) DecimalValue.of(2.1);
         assertEquals(expected.getRuntimeValue(), res.getRuntimeValue());
         log.info(toJson(res));
     }
 
     @Test
     void varBool() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = true")));
+        BooleanValue res = (BooleanValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = true")));
         var expected = BooleanValue.of(true);
         assertEquals(expected.getRuntimeValue(), res.getRuntimeValue());
         log.info(toJson(res));
@@ -63,6 +62,7 @@ public class VariableDeclarationTest extends BaseTest {
         assertEquals(expected, res);
         log.info(toJson(res));
     }
+
     @Test
     void varExpressionMultiplication() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2*2")));
@@ -78,6 +78,7 @@ public class VariableDeclarationTest extends BaseTest {
         assertEquals(expected, res);
         log.info(toJson(res));
     }
+
     @Test
     void varExpressionBoolean() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==2")));
@@ -97,11 +98,11 @@ public class VariableDeclarationTest extends BaseTest {
     @Test
     void varMultiDeclaration() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-        {
-            var y = 0
-            y=1
-        }
-        """)));
+                {
+                    var y = 0
+                    y=1
+                }
+                """)));
 
         log.info(toJson(res));
         var expected = IntegerValue.of(1);

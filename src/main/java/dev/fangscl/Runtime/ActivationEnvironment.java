@@ -2,7 +2,6 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class ActivationEnvironment extends Environment {
      * @param params
      * @param args
      */
-    public ActivationEnvironment(@Nullable Environment parent, List<Expression> params, List<RuntimeValue<Object>> args) {
+    public ActivationEnvironment(@Nullable Environment parent, List<Expression> params, List<Object> args) {
         super(parent);
         for (var i = 0; i < params.size(); i++) {
             // for each named parameter, we save the argument into the activation record(env that the function uses to execute)

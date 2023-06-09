@@ -1,14 +1,13 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import org.jetbrains.annotations.Nullable;
 
 public interface IEnvironment {
-    RuntimeValue assign(String varName, RuntimeValue value);
+    Object assign(String varName, Object value);
 
-    RuntimeValue lookup(@Nullable String varName);
+    Object lookup(@Nullable String varName);
 
-    RuntimeValue lookup(@Nullable RuntimeValue<String> varName);
+    Object lookup(@Nullable Object varName);
 
-    @Nullable RuntimeValue get(String key);
+    @Nullable Object get(String key);
 }

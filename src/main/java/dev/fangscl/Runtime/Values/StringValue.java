@@ -11,7 +11,7 @@ import java.util.Optional;
  * Receiving a StringLiteral
  */
 @Data
-public class StringValue implements RuntimeValue<String> {
+public class StringValue {
     private String value;
 
     public StringValue(String value) {
@@ -28,18 +28,17 @@ public class StringValue implements RuntimeValue<String> {
         this(literal.getValue());
     }
 
-    public static RuntimeValue of(Expression statement) {
+    public static Object of(Expression statement) {
         if (statement instanceof StringLiteral s)
             return new StringValue(s.getValue());
         throw new IllegalStateException();
     }
 
-    public static RuntimeValue of(String statement) {
+    public static Object of(String statement) {
         return new StringValue(statement);
     }
 
 
-    @Override
     public String getRuntimeValue() {
         return value;
     }

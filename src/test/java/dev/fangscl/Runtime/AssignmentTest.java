@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Log4j2
 public class AssignmentTest extends BaseTest {
 
-    private void setGlobalVar(RuntimeValue of) {
+    private void setGlobalVar(Object of) {
         global = new Environment(Map.entry("VERSION", of));
         interpreter.set(global);
     }

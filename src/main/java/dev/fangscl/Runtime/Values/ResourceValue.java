@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
+public class ResourceValue implements IEnvironment {
     private Environment environment;
     private Identifier name;
-    private List<RuntimeValue<Object>> args;
+    private List<Object> args;
 
-    private ResourceValue(Identifier name, List<RuntimeValue<Object>> args, Environment environment) {
+    private ResourceValue(Identifier name, List<Object> args, Environment environment) {
         this.name = name;
         this.args = args;
         this.environment = environment;
@@ -27,33 +27,32 @@ public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
         this(e, Collections.emptyList(), new Environment());
     }
 
-    @Override
     public Identifier getRuntimeValue() {
         return name;
     }
 
-    public static RuntimeValue<Identifier> of(Identifier name, List<RuntimeValue<Object>> params, Environment environment) {
+    public static Object of(Identifier name, List<Object> params, Environment environment) {
         return new ResourceValue(name, params, environment);
     }
 
-    public static ResourceValue of(String name, List<RuntimeValue<Object>> params, Environment environment) {
+    public static ResourceValue of(String name, List<Object> params, Environment environment) {
         return (ResourceValue) ResourceValue.of(Identifier.of(name), params, environment);
     }
 
 
-    public static RuntimeValue<Identifier> of(List<RuntimeValue<Object>> params, Environment environment) {
+    public static Object of(List<Object> params, Environment environment) {
         return new ResourceValue(null, params, environment);
     }
 
-    public static RuntimeValue<Identifier> of(Identifier string) {
+    public static Object of(Identifier string) {
         return ResourceValue.of(string, Collections.emptyList(), new Environment());
     }
 
-    public static RuntimeValue<Identifier> of(String string) {
+    public static Object of(String string) {
         return ResourceValue.of(Identifier.of(string));
     }
 
-    public static RuntimeValue<Identifier> of(String string, Environment environment) {
+    public static Object of(String string, Environment environment) {
         return ResourceValue.of(Identifier.of(string), Collections.emptyList(), environment);
     }
 
@@ -65,22 +64,22 @@ public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
     }
 
     @Override
-    public RuntimeValue assign(String varName, RuntimeValue value) {
+    public Object assign(String varName, Object value) {
         return environment.assign(varName, value);
     }
 
     @Override
-    public RuntimeValue lookup(@Nullable String varName) {
+    public Object lookup(@Nullable String varName) {
         return environment.lookup(varName);
     }
 
     @Override
-    public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
+    public Object lookup(@Nullable Object varName) {
         return environment.lookup(varName);
     }
 
     @Override
-    public @Nullable RuntimeValue get(String key) {
+    public @Nullable Object get(String key) {
         return environment.get(key);
     }
 
@@ -91,7 +90,7 @@ public class ResourceValue implements RuntimeValue<Identifier>, IEnvironment {
         var entries = environment.getVariables().entrySet();
         var args = new HashMap<String, Object>(entries.size());
         for (var it : entries) {
-            args.put(it.getKey(), it.getValue().getRuntimeValue());
+            args.put(it.getKey(), it.getValue());
         }
         return new Data(this.name(), args);
     }

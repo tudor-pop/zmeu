@@ -3,7 +3,6 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.DecimalValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void incrementInt() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     ++x
@@ -27,7 +26,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void decrementInt() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     --x
@@ -39,7 +38,7 @@ public class UnaryTest extends BaseTest {
     }
     @Test
     void incrementDecimal() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1.1
                     ++x
@@ -52,7 +51,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void decrementDecimal() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1.1
                     --x
@@ -64,7 +63,7 @@ public class UnaryTest extends BaseTest {
     }
     @Test
     void unaryMinus() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     -x
@@ -103,7 +102,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void notTrue() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = true
                     !x 

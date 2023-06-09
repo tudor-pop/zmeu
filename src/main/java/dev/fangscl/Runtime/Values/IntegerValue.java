@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import lombok.Data;
 
 @Data
-public class IntegerValue implements RuntimeValue<Integer> {
+public class IntegerValue {
     private int value;
 
     public IntegerValue(int number) {
@@ -16,18 +16,17 @@ public class IntegerValue implements RuntimeValue<Integer> {
         this(number.getValue().intValue());
     }
 
-    public static RuntimeValue of(Expression value) {
+    public static Object of(Expression value) {
         if (value instanceof NumericLiteral s) {
             return new IntegerValue(s.getValue().intValue());
         }
         throw new IllegalStateException();
     }
 
-    public static RuntimeValue of(int value) {
+    public static Object of(int value) {
         return new IntegerValue(value);
     }
 
-    @Override
     public Integer getRuntimeValue() {
         return value;
     }

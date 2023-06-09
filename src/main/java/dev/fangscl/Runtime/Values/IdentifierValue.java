@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import lombok.Data;
 
 @Data
-public class IdentifierValue implements RuntimeValue<String> {
+public class IdentifierValue {
     private String value;
 
     public IdentifierValue(String value) {
@@ -16,18 +16,17 @@ public class IdentifierValue implements RuntimeValue<String> {
         this(e.getSymbol());
     }
 
-    @Override
     public String getRuntimeValue() {
         return value;
     }
 
-    public static RuntimeValue<String> of(String string) {
+    public static Object of(String string) {
         return new IdentifierValue(string);
     }
-    public static RuntimeValue<String> of(Identifier string) {
+    public static Object of(Identifier string) {
         return new IdentifierValue(string);
     }
-    public static RuntimeValue<String> of(Expression string) {
+    public static Object of(Expression string) {
         if (string instanceof Identifier s)
             return new IdentifierValue(s);
         throw new RuntimeException("Invalid variable name: " + string.toString());

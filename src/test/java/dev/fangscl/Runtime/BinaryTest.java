@@ -4,7 +4,6 @@ import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ public class BinaryTest extends BaseTest{
     @Test
     void sum() {
         var res = interpreter.eval(Program.of(ExpressionStatement.of(BinaryExpression.of("+",1,1))));
-        RuntimeValue expected = IntegerValue.of(2);
+        var expected = IntegerValue.of(2);
         Assertions.assertEquals(expected, res);
     }
 

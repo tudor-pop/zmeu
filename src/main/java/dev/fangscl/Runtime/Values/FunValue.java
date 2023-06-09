@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public class FunValue implements RuntimeValue<Identifier> {
+public class FunValue {
     @JsonBackReference
     private Environment environment;
     private Identifier name;
@@ -32,39 +32,38 @@ public class FunValue implements RuntimeValue<Identifier> {
         this(e, Collections.emptyList(), ExpressionStatement.of(BlockExpression.of()), new Environment());
     }
 
-    @Override
     public Identifier getRuntimeValue() {
         return name;
     }
 
-    public static RuntimeValue<Identifier> of(Identifier name, List<Expression> params, Statement body, Environment environment) {
+    public static Object of(Identifier name, List<Expression> params, Statement body, Environment environment) {
         return new FunValue(name, params, body, environment);
     }
 
     public static FunValue of(String name, List<Expression> params, Statement body, Environment environment) {
         return (FunValue) FunValue.of(Identifier.of(name), params, body, environment);
     }
-    public static RuntimeValue<Identifier> of(String name, List<Expression> params,  Environment environment) {
+    public static Object of(String name, List<Expression> params,  Environment environment) {
         return FunValue.of(Identifier.of(name), params, ExpressionStatement.of(BlockExpression.of()), environment);
     }
 
-    public static RuntimeValue<Identifier> of(List<Expression> params, Statement body, Environment environment) {
+    public static Object of(List<Expression> params, Statement body, Environment environment) {
         return new FunValue(null, params, body, environment);
     }
 
-    public static RuntimeValue<Identifier> of(Identifier string) {
+    public static Object of(Identifier string) {
         return FunValue.of(string, Collections.emptyList(), ExpressionStatement.of(BlockExpression.of()), new Environment());
     }
 
-    public static RuntimeValue<Identifier> of(String string) {
+    public static Object of(String string) {
         return FunValue.of(Identifier.of(string));
     }
 
-    public static RuntimeValue<Identifier> of(String string, Environment environment) {
+    public static Object of(String string, Environment environment) {
         return FunValue.of(Identifier.of(string), Collections.emptyList(), ExpressionStatement.of(BlockExpression.of()), environment);
     }
 
-    public static RuntimeValue<Identifier> of(Expression string) {
+    public static Object of(Expression string) {
         if (string instanceof Identifier s)
             return new FunValue(s);
         throw new RuntimeException("Invalid variable name: " + string.toString());

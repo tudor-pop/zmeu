@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
+public class SchemaValue implements IEnvironment {
     private Environment environment;
     private Identifier name;
     private BlockExpression body;
@@ -20,7 +20,6 @@ public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
         this.environment = environment;
     }
 
-    @Override
     public Identifier getRuntimeValue() {
         return name;
     }
@@ -44,22 +43,22 @@ public class SchemaValue implements RuntimeValue<Identifier>, IEnvironment {
     }
 
     @Override
-    public RuntimeValue assign(String varName, RuntimeValue value) {
+    public Object assign(String varName, Object value) {
         return environment.assign(varName, value);
     }
 
     @Override
-    public RuntimeValue lookup(@Nullable String varName) {
+    public Object lookup(@Nullable String varName) {
         return environment.lookup(varName);
     }
 
     @Override
-    public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
+    public Object lookup(@Nullable Object varName) {
         return environment.lookup(varName);
     }
 
     @Override
-    public @Nullable RuntimeValue get(String key) {
+    public @Nullable Object get(String key) {
         return environment.get(key);
     }
 

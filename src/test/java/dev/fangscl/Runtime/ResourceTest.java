@@ -6,7 +6,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.ResourceValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import dev.fangscl.Runtime.Values.SchemaValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.SneakyThrows;
@@ -41,7 +40,7 @@ public class ResourceTest extends BaseTest {
      */
     @Test
      void resourceIsDefinedInSchemaEnv() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm { }
                 resource Vm main {
                     
@@ -79,7 +78,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInheritsDefaultSchemaValue() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -99,7 +98,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceMemberAccess() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -138,7 +137,7 @@ public class ResourceTest extends BaseTest {
      */
     @Test
     void resourceSetMemberAccess() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -165,7 +164,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInit() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -190,7 +189,7 @@ public class ResourceTest extends BaseTest {
     @SneakyThrows
     @Test
     void resourceInitJson() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }

@@ -5,7 +5,7 @@ import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import lombok.Data;
 
 @Data
-public class DecimalValue implements RuntimeValue<Double> {
+public class DecimalValue {
     private double value;
 
     public DecimalValue(double number) {
@@ -20,17 +20,16 @@ public class DecimalValue implements RuntimeValue<Double> {
         this(decimalLiteral.getValue().doubleValue());
     }
 
-    public static RuntimeValue of(Expression statement) {
+    public static DecimalValue of(Expression statement) {
         if (statement instanceof NumericLiteral s)
             return new DecimalValue(s.getValue().doubleValue());
         throw new IllegalStateException();
     }
 
-    public static RuntimeValue of(double value) {
+    public static DecimalValue of(double value) {
         return new DecimalValue(value);
     }
 
-    @Override
     public Double getRuntimeValue() {
         return value;
     }

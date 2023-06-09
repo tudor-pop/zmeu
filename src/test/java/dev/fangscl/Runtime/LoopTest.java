@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ public class LoopTest extends BaseTest {
 
     @Test
     void increment() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     while (x < 5){
@@ -28,7 +27,7 @@ public class LoopTest extends BaseTest {
 
     @Test
     void incrementEq() {
-        RuntimeValue<IntegerValue> res = (RuntimeValue<IntegerValue>) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        IntegerValue res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     while (x <= 5){

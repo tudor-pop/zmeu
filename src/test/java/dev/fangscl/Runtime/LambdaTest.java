@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Values.IntegerValue;
-import dev.fangscl.Runtime.Values.RuntimeValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     fun onClick(callback){
                         var x = 10
@@ -29,7 +28,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaAssignToVar() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 var f = (x) -> x*x
                 f(2)
                 """)));
@@ -41,7 +40,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaInvoke() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 ((x) -> x*x) (2)
                 """)));
 
@@ -51,7 +50,7 @@ public class LambdaTest extends BaseTest {
     }
     @Test
     void lambdaInvokeClojure() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                 var y = 3
                 ((x) ->{ 
@@ -66,7 +65,7 @@ public class LambdaTest extends BaseTest {
     }
     @Test
     void lambdaInvokeClojure2() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                 var y = 3
                 ((x) ->{ 
@@ -83,7 +82,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaInvokeClojureWithingFunction() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 
                 var y = 3
                 fun foo(a) {
@@ -104,7 +103,7 @@ public class LambdaTest extends BaseTest {
     }
     @Test
     void lambdaInvokeStaticClojure() {
-        RuntimeValue res = (RuntimeValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 
                 var x = 10
                 fun foo(){ x }

@@ -17,24 +17,24 @@ public class Environment implements IEnvironment {
     private final Environment parent;
 
     @Getter
-    private final Map<String, RuntimeValue<?>> variables;
+    private final Map<String, Object> variables;
 
     public Environment(@Nullable Environment parent) {
         this.parent = parent;
         this.variables = new HashMap<>(32);
     }
 
-    public Environment(@Nullable Environment parent, Map<String, RuntimeValue<?>> variables) {
+    public Environment(@Nullable Environment parent, Map<String, Object> variables) {
         this.parent = parent;
         this.variables = variables;
     }
 
-    public Environment(Map<String, RuntimeValue<?>> variables) {
+    public Environment(Map<String, Object> variables) {
         this.parent = null;
         this.variables = variables;
     }
 
-    public Environment(Map.Entry<String, RuntimeValue<?>>... variables) {
+    public Environment(Map.Entry<String, Object>... variables) {
         this.parent = null;
         this.variables = new HashMap<>();
         for (var variable : variables) {
@@ -50,7 +50,7 @@ public class Environment implements IEnvironment {
      * Copy parent's variables into a new Environment
      */
     public static Environment copyOf(Environment parent) {
-        Map<String, RuntimeValue<?>> res = new HashMap<>(parent.getVariables().size() + 1);
+        Map<String, Object> res = new HashMap<>(parent.getVariables().size() + 1);
         for (var it : parent.getVariables().entrySet()) {
             res.put(it.getKey(), it.getValue());
         }
@@ -62,7 +62,7 @@ public class Environment implements IEnvironment {
      * var a = 2
      * var b = 3
      */
-    public RuntimeValue init(String name, RuntimeValue value) {
+    public Object init(String name, Object value) {
         if (variables.containsKey(name)) {
             throw new VarExistsException(name);
         }
@@ -70,27 +70,27 @@ public class Environment implements IEnvironment {
         return value;
     }
 
-    public RuntimeValue init(String name, int value) {
+    public Object init(String name, int value) {
         return init(name, IntegerValue.of(value));
     }
 
-    public RuntimeValue init(String name, double value) {
+    public Object init(String name, double value) {
         return init(name, DecimalValue.of(value));
     }
 
-    public RuntimeValue init(String name, float value) {
+    public Object init(String name, float value) {
         return init(name, DecimalValue.of(value));
     }
 
-    public RuntimeValue init(String name, String value) {
+    public Object init(String name, String value) {
         return init(name, StringValue.of(value));
     }
 
-    public RuntimeValue init(String name, boolean value) {
+    public Object init(String name, boolean value) {
         return init(name, BooleanValue.of(value));
     }
 
-    public RuntimeValue init(Identifier name, RuntimeValue value) {
+    public Object init(Identifier name, Object value) {
         return init(name.getSymbol(), value);
     }
 
@@ -99,14 +99,14 @@ public class Environment implements IEnvironment {
      * x = 10
      */
     @Override
-    public RuntimeValue assign(String varName, RuntimeValue value) {
+    public Object assign(String varName, Object value) {
         var env = this.resolve(varName);
         env.put(varName, value);
         return value;
     }
 
     @Override
-    public RuntimeValue lookup(@Nullable String varName) {
+    public Object lookup(@Nullable String varName) {
         if (varName == null) {
             varName = "null";
         }
@@ -115,8 +115,8 @@ public class Environment implements IEnvironment {
     }
 
     @Override
-    public RuntimeValue lookup(@Nullable RuntimeValue<String> varName) {
-        return lookup(varName.getRuntimeValue());
+    public Object lookup(@Nullable Object varName) {
+        return lookup(varName);
     }
 
     /**
@@ -139,16 +139,16 @@ public class Environment implements IEnvironment {
         return resolve(symbol, "Variable not found: ");
     }
 
-    private void put(String key, RuntimeValue value) {
+    private void put(String key, Object value) {
         this.variables.put(key, value);
     }
 
     @Override
-    public RuntimeValue get(String key) {
+    public Object get(String key) {
         return this.variables.get(key);
     }
 
-    public RuntimeValue lookup(String symbol, String error) {
+    public Object lookup(String symbol, String error) {
         return resolve(symbol, error) // search the scope
                 .get(symbol);
     }
