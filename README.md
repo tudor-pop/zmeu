@@ -20,48 +20,55 @@ Code like this is weird, so C, Java, and friends all disallow it.
  And term can match 1 + 2 but also 3 * 4 / 5. 
  The final primary rule covers the highest-precedence forms—literals 
  and parenthesized expressions.
-Program        → Declaration* EOF ;
+Program        → Declaration* EOF 
 
 # Distinction rule for statements that declare names
 Declaration     → VarDeclaration
-                | Statement ;
+                | Statement 
                 
-VarDeclaration  → "var" IDENTIFIER ( "=" expression )? newLine ;
+VarDeclaration  → "var" IDENTIFIER ( "=" expression )? newLine 
 
 Statement       → ExpressionStatement
                 | IfStatement
-                | BlockExpression ;
+                | IterationStatement
+                | BlockExpression
 
-BlockExpression → "{" Declaration* "}" ;
+IterationStatement  → WhileStatement
+                    | ForStatement
+
+WhileStatement  → "while" "(" Expression ")" Statement
+ForStatement    → "for" "(" VarDeclaration ; Expression ; Statement
+
+BlockExpression → "{" Declaration* "}" 
 
 IfStatement     → "if" "(" Expression ")" Statement
-                ( "else" Statement )? ;
+                ( "else" Statement )? 
                 
-Expression      → Assignment ;
+Expression      → Assignment 
 
 Assignment      → IDENTIFIER "=" Assignment
-                | OrExpression ;
+                | OrExpression 
 
 OrExpression    → AndExpression ("or" AndExpression)*
 
 AndExpression   → Equality ("and" Equality)*               
 
-Equality        → Comparison ( ( "!=" | "==" ) Comparison )* ;  
+Equality        → Comparison ( ( "!=" | "==" ) Comparison )*   
 
-Comparison      → Term ( ( ">" | ">=" | "<" | "<=" ) Term )* ;  
+Comparison      → Term ( ( ">" | ">=" | "<" | "<=" ) Term )*   
 
-Term            → Factor ( ( "-" | "+" ) Factor )* ;  
+Term            → Factor ( ( "-" | "+" ) Factor )*   
 
-Factor          → Unary ( ( "/" | "*" ) Unary )* ;  
+Factor          → Unary ( ( "/" | "*" ) Unary )*   
 
 Unary           → ( "!" | "-" ) Unary  
-                | Primary ;  
+                | Primary   
                 
 Primary         → NUMBER | STRING | "true" | "false" | "nil"  
-                | "(" expression ")" ;
+                | "(" expression ")" 
                 | IDENTIFIER
                 
-newLine         → ; | \n
+newLine         →  | \n
 
 ```
 

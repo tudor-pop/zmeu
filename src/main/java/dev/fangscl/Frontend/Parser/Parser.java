@@ -158,12 +158,6 @@ public class Parser {
         };
     }
 
-    /**
-     * IterationStatement
-     * : WhileStatement
-     * | ForStatement
-     * ;
-     */
     private Statement IterationStatement() {
         return switch (lookAhead().getType()) {
             case While -> WhileStatement();

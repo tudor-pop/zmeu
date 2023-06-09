@@ -324,7 +324,7 @@ public class Interpreter implements
     public Object eval(WhileStatement statement) {
         Object result = NullValue.of();
 
-        while ((((BooleanValue) executeBlock(statement.getTest(), env)).isValue())) {
+        while (isTruthy(eval(statement.getTest()))) {
             result = executeBlock(statement.getBody(), env);
         }
         return result;
