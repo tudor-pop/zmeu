@@ -500,50 +500,31 @@ public class Parser {
         return left;
     }
 
-    /**
-     * Logical LOGICAL_OPERATOR Expressions: ||
-     * x || y
-     * AndExpression
-     * : AndExpression LOGICAL_OPERATOR OrExpression
-     * | EqualityExpression
-     * ;
-     */
+    // x || y
     private Expression OrExpression() {
         var expression = AndExpression();
         while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Logical_Or)) {
             var operator = eat();
-            Expression right = OrExpression();
+            Expression right = AndExpression();
             expression = LogicalExpression.of(operator.getValue().toString(), expression, right);
         }
         return expression;
     }
 
-    /**
-     * Logical LOGICAL_OPERATOR Expressions: &&
-     * x && y
-     * AndExpression
-     * : EqualityExpression LOGICAL_OPERATOR AndExpression
-     * | EqualityExpression
-     * ;
-     */
+    // x && y
     private Expression AndExpression() {
         var expression = EqualityExpression();
         while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Logical_And)) {
             var operator = eat();
-            Expression right = AndExpression();
+            Expression right = EqualityExpression();
             expression = LogicalExpression.of(operator.getValue(), expression, right);
         }
         return expression;
     }
 
     /**
-     * EQUALITY_OPERATOR: == !=
      * x == y
      * x != y
-     * EqualityExpression
-     * : RelationalExpression EQUALITY_OPERATOR EqualityExpression
-     * | RelationalExpression
-     * ;
      */
     private Expression EqualityExpression() {
         var expression = RelationalExpression();
@@ -556,7 +537,6 @@ public class Parser {
     }
 
     /**
-     * RELATIONAL_OPERATOR: >,>=,<=,<
      * x > y
      * x >= y
      * x < y

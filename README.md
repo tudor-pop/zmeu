@@ -40,8 +40,12 @@ IfStatement     → "if" "(" Expression ")" Statement
 Expression      → Assignment ;
 
 Assignment      → IDENTIFIER "=" Assignment
-                | Equality ;
-                 
+                | OrExpression ;
+
+OrExpression    → AndExpression ("or" AndExpression)*
+
+AndExpression   → Equality ("and" Equality)*               
+
 Equality        → Comparison ( ( "!=" | "==" ) Comparison )* ;  
 
 Comparison      → Term ( ( ">" | ">=" | "<" | "<=" ) Term )* ;  
