@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser.Expressions;
 
+import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,13 +10,13 @@ import lombok.EqualsAndHashCode;
 public class LogicalExpression extends Expression {
     private Expression left;
     private Expression right;
-    private String operator;
+    private TokenType operator;
 
     public LogicalExpression() {
         this.kind = NodeType.LogicalExpression;
     }
 
-    public LogicalExpression(Expression left, Expression right, String operator) {
+    public LogicalExpression(Expression left, Expression right, TokenType operator) {
         this();
         this.left = left;
         this.right = right;
@@ -23,7 +24,7 @@ public class LogicalExpression extends Expression {
     }
 
     public static Expression of(Object operator, Expression left, Expression right) {
-        return new LogicalExpression(left, right, operator.toString());
+        return new LogicalExpression(left, right, TokenType.toSymbol(operator.toString()));
     }
 
     @Override

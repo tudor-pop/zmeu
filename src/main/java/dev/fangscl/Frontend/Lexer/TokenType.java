@@ -23,9 +23,9 @@ public enum TokenType {
     RelationalOperator("<>="),
     Equality_Operator("=="),
     /***********   Keywords   ******************/
-    Logical_And("and"),
-    Logical_Or("or"),
-    Logical_Not("not"),
+    Logical_And("&&"),
+    Logical_Or("||"),
+    Logical_Not("!"),
     Schema("schema"),
     Return("return"),
     Init("init"),
@@ -150,7 +150,15 @@ public enum TokenType {
     }
 
     public static TokenType toSymbol(String token) {
-        return toSymbol(token.charAt(0));
+        if (token.length() > 1) {
+            return switch (token) {
+                case "||" -> Logical_Or;
+                case "&&" -> Logical_And;
+                default -> Logical_Not;
+            };
+        } else {
+            return toSymbol(token.charAt(0));
+        }
     }
 
     public static boolean isSymbol(char character) {

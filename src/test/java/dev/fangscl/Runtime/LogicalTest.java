@@ -1,157 +1,86 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Frontend.Parser.Expressions.LogicalExpression;
+import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
+import dev.fangscl.Frontend.Parser.Literals.NullLiteral;
+import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Program;
+import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
+import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
-import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@Log4j2
 public class LogicalTest extends BaseTest {
 
     @Test
-    void consequentLess() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 1
-                    var y = 2
-                    if (x < y){
-                        x = y 
-                    }
-                    x       
-                }
-                """)));
+    void trueOrTrue() {
+        // true || true -> true
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
+                BooleanLiteral.of(true), BooleanLiteral.of(true)))));
+        var expected = BooleanValue.of(true);
+        Assertions.assertEquals(expected, res);
+    }
+
+    @Test
+    void trueOrFalse() {
+        // true || false -> true
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
+                BooleanLiteral.of(true), BooleanLiteral.of(false)))));
+        var expected = BooleanValue.of(true);
+        Assertions.assertEquals(expected, res);
+    }
+
+    @Test
+    void falseOrTrue() {
+        // false || true -> true
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
+                BooleanLiteral.of(false), BooleanLiteral.of(true)))));
+        var expected = BooleanValue.of(true);
+        Assertions.assertEquals(expected, res);
+    }
+
+    @Test
+    void falseOrFalse() {
+        // false || true -> true
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
+                BooleanLiteral.of(false), BooleanLiteral.of(false)))));
+        var expected = BooleanValue.of(false);
+        Assertions.assertEquals(expected, res);
+    }
+
+    @Test
+    void falseAndTrue() {
+        // null && 2 -> null
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
+                NullLiteral.of(), NumericLiteral.of(2)))));
+        Assertions.assertEquals(null, res);
+    }
+
+    @Test
+    void trueAndFalse() {
+        // 2 && null -> null
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
+                NumericLiteral.of(2), NullLiteral.of()))));
+        Assertions.assertEquals(null, res);
+    }
+
+    @Test
+    void trueAndTrue() {
+        // 1 && 2 -> 2
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
+                NumericLiteral.of(1), NumericLiteral.of(2)))));
         var expected = IntegerValue.of(2);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
+        Assertions.assertEquals(expected, res);
     }
 
     @Test
-    void consequentLessEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 2
-                    var y = 2
-                    if (x <= y){
-                        x = y 
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(2);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
+    void falseAndFalse() {
+        // false && false -> false
+        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
+                BooleanLiteral.of(false), BooleanLiteral.of(false)))));
+        var expected = BooleanValue.of(false);
+        Assertions.assertEquals(expected, res);
     }
-
-    @Test
-    void consequentGreat() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 3
-                    var y = 2
-                    if (x > y){
-                        x = y 
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(2);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
-    }
-
-    @Test
-    void consequentGreatEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 2
-                    var y = 2
-                    if (x >= y){
-                        x = 3 
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(3);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
-    }
-
-    @Test
-    void alternateGreat() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 1
-                    var y = 2
-                    if (x > y){
-                        x = y 
-                    } else {
-                        x = 3
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(3);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
-    }
-
-    @Test
-    void alternateGreatEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 1
-                    var y = 2
-                    if (x >= y){
-                        x = y 
-                    } else {
-                        x = 3
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(3);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
-    }
-
-    @Test
-    void alternateEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 2
-                    var y = 1
-                    if (x <= y){
-                        x = y 
-                    } else {
-                        x = 3
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(3);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
-    }
-
-    @Test
-    void alternate() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                {
-                    var x = 2
-                    var y = 1
-                    if (x < y){
-                        x = y 
-                    } else {
-                        x = 3
-                    }
-                    x       
-                }
-                """)));
-        var expected = IntegerValue.of(3);
-        log.warn(toJson(res));
-        assertEquals(expected, res);
-    }
-
 
 }

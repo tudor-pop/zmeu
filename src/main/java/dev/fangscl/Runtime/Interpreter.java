@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
@@ -240,7 +241,30 @@ public class Interpreter implements
 
     @Override
     public Object eval(LogicalExpression expression) {
-        return null;
+        var left = eval(expression.getLeft());
+
+        if (expression.getOperator() == TokenType.Logical_Or) {
+            if (isTruthy(left)) {
+                return left;
+            }
+        } else  {
+            if (!isTruthy(left)) {
+                return left;
+            }
+        }
+
+        return eval(expression.getRight());
+    }
+
+    private boolean isTruthy(Object object) {
+        if (object == null) {
+            return false;
+        } else if (object instanceof Boolean b) {
+            return b;
+        } else if (object instanceof BooleanValue b) {
+            return b.isValue();
+        }
+        return true;
     }
 
     @Override

@@ -33,7 +33,7 @@ public class AstPrinter implements Visitor<String> {
 
     @Override
     public String eval(LogicalExpression expression) {
-        return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
+        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
     }
 
     @Override
