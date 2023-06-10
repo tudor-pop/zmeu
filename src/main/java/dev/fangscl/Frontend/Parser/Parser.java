@@ -118,6 +118,7 @@ public class Parser {
             return switch (lookAhead().getType()) {
                 case Fun -> FunctionDeclaration();
                 case Schema -> SchemaDeclaration();
+                case Resource -> ResourceDeclaration();
                 case Var -> VariableDeclarations();
                 default -> Statement();
             };
@@ -651,7 +652,6 @@ public class Parser {
             }
             case Identifier -> Identifier();
             case This -> ThisExpression();
-            case Resource -> ResourceExpression();
             case EOF -> null;
             default -> LeftHandSideExpression();
         };
@@ -667,7 +667,7 @@ public class Parser {
         return ThisExpression.of();
     }
 
-    private Expression ResourceExpression() {
+    private Statement ResourceDeclaration() {
         eat(TokenType.Resource);
         Identifier type = Identifier();
         Identifier name = null;

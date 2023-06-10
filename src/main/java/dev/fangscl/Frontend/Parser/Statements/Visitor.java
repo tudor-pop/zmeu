@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser.Statements;
 
+import dev.fangscl.Frontend.Parser.Expressions.ResourceExpression;
 import dev.fangscl.Frontend.Parser.Expressions.VariableDeclaration;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Program;
@@ -32,5 +33,11 @@ public interface Visitor<R> {
     R eval(VariableDeclaration statement);
 
     R eval(Identifier statement);
+
+    /**
+     * An instance of a Schema is an Environment!
+     * the 'parent' component of the instance environment is set to the class environment making class members accessible
+     */
+    R eval(ResourceExpression expression);
 
 }

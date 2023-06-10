@@ -33,12 +33,6 @@ public interface Visitor<R> {
 
     R eval(MemberExpression expression);
 
-    /**
-     * An instance of a Schema is an Environment!
-     * the 'parent' component of the instance environment is set to the class environment making class members accessible
-     */
-    R eval(ResourceExpression expression);
-
     R eval(ThisExpression expression);
 
     R eval(UnaryExpression expression);

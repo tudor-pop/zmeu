@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ResourceExpression extends Expression {
+public class ResourceExpression extends Statement {
     private Identifier type;
     @Nullable
     private Identifier name;
@@ -34,19 +34,13 @@ public class ResourceExpression extends Expression {
         this.block = block;
     }
 
-    public static Expression of(Identifier type, Identifier name, BlockExpression block) {
+    public static Statement of(Identifier type, Identifier name, BlockExpression block) {
         return new ResourceExpression(type, name, block);
     }
 
-    public static Expression of() {
+    public static Statement of() {
         return new ResourceExpression();
     }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
-
 
     public List<Statement> getArguments() {
         return block.getExpression();
@@ -54,5 +48,10 @@ public class ResourceExpression extends Expression {
 
     public String name() {
         return name.getSymbol();
+    }
+
+    @Override
+    public <R> R accept(dev.fangscl.Frontend.Parser.Statements.Visitor<R> visitor) {
+        return visitor.eval(this);
     }
 }

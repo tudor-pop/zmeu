@@ -42,11 +42,6 @@ public class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(ResourceExpression expression) {
-        return parenthesize("resource", expression.getName(), expression.getBlock());
-    }
-
-    @Override
     public String eval(ThisExpression expression) {
         return null;
     }

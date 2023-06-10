@@ -41,10 +41,10 @@ public class SyntaxPrinter implements Visitor<String> {
         return null;
     }
 
-    @Override
-    public String eval(ResourceExpression expression) {
-        return "resource " + expression.getName().accept(this) + expression.getBlock().accept(this);
-    }
+//    @Override
+//    public String eval(ResourceExpression expression) {
+//        return "resource " + expression.getName().accept(this) + expression.getBlock().accept(this);
+//    }
 
     @Override
     public String eval(ThisExpression expression) {
