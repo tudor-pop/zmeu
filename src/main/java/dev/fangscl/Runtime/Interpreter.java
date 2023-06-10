@@ -233,7 +233,7 @@ public class Interpreter implements
         var declared = (FunValue) function.getEnvironment()
                 .lookup(function.name(), "Function not declared: " + function.name());
 
-        if (args.size() != declared.getParams().size()) {
+        if (args.size() != declared.arity()) {
             throw new RuntimeException("Expected %s arguments but got %d: %s".formatted(function.getParams().size(), args.size(), function.getName()));
         }
 

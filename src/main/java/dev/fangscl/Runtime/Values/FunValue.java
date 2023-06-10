@@ -81,4 +81,10 @@ public class FunValue implements Callable {
     public Object call(Interpreter interpreter, List<Object> args) {
         return interpreter.Call(this, args);
     }
+
+    @Override
+    public int arity() {
+        return getParams().size();
+    }
+
 }
