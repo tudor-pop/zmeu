@@ -62,7 +62,11 @@ Term            → Factor ( ( "-" | "+" ) Factor )*
 Factor          → Unary ( ( "/" | "*" ) Unary )*   
 
 Unary           → ( "!" | "-" ) Unary  
-                | Primary   
+                | CallExpression
+
+CallExpression  → Primary ("(" Arguments? ")")*            
+
+Arguments       → Expression ("," Expression)*
                 
 Primary         → NUMBER | STRING | "true" | "false" | "nil"  
                 | "(" expression ")" 

@@ -5,8 +5,6 @@ import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Statements.*;
-import dev.fangscl.Frontend.Parser.errors.ParseError;
-import dev.fangscl.Frontend.visitors.AstPrinter;
 import dev.fangscl.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -606,12 +604,6 @@ public class Parser {
         return left;
     }
 
-    /**
-     * MultiplicativeExpression
-     * : UnaryExpression
-     * | MultiplicativeExpression MULTIPLICATIVE_OPERATOR UnaryExpression -> PrimaryExpression MULTIPLICATIVE_OPERATOR PrimaryExpression
-     * ;
-     */
     private Expression MultiplicativeExpression() {
         var left = UnaryExpression();
 
@@ -625,13 +617,6 @@ public class Parser {
         return left;
     }
 
-    /**
-     * UnaryExpression
-     * : LeftHandSideExpression
-     * | ADDITIVE_OPERATOR UnaryExpression
-     * | LOGICAL_NOT UnaryExpression
-     * ;
-     */
     private Expression UnaryExpression() {
         var operator = switch (lookAhead().getType()) {
             case Minus -> eat(TokenType.Minus);
@@ -647,19 +632,6 @@ public class Parser {
         return LeftHandSideExpression();
     }
 
-    private boolean match(String... strings) {
-        return iterator.hasNext() && lookAhead().is(strings);
-    }
-
-    /**
-     * PrimaryExpression
-     * : Literal
-     * | ParenthesizedExpression
-     * | Identifier
-     * | ThisExpression
-     * | ResourceExpression
-     * ;
-     */
     @Nullable
     private Expression PrimaryExpression() {
         if (lookAhead() == null) {
@@ -695,11 +667,6 @@ public class Parser {
         return ThisExpression.of();
     }
 
-    /**
-     * ResourceExpression
-     * : resource Identifier Identifier? BlockStatement
-     * ;
-     */
     private Expression ResourceExpression() {
         eat(TokenType.Resource);
         Identifier type = Identifier();
@@ -712,83 +679,47 @@ public class Parser {
         return ResourceExpression.of(type, name, (BlockExpression) body);
     }
 
-    /**
-     * LeftHandSideExpression
-     * : CallExpression
-     * ;
-     */
     private Expression LeftHandSideExpression() {
         return CallMemberExpression();
     }
 
-    /**
-     * CallMemberExpression
-     * : MemberExpression
-     * | CallExpression
-     * ;
-     * bird.fly()
-     */
+    // bird.fly()
     private Expression CallMemberExpression() {
-        var funBeingCalled = MemberExpression(); // .fly
-        if (IsLookAhead(TokenType.OpenParenthesis)) { // fly(
-            return CallExpression(funBeingCalled);
+        var primaryIdentifier = MemberExpression(); // .fly
+        while (true) {
+            if (IsLookAhead(TokenType.OpenParenthesis)) { // fly(
+                primaryIdentifier = CallExpression.of(primaryIdentifier, Arguments());
+            } else {
+                break;
+            }
         }
-        return funBeingCalled;
+        return primaryIdentifier;
     }
 
-    /**
-     * CallExpression
-     * : Callee Arguments
-     * ;
-     * Callee
-     * : MemberExpression
-     * | CallExpression
-     * ;
-     */
-    private Expression CallExpression(Expression member) {
-        var res = CallExpression.of(member, Arguments()); // fly()
-        if (IsLookAhead(TokenType.OpenParenthesis)) { // fly()()
-            res = CallExpression(res);
-        }
-        return res;
-    }
-
-    /**
-     * Arguments
-     * : ( Arguments* )
-     * ;
-     */
     private List<Expression> Arguments() {
-        eat(TokenType.OpenParenthesis);
-        var list = IsLookAhead(TokenType.CloseParenthesis)
-                ? Collections.<Expression>emptyList()
-                : ArgumentList();
-        eat(TokenType.CloseParenthesis);
+        eat(TokenType.OpenParenthesis, "Expect '(' before arguments.");
+        var list = ArgumentList();
+        eat(TokenType.CloseParenthesis, "Expect ')' after arguments.");
         return list;
     }
 
-    /**
-     * ArgumentList
-     * : Expression
-     * | ArgumentList , Expression
-     * ;
-     * Expression because the argument list could be a Lambda that needs to be evaluated
-     */
     private List<Expression> ArgumentList() {
+        if (IsLookAhead(TokenType.CloseParenthesis)) return Collections.emptyList();
+
         var arguments = new ArrayList<Expression>();
         do {
+            if (arguments.size() >= 128) {
+                throw Error(lookAhead(), "Can't have more than 128 arguments");
+            }
             arguments.add(Expression());
-        } while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
+        } while (match(TokenType.Comma) && eat(TokenType.Comma, "Expect ',' after argument: " + iterator.getCurrent().getRaw()) != null);
 
         return arguments;
     }
 
     /**
-     * MemberExpression
-     * : PrimaryExpression
-     * | MemberExpression . MemberExpression
-     * | MemberExpression [ Expression ]
-     * ;
+     * a.Expression
+     * a[ Expression ]
      */
     private Expression MemberExpression() {
         var object = PrimaryExpression();
@@ -820,21 +751,11 @@ public class Parser {
         return Identifier();
     }
 
-    /**
-     * Identifier
-     * : IDENTIFIER
-     * ;
-     */
     private Identifier Identifier() {
         var id = eat(TokenType.Identifier);
         return new Identifier(id.getValue());
     }
 
-    /**
-     * ParenthesizedExpression
-     * : ( Expression )
-     * ;
-     */
     private Expression ParenthesizedExpression() {
         if (IsLookAheadAfter(TokenType.CloseParenthesis, TokenType.Lambda)) {
             return LambdaExpression();
@@ -849,14 +770,6 @@ public class Parser {
         return res;
     }
 
-    /**
-     * Literal
-     * : NumericLiteral
-     * | BooleanLiteral
-     * | StringLiteral
-     * | NullLiteral
-     * ;
-     */
     private Expression Literal() {
         Token current = iterator.getCurrent();
         return switch (current.getType()) {
@@ -868,12 +781,6 @@ public class Parser {
         };
     }
 
-    /**
-     * BooleanLiteral
-     * : true
-     * | false
-     * ;
-     */
     private Expression BooleanLiteral() {
 //        var literal = eat();
         return BooleanLiteral.of(iterator.getCurrent().getValue());
@@ -902,4 +809,13 @@ public class Parser {
     private boolean IsLookAhead(TokenType... type) {
         return iterator.IsLookAhead(type);
     }
+
+    private boolean match(String... strings) {
+        return iterator.hasNext() && lookAhead().is(strings);
+    }
+
+    private boolean match(TokenType... strings) {
+        return iterator.hasNext() && IsLookAhead(strings);
+    }
+
 }
