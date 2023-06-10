@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.Expressions.*;
@@ -206,15 +207,17 @@ public class Interpreter implements
 
     @Override
     public Object eval(CallExpression<Expression> expression) {
-        var function = (Callable) executeBlock(expression.getCallee(), env);
+        var callee = executeBlock(expression.getCallee(), env);
+        if (callee instanceof Callable function) {
+            List<Expression> arguments = expression.getArguments();
+            var args = new ArrayList<>(arguments.size());
+            for (Expression it : arguments) {
+                args.add(executeBlock(it, env));
+            }
 
-        List<Expression> arguments = expression.getArguments();
-        var args = new ArrayList<>(arguments.size());
-        for (Expression it : arguments) {
-            args.add(executeBlock(it, env));
+            return function.call(this, args);
         }
-
-        return function.call(this, args);
+        throw new RuntimeError(new Token(expression.getCallee(), TokenType.Fun), "Can only call functions and classes.");
     }
 
     public Object Call(FunValue function, List<Object> args) {
