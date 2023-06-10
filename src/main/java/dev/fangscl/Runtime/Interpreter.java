@@ -204,13 +204,13 @@ public class Interpreter implements
 
     @Override
     public Object eval(CallExpression<Expression> expression) {
-        Object eval = executeBlock(expression.getCallee(), env);
-        FunValue function = (FunValue) eval;
+        var function = (FunValue) executeBlock(expression.getCallee(), env);
 
-        var args = expression.getArguments()
-                .stream()
-                .map(it -> executeBlock(it, env))
-                .toList();
+        List<Expression> arguments = expression.getArguments();
+        var args = new ArrayList<>(arguments.size());
+        for (Expression it : arguments) {
+            args.add(executeBlock(it, env));
+        }
 
         if (function.name() == null) { // execute lambda
             return lambdaCall(function, args);
@@ -224,6 +224,9 @@ public class Interpreter implements
         var declared = (FunValue) function.getEnvironment()
                 .lookup(function.name(), "Function not declared: " + function.name());
 
+        if (args.size() != declared.getParams().size()) {
+            throw new RuntimeException("Expected %s arguments but got %d: %s".formatted(function.getParams().size(), args.size(), function.getName()));
+        }
 
         var environment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
         return executeBlock(declared.getBody(), environment);

@@ -20,7 +20,7 @@ public class FunTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        FunValue res = (FunValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (FunValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(){
                     var x = 1
                 }
