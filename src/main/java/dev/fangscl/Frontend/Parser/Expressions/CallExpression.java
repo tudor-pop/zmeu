@@ -11,11 +11,6 @@ import lombok.EqualsAndHashCode;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * AssignmentExpression
- * : AdditiveExpression
- * | LeftHandSideExpression AssignmentOperator AssignmentExpression
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder

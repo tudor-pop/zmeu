@@ -6,6 +6,7 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
+import dev.fangscl.Runtime.Functions.DateFunction;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.InvalidInitException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -38,6 +39,7 @@ public class Interpreter implements
         this.env.init("null", NullValue.of());
         this.env.init("true", BooleanValue.of(true));
         this.env.init("false", BooleanValue.of(false));
+        this.env.init("date", new DateFunction());
     }
 
     @Override
@@ -204,7 +206,7 @@ public class Interpreter implements
 
     @Override
     public Object eval(CallExpression<Expression> expression) {
-        var function = (FunValue) executeBlock(expression.getCallee(), env);
+        var function = (Callable) executeBlock(expression.getCallee(), env);
 
         List<Expression> arguments = expression.getArguments();
         var args = new ArrayList<>(arguments.size());
@@ -212,6 +214,10 @@ public class Interpreter implements
             args.add(executeBlock(it, env));
         }
 
+        return function.call(this, args);
+    }
+
+    public Object Call(FunValue function, List<Object> args) {
         if (function.name() == null) { // execute lambda
             return lambdaCall(function, args);
         }

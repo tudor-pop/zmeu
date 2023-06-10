@@ -6,7 +6,9 @@ import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
+import dev.fangscl.Runtime.Callable;
 import dev.fangscl.Runtime.Environment;
+import dev.fangscl.Runtime.Interpreter;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public class FunValue {
+public class FunValue implements Callable {
     @JsonBackReference
     private Environment environment;
     private Identifier name;
@@ -73,5 +75,10 @@ public class FunValue {
     public String name() {
         if (name == null) return null ;
         else return name.getSymbol();
+    }
+
+    @Override
+    public Object call(Interpreter interpreter, List<Object> args) {
+        return interpreter.Call(this, args);
     }
 }
