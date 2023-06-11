@@ -12,14 +12,8 @@ public class IntFunction implements Callable {
         Object arg = args.get(0);
         if (arg instanceof String s) {
             return Integer.parseInt(s);
-        } else if (arg instanceof Double d) {
+        } else if (arg instanceof Number d) {
             return d.intValue();
-        } else if (arg instanceof Float d) {
-            return d.intValue();
-        } else if (arg instanceof Integer d) {
-            return d;
-        } else if (arg instanceof Long d) {
-            return d;
         }
         throw new RuntimeException("Argument '%s' can't be converted to int".formatted(arg));
     }
