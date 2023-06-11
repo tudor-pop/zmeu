@@ -26,6 +26,9 @@ Program        → Declaration* EOF
 Declaration     → VarDeclaration
                 | Statement 
                 | FunDeclaration
+                | TypeDeclaration
+
+TypeDeclaration → "schema" Identifier "{" BlockExpression "}"
                
 FunDeclaration  → "fun" Identifier "(" Parameters? ")" BlockExpression
 

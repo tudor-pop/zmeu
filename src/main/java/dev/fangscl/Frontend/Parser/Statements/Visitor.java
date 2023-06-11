@@ -28,7 +28,7 @@ public interface Visitor<R> {
 
     R eval(ForStatement statement);
 
-    R eval(SchemaDeclaration statement);
+    R eval(TypeDeclaration statement);
 
     R eval(VariableDeclaration statement);
 

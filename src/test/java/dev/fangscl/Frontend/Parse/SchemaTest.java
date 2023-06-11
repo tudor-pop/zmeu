@@ -27,7 +27,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                SchemaDeclaration.of(Identifier.of("square"),
+                TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)))
                         )
@@ -47,7 +47,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                SchemaDeclaration.of(Identifier.of("square"),
+                TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
                                 FunctionDeclaration.of(Identifier.of("test"), Collections.emptyList(), BlockExpression.of())
                         )
@@ -67,7 +67,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                SchemaDeclaration.of(Identifier.of("square"),
+                TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
                                 InitStatement.of(Collections.emptyList(), BlockExpression.of())
                         )
@@ -88,7 +88,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """));
         var expected = Program.of(
-                SchemaDeclaration.of(Identifier.of("square"),
+                TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
                                 InitStatement.of(List.of(Identifier.of("x")),
                                         BlockExpression.of(

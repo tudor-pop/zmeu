@@ -26,7 +26,7 @@ public enum TokenType {
     Logical_And("&&"),
     Logical_Or("||"),
     Logical_Not("!"),
-    Schema("schema"),
+    Type("type"),
     Return("return"),
     Init("init"),
     For("for"),
@@ -179,7 +179,7 @@ public enum TokenType {
             case "null" -> Null;
             case "and" -> Logical_And;
             case "or" -> Logical_Or;
-            case "schema" -> Schema;
+            case "schema" -> Type;
             case "return" -> Return;
             case "fun" -> Fun;
             case "readonly" -> ReadOnly;

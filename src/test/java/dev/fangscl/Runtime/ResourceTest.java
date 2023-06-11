@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.ResourceValue;
-import dev.fangscl.Runtime.Values.SchemaValue;
+import dev.fangscl.Runtime.Values.TypeValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -21,7 +21,7 @@ public class ResourceTest extends BaseTest {
     void newResourceThrowsIfNoNameIsSpecified() {
         Assertions.assertThrows(RuntimeException.class, () -> {
             interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                    schema Vm { }
+                    type Vm { }
                     resource Vm {
                         
                     }
@@ -32,39 +32,38 @@ public class ResourceTest extends BaseTest {
     /**
      * This checks for the following syntax
      * Vm.main
-     * All resources are defined in the schema
+     * All resources are defined in the type
      * global env{
      *     Vm : SchemaValue -> variables{ main -> resource Vm}
      * }
      */
     @Test
      void resourceIsDefinedInSchemaEnv() {
-        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm { }
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm { }
                 resource Vm main {
                     
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue schema = (SchemaValue) global.get("Vm");
+        var type = (TypeValue) global.get("Vm");
 
-        assertNotNull(schema);
-        assertEquals(Identifier.of("Vm"), schema.getName());
+        assertNotNull(type);
+        assertEquals(Identifier.of("Vm"), type.getName());
 
 
-        String main = "main";
-        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+        ResourceValue resource = (ResourceValue) type.getEnvironment().get("main");
 
         assertNotNull(resource);
-        assertEquals(Identifier.of(main), resource.getName());
+        assertEquals(Identifier.of("main"), resource.getName());
     }
 
     @Test
-    @DisplayName("throw if a resource uses a field not defined in the schema")
+    @DisplayName("throw if a resource uses a field not defined in the type")
     void resourceThrowsIfFieldNotDefinedInSchema() {
         assertThrows(NotFoundException.class, () -> {
             interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                    schema Vm {
+                    type Vm {
                     }
                                     
                     resource Vm main {
@@ -77,8 +76,8 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInheritsDefaultSchemaValue() {
-        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                    var x = 2
                 }
                                 
@@ -87,10 +86,9 @@ public class ResourceTest extends BaseTest {
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue schema = (SchemaValue) global.get("Vm");
+        var type = (TypeValue) global.get("Vm");
 
-        String main = "main";
-        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+        var resource = (ResourceValue) type.getEnvironment().get("main");
 
         assertEquals(2, resource.getEnvironment().lookup("x"));
     }
@@ -98,7 +96,7 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceMemberAccess() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+                type Vm {
                    var x = 2
                 }
                                 
@@ -110,9 +108,9 @@ public class ResourceTest extends BaseTest {
                 z
                 """)));
         log.warn(toJson(res));
-        SchemaValue schema = (SchemaValue) global.get("Vm");
+        var type = (TypeValue) global.get("Vm");
 
-        var resource = (ResourceValue) schema.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getEnvironment().get("main");
         assertSame(2, resource.getEnvironment().get("x"));
         // make sure main's x has been changed
         assertEquals(2, resource.getEnvironment().get("x"));
@@ -122,20 +120,20 @@ public class ResourceTest extends BaseTest {
         assertSame(y, resource);
         // assert y holds reference to Vm.main
         var z = global.lookup("z");
-        assertSame(z, schema.getEnvironment().get("x"));
+        assertSame(z, type.getEnvironment().get("x"));
 
         assertEquals(2, res);
     }
 
     /**
      * Change a value in the resource instance works
-     * It should not change the schema default values
+     * It should not change the type default values
      * It should only change the member of the resource
      */
     @Test
     void resourceSetMemberAccess() {
-        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                    var x = 2
                 }
                                 
@@ -145,13 +143,12 @@ public class ResourceTest extends BaseTest {
                 Vm.main.x = 3
                 """)));
         log.warn(toJson(res));
-        SchemaValue schema = (SchemaValue) global.get("Vm");
+        var type = (TypeValue) global.get("Vm");
 
-        String main = "main";
-        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+        var resource = (ResourceValue) type.getEnvironment().get("main");
 
-        // default x in schema remains the same
-        assertEquals(2, schema.getEnvironment().get("x"));
+        // default x in type remains the same
+        assertEquals(2, type.getEnvironment().get("x"));
 
         // x of main resource was updated with a new value
         var x = resource.get("x");
@@ -161,8 +158,8 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInit() {
-        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                    var x = 2
                 }
                                 
@@ -171,13 +168,12 @@ public class ResourceTest extends BaseTest {
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue schema = (SchemaValue) global.get("Vm");
+        var type = (TypeValue) global.get("Vm");
 
-        String main = "main";
-        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+        var resource = (ResourceValue) type.getEnvironment().get("main");
 
-        // default x in schema remains the same
-        assertEquals(2, schema.getEnvironment().get("x"));
+        // default x in type remains the same
+        assertEquals(2, type.getEnvironment().get("x"));
 
         // x of main resource was updated with a new value
         var x = resource.get("x");
@@ -186,8 +182,8 @@ public class ResourceTest extends BaseTest {
     @SneakyThrows
     @Test
     void resourceInitJson() {
-        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                    var x = 2
                 }
                                 
@@ -196,10 +192,9 @@ public class ResourceTest extends BaseTest {
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue schema = (SchemaValue) global.get("Vm");
+        var type = (TypeValue) global.get("Vm");
 
-        String main = "main";
-        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
+        var resource = (ResourceValue) type.getEnvironment().get("main");
 
         var mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
         log.warn(mapper.writeValueAsString(resource.asData()));

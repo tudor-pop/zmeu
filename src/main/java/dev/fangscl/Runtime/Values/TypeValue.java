@@ -9,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class SchemaValue implements IEnvironment {
+public class TypeValue implements IEnvironment {
     private Environment environment;
     private Identifier name;
     private BlockExpression body;
 
-    private SchemaValue(Identifier name, BlockExpression body, Environment environment) {
+    private TypeValue(Identifier name, BlockExpression body, Environment environment) {
         this.name = name;
         this.body = body;
         this.environment = environment;
@@ -24,8 +24,8 @@ public class SchemaValue implements IEnvironment {
         return name;
     }
 
-    public static SchemaValue of(Identifier name, BlockExpression body, Environment environment) {
-        return new SchemaValue(name, body, environment);
+    public static TypeValue of(Identifier name, BlockExpression body, Environment environment) {
+        return new TypeValue(name, body, environment);
     }
 
     public String getNameString() {

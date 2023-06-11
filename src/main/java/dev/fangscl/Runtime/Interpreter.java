@@ -306,22 +306,22 @@ public class Interpreter implements
         if (expression.getName() == null) {
             throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
         }
-        var schemaValueTmp = executeBlock(expression.getType(), env);
-        var schemaValue = (SchemaValue) schemaValueTmp;
+        var typeValueTmp = executeBlock(expression.getType(), env);
+        var typeValue = (TypeValue) typeValueTmp;
 
-        Environment schemaEnvironment = Optional.ofNullable(schemaValue.getEnvironment()).orElse(env);
-        var resourceEnv = Environment.copyOf(schemaEnvironment);
+        Environment typeEnvironment = Optional.ofNullable(typeValue.getEnvironment()).orElse(env);
+        Environment resourceEnv = Environment.copyOf(typeEnvironment);
         try {
             var args = new ArrayList<>();
             for (Statement it : expression.getArguments()) {
                 Object objectRuntimeValue = executeBlock(it, resourceEnv);
                 args.add(objectRuntimeValue);
             }
-            var init = schemaValue.getMethodOrNull("init");
+            var init = typeValue.getMethodOrNull("init");
             if (init != null) {
                 functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
             }
-            return schemaEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
+            return typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
         } catch (NotFoundException e) {
             throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
         }
@@ -363,16 +363,16 @@ public class Interpreter implements
     }
 
     @Override
-    public Object eval(SchemaDeclaration expression) {
+    public Object eval(TypeDeclaration expression) {
         var name = expression.getName();
-        var schemaEnv = new Environment(env);
+        var typeEnv = new Environment(env);
 
         Statement body = expression.getBody();
         if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
-            executeBlock(blockExpression.getExpression(), schemaEnv); // install properties/methods of a schema into the environment
-            return env.init(name.getSymbol(), SchemaValue.of(name, blockExpression, schemaEnv)); // install the schema into the global env
+            executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
+            return env.init(name.getSymbol(), TypeValue.of(name, blockExpression, typeEnv)); // install the type into the global env
         }
-        throw new RuntimeException("Invalid schema");
+        throw new RuntimeException("Invalid type");
     }
 
     @Override

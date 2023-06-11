@@ -117,7 +117,7 @@ public class Parser {
         try {
             return switch (lookAhead().getType()) {
                 case Fun -> FunctionDeclaration();
-                case Schema -> SchemaDeclaration();
+                case Type -> TypeDeclaration();
                 case Resource -> ResourceDeclaration();
                 case Var -> VariableDeclarations();
                 default -> Statement();
@@ -383,12 +383,12 @@ public class Parser {
      * : schema Identifier BlockStatement
      * ;
      */
-    private Statement SchemaDeclaration() {
-        eat(TokenType.Schema);
+    private Statement TypeDeclaration() {
+        eat(TokenType.Type);
         var test = Identifier();
 
         Statement body = ExpressionStatement.of(BlockExpression());
-        return SchemaDeclaration.of(test, body);
+        return TypeDeclaration.of(test, body);
     }
 
     /**

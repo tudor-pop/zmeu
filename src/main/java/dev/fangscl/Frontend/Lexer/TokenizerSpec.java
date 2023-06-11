@@ -68,7 +68,7 @@ class TokenizerSpec {
             new Entry("^\\bnull\\b", TokenType.Null),
             new Entry("^\\bfun\\b", TokenType.Fun),
             new Entry("^\\breturn\\b", TokenType.Return),
-            new Entry("^\\bschema\\b", TokenType.Schema),
+            new Entry("^\\btype\\b", TokenType.Type),
             new Entry("^\\binit\\b", TokenType.Init),
             new Entry("^\\bthis\\b", TokenType.This),
             new Entry("^\\bresource\\b", TokenType.Resource),

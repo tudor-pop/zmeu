@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class LiteralTest extends BaseTest {
     @Test
     void literal() {
-        var res = (Double) interpreter.eval(10.0);
+        var res = interpreter.eval(10.0);
         Assertions.assertEquals(10.0, res);
     }
 

@@ -11,80 +11,80 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Log4j2
-public class SchemaTest extends BaseTest {
+public class TypeTest extends BaseTest {
 
     @Test
-    void schemaDeclaration() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+    void typeDeclaration() {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals(Identifier.of("Vm"), actual.getName());
     }
 
     @Test
-    void schemaDeclarationWithFunction() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+    void typeDeclarationWithFunction() {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     fun test(){
                     
                     }
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals(FunValue.of("test", actual.getEnvironment()), actual.getEnvironment().lookup("test"));
     }
 
     @Test
-    void schemaDeclarationWithVariable() {
-        Identifier res = (Identifier) interpreter.eval
+    void typeDeclarationWithVariable() {
+        var res = (Identifier) interpreter.eval
                 (parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+                type Vm {
                     var x
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertNull(actual.getEnvironment().get("x"));
     }
 
     @Test
-    void schemaDeclarationWithVariableInit() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+    void typeDeclarationWithVariableInit() {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     var x=20.2
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals(20.2, actual.getEnvironment().get("x"));
     }
 
     @Test
-    void schemaDeclarationWithVariableInitString() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+    void typeDeclarationWithVariableInitString() {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     var x="hello"
                 }
                 """)));
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals("hello", actual.getEnvironment().get("x"));
     }
 
     @Test
     void initDeclaration() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     init(){
                        
                     }
@@ -92,14 +92,14 @@ public class SchemaTest extends BaseTest {
                 """)));
 
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals(FunValue.of("init", actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
     @Test
     void initDeclarationWithParams() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     init(x){
                        
                     }
@@ -107,21 +107,21 @@ public class SchemaTest extends BaseTest {
                 """)));
 
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
 
     @Test
     void initDeclarationWithParamsAssignment() {
-        Identifier res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                schema Vm {
+        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm {
                     var x = 1;
                 }
                 """)));
 
         log.warn(toJson(res));
-        SchemaValue actual = (SchemaValue) global.get("Vm");
+        var actual = (TypeValue) global.get("Vm");
 
         assertEquals(res, actual);
     }

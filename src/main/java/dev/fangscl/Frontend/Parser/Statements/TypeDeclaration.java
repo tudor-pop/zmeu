@@ -9,56 +9,52 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * SchemaDeclaration
- * : schema Identifier BlockStatement
- * ;
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SchemaDeclaration extends Statement {
+public class TypeDeclaration extends Statement {
     private Identifier name;
     private Statement body;
 
-    public SchemaDeclaration(Identifier name, @Nullable Statement body) {
+    public TypeDeclaration(Identifier name, @Nullable Statement body) {
         this();
         this.name = name;
         this.body = body;
     }
-    public SchemaDeclaration(Identifier name, @Nullable Expression body) {
-        this(name,ExpressionStatement.of(body));
+
+    public TypeDeclaration(Identifier name, @Nullable Expression body) {
+        this(name, ExpressionStatement.of(body));
     }
 
-    public SchemaDeclaration() {
+    public TypeDeclaration() {
         this.kind = NodeType.SchemaDeclaration;
     }
 
     public static Statement of(Identifier test, Expression body) {
-        return new SchemaDeclaration(test, body);
+        return new TypeDeclaration(test, body);
     }
 
     public static Statement of(Identifier test, Statement body) {
-        return new SchemaDeclaration(test, body);
+        return new TypeDeclaration(test, body);
     }
 
     public static Statement of(Identifier test, int value) {
-        return new SchemaDeclaration(test, NumericLiteral.of(value));
+        return new TypeDeclaration(test, NumericLiteral.of(value));
     }
 
     public static Statement of(Identifier test, double value) {
-        return new SchemaDeclaration(test, NumericLiteral.of(value));
+        return new TypeDeclaration(test, NumericLiteral.of(value));
     }
 
     public static Statement of() {
-        return new SchemaDeclaration();
+        return new TypeDeclaration();
     }
 
     public static Statement of(Identifier test, float value) {
-        return new SchemaDeclaration(test, NumericLiteral.of(value));
+        return new TypeDeclaration(test, NumericLiteral.of(value));
     }
 
     public static Statement of(Identifier test, String value) {
-        return new SchemaDeclaration(test, StringLiteral.of(value));
+        return new TypeDeclaration(test, StringLiteral.of(value));
     }
 
     @Override
