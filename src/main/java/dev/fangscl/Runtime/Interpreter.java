@@ -46,6 +46,7 @@ public class Interpreter implements
         this.env.init("max", new MaxFunction());
         this.env.init("ceil", new CeilFunction());
         this.env.init("floor", new FloorFunction());
+        this.env.init("abs", new AbsFunction());
         this.env.init("date", new DateFunction());
     }
 
