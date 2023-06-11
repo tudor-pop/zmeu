@@ -425,15 +425,10 @@ public class Parser {
         return params;
     }
 
-    /**
-     * ReturnStatement
-     * : return OptExpression \n
-     * ;
-     */
     private Statement ReturnStatement() {
         eat(TokenType.Return);
         var arg = OptExpression();
-        eat(TokenType.lineTerminator());
+        iterator.eatLineTerminator();
         return ReturnStatement.of(arg);
     }
 
