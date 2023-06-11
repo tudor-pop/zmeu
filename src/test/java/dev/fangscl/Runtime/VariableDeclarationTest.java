@@ -1,6 +1,6 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.BooleanValue;
+import com.sun.jdi.BooleanValue;
 import dev.fangscl.Runtime.Values.DecimalValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
@@ -40,9 +40,8 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varBool() {
-        BooleanValue res = (BooleanValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = true")));
-        var expected = BooleanValue.of(true);
-        assertEquals(expected.getRuntimeValue(), res.getRuntimeValue());
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = true")));
+        assertTrue(res);
         log.info(toJson(res));
     }
 
@@ -82,7 +81,7 @@ public class VariableDeclarationTest extends BaseTest {
     @Test
     void varExpressionBoolean() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==2")));
-        var expected = BooleanValue.of(true);
+        var expected = true;
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -90,7 +89,7 @@ public class VariableDeclarationTest extends BaseTest {
     @Test
     void varExpressionBooleanFalse() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==1")));
-        var expected = BooleanValue.of(false);
+        var expected = false;
         assertEquals(expected, res);
         log.info(toJson(res));
     }

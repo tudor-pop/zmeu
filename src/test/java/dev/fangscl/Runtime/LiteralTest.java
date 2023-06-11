@@ -41,14 +41,14 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void boolFalse() {
-        var evalRes = (BooleanValue)interpreter.eval(false);
-        Assertions.assertFalse(evalRes.getRuntimeValue());
+        var evalRes = (Boolean)interpreter.eval(false);
+        Assertions.assertFalse(evalRes);
     }
 
     @Test
     void boolTrue() {
-        var evalRes = (BooleanValue)interpreter.eval(true);
-        Assertions.assertTrue(evalRes.getRuntimeValue());
+        var evalRes = (Boolean)interpreter.eval(true);
+        Assertions.assertTrue(evalRes);
     }
 
     @Test

@@ -1,12 +1,12 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.DecimalValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Log4j2
 public class UnaryTest extends BaseTest {
@@ -89,15 +89,14 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void notFalse() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = false
                     !x 
                 }
                 """)));
-        var expected = BooleanValue.of(true);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertTrue(res);
     }
 
     @Test
@@ -108,7 +107,7 @@ public class UnaryTest extends BaseTest {
                     !x 
                 }
                 """)));
-        var expected = BooleanValue.of(false);
+        var expected = false;
         log.warn(toJson(res));
         assertEquals(expected, res);
     }

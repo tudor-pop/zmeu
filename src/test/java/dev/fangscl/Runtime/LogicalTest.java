@@ -6,7 +6,6 @@ import dev.fangscl.Frontend.Parser.Literals.NullLiteral;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
-import dev.fangscl.Runtime.Values.BooleanValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ public class LogicalTest extends BaseTest {
         // true || true -> true
         var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
                 BooleanLiteral.of(true), BooleanLiteral.of(true)))));
-        var expected = BooleanValue.of(true);
+        var expected = true;
         Assertions.assertEquals(expected, res);
     }
 
@@ -27,7 +26,7 @@ public class LogicalTest extends BaseTest {
         // true || false -> true
         var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
                 BooleanLiteral.of(true), BooleanLiteral.of(false)))));
-        var expected = BooleanValue.of(true);
+        var expected = true;
         Assertions.assertEquals(expected, res);
     }
 
@@ -36,7 +35,7 @@ public class LogicalTest extends BaseTest {
         // false || true -> true
         var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
                 BooleanLiteral.of(false), BooleanLiteral.of(true)))));
-        var expected = BooleanValue.of(true);
+        var expected = true;
         Assertions.assertEquals(expected, res);
     }
 
@@ -45,7 +44,7 @@ public class LogicalTest extends BaseTest {
         // false || true -> true
         var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
                 BooleanLiteral.of(false), BooleanLiteral.of(false)))));
-        var expected = BooleanValue.of(false);
+        var expected = false;
         Assertions.assertEquals(expected, res);
     }
 
@@ -79,7 +78,7 @@ public class LogicalTest extends BaseTest {
         // false && false -> false
         var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
                 BooleanLiteral.of(false), BooleanLiteral.of(false)))));
-        var expected = BooleanValue.of(false);
+        var expected = false;
         Assertions.assertEquals(expected, res);
     }
 

@@ -43,8 +43,8 @@ public class Interpreter implements
     public void set(Environment environment) {
         this.env = environment;
         this.env.init("null", NullValue.of());
-        this.env.init("true", BooleanValue.of(true));
-        this.env.init("false", BooleanValue.of(false));
+        this.env.init("true", true);
+        this.env.init("false", false);
 
         // casting
         this.env.init("int", new IntCastFunction());
@@ -59,7 +59,6 @@ public class Interpreter implements
         this.env.init("ceil", new CeilFunction());
         this.env.init("floor", new FloorFunction());
         this.env.init("abs", new AbsFunction());
-
         this.env.init("date", new DateFunction());
     }
 
@@ -70,7 +69,7 @@ public class Interpreter implements
 
     @Override
     public Object eval(boolean expression) {
-        return BooleanValue.of(expression);
+        return expression;
     }
 
     @Override
@@ -104,7 +103,7 @@ public class Interpreter implements
 
     @Override
     public Object eval(BooleanLiteral expression) {
-        return BooleanValue.of(expression);
+        return expression.isValue();
     }
 
     @Override
@@ -165,11 +164,11 @@ public class Interpreter implements
                     case "/" -> IntegerValue.of(lhsn.getValue() / rhsn.getValue());
                     case "*" -> IntegerValue.of(lhsn.getValue() * rhsn.getValue());
                     case "%" -> IntegerValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> BooleanValue.of(lhsn.getValue() == rhsn.getValue());
-                    case "<" -> BooleanValue.of(lhsn.getValue() < rhsn.getValue());
-                    case "<=" -> BooleanValue.of(lhsn.getValue() <= rhsn.getValue());
-                    case ">" -> BooleanValue.of(lhsn.getValue() > rhsn.getValue());
-                    case ">=" -> BooleanValue.of(lhsn.getValue() >= rhsn.getValue());
+                    case "==" -> lhsn.getValue() == rhsn.getValue();
+                    case "<" -> lhsn.getValue() < rhsn.getValue();
+                    case "<=" -> lhsn.getValue() <= rhsn.getValue();
+                    case ">" -> lhsn.getValue() > rhsn.getValue();
+                    case ">=" -> lhsn.getValue() >= rhsn.getValue();
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             } else if (lhs instanceof DecimalValue lhsn && rhs instanceof DecimalValue rhsn) {
@@ -179,13 +178,11 @@ public class Interpreter implements
                     case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
                     case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
                     case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
-                    case "<" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0);
-                    case "<=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 ||
-                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
-                    case ">" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0);
-                    case ">=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 ||
-                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case "==" -> Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case "<" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0;
+                    case "<=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case ">" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0;
+                    case ">=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             } else if (lhs instanceof DecimalValue lhsn && rhs instanceof IntegerValue rhsn) {
@@ -195,13 +192,11 @@ public class Interpreter implements
                     case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
                     case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
                     case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
-                    case "<" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0);
-                    case "<=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 ||
-                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
-                    case ">" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0);
-                    case ">=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 ||
-                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case "==" -> Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case "<" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0;
+                    case "<=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case ">" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0;
+                    case ">=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             } else if (lhs instanceof IntegerValue lhsn && rhs instanceof DecimalValue rhsn) {
@@ -211,13 +206,11 @@ public class Interpreter implements
                     case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
                     case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
                     case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
-                    case "<" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0);
-                    case "<=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 ||
-                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
-                    case ">" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0);
-                    case ">=" -> BooleanValue.of(Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 ||
-                                                 Double.compare(lhsn.getValue(), rhsn.getValue()) == 0);
+                    case "==" -> Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case "<" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0;
+                    case "<=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case ">" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0;
+                    case ">=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             }
@@ -293,8 +286,6 @@ public class Interpreter implements
             return false;
         } else if (object instanceof Boolean b) {
             return b;
-        } else if (object instanceof BooleanValue b) {
-            return b.isValue();
         }
         return true;
     }
@@ -344,8 +335,8 @@ public class Interpreter implements
 
     @Override
     public Object eval(IfStatement statement) {
-        var eval = (BooleanValue) executeBlock(statement.getTest(), env);
-        if (eval.isValue()) {
+        var eval = (Boolean) executeBlock(statement.getTest(), env);
+        if (eval) {
             return executeBlock(statement.getConsequent(), env);
         } else {
             return executeBlock(statement.getAlternate(), env);
@@ -424,8 +415,8 @@ public class Interpreter implements
                 }
                 case "!" -> {
                     Object res = executeBlock(expression.getValue(), env);
-                    if (res instanceof BooleanValue r) {
-                        yield BooleanValue.of(!r.isValue());
+                    if (res instanceof Boolean aBoolean) {
+                        yield !aBoolean;
                     }
                     throw new RuntimeException("Invalid not operator: " + res);
                 }

@@ -87,7 +87,7 @@ public class Environment implements IEnvironment {
     }
 
     public Object init(String name, boolean value) {
-        return init(name, BooleanValue.of(value));
+        return init(name, Boolean.valueOf(value));
     }
 
     public Object init(Identifier name, Object value) {
