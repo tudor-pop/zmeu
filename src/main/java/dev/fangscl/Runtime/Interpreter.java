@@ -262,8 +262,8 @@ public class Interpreter implements
     }
 
     private Object lambdaCall(FunValue function, List<Object> args) {
-        Environment activationEnvironment = new ActivationEnvironment(function.getClojure(), function.getParams(), args);
-        return executeBlock(function.getBody(), activationEnvironment);
+        var environment = new ActivationEnvironment(function.getClojure(), function.getParams(), args);
+        return executeBlock(function.getBody(), environment);
     }
 
     @Override
