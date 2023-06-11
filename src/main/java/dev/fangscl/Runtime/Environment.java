@@ -1,9 +1,8 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Runtime.Values.*;
-import dev.fangscl.Runtime.exceptions.VarExistsException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
+import dev.fangscl.Runtime.exceptions.VarExistsException;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +82,7 @@ public class Environment implements IEnvironment {
     }
 
     public Object init(String name, String value) {
-        return init(name, StringValue.of(value));
+        return init(name, (Object) value);
     }
 
     public Object init(String name, boolean value) {

@@ -3,7 +3,6 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Runtime.Values.NullValue;
-import dev.fangscl.Runtime.Values.StringValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,16 +27,16 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void stringLiteral() {
-        var res = (StringValue) interpreter.eval("""
+        var res = interpreter.eval("""
                 "hello world!"
                 """);
-        Assertions.assertEquals("hello world!", res.getRuntimeValue());
+        Assertions.assertEquals("\"hello world!\"\n", res);
     }
 
     @Test
     void stringLiterals() {
-        var res = (StringValue) interpreter.eval("hello world!");
-        Assertions.assertEquals("hello world!", res.getRuntimeValue());
+        var res = interpreter.eval("hello world!");
+        Assertions.assertEquals("hello world!", res);
     }
 
     @Test

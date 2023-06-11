@@ -74,7 +74,7 @@ public class Interpreter implements
 
     @Override
     public Object eval(String expression) {
-        return StringValue.of(expression);
+        return expression;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class Interpreter implements
 
     @Override
     public Object eval(StringLiteral expression) {
-        return StringValue.of(expression);
+        return expression.getValue();
     }
 
     @Override
