@@ -6,7 +6,7 @@ import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import org.junit.jupiter.api.BeforeEach;
 
-class BaseTest {
+public class BaseTest {
     protected Interpreter interpreter;
     protected Parser parser;
     protected Tokenizer tokenizer;

@@ -368,11 +368,11 @@ public class Parser {
      * ;
      */
     private Statement FunctionDeclaration() {
-        eat(TokenType.Fun);
+        eat(TokenType.Fun, "Fun token expected: " + lookAhead());
         var test = Identifier();
-        eat(TokenType.OpenParenthesis);
+        eat(TokenType.OpenParenthesis, "Expected '(' but got: " + lookAhead());
         List<Expression> params = OptParameterList();
-        eat(TokenType.CloseParenthesis);
+        eat(TokenType.CloseParenthesis, "Expected ')' but got: " + lookAhead());
 
         Statement body = ExpressionStatement.of(BlockExpression());
         return FunctionDeclaration.of(test, params, body);

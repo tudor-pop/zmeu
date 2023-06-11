@@ -25,6 +25,11 @@ Program        → Declaration* EOF
 # Distinction rule for statements that declare names
 Declaration     → VarDeclaration
                 | Statement 
+                | FunDeclaration
+               
+FunDeclaration  → "fun" Identifier "(" Parameters? ")" BlockExpression
+
+Parameters      → Identifier ( "," Identifier )*
                 
 VarDeclaration  → "var" IDENTIFIER ( "=" expression )? newLine 
 
