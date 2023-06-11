@@ -7,7 +7,9 @@ import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import dev.fangscl.Runtime.Values.FunValue;
+import dev.fangscl.Runtime.exceptions.VarExistsException;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -84,6 +86,19 @@ public class FunTest extends BaseTest {
     }
 
     @Test
+    void funBodyOverlappingWithParam() {
+        Assertions.assertThrows(VarExistsException.class, () -> {
+            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                    fun sqrt(x){
+                       var x = 2
+                       x*x
+                    }
+                    sqrt(2)
+                    """)));
+        });
+    }
+
+    @Test
     void funBodyMultiParams() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x,y){
@@ -119,16 +134,16 @@ public class FunTest extends BaseTest {
     @Test
     void returnStatement() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-            fun fib(n) {
-               if (n <= 1) {
-                    return n
-               }
-               return fib(n - 2) + fib(n - 1)
-             }
-            var x = fib(6)
-            println("fib result is: ", x)
-            x
-                """)));
+                fun fib(n) {
+                   if (n <= 1) {
+                        return n
+                   }
+                   return fib(n - 2) + fib(n - 1)
+                 }
+                var x = fib(6)
+                println("fib result is: ", x)
+                x
+                    """)));
         log.warn(toJson(res));
         assertEquals(8, res);
     }

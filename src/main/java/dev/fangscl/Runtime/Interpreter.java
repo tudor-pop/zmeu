@@ -126,15 +126,15 @@ public class Interpreter implements
 
     @Override
     public Object eval(LambdaExpression expression) {
-        List<Expression> params = expression.getParams();
-        Statement body = expression.getBody();
+        var params = expression.getParams();
+        var body = expression.getBody();
         return FunValue.of((Identifier) null, params, body, env);
     }
 
     @Override
     public Object eval(BlockExpression block) {
         Object res = NullValue.of();
-        var env = new Environment(this.env);
+        var env = this.env instanceof ActivationEnvironment ? this.env : new Environment(this.env);
         for (var it : block.getExpression()) {
             res = executeBlock(it, env);
         }
@@ -204,15 +204,15 @@ public class Interpreter implements
                 };
             } else if (lhs instanceof Integer lhsn && rhs instanceof Double rhsn) {
                 return switch (op) {
-                    case "+" ->lhsn + rhsn;
-                    case "-" ->lhsn - rhsn;
-                    case "/" ->lhsn / rhsn;
-                    case "*" ->lhsn * rhsn;
-                    case "%" ->lhsn % rhsn;
+                    case "+" -> lhsn + rhsn;
+                    case "-" -> lhsn - rhsn;
+                    case "/" -> lhsn / rhsn;
+                    case "*" -> lhsn * rhsn;
+                    case "%" -> lhsn % rhsn;
                     case "==" -> Double.compare(lhsn, rhsn) == 0;
-                    case "<" -> Double.compare(lhsn,  rhsn) < 0;
+                    case "<" -> Double.compare(lhsn, rhsn) < 0;
                     case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
-                    case ">" -> Double.compare(lhsn,  rhsn) > 0;
+                    case ">" -> Double.compare(lhsn, rhsn) > 0;
                     case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
@@ -225,11 +225,13 @@ public class Interpreter implements
     public Object eval(CallExpression<Expression> expression) {
         var callee = executeBlock(expression.getCallee(), env);
         if (callee instanceof Callable function) {
-            List<Expression> arguments = expression.getArguments();
-            var args = new ArrayList<>(arguments.size());
-            for (Expression it : arguments) {
+
+            // evaluate arguments
+            var args = new ArrayList<>(expression.getArguments().size());
+            for (Expression it : expression.getArguments()) {
                 args.add(executeBlock(it, env));
             }
+
             try {
                 return function.call(this, args);
             } catch (Return aReturn) {
@@ -237,15 +239,6 @@ public class Interpreter implements
             }
         }
         throw new RuntimeError(new Token(expression.getCallee(), TokenType.Fun), "Can only call functions and classes.");
-    }
-
-    @Override
-    public Object eval(ReturnStatement statement) {
-        Object value = null;
-        if (statement.getArgument() != null) {
-            value = eval(statement.getArgument());
-        }
-        throw new Return(value);
     }
 
     public Object Call(FunValue function, List<Object> args) {
@@ -258,20 +251,28 @@ public class Interpreter implements
 
     private Object functionCall(FunValue function, List<Object> args) {
         // for function execution, use the clojured environment from the declared scope
-        var declared = (FunValue) function.getEnvironment()
-                .lookup(function.name(), "Function not declared: " + function.name());
+        var declared = (FunValue) function.getClojure().lookup(function.name(), "Function not declared: %s".formatted(function.name()));
 
         if (args.size() != declared.arity()) {
             throw new RuntimeException("Expected %s arguments but got %d: %s".formatted(function.getParams().size(), args.size(), function.getName()));
         }
 
-        var environment = new ActivationEnvironment(declared.getEnvironment(), declared.getParams(), args);
+        var environment = new ActivationEnvironment(declared.getClojure(), declared.getParams(), args);
         return executeBlock(declared.getBody(), environment);
     }
 
     private Object lambdaCall(FunValue function, List<Object> args) {
-        Environment activationEnvironment = new ActivationEnvironment(function.getEnvironment(), function.getParams(), args);
+        Environment activationEnvironment = new ActivationEnvironment(function.getClojure(), function.getParams(), args);
         return executeBlock(function.getBody(), activationEnvironment);
+    }
+
+    @Override
+    public Object eval(ReturnStatement statement) {
+        Object value = null;
+        if (statement.getArgument() != null) {
+            value = eval(statement.getArgument());
+        }
+        throw new Return(value);
     }
 
     @Override
@@ -490,10 +491,7 @@ public class Interpreter implements
 
     @Override
     public Object eval(InitStatement statement) {
-        var name = statement.getName();
-        var params = statement.getParams();
-        var body1 = statement.getBody();
-        return executeBlock(FunctionDeclaration.of(name, params, body1), env);
+        return eval(FunctionDeclaration.of(statement.getName(), statement.getParams(), statement.getBody()));
     }
 
     @Override

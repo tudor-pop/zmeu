@@ -18,16 +18,16 @@ import java.util.List;
 @Data
 public class FunValue implements Callable {
     @JsonBackReference
-    private Environment environment;
+    private Environment clojure;
     private Identifier name;
     private List<Expression> params;
     private Statement body;
 
-    private FunValue(Identifier name, List<Expression> params, Statement body, Environment environment) {
+    private FunValue(Identifier name, List<Expression> params, Statement body, Environment clojure) {
         this.name = name;
         this.params = params;
         this.body = body;
-        this.environment = environment;
+        this.clojure = clojure;
     }
 
     private FunValue(Identifier e) {
@@ -43,7 +43,7 @@ public class FunValue implements Callable {
     }
 
     public static FunValue of(String name, List<Expression> params, Statement body, Environment environment) {
-        return (FunValue) FunValue.of(Identifier.of(name), params, body, environment);
+        return (FunValue) of(Identifier.of(name), params, body, environment);
     }
     public static Object of(String name, List<Expression> params,  Environment environment) {
         return FunValue.of(Identifier.of(name), params, ExpressionStatement.of(BlockExpression.of()), environment);
