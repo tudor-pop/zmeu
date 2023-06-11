@@ -7,6 +7,7 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
+import dev.fangscl.Runtime.Functions.Cast.BooleanCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.DecimalCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.StringCastFunction;
@@ -44,16 +45,21 @@ public class Interpreter implements
         this.env.init("null", NullValue.of());
         this.env.init("true", BooleanValue.of(true));
         this.env.init("false", BooleanValue.of(false));
+
+        // casting
         this.env.init("int", new IntCastFunction());
         this.env.init("decimal", new DecimalCastFunction());
         this.env.init("string", new StringCastFunction());
-        this.env.init("pow", new PowFunction());
+        this.env.init("boolean", new BooleanCastFunction());
 
+        // number
+        this.env.init("pow", new PowFunction());
         this.env.init("min", new MinFunction());
         this.env.init("max", new MaxFunction());
         this.env.init("ceil", new CeilFunction());
         this.env.init("floor", new FloorFunction());
         this.env.init("abs", new AbsFunction());
+
         this.env.init("date", new DateFunction());
     }
 
