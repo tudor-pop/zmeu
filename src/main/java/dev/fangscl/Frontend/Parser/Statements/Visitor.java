@@ -10,12 +10,12 @@ public interface Visitor<R> {
 
     R eval(Statement statement);
 
-    R eval(InitStatement statement);
-
     /**
      * InitStatement
      * Syntactic sugar for a function
      */
+    R eval(InitStatement statement);
+
     R eval(FunctionDeclaration statement);
 
     R eval(ExpressionStatement statement);
@@ -29,6 +29,8 @@ public interface Visitor<R> {
     R eval(ForStatement statement);
 
     R eval(TypeDeclaration statement);
+
+    R eval(ReturnStatement statement);
 
     R eval(VariableDeclaration statement);
 

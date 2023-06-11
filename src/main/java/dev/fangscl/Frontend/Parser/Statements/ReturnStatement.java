@@ -9,12 +9,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * <p>
- * BlockStatement
- * : '{' OptionalStatementList '}'
- * ;
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ReturnStatement extends Statement {

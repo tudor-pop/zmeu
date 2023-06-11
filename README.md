@@ -40,6 +40,9 @@ Statement       → ExpressionStatement
                 | IfStatement
                 | IterationStatement
                 | BlockExpression
+                | ReturnStatement
+
+ReturnStatement → "return" Expression? ;
 
 IterationStatement  → WhileStatement
                     | ForStatement

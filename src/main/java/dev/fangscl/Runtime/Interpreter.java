@@ -15,11 +15,11 @@ import dev.fangscl.Runtime.Functions.DateFunction;
 import dev.fangscl.Runtime.Functions.Numeric.*;
 import dev.fangscl.Runtime.Functions.PrintFunction;
 import dev.fangscl.Runtime.Functions.PrintlnFunction;
-import dev.fangscl.Runtime.Values.*;
-import dev.fangscl.Runtime.exceptions.InvalidInitException;
-import dev.fangscl.Runtime.exceptions.NotFoundException;
-import dev.fangscl.Runtime.exceptions.OperationNotImplementedException;
-import dev.fangscl.Runtime.exceptions.RuntimeError;
+import dev.fangscl.Runtime.Values.FunValue;
+import dev.fangscl.Runtime.Values.NullValue;
+import dev.fangscl.Runtime.Values.ResourceValue;
+import dev.fangscl.Runtime.Values.TypeValue;
+import dev.fangscl.Runtime.exceptions.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
@@ -230,10 +230,22 @@ public class Interpreter implements
             for (Expression it : arguments) {
                 args.add(executeBlock(it, env));
             }
-
-            return function.call(this, args);
+            try {
+                return function.call(this, args);
+            } catch (Return aReturn) {
+                return aReturn.getValue();
+            }
         }
         throw new RuntimeError(new Token(expression.getCallee(), TokenType.Fun), "Can only call functions and classes.");
+    }
+
+    @Override
+    public Object eval(ReturnStatement statement) {
+        Object value = null;
+        if (statement.getArgument() != null) {
+            value = eval(statement.getArgument());
+        }
+        throw new Return(value);
     }
 
     public Object Call(FunValue function, List<Object> args) {
@@ -342,7 +354,11 @@ public class Interpreter implements
         if (eval) {
             return executeBlock(statement.getConsequent(), env);
         } else {
-            return executeBlock(statement.getAlternate(), env);
+            Statement alternate = statement.getAlternate();
+            if (alternate == null) {
+                return null;
+            }
+            return executeBlock(alternate, env);
         }
     }
 

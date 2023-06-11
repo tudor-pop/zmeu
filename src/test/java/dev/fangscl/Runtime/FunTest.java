@@ -116,5 +116,23 @@ public class FunTest extends BaseTest {
         assertEquals(160, res);
     }
 
+    @Test
+    void returnStatement() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                fun fib(n) {
+                   if (n <= 1) {
+                        return n
+                   }
+                   return fib(n - 2) + fib(n - 1)
+                 }
+                var x = fib(6)
+                println("fib result is: ", x)
+                x
+                 
+                """)));
+        log.warn(toJson(res));
+        assertEquals(8, res);
+    }
+
 
 }
