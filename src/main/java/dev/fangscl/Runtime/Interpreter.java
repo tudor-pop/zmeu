@@ -79,12 +79,12 @@ public class Interpreter implements
 
     @Override
     public Object eval(double expression) {
-        return DecimalValue.of(expression);
+        return expression;
     }
 
     @Override
     public Object eval(float expression) {
-        return DecimalValue.of(expression);
+        return expression;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Interpreter implements
     public Object eval(NumericLiteral expression) {
         return switch (expression.getKind()) {
             case IntegerLiteral -> IntegerValue.of(expression);
-            case DecimalLiteral -> DecimalValue.of(expression);
+            case DecimalLiteral -> expression.getValue();
             default -> throw new IllegalStateException("Unexpected value: " + expression.getKind());
         };
     }
@@ -171,46 +171,46 @@ public class Interpreter implements
                     case ">=" -> lhsn.getValue() >= rhsn.getValue();
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
-            } else if (lhs instanceof DecimalValue lhsn && rhs instanceof DecimalValue rhsn) {
+            } else if (lhs instanceof Double lhsn && rhs instanceof Double rhsn) {
                 return switch (op) {
-                    case "+" -> DecimalValue.of(lhsn.getValue() + rhsn.getValue());
-                    case "-" -> DecimalValue.of(lhsn.getValue() - rhsn.getValue());
-                    case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
-                    case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
-                    case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
-                    case "<" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0;
-                    case "<=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
-                    case ">" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0;
-                    case ">=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case "+" -> lhsn + rhsn;
+                    case "-" -> lhsn - rhsn;
+                    case "/" -> lhsn / rhsn;
+                    case "*" -> lhsn * rhsn;
+                    case "%" -> lhsn % rhsn;
+                    case "==" -> Double.compare(lhsn, rhsn) == 0;
+                    case "<" -> Double.compare(lhsn, rhsn) < 0;
+                    case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
+                    case ">" -> Double.compare(lhsn, rhsn) > 0;
+                    case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
-            } else if (lhs instanceof DecimalValue lhsn && rhs instanceof IntegerValue rhsn) {
+            } else if (lhs instanceof Double lhsn && rhs instanceof IntegerValue rhsn) {
                 return switch (op) {
-                    case "+" -> DecimalValue.of(lhsn.getValue() + rhsn.getValue());
-                    case "-" -> DecimalValue.of(lhsn.getValue() - rhsn.getValue());
-                    case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
-                    case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
-                    case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
-                    case "<" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0;
-                    case "<=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
-                    case ">" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0;
-                    case ">=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case "+" -> lhsn + rhsn.getValue();
+                    case "-" -> lhsn - rhsn.getValue();
+                    case "/" -> lhsn / rhsn.getValue();
+                    case "*" -> lhsn * rhsn.getValue();
+                    case "%" -> lhsn % rhsn.getValue();
+                    case "==" -> Double.compare(lhsn, rhsn.getValue()) == 0;
+                    case "<" -> Double.compare(lhsn, rhsn.getValue()) < 0;
+                    case "<=" -> Double.compare(lhsn, rhsn.getValue()) < 0 || Double.compare(lhsn, rhsn.getValue()) == 0;
+                    case ">" -> Double.compare(lhsn, rhsn.getValue()) > 0;
+                    case ">=" -> Double.compare(lhsn, rhsn.getValue()) > 0 || Double.compare(lhsn, rhsn.getValue()) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
-            } else if (lhs instanceof IntegerValue lhsn && rhs instanceof DecimalValue rhsn) {
+            } else if (lhs instanceof IntegerValue lhsn && rhs instanceof Double rhsn) {
                 return switch (op) {
-                    case "+" -> DecimalValue.of(lhsn.getValue() + rhsn.getValue());
-                    case "-" -> DecimalValue.of(lhsn.getValue() - rhsn.getValue());
-                    case "/" -> DecimalValue.of(lhsn.getValue() / rhsn.getValue());
-                    case "*" -> DecimalValue.of(lhsn.getValue() * rhsn.getValue());
-                    case "%" -> DecimalValue.of(lhsn.getValue() % rhsn.getValue());
-                    case "==" -> Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
-                    case "<" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0;
-                    case "<=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) < 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
-                    case ">" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0;
-                    case ">=" -> Double.compare(lhsn.getValue(), rhsn.getValue()) > 0 || Double.compare(lhsn.getValue(), rhsn.getValue()) == 0;
+                    case "+" ->lhsn.getValue() + rhsn;
+                    case "-" ->lhsn.getValue() - rhsn;
+                    case "/" ->lhsn.getValue() / rhsn;
+                    case "*" ->lhsn.getValue() * rhsn;
+                    case "%" ->lhsn.getValue() % rhsn;
+                    case "==" -> Double.compare(lhsn.getValue(), rhsn) == 0;
+                    case "<" -> Double.compare(lhsn.getValue(),  rhsn) < 0;
+                    case "<=" -> Double.compare(lhsn.getValue(), rhsn) < 0 || Double.compare(lhsn.getValue(), rhsn) == 0;
+                    case ">" -> Double.compare(lhsn.getValue(),  rhsn) > 0;
+                    case ">=" -> Double.compare(lhsn.getValue(), rhsn) > 0 || Double.compare(lhsn.getValue(), rhsn) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
             }
@@ -385,8 +385,8 @@ public class Interpreter implements
                     Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(1 + r.getRuntimeValue());
-                    } else if (res instanceof DecimalValue r) {
-                        yield DecimalValue.of(1 + r.getRuntimeValue());
+                    } else if (res instanceof Double r) {
+                        yield 1 + r;
                     } else {
                         throw new RuntimeException("Invalid unary operator: " + res);
                     }
@@ -395,10 +395,8 @@ public class Interpreter implements
                     Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(r.getRuntimeValue() - 1);
-                    } else if (res instanceof DecimalValue r) {
-                        yield DecimalValue.of(
-                                BigDecimal.valueOf(r.getRuntimeValue()).subtract(BigDecimal.ONE)
-                                        .doubleValue());
+                    } else if (res instanceof Double r) {
+                        yield BigDecimal.valueOf(r).subtract(BigDecimal.ONE).doubleValue();
                     } else {
                         throw new RuntimeException("Invalid unary operator: " + res);
                     }
@@ -407,8 +405,8 @@ public class Interpreter implements
                     Object res = executeBlock(expression.getValue(), env);
                     if (res instanceof IntegerValue r) {
                         yield IntegerValue.of(-r.getRuntimeValue());
-                    } else if (res instanceof DecimalValue r) {
-                        yield DecimalValue.of(BigDecimal.valueOf(r.getRuntimeValue()).negate().doubleValue());
+                    } else if (res instanceof Double r) {
+                        yield BigDecimal.valueOf(r).negate().doubleValue();
                     } else {
                         throw new RuntimeException("Invalid unary operator: " + res);
                     }

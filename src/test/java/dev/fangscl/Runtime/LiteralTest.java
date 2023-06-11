@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
 public class LiteralTest extends BaseTest {
     @Test
     void literal() {
-        var evalRes = (DecimalValue)interpreter.eval(10.0);
-        Assertions.assertEquals(10.0, evalRes.getRuntimeValue());
+        var evalRes = (Double) interpreter.eval(10.0);
+        Assertions.assertEquals(10.0, evalRes);
     }
 
     @Test
     void literalDouble() {
-        var evalRes = (DecimalValue)interpreter.eval(10.1);
-        Assertions.assertEquals(10.1, evalRes.getRuntimeValue());
+        var evalRes = (Double) interpreter.eval(10.1);
+        Assertions.assertEquals(10.1, evalRes);
     }
 
     @Test

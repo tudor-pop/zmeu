@@ -1,7 +1,5 @@
 package dev.fangscl.Runtime;
 
-import com.sun.jdi.BooleanValue;
-import dev.fangscl.Runtime.Values.DecimalValue;
 import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -32,9 +30,8 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varDecimal() {
-        DecimalValue res = (DecimalValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2.1")));
-        var expected = (DecimalValue) DecimalValue.of(2.1);
-        assertEquals(expected.getRuntimeValue(), res.getRuntimeValue());
+        var res = (Double) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2.1")));
+        assertEquals(2.1, res);
         log.info(toJson(res));
     }
 

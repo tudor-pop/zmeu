@@ -75,11 +75,11 @@ public class Environment implements IEnvironment {
     }
 
     public Object init(String name, double value) {
-        return init(name, DecimalValue.of(value));
+        return init(name, Double.valueOf(value));
     }
 
     public Object init(String name, float value) {
-        return init(name, DecimalValue.of(value));
+        return init(name, Float.valueOf(value));
     }
 
     public Object init(String name, String value) {

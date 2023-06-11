@@ -46,11 +46,10 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void Decimal() {
-        setGlobalVar(DecimalValue.of(1.1));
+        setGlobalVar(1.1);
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
-        var expected = DecimalValue.of(1.1);
-        assertEquals(expected, res);
+        assertEquals(1.1, res);
         log.warn(toJson(res));
     }
 
@@ -105,20 +104,20 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void AssignmentDecimalSame() {
-        setGlobalVar(DecimalValue.of(1.1));
+        setGlobalVar(1.1);
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.1")));
-        var expected = DecimalValue.of(1.1);
+        var expected = 1.1;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignmentDecimalDifferent() {
-        setGlobalVar(DecimalValue.of(1.1));
+        setGlobalVar(1.1);
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.2")));
-        var expected = DecimalValue.of(1.2);
+        var expected = 1.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
@@ -129,7 +128,7 @@ public class AssignmentTest extends BaseTest {
                 var x=0
                 x = 1.1+2.2
                 """)));
-        var expected = DecimalValue.of(1.1 + 2.2);
+        var expected = 1.1 + 2.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
@@ -140,7 +139,7 @@ public class AssignmentTest extends BaseTest {
                 var x=0
                 x = 1.1*2.2
                 """)));
-        var expected = DecimalValue.of(1.1 * 2.2);
+        var expected = 1.1 * 2.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
@@ -151,7 +150,7 @@ public class AssignmentTest extends BaseTest {
                 var x=0
                 x = 2.1/2.2
                 """)));
-        var expected = DecimalValue.of(2.1 / 2.2);
+        var expected = 2.1 / 2.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }

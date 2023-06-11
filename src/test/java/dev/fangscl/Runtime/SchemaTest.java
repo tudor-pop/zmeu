@@ -65,7 +65,7 @@ public class SchemaTest extends BaseTest {
         log.warn(toJson(res));
         SchemaValue actual = (SchemaValue) global.get("Vm");
 
-        assertEquals(DecimalValue.of(20.2), actual.getEnvironment().get("x"));
+        assertEquals(20.2, actual.getEnvironment().get("x"));
     }
 
     @Test
