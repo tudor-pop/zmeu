@@ -13,6 +13,8 @@ import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.StringCastFunction;
 import dev.fangscl.Runtime.Functions.DateFunction;
 import dev.fangscl.Runtime.Functions.Numeric.*;
+import dev.fangscl.Runtime.Functions.PrintFunction;
+import dev.fangscl.Runtime.Functions.PrintlnFunction;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.InvalidInitException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -45,6 +47,8 @@ public class Interpreter implements
         this.env.init("null", NullValue.of());
         this.env.init("true", true);
         this.env.init("false", false);
+        this.env.init("print", new PrintFunction());
+        this.env.init("println", new PrintlnFunction());
 
         // casting
         this.env.init("int", new IntCastFunction());
