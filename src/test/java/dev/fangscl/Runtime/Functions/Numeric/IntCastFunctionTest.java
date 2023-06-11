@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class IntFunctionTest extends BaseTest {
-    private final IntFunction function = new IntFunction();
+class IntCastFunctionTest extends BaseTest {
+    private final IntCastFunction function = new IntCastFunction();
 
     @Test
     void stringToInt() {

@@ -5,7 +5,7 @@ import dev.fangscl.Runtime.Interpreter;
 
 import java.util.List;
 
-public class IntFunction implements Callable {
+public class IntCastFunction implements Callable {
 
     @Override
     public Object call(Interpreter interpreter, List<Object> args) {

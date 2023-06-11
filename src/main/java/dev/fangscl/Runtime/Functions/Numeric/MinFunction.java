@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MaxFunction implements Callable {
+public class MinFunction implements Callable {
 
     @Override
     public Object call(Interpreter interpreter, List<Object> args) {
@@ -19,6 +19,6 @@ public class MaxFunction implements Callable {
                 throw new RuntimeException("Invalid argument");
             }
         }
-        return Collections.max(arg);
+        return Collections.min(arg);
     }
 }

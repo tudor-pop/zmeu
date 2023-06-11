@@ -8,7 +8,9 @@ import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Functions.DateFunction;
-import dev.fangscl.Runtime.Functions.Numeric.IntFunction;
+import dev.fangscl.Runtime.Functions.Numeric.IntCastFunction;
+import dev.fangscl.Runtime.Functions.Numeric.MaxFunction;
+import dev.fangscl.Runtime.Functions.Numeric.MinFunction;
 import dev.fangscl.Runtime.Values.*;
 import dev.fangscl.Runtime.exceptions.InvalidInitException;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -41,7 +43,9 @@ public class Interpreter implements
         this.env.init("null", NullValue.of());
         this.env.init("true", BooleanValue.of(true));
         this.env.init("false", BooleanValue.of(false));
-        this.env.init("int", new IntFunction());
+        this.env.init("int", new IntCastFunction());
+        this.env.init("min", new MinFunction());
+        this.env.init("max", new MaxFunction());
         this.env.init("date", new DateFunction());
     }
 
