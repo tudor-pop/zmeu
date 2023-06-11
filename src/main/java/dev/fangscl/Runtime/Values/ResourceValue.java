@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime.Values;
 
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Environment;
 import dev.fangscl.Runtime.IEnvironment;
 import lombok.Data;
@@ -14,53 +13,43 @@ import java.util.Map;
 @Data
 public class ResourceValue implements IEnvironment {
     private Environment environment;
-    private Identifier name;
+    private String name;
     private List<Object> args;
 
-    private ResourceValue(Identifier name, List<Object> args, Environment environment) {
+    private ResourceValue(String name, List<Object> args, Environment environment) {
         this.name = name;
         this.args = args;
         this.environment = environment;
     }
 
-    private ResourceValue(Identifier e) {
+    private ResourceValue(String e) {
         this(e, Collections.emptyList(), new Environment());
     }
 
-    public Identifier getRuntimeValue() {
+    public String getRuntimeValue() {
         return name;
     }
 
-    public static Object of(Identifier name, List<Object> params, Environment environment) {
+    public static Object of(String name, List<Object> params, Environment environment) {
         return new ResourceValue(name, params, environment);
     }
-
-    public static ResourceValue of(String name, List<Object> params, Environment environment) {
-        return (ResourceValue) ResourceValue.of(Identifier.of(name), params, environment);
-    }
-
 
     public static Object of(List<Object> params, Environment environment) {
         return new ResourceValue(null, params, environment);
     }
 
-    public static Object of(Identifier string) {
+    public static Object of(String string) {
         return ResourceValue.of(string, Collections.emptyList(), new Environment());
     }
 
-    public static Object of(String string) {
-        return ResourceValue.of(Identifier.of(string));
-    }
-
     public static Object of(String string, Environment environment) {
-        return ResourceValue.of(Identifier.of(string), Collections.emptyList(), environment);
+        return ResourceValue.of(string, Collections.emptyList(), environment);
     }
 
 
     @Nullable
     public String name() {
-        if (name == null) return null ;
-        else return name.getSymbol();
+        return name;
     }
 
     @Override

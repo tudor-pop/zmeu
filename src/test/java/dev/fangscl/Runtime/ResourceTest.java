@@ -52,10 +52,10 @@ public class ResourceTest extends BaseTest {
         assertEquals(Identifier.of("Vm"), type.getName());
 
 
-        ResourceValue resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getEnvironment().get("main");
 
         assertNotNull(resource);
-        assertEquals(Identifier.of("main"), resource.getName());
+        assertEquals("main", resource.getName());
     }
 
     @Test

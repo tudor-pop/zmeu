@@ -321,7 +321,7 @@ public class Interpreter implements
             if (init != null) {
                 functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
             }
-            return typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName(), args, resourceEnv));
+            return typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName().getSymbol(), args, resourceEnv));
         } catch (NotFoundException e) {
             throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
         }
