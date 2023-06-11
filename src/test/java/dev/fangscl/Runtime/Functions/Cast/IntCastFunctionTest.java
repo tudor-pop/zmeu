@@ -1,6 +1,7 @@
-package dev.fangscl.Runtime.Functions.Numeric;
+package dev.fangscl.Runtime.Functions.Cast;
 
 import dev.fangscl.Runtime.BaseTest;
+import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

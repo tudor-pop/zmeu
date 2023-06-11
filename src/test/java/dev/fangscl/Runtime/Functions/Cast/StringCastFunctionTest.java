@@ -1,6 +1,7 @@
-package dev.fangscl.Runtime.Functions.Numeric;
+package dev.fangscl.Runtime.Functions.Cast;
 
 import dev.fangscl.Runtime.BaseTest;
+import dev.fangscl.Runtime.Functions.Cast.StringCastFunction;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

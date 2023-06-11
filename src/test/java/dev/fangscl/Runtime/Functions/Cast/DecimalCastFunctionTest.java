@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime.Functions.Numeric;
+package dev.fangscl.Runtime.Functions.Cast;
 
 import dev.fangscl.Runtime.BaseTest;
 import org.junit.jupiter.api.Test;
