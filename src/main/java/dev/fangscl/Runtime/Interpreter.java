@@ -42,6 +42,10 @@ public class Interpreter implements
         this.env.init("true", BooleanValue.of(true));
         this.env.init("false", BooleanValue.of(false));
         this.env.init("int", new IntCastFunction());
+        this.env.init("decimal", new DecimalCastFunction());
+        this.env.init("string", new StringCastFunction());
+        this.env.init("pow", new PowFunction());
+
         this.env.init("min", new MinFunction());
         this.env.init("max", new MaxFunction());
         this.env.init("ceil", new CeilFunction());
