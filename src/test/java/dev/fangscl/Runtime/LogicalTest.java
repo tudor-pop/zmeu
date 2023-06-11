@@ -6,7 +6,6 @@ import dev.fangscl.Frontend.Parser.Literals.NullLiteral;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
-import dev.fangscl.Runtime.Values.IntegerValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -69,8 +68,7 @@ public class LogicalTest extends BaseTest {
         // 1 && 2 -> 2
         var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
                 NumericLiteral.of(1), NumericLiteral.of(2)))));
-        var expected = IntegerValue.of(2);
-        Assertions.assertEquals(expected, res);
+        Assertions.assertEquals(2, res);
     }
 
     @Test

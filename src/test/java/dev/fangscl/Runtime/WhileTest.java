@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,7 @@ public class WhileTest extends BaseTest {
 
     @Test
     void increment() {
-        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     while (x < 5){
@@ -20,14 +19,13 @@ public class WhileTest extends BaseTest {
                     x 
                 }
                 """)));
-        var expected = IntegerValue.of(5);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(5, res);
     }
 
     @Test
     void incrementEq() {
-        IntegerValue res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var x = 1
                     while (x <= 5){
@@ -36,11 +34,9 @@ public class WhileTest extends BaseTest {
                     x 
                 }
                 """)));
-        var expected = IntegerValue.of(6);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(6, res);
     }
-
 
 
 }

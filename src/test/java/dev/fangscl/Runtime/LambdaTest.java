@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +20,8 @@ public class LambdaTest extends BaseTest {
                     onClick((data)->data*10)
                 }""")));
 
-        var expected = IntegerValue.of(300);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(300, res);
     }
 
     @Test
@@ -33,9 +31,8 @@ public class LambdaTest extends BaseTest {
                 f(2)
                 """)));
 
-        var expected = IntegerValue.of(4);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(4, res);
     }
 
     @Test
@@ -44,9 +41,8 @@ public class LambdaTest extends BaseTest {
                 ((x) -> x*x) (2)
                 """)));
 
-        var expected = IntegerValue.of(4);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(4, res);
     }
     @Test
     void lambdaInvokeClojure() {
@@ -59,9 +55,8 @@ public class LambdaTest extends BaseTest {
                     }) (2)
                 }""")));
 
-        var expected = IntegerValue.of(9);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(9, res);
     }
     @Test
     void lambdaInvokeClojure2() {
@@ -75,9 +70,8 @@ public class LambdaTest extends BaseTest {
                     }) (2)
                 }""")));
 
-        var expected = IntegerValue.of(11);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(11, res);
     }
 
     @Test
@@ -97,9 +91,8 @@ public class LambdaTest extends BaseTest {
                 
                 """)));
 
-        var expected = IntegerValue.of(9);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(9, res);
     }
     @Test
     void lambdaInvokeStaticClojure() {
@@ -115,9 +108,8 @@ public class LambdaTest extends BaseTest {
                 bar()
                 """)));
 
-        var expected = IntegerValue.of(30);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(30, res);
     }
 
 }

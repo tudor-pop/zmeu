@@ -7,7 +7,6 @@ import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.VariableStatement;
 import dev.fangscl.Runtime.Values.FunValue;
-import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -62,47 +61,44 @@ public class FunTest extends BaseTest {
 
     @Test
     void funEvaluateBlock() {
-        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun myFun(x){
                    x
                 }
                 myFun(2)
                 """)));
-        var expected = IntegerValue.of(2);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(2, res);
     }
 
     @Test
     void funBody() {
-        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x){
                    x*x
                 }
                 sqrt(2)
                 """)));
-        var expected = IntegerValue.of(4);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(4, res);
     }
 
     @Test
     void funBodyMultiParams() {
-        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 fun sqrt(x,y){
                    var z = 1
                    x*y+z
                 }
                 sqrt(2,3)
                 """)));
-        var expected = IntegerValue.of(7);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(7, res);
     }
 
     @Test
     void funClojure() {
-        var res = (IntegerValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 {
                     var a = 100
                     fun calc(x,y){
@@ -116,9 +112,8 @@ public class FunTest extends BaseTest {
                     fn(30)
                 }
                 """)));
-        var expected = IntegerValue.of(160);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(160, res);
     }
 
 

@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +21,7 @@ public class VariableDeclarationTest extends BaseTest {
     @Test
     void varInt() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2")));
-        var expected = IntegerValue.of(2);
-        assertEquals(expected, res);
+        assertEquals(2, res);
         log.info(toJson(res));
     }
 
@@ -46,32 +44,28 @@ public class VariableDeclarationTest extends BaseTest {
     @Test
     void varExpressionPlus() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2+2")));
-        var expected = IntegerValue.of(4);
-        assertEquals(expected, res);
+        assertEquals(4, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionMinus() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2-2")));
-        var expected = IntegerValue.of(0);
-        assertEquals(expected, res);
+        assertEquals(0, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionMultiplication() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2*2")));
-        var expected = IntegerValue.of(4);
-        assertEquals(expected, res);
+        assertEquals(4, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionDivision() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2/2")));
-        var expected = IntegerValue.of(1);
-        assertEquals(expected, res);
+        assertEquals(1, res);
         log.info(toJson(res));
     }
 
@@ -101,8 +95,7 @@ public class VariableDeclarationTest extends BaseTest {
                 """)));
 
         log.info(toJson(res));
-        var expected = IntegerValue.of(1);
-        assertEquals(expected, res);
+        assertEquals(1, res);
     }
 
 }

@@ -2,58 +2,59 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Runtime.Values.*;
+import dev.fangscl.Runtime.Values.NullValue;
+import dev.fangscl.Runtime.Values.StringValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class LiteralTest extends BaseTest {
     @Test
     void literal() {
-        var evalRes = (Double) interpreter.eval(10.0);
-        Assertions.assertEquals(10.0, evalRes);
+        var res = (Double) interpreter.eval(10.0);
+        Assertions.assertEquals(10.0, res);
     }
 
     @Test
     void literalDouble() {
-        var evalRes = (Double) interpreter.eval(10.1);
-        Assertions.assertEquals(10.1, evalRes);
+        var res = interpreter.eval(10.1);
+        Assertions.assertEquals(10.1, res);
     }
 
     @Test
     void integerLiteral() {
-        var evalRes = (IntegerValue) interpreter.eval(NumericLiteral.of(10));
-        Assertions.assertEquals(10, evalRes.getRuntimeValue());
+        var res = interpreter.eval(NumericLiteral.of(10));
+        Assertions.assertEquals(10, res);
     }
 
     @Test
     void stringLiteral() {
-        var evalRes = (StringValue) interpreter.eval("""
+        var res = (StringValue) interpreter.eval("""
                 "hello world!"
                 """);
-        Assertions.assertEquals("hello world!", evalRes.getRuntimeValue());
+        Assertions.assertEquals("hello world!", res.getRuntimeValue());
     }
 
     @Test
     void stringLiterals() {
-        var evalRes = (StringValue) interpreter.eval("hello world!");
-        Assertions.assertEquals("hello world!", evalRes.getRuntimeValue());
+        var res = (StringValue) interpreter.eval("hello world!");
+        Assertions.assertEquals("hello world!", res.getRuntimeValue());
     }
 
     @Test
     void boolFalse() {
-        var evalRes = (Boolean)interpreter.eval(false);
-        Assertions.assertFalse(evalRes);
+        var res = (Boolean) interpreter.eval(false);
+        Assertions.assertFalse(res);
     }
 
     @Test
     void boolTrue() {
-        var evalRes = (Boolean)interpreter.eval(true);
-        Assertions.assertTrue(evalRes);
+        var res = (Boolean) interpreter.eval(true);
+        Assertions.assertTrue(res);
     }
 
     @Test
     void NullTest() {
-        var evalRes = (NullValue) interpreter.eval(new Identifier());
-        Assertions.assertEquals(NullValue.of(), evalRes.getRuntimeValue());
+        var res = (NullValue) interpreter.eval(new Identifier());
+        Assertions.assertEquals(NullValue.of(), res.getRuntimeValue());
     }
 }

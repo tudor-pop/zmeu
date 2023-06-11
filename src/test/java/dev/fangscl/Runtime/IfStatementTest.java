@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -21,9 +20,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(2);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(2, res);
     }
 
     @Test
@@ -38,9 +36,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(2);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(2, res);
     }
 
     @Test
@@ -55,9 +52,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(2);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(2, res);
     }
 
     @Test
@@ -72,9 +68,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(3);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(3, res);
     }
 
     @Test
@@ -91,9 +86,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(3);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(3, res);
     }
 
     @Test
@@ -110,9 +104,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(3);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(3, res);
     }
 
     @Test
@@ -129,9 +122,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(3);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(3  , res);
     }
 
     @Test
@@ -148,9 +140,8 @@ public class IfStatementTest extends BaseTest {
                     x       
                 }
                 """)));
-        var expected = IntegerValue.of(3);
         log.warn(toJson(res));
-        assertEquals(expected, res);
+        assertEquals(3, res);
     }
 
 

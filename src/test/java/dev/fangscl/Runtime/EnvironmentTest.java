@@ -2,7 +2,6 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
-import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +20,7 @@ public class EnvironmentTest {
     @Test
     void declareVar() {
         var res = environment.init("x", 1);
-        var expected = IntegerValue.of(1);
+        var expected = 1;
         Assertions.assertEquals(expected, res);
         Assertions.assertEquals(expected, environment.get("x"));
         log.warn(res);
@@ -37,7 +36,7 @@ public class EnvironmentTest {
         var global = new Environment();
         global.init("VERSION", 10);
         var interpreter = new Interpreter(global);
-        Assertions.assertEquals(IntegerValue.of(10), interpreter.eval(ExpressionStatement.of(Identifier.of("VERSION"))));
+        Assertions.assertEquals(10, interpreter.eval(ExpressionStatement.of(Identifier.of("VERSION"))));
     }
 
 }

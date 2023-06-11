@@ -71,7 +71,7 @@ public class Environment implements IEnvironment {
     }
 
     public Object init(String name, int value) {
-        return init(name, IntegerValue.of(value));
+        return init(name, Integer.valueOf(value));
     }
 
     public Object init(String name, double value) {

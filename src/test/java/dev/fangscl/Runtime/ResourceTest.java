@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Runtime.Values.IntegerValue;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import dev.fangscl.Runtime.Values.SchemaValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -93,12 +92,12 @@ public class ResourceTest extends BaseTest {
         String main = "main";
         ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
 
-        assertEquals(IntegerValue.of(2), resource.getEnvironment().lookup("x"));
+        assertEquals(2, resource.getEnvironment().lookup("x"));
     }
 
     @Test
     void resourceMemberAccess() {
-        Object res = (Object) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 schema Vm {
                    var x = 2
                 }
@@ -113,12 +112,10 @@ public class ResourceTest extends BaseTest {
         log.warn(toJson(res));
         SchemaValue schema = (SchemaValue) global.get("Vm");
 
-        String main = "main";
-        ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
-        // make sure main has it's own copy of x
-        assertNotSame(IntegerValue.of(2), resource.getEnvironment().get("x"));
+        var resource = (ResourceValue) schema.getEnvironment().get("main");
+        assertSame(2, resource.getEnvironment().get("x"));
         // make sure main's x has been changed
-        assertEquals(IntegerValue.of(2), resource.getEnvironment().get("x"));
+        assertEquals(2, resource.getEnvironment().get("x"));
 
         // assert y holds reference to Vm.main
         var y = global.lookup("y");
@@ -127,7 +124,7 @@ public class ResourceTest extends BaseTest {
         var z = global.lookup("z");
         assertSame(z, schema.getEnvironment().get("x"));
 
-        assertEquals(IntegerValue.of(2), res);
+        assertEquals(2, res);
     }
 
     /**
@@ -154,12 +151,12 @@ public class ResourceTest extends BaseTest {
         ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
 
         // default x in schema remains the same
-        assertEquals(IntegerValue.of(2), schema.getEnvironment().get("x"));
+        assertEquals(2, schema.getEnvironment().get("x"));
 
         // x of main resource was updated with a new value
         var x = resource.get("x");
-        assertEquals(IntegerValue.of(3), res);
-        assertEquals(IntegerValue.of(3), x);
+        assertEquals(3, res);
+        assertEquals(3, x);
     }
 
     @Test
@@ -180,11 +177,11 @@ public class ResourceTest extends BaseTest {
         ResourceValue resource = (ResourceValue) schema.getEnvironment().get(main);
 
         // default x in schema remains the same
-        assertEquals(IntegerValue.of(2), schema.getEnvironment().get("x"));
+        assertEquals(2, schema.getEnvironment().get("x"));
 
         // x of main resource was updated with a new value
         var x = resource.get("x");
-        assertEquals(IntegerValue.of(3), x);
+        assertEquals(3, x);
     }
     @SneakyThrows
     @Test

@@ -1,6 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.IntegerValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +14,7 @@ public class BlockTest extends BaseTest{
                 var y=20
                 x*y+30
                 """)));
-        var expected = IntegerValue.of(230);
-        assertEquals(expected, res);
+        assertEquals(230, res);
         log.warn(toJson(res));
     }
     @Test
@@ -30,8 +28,7 @@ public class BlockTest extends BaseTest{
                     x
                 }
                 """)));
-        var expected = IntegerValue.of(10);
-        assertEquals(expected, res);
+        assertEquals(10, res);
         log.warn(toJson(res));
     }
 
@@ -47,8 +44,7 @@ public class BlockTest extends BaseTest{
                     res
                 }
                 """)));
-        var expected = IntegerValue.of(20);
-        assertEquals(expected, res);
+        assertEquals(20, res);
         log.warn(toJson(res));
     }
 
@@ -63,8 +59,7 @@ public class BlockTest extends BaseTest{
                     outer
                 }
                 """)));
-        var expected = IntegerValue.of(20);
-        assertEquals(expected, res);
+        assertEquals(20, res);
         log.warn(toJson(res));
     }
 }

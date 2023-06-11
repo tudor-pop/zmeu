@@ -18,11 +18,10 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void GlobalVarInt() {
-        setGlobalVar(IntegerValue.of(2));
+        setGlobalVar(2);
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
-        var expected = IntegerValue.of(2);
-        assertEquals(expected, res);
+        assertEquals(2, res);
         log.warn(toJson(res));
     }
 
@@ -66,20 +65,20 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void AssignmentInt() {
-        setGlobalVar(IntegerValue.of(1));
+        setGlobalVar(1);
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=2")));
-        var expected = IntegerValue.of(2);
+        var expected = 2;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignmentIntSame() {
-        setGlobalVar(IntegerValue.of(1));
+        setGlobalVar(1);
 
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1")));
-        var expected = IntegerValue.of(1);
+        var expected = 1;
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
