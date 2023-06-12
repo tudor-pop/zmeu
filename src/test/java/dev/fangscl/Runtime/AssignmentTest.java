@@ -185,6 +185,26 @@ public class AssignmentTest extends BaseTest {
     }
 
     @Test
+    void AssignLessTrue() {
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 3 < 3.1
+                """)));
+        assertTrue(res);
+        log.warn(toJson(res));
+    }
+
+    @Test
+    void AssignLessFalse() {
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x=0
+                x = 3.2 < 3.1
+                """)));
+        assertFalse(res);
+        log.warn(toJson(res));
+    }
+
+    @Test
     void AssignGreater() {
         var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 var x=0

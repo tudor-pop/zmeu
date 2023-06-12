@@ -188,6 +188,34 @@ public class Interpreter implements
                     case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
                     default -> throw new RuntimeException("Operator could not be evaluated");
                 };
+            } else if (lhs instanceof Double lhsn && rhs instanceof Integer rhsn) {
+                return switch (op) {
+                    case "+" -> lhsn + rhsn;
+                    case "-" -> lhsn - rhsn;
+                    case "/" -> lhsn / rhsn;
+                    case "*" -> lhsn * rhsn;
+                    case "%" -> lhsn % rhsn;
+                    case "==" -> Double.compare(lhsn, rhsn) == 0;
+                    case "<" -> Double.compare(lhsn, rhsn) < 0;
+                    case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
+                    case ">" -> Double.compare(lhsn, rhsn) > 0;
+                    case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
+            } else if (lhs instanceof Integer lhsn && rhs instanceof Double rhsn) {
+                return switch (op) {
+                    case "+" -> lhsn + rhsn;
+                    case "-" -> lhsn - rhsn;
+                    case "/" -> lhsn / rhsn;
+                    case "*" -> lhsn * rhsn;
+                    case "%" -> lhsn % rhsn;
+                    case "==" -> Double.compare(lhsn, rhsn) == 0;
+                    case "<" -> Double.compare(lhsn, rhsn) < 0;
+                    case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
+                    case ">" -> Double.compare(lhsn, rhsn) > 0;
+                    case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
+                    default -> throw new RuntimeException("Operator could not be evaluated");
+                };
             }
         }
         throw new RuntimeException("Invalid number: %s %s".formatted(lhs, rhs));
