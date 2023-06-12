@@ -1,11 +1,5 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Frontend.Parser.Expressions.LogicalExpression;
-import dev.fangscl.Frontend.Parser.Literals.BooleanLiteral;
-import dev.fangscl.Frontend.Parser.Literals.NullLiteral;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,71 +7,57 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void trueOrTrue() {
-        // true || true -> true
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
-                BooleanLiteral.of(true), BooleanLiteral.of(true)))));
-        var expected = true;
-        Assertions.assertEquals(expected, res);
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("true || true")));
+        Assertions.assertTrue(res);
     }
 
     @Test
     void trueOrFalse() {
         // true || false -> true
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
-                BooleanLiteral.of(true), BooleanLiteral.of(false)))));
-        var expected = true;
-        Assertions.assertEquals(expected, res);
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("true || false")));
+        Assertions.assertTrue(res);
     }
 
     @Test
     void falseOrTrue() {
         // false || true -> true
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
-                BooleanLiteral.of(false), BooleanLiteral.of(true)))));
-        var expected = true;
-        Assertions.assertEquals(expected, res);
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("false || true")));
+        Assertions.assertTrue(res);
     }
 
     @Test
     void falseOrFalse() {
-        // false || true -> true
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("||",
-                BooleanLiteral.of(false), BooleanLiteral.of(false)))));
-        var expected = false;
-        Assertions.assertEquals(expected, res);
+        // false || false -> true
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("false || false")));
+        Assertions.assertFalse(res);
     }
 
     @Test
     void falseAndTrue() {
         // null && 2 -> null
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
-                NullLiteral.of(), NumericLiteral.of(2)))));
-        Assertions.assertEquals(null, res);
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("null && 2")));
+        Assertions.assertNull(res);
     }
 
     @Test
     void trueAndFalse() {
         // 2 && null -> null
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
-                NumericLiteral.of(2), NullLiteral.of()))));
-        Assertions.assertEquals(null, res);
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("2 && null")));
+        Assertions.assertNull(res);
     }
 
     @Test
     void trueAndTrue() {
         // 1 && 2 -> 2
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
-                NumericLiteral.of(1), NumericLiteral.of(2)))));
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("1 && 2")));
         Assertions.assertEquals(2, res);
     }
 
     @Test
     void falseAndFalse() {
         // false && false -> false
-        var res = interpreter.eval(Program.of(ExpressionStatement.of(LogicalExpression.of("&&",
-                BooleanLiteral.of(false), BooleanLiteral.of(false)))));
-        var expected = false;
-        Assertions.assertEquals(expected, res);
+        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("false && false")));
+        Assertions.assertFalse(res);
     }
 
 }
