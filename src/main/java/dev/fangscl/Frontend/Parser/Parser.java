@@ -378,16 +378,11 @@ public class Parser {
         return FunctionDeclaration.of(test, params, body);
     }
 
-    /**
-     * SchemaDeclaration
-     * : schema Identifier BlockStatement
-     * ;
-     */
     private Statement TypeDeclaration() {
         eat(TokenType.Type);
         var test = Identifier();
 
-        Statement body = ExpressionStatement.of(BlockExpression());
+        Expression body = BlockExpression();
         return TypeDeclaration.of(test, body);
     }
 

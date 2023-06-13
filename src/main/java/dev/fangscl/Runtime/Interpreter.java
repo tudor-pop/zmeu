@@ -64,6 +64,9 @@ public class Interpreter implements
         this.env.init("floor", new FloorFunction());
         this.env.init("abs", new AbsFunction());
         this.env.init("date", new DateFunction());
+
+//        this.env.init("Vm", new Vm());
+
     }
 
     @Override
@@ -323,22 +326,23 @@ public class Interpreter implements
         if (expression.getName() == null) {
             throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
         }
-        var typeValueTmp = executeBlock(expression.getType(), env);
-        var typeValue = (TypeValue) typeValueTmp;
+        var typeValue = (TypeValue) executeBlock(expression.getType(), env);
 
-        Environment typeEnvironment = Optional.ofNullable(typeValue.getEnvironment()).orElse(env);
+        Environment typeEnvironment = typeValue.getEnvironment();
         Environment resourceEnv = Environment.copyOf(typeEnvironment);
         try {
-            var args = new ArrayList<>();
-            for (Statement it : expression.getArguments()) {
-                Object objectRuntimeValue = executeBlock(it, resourceEnv);
-                args.add(objectRuntimeValue);
-            }
             var init = typeValue.getMethodOrNull("init");
             if (init != null) {
+                var args = new ArrayList<>();
+                for (Statement it : expression.getArguments()) {
+                    Object objectRuntimeValue = executeBlock(it, resourceEnv);
+                    args.add(objectRuntimeValue);
+                }
                 functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
+            } else {
+                expression.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            return typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName().getSymbol(), args, resourceEnv));
+            return typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName().getSymbol(), resourceEnv));
         } catch (NotFoundException e) {
             throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
         }
@@ -391,7 +395,7 @@ public class Interpreter implements
         Statement body = expression.getBody();
         if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
             executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
-            return env.init(name.getSymbol(), TypeValue.of(name, blockExpression, typeEnv)); // install the type into the global env
+            return env.init(name.getSymbol(), TypeValue.of(name, typeEnv)); // install the type into the global env
         }
         throw new RuntimeException("Invalid type");
     }

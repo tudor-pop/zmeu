@@ -28,7 +28,7 @@ Declaration     → VarDeclaration
                 | FunDeclaration
                 | TypeDeclaration
 
-TypeDeclaration → "schema" Identifier "{" BlockExpression "}"
+TypeDeclaration → "type" Identifier "{" BlockExpression "}"
                
 FunDeclaration  → "fun" Identifier "(" Parameters? ")" BlockExpression
 

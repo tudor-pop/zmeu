@@ -49,7 +49,7 @@ public class Environment implements IEnvironment {
      * Copy parent's variables into a new Environment
      */
     public static Environment copyOf(Environment parent) {
-        Map<String, Object> res = new HashMap<>(parent.getVariables().size() + 1);
+        Map<String, Object> res = new HashMap<>(parent.getVariables().size());
         for (var it : parent.getVariables().entrySet()) {
             res.put(it.getKey(), it.getValue());
         }

@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Runtime.Environment;
 import dev.fangscl.Runtime.IEnvironment;
 import lombok.Data;
@@ -12,11 +11,9 @@ import org.jetbrains.annotations.Nullable;
 public class TypeValue implements IEnvironment {
     private Environment environment;
     private Identifier name;
-    private BlockExpression body;
 
-    private TypeValue(Identifier name, BlockExpression body, Environment environment) {
+    private TypeValue(Identifier name, Environment environment) {
         this.name = name;
-        this.body = body;
         this.environment = environment;
     }
 
@@ -24,8 +21,8 @@ public class TypeValue implements IEnvironment {
         return name;
     }
 
-    public static TypeValue of(Identifier name, BlockExpression body, Environment environment) {
-        return new TypeValue(name, body, environment);
+    public static TypeValue of(Identifier name, Environment environment) {
+        return new TypeValue(name, environment);
     }
 
     public String getNameString() {

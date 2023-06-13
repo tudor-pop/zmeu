@@ -10,11 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * AssignmentExpression
- * : AdditiveExpression
- * | LeftHandSideExpression AssignmentOperator AssignmentExpression
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ResourceExpression extends Statement {
