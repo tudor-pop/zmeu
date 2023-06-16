@@ -34,11 +34,11 @@ public class ResourceTest extends BaseTest {
      * Vm.main
      * All resources are defined in the type
      * global env{
-     *     Vm : SchemaValue -> variables{ main -> resource Vm}
+     * Vm : SchemaValue -> variables{ main -> resource Vm}
      * }
      */
     @Test
-     void resourceIsDefinedInSchemaEnv() {
+    void resourceIsDefinedInSchemaEnv() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm { }
                 resource Vm main {
@@ -57,14 +57,19 @@ public class ResourceTest extends BaseTest {
         assertNotNull(resource);
         assertEquals("main", resource.getName());
     }
+
     @Test
-     void resourceIsDefinedInSchema() {
+    void resourceIsDefinedInSchema() {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm { 
                     var name
                     var maxCount
                 }
                 resource Vm main {
+                    name = "first"
+                    maxCount = 2
+                }
+                resource Vm second {
                     name = "first"
                     maxCount = 1
                 }
@@ -73,10 +78,10 @@ public class ResourceTest extends BaseTest {
         var type = (TypeValue) global.get("Vm");
 
         assertNotNull(type);
-        assertEquals(Identifier.of("Vm"), type.getType());
+        assertEquals("Vm", type.getType());
 
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getInstances().get("main");
 
         assertNotNull(resource);
         assertEquals("main", resource.getName());
@@ -203,6 +208,7 @@ public class ResourceTest extends BaseTest {
         var x = resource.get("x");
         assertEquals(3, x);
     }
+
     @SneakyThrows
     @Test
     void resourceInitJson() {

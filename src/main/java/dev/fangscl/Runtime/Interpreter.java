@@ -343,7 +343,7 @@ public class Interpreter implements
             } else {
                 expression.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            var res = typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName().getSymbol(), resourceEnv));
+            var res = typeValue.initInstance(expression.name(), ResourceValue.of(expression.name(), resourceEnv));
             engine.process(typeValue.typeString(), resourceEnv.getVariables());
             return res;
         } catch (NotFoundException e) {
@@ -398,7 +398,7 @@ public class Interpreter implements
         Statement body = expression.getBody();
         if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
             executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
-            return env.init(name.getSymbol(), TypeValue.of(name, typeEnv)); // install the type into the global env
+            return env.init(name, TypeValue.of(name, typeEnv)); // install the type into the global env
         }
         throw new RuntimeException("Invalid type");
     }

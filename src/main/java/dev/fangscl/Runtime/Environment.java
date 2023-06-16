@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
@@ -16,6 +17,7 @@ public class Environment implements IEnvironment {
     private final Environment parent;
 
     @Getter
+    @JsonIgnoreProperties("variables")
     private final Map<String, Object> variables;
 
     public Environment(@Nullable Environment parent) {
