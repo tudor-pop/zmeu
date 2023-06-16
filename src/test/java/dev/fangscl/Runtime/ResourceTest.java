@@ -49,7 +49,31 @@ public class ResourceTest extends BaseTest {
         var type = (TypeValue) global.get("Vm");
 
         assertNotNull(type);
-        assertEquals(Identifier.of("Vm"), type.getName());
+        assertEquals(Identifier.of("Vm"), type.getType());
+
+
+        var resource = (ResourceValue) type.getEnvironment().get("main");
+
+        assertNotNull(resource);
+        assertEquals("main", resource.getName());
+    }
+    @Test
+     void resourceIsDefinedInSchema() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                type Vm { 
+                    var name
+                    var maxCount
+                }
+                resource Vm main {
+                    name = "first"
+                    maxCount = 1
+                }
+                """)));
+        log.warn(toJson(res));
+        var type = (TypeValue) global.get("Vm");
+
+        assertNotNull(type);
+        assertEquals(Identifier.of("Vm"), type.getType());
 
 
         var resource = (ResourceValue) type.getEnvironment().get("main");

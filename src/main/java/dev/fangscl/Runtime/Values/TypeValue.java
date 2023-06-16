@@ -10,23 +10,23 @@ import org.jetbrains.annotations.Nullable;
 @Data
 public class TypeValue implements IEnvironment {
     private Environment environment;
-    private Identifier name;
+    private Identifier type;
 
-    private TypeValue(Identifier name, Environment environment) {
-        this.name = name;
+    private TypeValue(Identifier type, Environment environment) {
+        this.type = type;
         this.environment = environment;
     }
 
     public Identifier getRuntimeValue() {
-        return name;
+        return type;
     }
 
     public static TypeValue of(Identifier name, Environment environment) {
         return new TypeValue(name, environment);
     }
 
-    public String getNameString() {
-        return name.getSymbol();
+    public String typeString() {
+        return type.getSymbol();
     }
 
     @NotNull

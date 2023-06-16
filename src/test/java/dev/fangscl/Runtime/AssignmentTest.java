@@ -1,10 +1,8 @@
 package dev.fangscl.Runtime;
 
-import dev.fangscl.Runtime.Values.*;
+import dev.fangscl.Runtime.Values.NullValue;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,8 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AssignmentTest extends BaseTest {
 
     private void setGlobalVar(Object of) {
-        global = new Environment(Map.entry("VERSION", of));
-        interpreter.set(global);
+        global.init("VERSION", of);
     }
 
     @Test

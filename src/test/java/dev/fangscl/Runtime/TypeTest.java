@@ -23,7 +23,7 @@ public class TypeTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
-        assertEquals(Identifier.of("Vm"), actual.getName());
+        assertEquals(Identifier.of("Vm"), actual.getType());
     }
 
     @Test

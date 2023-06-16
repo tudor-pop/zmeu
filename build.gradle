@@ -20,7 +20,12 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
-    testImplementation 'software.amazon.awssdk:ec2:2.20.83'
+    implementation 'software.amazon.awssdk:ec2:2.20.83'
+    implementation 'software.amazon.awssdk:sdk-core:2.20.83'
+    implementation 'software.amazon.awssdk:aws-core:2.20.83'
+    implementation 'com.github.java-json-tools:json-patch:1.13'
+    implementation 'org.jgrapht:jgrapht-core:1.5.2'
+
 
 
     compileOnly 'org.projectlombok:lombok:1.18.28'

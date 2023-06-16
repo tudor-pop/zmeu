@@ -7,6 +7,7 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
+import dev.fangscl.Runtime.Engine.Engine;
 import dev.fangscl.Runtime.Functions.Cast.BooleanCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.DecimalCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
@@ -33,16 +34,18 @@ public class Interpreter implements
         dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
-
-    public Interpreter(Environment environment) {
-        this.set(environment);
-    }
+    private Engine engine;
 
     public Interpreter() {
         this(new Environment());
     }
 
-    public void set(Environment environment) {
+    public Interpreter(Environment environment) {
+        this(environment, new Engine());
+    }
+
+    public Interpreter(Environment environment, Engine engine) {
+        this.engine = engine;
         this.env = environment;
         this.env.init("null", NullValue.of());
         this.env.init("true", true);
@@ -66,7 +69,6 @@ public class Interpreter implements
         this.env.init("date", new DateFunction());
 
 //        this.env.init("Vm", new Vm());
-
     }
 
     @Override
@@ -320,7 +322,6 @@ public class Interpreter implements
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
     }
 
-
     @Override
     public Object eval(ResourceExpression expression) {
         if (expression.getName() == null) {
@@ -342,7 +343,9 @@ public class Interpreter implements
             } else {
                 expression.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            return typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName().getSymbol(), resourceEnv));
+            var res = typeEnvironment.init(expression.getName(), ResourceValue.of(expression.getName().getSymbol(), resourceEnv));
+            engine.process(typeValue.typeString(), resourceEnv.getVariables());
+            return res;
         } catch (NotFoundException e) {
             throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
         }
