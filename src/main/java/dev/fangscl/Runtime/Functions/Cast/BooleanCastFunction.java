@@ -17,9 +17,9 @@ public class BooleanCastFunction implements Callable {
             return false;
         }
         if (arg instanceof String s) {
-            if (s.equalsIgnoreCase("yes")) {
+            if ("yes".equalsIgnoreCase(s)) {
                 return true;
-            } else if (s.equalsIgnoreCase("no")) {
+            } else if ("no".equalsIgnoreCase(s)) {
                 return false;
             }
             return Boolean.parseBoolean(s);
