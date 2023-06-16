@@ -12,12 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TypeDeclaration extends Statement {
-    private String name;
+    private Identifier name;
     private Statement body;
 
     public TypeDeclaration(Identifier name, @Nullable Statement body) {
         this();
-        this.name = name.getSymbol();
+        this.name = name;
         this.body = body;
     }
 

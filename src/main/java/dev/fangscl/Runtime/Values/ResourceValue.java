@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime.Values;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.fangscl.Runtime.Environment;
 import dev.fangscl.Runtime.IEnvironment;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @Data
 public class ResourceValue implements IEnvironment {
+    @JsonIgnore
     private Environment environment;
     private String name;
     private List<Object> args;

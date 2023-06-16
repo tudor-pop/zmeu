@@ -14,6 +14,7 @@ import java.util.Map;
 @Log4j2
 public class Environment implements IEnvironment {
     @Nullable
+    @Getter
     private final Environment parent;
 
     @Getter

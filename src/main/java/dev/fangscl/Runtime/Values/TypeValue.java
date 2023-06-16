@@ -11,9 +11,9 @@ import org.jetbrains.annotations.Nullable;
 public class TypeValue implements IEnvironment {
     private final Environment environment;
     private final Environment instances ;
-    private final String type;
+    private final Identifier type;
 
-    private TypeValue(String type, Environment environment) {
+    private TypeValue(Identifier type, Environment environment) {
         this.type = type;
         this.instances = new Environment(environment);
         this.environment = environment;
@@ -21,15 +21,15 @@ public class TypeValue implements IEnvironment {
     }
 
     public static TypeValue of(Identifier name, Environment environment) {
-        return new TypeValue(name.getSymbol(), environment);
-    }
-
-    public static TypeValue of(String name, Environment environment) {
         return new TypeValue(name, environment);
     }
 
+    public static TypeValue of(String name, Environment environment) {
+        return new TypeValue(Identifier.of(name), environment);
+    }
+
     public String typeString() {
-        return type;
+        return type.getSymbol();
     }
 
     @NotNull

@@ -71,14 +71,14 @@ public class ResourceTest extends BaseTest {
                 }
                 resource Vm second {
                     name = "first"
-                    maxCount = 1
+                    maxCount = Vm.main.maxCount
                 }
                 """)));
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
         assertNotNull(type);
-        assertEquals("Vm", type.getType());
+        assertEquals(Identifier.of("Vm"), type.getType());
 
 
         var resource = (ResourceValue) type.getInstances().get("main");
