@@ -7,7 +7,7 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
-import dev.fangscl.Runtime.Engine.Engine;
+import dev.fangscl.Engine.Engine;
 import dev.fangscl.Runtime.Functions.Cast.BooleanCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.DecimalCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
