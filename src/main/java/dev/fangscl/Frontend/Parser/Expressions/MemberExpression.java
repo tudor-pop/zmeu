@@ -7,11 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * AssignmentExpression
- * : AdditiveExpression
- * | LeftHandSideExpression AssignmentOperator AssignmentExpression
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
