@@ -1,8 +1,8 @@
 package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Runtime.Environment;
-import dev.fangscl.Runtime.IEnvironment;
+import dev.fangscl.Runtime.Environment.Environment;
+import dev.fangscl.Runtime.Environment.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

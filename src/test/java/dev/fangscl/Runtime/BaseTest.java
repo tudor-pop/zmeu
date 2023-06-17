@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
+import dev.fangscl.Runtime.Environment.Environment;
 import org.junit.jupiter.api.BeforeEach;
 
 public class BaseTest {

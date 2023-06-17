@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime;
+package dev.fangscl.Runtime.Environment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
@@ -25,7 +25,7 @@ public class Environment implements IEnvironment {
 
     public Environment(@Nullable Environment parent) {
         this.parent = parent;
-        this.variables = new HashMap<>(32);
+        this.variables = new HashMap<>(8);
     }
 
     public Environment(@Nullable Environment parent, Map<String, Object> variables) {
@@ -34,7 +34,7 @@ public class Environment implements IEnvironment {
     }
 
     public Environment(@Nullable Environment parent, Resource variables) {
-        this();
+        this(parent);
         for (Field field : variables.getClass().getDeclaredFields()) {
             try {
                 field.setAccessible(true);
@@ -48,14 +48,6 @@ public class Environment implements IEnvironment {
     public Environment(Map<String, Object> variables) {
         this.parent = null;
         this.variables = variables;
-    }
-
-    public Environment(Map.Entry<String, Object>... variables) {
-        this.parent = null;
-        this.variables = new HashMap<>();
-        for (var variable : variables) {
-            this.variables.put(variable.getKey(), variable.getValue());
-        }
     }
 
     public Environment() {

@@ -72,6 +72,24 @@ public class FunTest extends BaseTest {
         log.warn(toJson(res));
         assertEquals(2, res);
     }
+    @Test
+    void funEvaluateBlockWithOuter() {
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+                var x = "global"
+                {
+                    fun myFun(){
+                       var y=1
+                       print(x)
+                    }
+                    myFun()
+                    var x="local"
+                    myFun()
+                    
+                }
+                """)));
+        log.warn(toJson(res));
+        assertEquals("global", res);
+    }
 
     @Test
     void funBody() {

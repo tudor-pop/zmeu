@@ -7,7 +7,7 @@ import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 import dev.fangscl.Runtime.Callable;
-import dev.fangscl.Runtime.Environment;
+import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Interpreter;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;

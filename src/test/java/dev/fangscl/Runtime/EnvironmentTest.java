@@ -2,6 +2,7 @@ package dev.fangscl.Runtime;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
+import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;

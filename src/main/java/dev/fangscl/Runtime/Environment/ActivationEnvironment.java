@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime;
+package dev.fangscl.Runtime.Environment;
 
 import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;

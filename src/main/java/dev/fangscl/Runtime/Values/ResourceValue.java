@@ -1,8 +1,8 @@
 package dev.fangscl.Runtime.Values;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import dev.fangscl.Runtime.Environment;
-import dev.fangscl.Runtime.IEnvironment;
+import dev.fangscl.Runtime.Environment.Environment;
+import dev.fangscl.Runtime.Environment.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
