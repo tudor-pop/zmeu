@@ -2,12 +2,14 @@ package dev.fangscl.Runtime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
+import dev.fangscl.Resources.Resource;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,8 +29,20 @@ public class Environment implements IEnvironment {
     }
 
     public Environment(@Nullable Environment parent, Map<String, Object> variables) {
-        this.parent = parent;
-        this.variables = variables;
+        this(parent);
+        this.variables.putAll(variables);
+    }
+
+    public Environment(@Nullable Environment parent, Resource variables) {
+        this();
+        for (Field field : variables.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true);
+                this.variables.put(field.getName(), field.get(field.getName()));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public Environment(Map<String, Object> variables) {
@@ -46,17 +60,6 @@ public class Environment implements IEnvironment {
 
     public Environment() {
         this(new HashMap<>());
-    }
-
-    /**
-     * Copy parent's variables into a new Environment
-     */
-    public static Environment copyOf(Environment parent) {
-        Map<String, Object> res = new HashMap<>(parent.getVariables().size());
-        for (var it : parent.getVariables().entrySet()) {
-            res.put(it.getKey(), it.getValue());
-        }
-        return new Environment(parent, res);
     }
 
     /**

@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime;
 
+import dev.fangscl.Engine.Engine;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
@@ -7,7 +8,6 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
-import dev.fangscl.Engine.Engine;
 import dev.fangscl.Runtime.Functions.Cast.BooleanCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.DecimalCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
@@ -34,7 +34,7 @@ public class Interpreter implements
         dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
-    private Engine engine;
+    private final Engine engine;
 
     public Interpreter() {
         this(new Environment());
@@ -68,7 +68,7 @@ public class Interpreter implements
         this.env.init("abs", new AbsFunction());
         this.env.init("date", new DateFunction());
 
-//        this.env.init("Vm", new Vm());
+//        this.env.init("Vm", TypeValue.of("Vm", new Environment(env, new Vm())));
     }
 
     @Override
@@ -334,7 +334,7 @@ public class Interpreter implements
         var typeValue = (TypeValue) executeBlock(expression.getType(), env);
 
         Environment typeEnvironment = typeValue.getEnvironment();
-        Environment resourceEnv = Environment.copyOf(typeEnvironment);
+        Environment resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
         try {
             var init = typeValue.getMethodOrNull("init");
             if (init != null) {
@@ -351,7 +351,8 @@ public class Interpreter implements
             engine.process(typeValue.typeString(), resourceEnv.getVariables());
             return res;
         } catch (NotFoundException e) {
-            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()));
+//            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
+            throw e;
         }
     }
 

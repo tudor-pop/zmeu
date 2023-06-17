@@ -63,11 +63,11 @@ public class ResourceTest extends BaseTest {
         var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm { 
                     var name
-                    var maxCount
+                    var maxCount=0
                 }
                 resource Vm main {
                     name = "first"
-                    maxCount = 2
+                    maxCount=1
                 }
                 resource Vm second {
                     name = "first"
