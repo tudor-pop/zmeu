@@ -73,7 +73,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         for (int i = scopes.size() - 1; i >= 0; i--) {
             if (scopes.get(i).containsKey(identifier.getSymbol())) {
                 interpreter.resolve(expression, scopes.size() - 1 - i);
-                return;
+                break;
             }
         }
 
