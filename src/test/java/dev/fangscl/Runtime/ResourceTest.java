@@ -119,7 +119,7 @@ public class ResourceTest extends BaseTest {
 
         var resource = (ResourceValue) type.getEnvironment().get("main");
 
-        assertEquals(2, resource.getEnvironment().lookup("x"));
+        assertEquals(2, resource.getParent().lookup("x"));
     }
 
     @Test
@@ -140,9 +140,9 @@ public class ResourceTest extends BaseTest {
         var type = (TypeValue) global.get("Vm");
 
         var resource = (ResourceValue) type.getEnvironment().get("main");
-        assertSame(2, resource.getEnvironment().get("x"));
+        assertSame(2, resource.getParent().get("x"));
         // make sure main's x has been changed
-        assertEquals(2, resource.getEnvironment().get("x"));
+        assertEquals(2, resource.getParent().get("x"));
 
         // assert y holds reference to Vm.main
         var y = global.lookup("y");

@@ -27,9 +27,7 @@ import dev.fangscl.Runtime.exceptions.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 public class Interpreter implements
@@ -37,7 +35,9 @@ public class Interpreter implements
         dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
+    private Environment globals;
     private final Engine engine;
+    private final Map<Expression, Integer> locals = new HashMap<>();
 
     public Interpreter() {
         this(new Environment());
@@ -49,29 +49,30 @@ public class Interpreter implements
 
     public Interpreter(Environment environment, Engine engine) {
         this.engine = engine;
+        this.globals = environment;
         this.env = environment;
-        this.env.init("null", NullValue.of());
-        this.env.init("true", true);
-        this.env.init("false", false);
-        this.env.init("print", new PrintFunction());
-        this.env.init("println", new PrintlnFunction());
+        this.globals.init("null", NullValue.of());
+        this.globals.init("true", true);
+        this.globals.init("false", false);
+        this.globals.init("print", new PrintFunction());
+        this.globals.init("println", new PrintlnFunction());
 
         // casting
-        this.env.init("int", new IntCastFunction());
-        this.env.init("decimal", new DecimalCastFunction());
-        this.env.init("string", new StringCastFunction());
-        this.env.init("boolean", new BooleanCastFunction());
+        this.globals.init("int", new IntCastFunction());
+        this.globals.init("decimal", new DecimalCastFunction());
+        this.globals.init("string", new StringCastFunction());
+        this.globals.init("boolean", new BooleanCastFunction());
 
         // number
-        this.env.init("pow", new PowFunction());
-        this.env.init("min", new MinFunction());
-        this.env.init("max", new MaxFunction());
-        this.env.init("ceil", new CeilFunction());
-        this.env.init("floor", new FloorFunction());
-        this.env.init("abs", new AbsFunction());
-        this.env.init("date", new DateFunction());
+        this.globals.init("pow", new PowFunction());
+        this.globals.init("min", new MinFunction());
+        this.globals.init("max", new MaxFunction());
+        this.globals.init("ceil", new CeilFunction());
+        this.globals.init("floor", new FloorFunction());
+        this.globals.init("abs", new AbsFunction());
+        this.globals.init("date", new DateFunction());
 
-//        this.env.init("Vm", TypeValue.of("Vm", new Environment(env, new Vm())));
+//        this.globals.init("Vm", TypeValue.of("Vm", new Environment(env, new Vm())));
     }
 
     @Override
@@ -119,7 +120,26 @@ public class Interpreter implements
 
     @Override
     public Object eval(Identifier expression) {
-        return env.lookup(expression.getSymbol());
+        return lookupVar(expression);
+    }
+
+    private Object lookupVar(Identifier expression) {
+        var hops = locals.get(expression);
+        return lookup(expression.getSymbol(), hops);
+    }
+
+    private Object lookup(String symbol, Integer hops) {
+        if (hops == null) {
+            return globals.lookup(symbol);
+        }
+        return env.ancestor(hops).lookup(symbol);
+    }
+
+    private Object assign(String symbol, Object right, Integer hops) {
+        if (hops == null) {
+            return globals.assign(symbol, right);
+        }
+        return env.ancestor(hops).assign(symbol, right, hops);
     }
 
     @Override
@@ -483,7 +503,8 @@ public class Interpreter implements
                 throw new OperationNotImplementedException("Invalid assignment expression");
             }
         } else if (left instanceof Identifier identifier) {
-            return env.assign(identifier.getSymbol(), right);
+            Integer distance = locals.get(identifier);
+            return assign(identifier.getSymbol(), right, distance);
         }
         throw new RuntimeException("Invalid assignment");
     }
@@ -491,6 +512,8 @@ public class Interpreter implements
     @Override
     public Object eval(Program program) {
         Object lastEval = new NullValue();
+        var resolver = new Resolver(this);
+        resolver.resolve(program);
 
         for (Statement i : program.getBody()) {
             lastEval = executeBlock(i, env);
@@ -581,4 +604,9 @@ public class Interpreter implements
         System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().getLine());
         hadRuntimeError = true;
     }
+
+    public void resolve(Expression expression, int hops) {
+        locals.put(expression, hops);
+    }
+
 }

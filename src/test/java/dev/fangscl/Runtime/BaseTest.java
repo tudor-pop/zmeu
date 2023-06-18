@@ -13,6 +13,7 @@ public class BaseTest {
     protected Tokenizer tokenizer;
     protected Environment global;
     protected ObjectMapper gson = new ObjectMapper();
+    protected Resolver resolver;
 
     @BeforeEach
     void reset() {
@@ -20,6 +21,7 @@ public class BaseTest {
         this.interpreter = new Interpreter(global);
         this.parser = new Parser();
         this.tokenizer = new Tokenizer();
+        this.resolver = new Resolver(interpreter);
     }
 
     protected String toJson(Object o) {

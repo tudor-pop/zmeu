@@ -45,4 +45,8 @@ public class Program extends Statement {
     public <R> R accept(Visitor<R> visitor) {
         return visitor.eval(this);
     }
+
+    public boolean hasBody() {
+        return body != null;
+    }
 }

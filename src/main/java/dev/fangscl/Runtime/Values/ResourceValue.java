@@ -14,14 +14,14 @@ import java.util.Map;
 @Data
 public class ResourceValue implements IEnvironment {
     @JsonIgnore
-    private Environment environment;
+    private Environment parent;
     private String name;
     private List<Object> args;
 
-    private ResourceValue(String name, List<Object> args, Environment environment) {
+    private ResourceValue(String name, List<Object> args, Environment parent) {
         this.name = name;
         this.args = args;
-        this.environment = environment;
+        this.parent = parent;
     }
 
     private ResourceValue(String e) {
@@ -56,29 +56,34 @@ public class ResourceValue implements IEnvironment {
 
     @Override
     public Object assign(String varName, Object value) {
-        return environment.assign(varName, value);
+        return parent.assign(varName, value);
     }
 
     @Override
     public Object lookup(@Nullable String varName) {
-        return environment.lookup(varName);
+        return parent.lookup(varName);
     }
 
     @Override
     public Object lookup(@Nullable Object varName) {
-        return environment.lookup(varName);
+        return parent.lookup(varName);
     }
 
     @Override
     public @Nullable Object get(String key) {
-        return environment.get(key);
+        return parent.get(key);
+    }
+
+    @Override
+    public Object init(String name, Object value) {
+        return parent.init(name, value);
     }
 
     public record Data(String name, Map<String, Object> args) {
     }
 
     public Data asData() {
-        var entries = environment.getVariables().entrySet();
+        var entries = parent.getVariables().entrySet();
         var args = new HashMap<String, Object>(entries.size());
         for (var it : entries) {
             args.put(it.getKey(), it.getValue());

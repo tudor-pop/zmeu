@@ -9,6 +9,9 @@ import lombok.EqualsAndHashCode;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Acts as VariableExpression without creating a new node
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Identifier extends Expression {

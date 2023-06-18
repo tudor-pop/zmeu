@@ -20,10 +20,10 @@ public class FunValue implements Callable {
     @JsonBackReference
     private Environment clojure;
     private Identifier name;
-    private List<Expression> params;
+    private List<Identifier> params;
     private Statement body;
 
-    private FunValue(Identifier name, List<Expression> params, Statement body, Environment clojure) {
+    private FunValue(Identifier name, List<Identifier> params, Statement body, Environment clojure) {
         this.name = name;
         this.params = params;
         this.body = body;
@@ -38,18 +38,18 @@ public class FunValue implements Callable {
         return name;
     }
 
-    public static Object of(Identifier name, List<Expression> params, Statement body, Environment environment) {
+    public static Object of(Identifier name, List<Identifier> params, Statement body, Environment environment) {
         return new FunValue(name, params, body, environment);
     }
 
-    public static FunValue of(String name, List<Expression> params, Statement body, Environment environment) {
+    public static FunValue of(String name, List<Identifier> params, Statement body, Environment environment) {
         return (FunValue) of(Identifier.of(name), params, body, environment);
     }
-    public static Object of(String name, List<Expression> params,  Environment environment) {
+    public static Object of(String name, List<Identifier> params,  Environment environment) {
         return FunValue.of(Identifier.of(name), params, ExpressionStatement.of(BlockExpression.of()), environment);
     }
 
-    public static Object of(List<Expression> params, Statement body, Environment environment) {
+    public static Object of(List<Identifier> params, Statement body, Environment environment) {
         return new FunValue(null, params, body, environment);
     }
 

@@ -5,11 +5,6 @@ import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * AssignmentExpression
- * : AdditiveExpression
- * | LeftHandSideExpression AssignmentOperator AssignmentExpression
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class VariableDeclaration extends Expression {
@@ -25,6 +20,7 @@ public class VariableDeclaration extends Expression {
         this.id = (Identifier) id;
         this.init = init;
     }
+
     private VariableDeclaration(Expression id) {
         this(id, null);
     }
@@ -36,6 +32,7 @@ public class VariableDeclaration extends Expression {
     public static VariableDeclaration of(Expression id) {
         return new VariableDeclaration(id);
     }
+
     public static VariableDeclaration of(String id) {
         return new VariableDeclaration(Identifier.of(id));
     }

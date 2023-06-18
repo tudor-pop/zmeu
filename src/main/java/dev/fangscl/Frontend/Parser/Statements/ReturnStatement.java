@@ -27,6 +27,7 @@ public class ReturnStatement extends Statement {
         this.kind = NodeType.ReturnStatement;
     }
 
+
     public static Statement of(Expression body) {
         return new ReturnStatement(body);
     }
@@ -58,5 +59,9 @@ public class ReturnStatement extends Statement {
     @Override
     public <R> R accept(Visitor<R> visitor) {
         return visitor.eval(this);
+    }
+
+    public boolean hasArgument() {
+        return argument != null;
     }
 }

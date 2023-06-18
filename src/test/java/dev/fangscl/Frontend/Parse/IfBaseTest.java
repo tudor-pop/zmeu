@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parse;
 
+import dev.fangscl.ErrorSystem;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.AssignmentExpression;
 import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
@@ -61,7 +62,7 @@ public class IfBaseTest extends BaseTest {
         parser.produceAST(tokenizer.tokenize("""
                 if x) x=1
                 """));
-        ParseError parseError = parser.getIterator().getErrors().get(0);
+        ParseError parseError = ErrorSystem.getErrors().get(0);
         Assertions.assertEquals(TokenType.OpenParenthesis, parseError.getExpected());
     }
 
@@ -70,7 +71,7 @@ public class IfBaseTest extends BaseTest {
         parser.produceAST(tokenizer.tokenize("""
                 if (x x=1
                 """));
-        ParseError parseError = parser.getIterator().getErrors().get(0);
+        ParseError parseError = ErrorSystem.getErrors().get(0);
         Assertions.assertEquals(TokenType.CloseParenthesis, parseError.getExpected());
     }
 

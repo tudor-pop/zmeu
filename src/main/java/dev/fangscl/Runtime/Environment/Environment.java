@@ -1,7 +1,6 @@
 package dev.fangscl.Runtime.Environment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Resources.Resource;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
@@ -59,36 +58,13 @@ public class Environment implements IEnvironment {
      * var a = 2
      * var b = 3
      */
+    @Override
     public Object init(String name, Object value) {
         if (variables.containsKey(name)) {
             throw new VarExistsException(name);
         }
         this.put(name, value);
         return value;
-    }
-
-    public Object init(String name, int value) {
-        return init(name, Integer.valueOf(value));
-    }
-
-    public Object init(String name, double value) {
-        return init(name, Double.valueOf(value));
-    }
-
-    public Object init(String name, float value) {
-        return init(name, Float.valueOf(value));
-    }
-
-    public Object init(String name, String value) {
-        return init(name, (Object) value);
-    }
-
-    public Object init(String name, boolean value) {
-        return init(name, Boolean.valueOf(value));
-    }
-
-    public Object init(Identifier name, Object value) {
-        return init(name.getSymbol(), value);
     }
 
     /**

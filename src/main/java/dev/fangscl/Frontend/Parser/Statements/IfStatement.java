@@ -35,6 +35,10 @@ public class IfStatement extends Statement {
         this.kind = NodeType.BlockStatement;
     }
 
+    public boolean hasElse() {
+        return alternate != null;
+    }
+
     public static Statement of(Expression test, Expression consequent, Expression alternate) {
         return new IfStatement(test, consequent, alternate);
     }

@@ -80,7 +80,7 @@ CallExpression  → Primary ("(" Arguments? ")")*
 Arguments       → Expression ("," Expression)*
                 
 Primary         → NUMBER | STRING | "true" | "false" | "nil"  
-                | "(" expression ")" 
+                | "(" Expression ")" 
                 | IDENTIFIER
                 
 newLine         →  | \n

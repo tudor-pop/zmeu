@@ -1,5 +1,6 @@
 package dev.fangscl.Frontend.Parser;
 
+import dev.fangscl.ErrorSystem;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.*;
@@ -371,7 +372,7 @@ public class Parser {
         eat(TokenType.Fun, "Fun token expected: " + lookAhead());
         var test = Identifier();
         eat(TokenType.OpenParenthesis, "Expected '(' but got: " + lookAhead());
-        List<Expression> params = OptParameterList();
+        var params = OptParameterList();
         eat(TokenType.CloseParenthesis, "Expected ')' but got: " + lookAhead());
 
         Statement body = ExpressionStatement.of(BlockExpression());
@@ -394,14 +395,14 @@ public class Parser {
     private Statement InitStatement() {
         eat(TokenType.Init);
         eat(TokenType.OpenParenthesis);
-        List<Expression> params = OptParameterList();
+        var params = OptParameterList();
         eat(TokenType.CloseParenthesis);
 
         Statement body = ExpressionStatement.of(BlockExpression());
         return InitStatement.of(params, body);
     }
 
-    private List<Expression> OptParameterList() {
+    private List<Identifier> OptParameterList() {
         return IsLookAhead(TokenType.CloseParenthesis) ? Collections.emptyList() : ParameterList();
     }
 
@@ -411,8 +412,8 @@ public class Parser {
      * | ParameterList, Identifier
      * ;
      */
-    private List<Expression> ParameterList() {
-        var params = new ArrayList<Expression>();
+    private List<Identifier> ParameterList() {
+        var params = new ArrayList<Identifier>();
         do {
             params.add(Identifier());
         } while (IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
@@ -445,7 +446,7 @@ public class Parser {
             return CallExpression.of(expression, Arguments());
         }
 
-        List<Expression> params = OptParameterList();
+        var params = OptParameterList();
         eat(TokenType.CloseParenthesis);
         eat(TokenType.Lambda, "Expected -> but got: " + lookAhead().getValue());
 
@@ -571,7 +572,7 @@ public class Parser {
     }
 
     private RuntimeException Error(Token token, String message) {
-        return iterator.error(message, token);
+        return ErrorSystem.error(message, token);
     }
 
 

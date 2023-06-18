@@ -2,15 +2,14 @@ package dev.fangscl.Runtime.Values;
 
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Environment.Environment;
-import dev.fangscl.Runtime.Environment.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class TypeValue implements IEnvironment {
+public class TypeValue {
     private final Environment environment;
-    private final Environment instances ;
+    private final Environment instances;
     private final Identifier type;
 
     private TypeValue(Identifier type, Environment environment) {
@@ -42,22 +41,18 @@ public class TypeValue implements IEnvironment {
         return (FunValue) environment.get(methodName);
     }
 
-    @Override
     public Object assign(String varName, Object value) {
         return environment.assign(varName, value);
     }
 
-    @Override
     public Object lookup(@Nullable String varName) {
         return environment.lookup(varName);
     }
 
-    @Override
     public Object lookup(@Nullable Object varName) {
         return environment.lookup(varName);
     }
 
-    @Override
     public @Nullable Object get(String key) {
         return environment.get(key);
     }

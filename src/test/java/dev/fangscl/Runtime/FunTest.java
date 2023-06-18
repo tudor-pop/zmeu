@@ -78,8 +78,8 @@ public class FunTest extends BaseTest {
                 var x = "global"
                 {
                     fun myFun(){
-                       var y=1
-                       print(x)
+                      println(x)
+                      x
                     }
                     myFun()
                     var x="local"
