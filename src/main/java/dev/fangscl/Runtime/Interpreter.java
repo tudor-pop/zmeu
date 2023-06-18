@@ -35,7 +35,6 @@ public class Interpreter implements
         dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
-    private Environment globals;
     private final Engine engine;
     private final Map<Expression, Integer> locals = new HashMap<>();
 
@@ -49,28 +48,27 @@ public class Interpreter implements
 
     public Interpreter(Environment environment, Engine engine) {
         this.engine = engine;
-        this.globals = environment;
         this.env = environment;
-        this.globals.init("null", NullValue.of());
-        this.globals.init("true", true);
-        this.globals.init("false", false);
-        this.globals.init("print", new PrintFunction());
-        this.globals.init("println", new PrintlnFunction());
+        this.env.init("null", NullValue.of());
+        this.env.init("true", true);
+        this.env.init("false", false);
+        this.env.init("print", new PrintFunction());
+        this.env.init("println", new PrintlnFunction());
 
         // casting
-        this.globals.init("int", new IntCastFunction());
-        this.globals.init("decimal", new DecimalCastFunction());
-        this.globals.init("string", new StringCastFunction());
-        this.globals.init("boolean", new BooleanCastFunction());
+        this.env.init("int", new IntCastFunction());
+        this.env.init("decimal", new DecimalCastFunction());
+        this.env.init("string", new StringCastFunction());
+        this.env.init("boolean", new BooleanCastFunction());
 
         // number
-        this.globals.init("pow", new PowFunction());
-        this.globals.init("min", new MinFunction());
-        this.globals.init("max", new MaxFunction());
-        this.globals.init("ceil", new CeilFunction());
-        this.globals.init("floor", new FloorFunction());
-        this.globals.init("abs", new AbsFunction());
-        this.globals.init("date", new DateFunction());
+        this.env.init("pow", new PowFunction());
+        this.env.init("min", new MinFunction());
+        this.env.init("max", new MaxFunction());
+        this.env.init("ceil", new CeilFunction());
+        this.env.init("floor", new FloorFunction());
+        this.env.init("abs", new AbsFunction());
+        this.env.init("date", new DateFunction());
 
 //        this.globals.init("Vm", TypeValue.of("Vm", new Environment(env, new Vm())));
     }
@@ -125,21 +123,7 @@ public class Interpreter implements
 
     private Object lookupVar(Identifier expression) {
         var hops = locals.get(expression);
-        return lookup(expression.getSymbol(), hops);
-    }
-
-    private Object lookup(String symbol, Integer hops) {
-        if (hops == null) {
-            return globals.lookup(symbol);
-        }
-        return env.ancestor(hops).lookup(symbol);
-    }
-
-    private Object assign(String symbol, Object right, Integer hops) {
-        if (hops == null) {
-            return globals.assign(symbol, right);
-        }
-        return env.ancestor(hops).assign(symbol, right, hops);
+        return env.lookup(expression.getSymbol(), hops);
     }
 
     @Override
@@ -504,7 +488,7 @@ public class Interpreter implements
             }
         } else if (left instanceof Identifier identifier) {
             Integer distance = locals.get(identifier);
-            return assign(identifier.getSymbol(), right, distance);
+            return env.assign(identifier.getSymbol(), right, distance);
         }
         throw new RuntimeException("Invalid assignment");
     }

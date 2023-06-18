@@ -16,10 +16,15 @@ public interface IEnvironment {
      * Return the environment after going through n parents
      */
     default IEnvironment ancestor(Integer hops) {
-        if (hops == null) {
-            return this;
-        }
         IEnvironment environment = this;
+        if (hops == null) {
+            // if number of hops is not defined we are not in a local scope so we try to find
+            // the variable in the global scope. Else we know exactly how many parents we need to go up the chain
+            for (var parent = getParent(); parent != null; parent = parent.getParent()){
+                environment = parent;
+            }
+            return environment;
+        }
         for (int i = 0; i < hops; i++) {
             var parent1 = environment.getParent();
             if (parent1 == null) break;
@@ -57,7 +62,12 @@ public interface IEnvironment {
 
     Object init(String name, Object value);
 
-    default Object assign(String symbol, Object right, Integer hops){
+    default Object assign(String symbol, Object right, Integer hops) {
         return ancestor(hops).assign(symbol, right);
     }
+
+    default Object lookup(String symbol, Integer hops) {
+        return ancestor(hops).lookup(symbol);
+    }
+
 }
