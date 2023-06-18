@@ -96,6 +96,13 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(LambdaExpression expression) {
+        beginScope();
+        for (Identifier param : expression.getParams()) {
+            declare(param);
+            define(param);
+        }
+        resolve(expression.getBody());
+        endScope();
         return null;
     }
 
