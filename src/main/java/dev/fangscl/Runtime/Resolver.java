@@ -29,6 +29,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
             resolve(statement);
         }
     }
+
     void resolve(Program program) {
         for (var statement : program.getBody()) {
             resolve(statement);
@@ -91,18 +92,6 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(StringLiteral expression) {
-        return null;
-    }
-
-    @Override
-    public Void eval(LambdaExpression expression) {
-        beginScope();
-        for (Identifier param : expression.getParams()) {
-            declare(param);
-            define(param);
-        }
-        resolve(expression.getBody());
-        endScope();
         return null;
     }
 
@@ -189,21 +178,34 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     }
 
     @Override
+    public Void eval(LambdaExpression expression) {
+        resolveFunction(expression.getParams(), (ExpressionStatement) expression.getBody());
+        return null;
+    }
+
+    @Override
     public Void eval(FunctionDeclaration statement) {
         declare(statement.getName());
         define(statement.getName());
 
-        resolveFunction(statement);
+        resolveFunction(statement.getParams(), (ExpressionStatement) statement.getBody());
         return null;
     }
 
-    private void resolveFunction(FunctionDeclaration function) {
+    private void resolveFunction(List<Identifier> function, ExpressionStatement body) {
         beginScope();
-        for (var param : function.getParams()) {
+        for (var param : function) {
             declare(param);
             define(param);
         }
-        resolve(function.getBody());
+        // this installs the params in the same scope as the function's body.
+        // without extracting and casting to BlockExpression it would create a separate
+        // scope for the body and a separate one for the params
+        if (body.getStatement() instanceof BlockExpression block) {
+            resolve(block.getExpression());
+        } else {
+            resolve(body.getStatement());
+        }
         endScope();
     }
 

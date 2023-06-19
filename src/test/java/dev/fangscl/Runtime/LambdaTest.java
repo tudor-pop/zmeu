@@ -80,8 +80,8 @@ public class LambdaTest extends BaseTest {
                 
                 var y = 3
                 fun foo(a) {
-                    var z=3 
-                    (x) -> { 
+                    var z=3
+                    (x) -> {
                         var y=4
                         x*y+z+a
                     }
