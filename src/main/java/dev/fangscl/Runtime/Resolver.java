@@ -66,14 +66,14 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
             ErrorSystem.error("Can't read local variable in its own initializer.", identifier.getSymbol());
         }
 
-        resolveLocal(identifier, identifier);
+        resolveLocal(identifier);
         return null;
     }
 
-    private void resolveLocal(Expression expression, Identifier identifier) {
+    private void resolveLocal(Identifier identifier) {
         for (int i = scopes.size() - 1; i >= 0; i--) {
             if (scopes.get(i).containsKey(identifier.getSymbol())) {
-                interpreter.resolve(expression, scopes.size() - 1 - i);
+                interpreter.resolve(identifier, scopes.size() - 1 - i);
                 break;
             }
         }
@@ -300,7 +300,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     @Override
     public Void eval(AssignmentExpression expression) {
         resolve(expression.getRight());
-        resolveLocal(expression, (Identifier) expression.getLeft());
+        resolve(expression.getLeft());
         return null;
     }
 

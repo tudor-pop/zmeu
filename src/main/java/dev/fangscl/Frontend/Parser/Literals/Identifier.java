@@ -1,8 +1,8 @@
 package dev.fangscl.Frontend.Parser.Literals;
 
+import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.NodeType;
-import dev.fangscl.Frontend.Parser.Expressions.Expression;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Identifier extends Expression {
+    @EqualsAndHashCode.Exclude
     private String symbol;
 
     public Identifier() {

@@ -1,12 +1,16 @@
 package dev.fangscl.Frontend.Parser.Expressions;
 
 import dev.fangscl.Frontend.Parser.NodeType;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.ArrayUtils;
 
-@Data
+@ToString
 public abstract class Expression {
 
+    @Getter
+    @Setter
     protected NodeType kind;
 
     public boolean is(NodeType type) {
