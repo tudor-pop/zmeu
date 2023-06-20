@@ -11,6 +11,8 @@ import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Interpreter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -90,4 +92,23 @@ public class FunValue implements Callable {
         return getParams().size();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FunValue funValue = (FunValue) o;
+
+        return new EqualsBuilder().append(name.getSymbol(), funValue.name.getSymbol()).append(paramsAsString(), funValue.paramsAsString()).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(name.getSymbol()).append(paramsAsString()).toHashCode();
+    }
+
+    public List<String> paramsAsString() {
+        return this.params.stream().map(Identifier::getSymbol).toList();
+    }
 }

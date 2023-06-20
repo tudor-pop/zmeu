@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Acts as VariableExpression without creating a new node
@@ -15,8 +16,8 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Identifier extends Expression {
-    @EqualsAndHashCode.Exclude
     private String symbol;
+    private UUID id = UUID.randomUUID();
 
     public Identifier() {
         this.kind = NodeType.Identifier;
