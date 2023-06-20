@@ -10,6 +10,7 @@ import dev.fangscl.Runtime.Callable;
 import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Interpreter;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -18,9 +19,11 @@ import java.util.List;
 @Data
 public class FunValue implements Callable {
     @JsonBackReference
+    @EqualsAndHashCode.Exclude
     private Environment clojure;
     private Identifier name;
     private List<Identifier> params;
+    @EqualsAndHashCode.Exclude
     private Statement body;
 
     private FunValue(Identifier name, List<Identifier> params, Statement body, Environment clojure) {

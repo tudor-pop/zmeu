@@ -1,12 +1,14 @@
 package dev.fangscl.Frontend.Parser.Expressions;
 
 import dev.fangscl.Frontend.Parser.NodeType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ArrayUtils;
 
 @ToString
+@EqualsAndHashCode
 public abstract class Expression {
 
     @Getter
