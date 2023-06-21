@@ -1,9 +1,5 @@
 package dev.fangscl.Runtime;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import dev.fangscl.Runtime.Values.TypeValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -49,10 +45,10 @@ public class ResourceTest extends BaseTest {
         var type = (TypeValue) global.get("Vm");
 
         assertNotNull(type);
-        assertEquals(Identifier.of("Vm"), type.getType());
+        assertEquals("Vm", type.getType().getSymbol());
 
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getInstances().get("main");
 
         assertNotNull(resource);
         assertEquals("main", resource.getName());
@@ -70,7 +66,7 @@ public class ResourceTest extends BaseTest {
                     maxCount=1
                 }
                 resource Vm second {
-                    name = "first"
+                    name = "second"
                     maxCount = Vm.main.maxCount
                 }
                 """)));
@@ -78,7 +74,7 @@ public class ResourceTest extends BaseTest {
         var type = (TypeValue) global.get("Vm");
 
         assertNotNull(type);
-        assertEquals(Identifier.of("Vm"), type.getType());
+        assertEquals("Vm", type.getType().getSymbol());
 
 
         var resource = (ResourceValue) type.getInstances().get("main");
@@ -117,7 +113,7 @@ public class ResourceTest extends BaseTest {
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getInstances().get("main");
 
         assertEquals(2, resource.getParent().lookup("x"));
     }
@@ -139,7 +135,7 @@ public class ResourceTest extends BaseTest {
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getInstances().get("main");
         assertSame(2, resource.getParent().get("x"));
         // make sure main's x has been changed
         assertEquals(2, resource.getParent().get("x"));
@@ -174,7 +170,7 @@ public class ResourceTest extends BaseTest {
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getInstances().get("main");
 
         // default x in type remains the same
         assertEquals(2, type.getEnvironment().get("x"));
@@ -199,7 +195,7 @@ public class ResourceTest extends BaseTest {
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = (ResourceValue) type.getInstances().get("main");
 
         // default x in type remains the same
         assertEquals(2, type.getEnvironment().get("x"));
@@ -224,11 +220,9 @@ public class ResourceTest extends BaseTest {
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
-        var resource = (ResourceValue) type.getEnvironment().get("main");
+        var resource = type.getInstances().get("main");
 
-        var mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-        log.warn(mapper.writeValueAsString(resource.asData()));
-
+        Assertions.assertInstanceOf(ResourceValue.class, resource);
     }
 
 

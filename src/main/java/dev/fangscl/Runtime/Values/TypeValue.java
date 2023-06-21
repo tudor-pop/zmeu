@@ -1,14 +1,18 @@
 package dev.fangscl.Runtime.Values;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Runtime.Environment.Environment;
+import dev.fangscl.Runtime.Environment.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class TypeValue {
+public class TypeValue implements IEnvironment {
+    @JsonIgnore
     private final Environment environment;
+    @JsonIgnore
     private final Environment instances;
     private final Identifier type;
 
@@ -53,8 +57,18 @@ public class TypeValue {
         return environment.lookup(varName);
     }
 
+    @Override
+    public IEnvironment getParent() {
+        return environment.getParent();
+    }
+
     public @Nullable Object get(String key) {
         return environment.get(key);
+    }
+
+    @Override
+    public Object init(String name, Object value) {
+        return environment.init(name,value);
     }
 
     public Object initInstance(String name, Object instance) {

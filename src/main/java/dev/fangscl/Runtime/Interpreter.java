@@ -337,14 +337,15 @@ public class Interpreter implements
     @Override
     public Object eval(MemberExpression expression) {
         if (expression.getProperty() instanceof Identifier resourceName) {
-            var value = (IEnvironment) executeBlock(expression.getObject(), env);
+            var value = executeBlock(expression.getObject(), env);
             // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
             // Since that environment points to the parent(type env) it will also find the properties
             if (value instanceof TypeValue typeValue) {
-                value = typeValue.getInstances();
+                return typeValue.getInstances()
+                        .lookup(resourceName.getSymbol());
+            } else if (value instanceof IEnvironment iEnvironment) {
+                return iEnvironment.lookup(resourceName.getSymbol());
             } // else it could be a resource or any other type
-            String symbol = resourceName.getSymbol();
-            return value.lookup(symbol);
         }
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
     }

@@ -6,6 +6,7 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -36,11 +37,11 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         }
     }
 
-    private void resolve(Statement stmt) {
+    private void resolve(@NotNull Statement stmt) {
         stmt.accept(this);
     }
 
-    private void resolve(Expression expr) {
+    private void resolve(@NotNull Expression expr) {
         expr.accept(this);
     }
 
@@ -78,21 +79,6 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
             }
         }
 
-    }
-
-    @Override
-    public Void eval(ResourceExpression expression) {
-        return null;
-    }
-
-    @Override
-    public Void eval(NullLiteral expression) {
-        return null;
-    }
-
-    @Override
-    public Void eval(StringLiteral expression) {
-        return null;
     }
 
     @Override
@@ -147,6 +133,12 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(MemberExpression expression) {
+//        beginScope();
+//        declare((Identifier) expression.getProperty());
+//        define((Identifier) expression.getProperty());
+//        resolve(expression.getProperty());
+        resolve(expression.getObject());
+//        endScope();
         return null;
     }
 
@@ -192,15 +184,19 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         return null;
     }
 
-    private void resolveFunction(List<Identifier> function, Statement body) {
+    private void resolveFunction(List<Identifier> params, Statement body) {
         beginScope(); // one for activation environment
+        initParams(params);
+
+        resolveNoBlock(body); //bypass function scope because we already are in the activation environment scope
+        endScope();
+    }
+
+    private void initParams(List<Identifier> function) {
         for (var param : function) {
             declare(param);
             define(param);
         }
-
-        resolveNoBlock(body); //bypass function scope because we already are in the activation environment scope
-        endScope();
     }
 
     /*
@@ -261,9 +257,33 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     }
 
     @Override
+    public Void eval(ResourceExpression expression) {
+        beginScope();
+        if (expression.getName() != null) {
+            declare(expression.getName());
+            define(expression.getName());
+            resolve(expression.getName());
+        }
+        for (Statement argument : expression.getArguments()) {
+            if (argument instanceof ExpressionStatement statement) {
+                if (statement.getStatement() instanceof AssignmentExpression assignmentExpression) {
+                    if (assignmentExpression.getLeft() instanceof Identifier identifier) {
+                        declare(identifier);
+                        define(identifier);
+//                        resolve(identifier);
+                    }
+                }
+            }
+        }
+//        resolve(expression.getArguments());
+        endScope();
+        return null;
+    }
+
+    @Override
     public Void eval(ForStatement statement) {
         beginScope();
-        if (statement.hasInit()) {
+        if (statement.getInit() != null) {
             resolve(statement.getInit());
         }
         resolve(statement.getTest());
@@ -275,6 +295,10 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(TypeDeclaration statement) {
+//        beginScope();
+//        resolve(statement.getName());
+//        resolveNoBlock(statement.getBody());
+//        endScope();
         return null;
     }
 
@@ -347,4 +371,16 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     public Void eval(String expression) {
         return null;
     }
+
+
+    @Override
+    public Void eval(NullLiteral expression) {
+        return null;
+    }
+
+    @Override
+    public Void eval(StringLiteral expression) {
+        return null;
+    }
+
 }

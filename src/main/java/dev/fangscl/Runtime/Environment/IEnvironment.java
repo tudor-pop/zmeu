@@ -20,9 +20,9 @@ public interface IEnvironment {
         if (hops == null) {
             // if number of hops is not defined we are not in a local scope so we try to find
             // the variable in the global scope. Else we know exactly how many parents we need to go up the chain
-            for (var parent = getParent(); parent != null; parent = parent.getParent()){
-                environment = parent;
-            }
+//            for (var parent = getParent(); parent != null; parent = parent.getParent()){
+//                environment = parent;
+//            }
             return environment;
         }
         for (int i = 0; i < hops; i++) {

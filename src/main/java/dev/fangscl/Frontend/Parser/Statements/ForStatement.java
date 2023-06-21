@@ -22,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ForStatement extends Statement {
     private Expression test;
+    @Nullable
     private Statement init;
     private Expression update;
     private Statement body;

@@ -15,7 +15,7 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclaration() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     
                 }
@@ -23,12 +23,12 @@ public class TypeTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
-        assertEquals(Identifier.of("Vm"), actual.getType());
+        assertEquals("Vm", actual.getType().getSymbol());
     }
 
     @Test
     void typeDeclarationWithFunction() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     fun test(){
                     
@@ -43,7 +43,7 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithVariable() {
-        var res = (Identifier) interpreter.eval
+        var res = interpreter.eval
                 (parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     var x
@@ -57,7 +57,7 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithVariableInit() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     var x=20.2
                 }
@@ -70,7 +70,7 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithVariableInitString() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     var x="hello"
                 }
@@ -83,7 +83,7 @@ public class TypeTest extends BaseTest {
 
     @Test
     void initDeclaration() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     init(){
                        
@@ -98,7 +98,7 @@ public class TypeTest extends BaseTest {
     }
     @Test
     void initDeclarationWithParams() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     init(x){
                        
@@ -114,7 +114,7 @@ public class TypeTest extends BaseTest {
 
     @Test
     void initDeclarationWithParamsAssignment() {
-        var res = (Identifier) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                 type Vm {
                     var x = 1;
                 }

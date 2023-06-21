@@ -1,7 +1,11 @@
 package dev.fangscl.Runtime;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Runtime.Environment.Environment;
@@ -22,6 +26,11 @@ public class BaseTest {
         this.parser = new Parser();
         this.tokenizer = new Tokenizer();
         this.resolver = new Resolver(interpreter);
+        gson.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        gson.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
+
+        gson.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+        gson.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
     }
 
     protected String toJson(Object o) {
