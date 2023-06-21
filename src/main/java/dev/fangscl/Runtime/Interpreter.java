@@ -284,8 +284,11 @@ public class Interpreter implements
     private Object executeDiscardBlock(FunValue declared, ActivationEnvironment environment) {
         Statement statement = declared.getBody();
         if (statement instanceof ExpressionStatement expressionStatement) {
-            if (expressionStatement.getStatement() instanceof BlockExpression blockExpression) {
+            Expression expression = expressionStatement.getStatement();
+            if (expression instanceof BlockExpression blockExpression) {
                 return executeBlock(blockExpression.getExpression(), environment);
+            } else { // lambdas without a block could simply be an expression: ((x) -> x*x)
+                return executeBlock(expression, environment);
             }
         }
         throw new RuntimeException("Invalid function body");
