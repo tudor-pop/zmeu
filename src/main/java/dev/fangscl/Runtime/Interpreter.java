@@ -27,7 +27,10 @@ import dev.fangscl.Runtime.exceptions.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 public class Interpreter implements
@@ -404,8 +407,9 @@ public class Interpreter implements
 
     @Override
     public Object eval(ForStatement statement) {
-        Expression test = Optional.ofNullable(statement.getTest()).orElse(BooleanLiteral.of(true));
-        var whileStatement = WhileStatement.of(test, BlockExpression.of(statement.getBody(), ExpressionStatement.of(statement.getUpdate())));
+        List<Statement> statements = statement.discardBlock();
+        statements.add(ExpressionStatement.of(statement.getUpdate()));
+        var whileStatement = WhileStatement.of(statement.getTest(), BlockExpression.of(statements));
         if (statement.getInit() == null) {
             return executeBlock(whileStatement, env);
         }

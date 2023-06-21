@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * <p>
  * BlockStatement
@@ -46,4 +48,25 @@ public class ForStatement extends Statement {
     public <R> R accept(Visitor<R> visitor) {
         return visitor.eval(this);
     }
+
+    public boolean hasInit() {
+        return init != null;
+    }
+
+    public List<Statement> discardBlock() {
+        if (body instanceof ExpressionStatement statement) {
+            if (statement.getStatement() instanceof BlockExpression expression) {
+                return expression.getExpression();
+            }
+        }
+        return null;
+    }
+
+    public boolean isBodyBlock() {
+        if (body instanceof ExpressionStatement statement) {
+            return statement.getStatement() instanceof BlockExpression;
+        }
+        return false;
+    }
+
 }

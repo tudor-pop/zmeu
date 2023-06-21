@@ -199,7 +199,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
             define(param);
         }
 
-        resolveBlock(body); //bypass function scope because we already are in the activation environment scope
+        resolveNoBlock(body); //bypass function scope because we already are in the activation environment scope
         endScope();
     }
 
@@ -208,7 +208,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
      without extracting and casting to BlockExpression it would create a separate
      scope for the body and a separate one for the params
      */
-    private void resolveBlock(Statement statement) {
+    private void resolveNoBlock(Statement statement) {
         if (statement instanceof ExpressionStatement body) {
             if (body.getStatement() instanceof BlockExpression block) {
                 resolve(block.getExpression());
@@ -262,6 +262,14 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(ForStatement statement) {
+        beginScope();
+        if (statement.hasInit()) {
+            resolve(statement.getInit());
+        }
+        resolve(statement.getTest());
+        resolve(statement.getUpdate());
+        resolveNoBlock(statement.getBody()); // we are already inside the block opened above
+        endScope();
         return null;
     }
 
