@@ -108,7 +108,7 @@ public class FunTest extends BaseTest {
         Assertions.assertThrows(VarExistsException.class, () -> {
             interpreter.eval(parser.produceAST(tokenizer.tokenize("""
                     fun sqrt(x){
-                       var x = 2
+                       var x = 3
                        x*x
                     }
                     sqrt(2)
@@ -157,7 +157,7 @@ public class FunTest extends BaseTest {
                         return n
                    }
                    return fib(n - 2) + fib(n - 1)
-                 }
+                }
                 var x = fib(6)
                 println("fib result is: ", x)
                 x

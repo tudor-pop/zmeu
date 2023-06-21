@@ -146,7 +146,7 @@ public class Interpreter implements
     @Override
     public Object eval(BlockExpression block) {
         Object res = NullValue.of();
-        var env = this.env instanceof ActivationEnvironment ? this.env : new Environment(this.env);
+        var env = new Environment(this.env);
         for (var it : block.getExpression()) {
             res = executeBlock(it, env);
         }
@@ -270,12 +270,22 @@ public class Interpreter implements
         }
 
         var environment = new ActivationEnvironment(declared.getClojure(), declared.getParams(), args);
-        return executeBlock(declared.getBody(), environment);
+        return executeDiscardBlock(declared, environment);
     }
 
     private Object lambdaCall(FunValue function, List<Object> args) {
         var environment = new ActivationEnvironment(function.getClojure(), function.getParams(), args);
-        return executeBlock(function.getBody(), environment);
+        return executeDiscardBlock(function, environment);
+    }
+
+    private Object executeDiscardBlock(FunValue declared, ActivationEnvironment environment) {
+        Statement statement = declared.getBody();
+        if (statement instanceof ExpressionStatement expressionStatement) {
+            if (expressionStatement.getStatement() instanceof BlockExpression blockExpression) {
+                return executeBlock(blockExpression.getExpression(), environment);
+            }
+        }
+        throw new RuntimeException("Invalid function body");
     }
 
     @Override
