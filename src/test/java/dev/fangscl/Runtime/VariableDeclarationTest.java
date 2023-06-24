@@ -11,7 +11,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varNull() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x")));
+        var res = eval("var x");
         assertNull(res);
         assertTrue(global.hasVar("x"));
         assertNull(global.get("x"));
@@ -20,7 +20,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varInt() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2")));
+        var res = eval("var x = 2");
         assertEquals(2, res);
         log.info(toJson(res));
     }
@@ -28,14 +28,14 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varDecimal() {
-        var res = (Double) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2.1")));
+        var res = (Double) eval("var x = 2.1");
         assertEquals(2.1, res);
         log.info(toJson(res));
     }
 
     @Test
     void varBool() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = true")));
+        var res = (Boolean) eval("var x = true");
         assertTrue(res);
         log.info(toJson(res));
     }
@@ -43,35 +43,35 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varExpressionPlus() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2+2")));
+        var res = eval("var x = 2+2");
         assertEquals(4, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionMinus() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2-2")));
+        var res = eval("var x = 2-2");
         assertEquals(0, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionMultiplication() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2*2")));
+        var res = eval("var x = 2*2");
         assertEquals(4, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionDivision() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2/2")));
+        var res = eval("var x = 2/2");
         assertEquals(1, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionBoolean() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==2")));
+        var res = eval("var x = 2==2");
         var expected = true;
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -79,7 +79,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varExpressionBooleanFalse() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("var x = 2==1")));
+        var res = eval("var x = 2==1");
         var expected = false;
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -87,12 +87,12 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void varMultiDeclaration() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var y = 0
                     y=1
                 }
-                """)));
+                """);
 
         log.info(toJson(res));
         assertEquals(1, res);

@@ -15,11 +15,11 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclaration() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
@@ -28,13 +28,13 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithFunction() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     fun test(){
                     
                     }
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
@@ -43,12 +43,11 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithVariable() {
-        var res = interpreter.eval
-                (parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     var x
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
@@ -57,11 +56,11 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithVariableInit() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     var x=20.2
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
@@ -70,11 +69,11 @@ public class TypeTest extends BaseTest {
 
     @Test
     void typeDeclarationWithVariableInitString() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     var x="hello"
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
 
@@ -83,13 +82,13 @@ public class TypeTest extends BaseTest {
 
     @Test
     void initDeclaration() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     init(){
                        
                     }
                 }
-                """)));
+                """);
 
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
@@ -98,13 +97,13 @@ public class TypeTest extends BaseTest {
     }
     @Test
     void initDeclarationWithParams() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     init(x){
                        
                     }
                 }
-                """)));
+                """);
 
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");
@@ -114,11 +113,11 @@ public class TypeTest extends BaseTest {
 
     @Test
     void initDeclarationWithParamsAssignment() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                     var x = 1;
                 }
-                """)));
+                """);
 
         log.warn(toJson(res));
         var actual = (TypeValue) global.get("Vm");

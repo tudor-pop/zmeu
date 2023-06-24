@@ -17,7 +17,7 @@ public class AssignmentTest extends BaseTest {
     void GlobalVarInt() {
         setGlobalVar(2);
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
+        var res = eval("VERSION");
         assertEquals(2, res);
         log.warn(toJson(res));
     }
@@ -26,7 +26,7 @@ public class AssignmentTest extends BaseTest {
     void GlobalBool() {
         setGlobalVar(false);
 
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
+        var res = (Boolean) eval("VERSION");
         assertFalse(res);
         log.warn(toJson(res));
     }
@@ -35,7 +35,7 @@ public class AssignmentTest extends BaseTest {
     void GlobalBoolTrue() {
         setGlobalVar(true);
 
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
+        var res = (Boolean) eval("VERSION");
         assertTrue(res);
         log.warn(toJson(res));
     }
@@ -44,7 +44,7 @@ public class AssignmentTest extends BaseTest {
     void Decimal() {
         setGlobalVar(1.1);
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
+        var res = eval("VERSION");
         assertEquals(1.1, res);
         log.warn(toJson(res));
     }
@@ -54,7 +54,7 @@ public class AssignmentTest extends BaseTest {
     void Null() {
         setGlobalVar(new NullValue());
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION")));
+        var res = eval("VERSION");
         var expected = new NullValue();
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -64,7 +64,7 @@ public class AssignmentTest extends BaseTest {
     void AssignmentInt() {
         setGlobalVar(1);
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=2")));
+        var res = eval("VERSION=2");
         var expected = 2;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -74,7 +74,7 @@ public class AssignmentTest extends BaseTest {
     void AssignmentIntSame() {
         setGlobalVar(1);
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1")));
+        var res = eval("VERSION=1");
         var expected = 1;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -84,7 +84,7 @@ public class AssignmentTest extends BaseTest {
     void AssignmentBool() {
         setGlobalVar(true);
 
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=true")));
+        var res = (Boolean) eval("VERSION=true");
         assertTrue(res);
         log.warn(toJson(res));
     }
@@ -93,7 +93,7 @@ public class AssignmentTest extends BaseTest {
     void AssignmentBoolDifferent() {
         setGlobalVar(true);
 
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=false")));
+        var res = (Boolean) eval("VERSION=false");
         assertFalse(res);
         log.warn(toJson(res));
     }
@@ -102,7 +102,7 @@ public class AssignmentTest extends BaseTest {
     void AssignmentDecimalSame() {
         setGlobalVar(1.1);
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.1")));
+        var res = eval("VERSION=1.1");
         var expected = 1.1;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -112,7 +112,7 @@ public class AssignmentTest extends BaseTest {
     void AssignmentDecimalDifferent() {
         setGlobalVar(1.1);
 
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("VERSION=1.2")));
+        var res = eval("VERSION=1.2");
         var expected = 1.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -120,10 +120,10 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void AssignAddition() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 var x=0
                 x = 1.1+2.2
-                """)));
+                """);
         var expected = 1.1 + 2.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -131,10 +131,10 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void AssignMultiplication() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 var x=0
                 x = 1.1*2.2
-                """)));
+                """);
         var expected = 1.1 * 2.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -142,10 +142,10 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void AssignDivision() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 var x=0
                 x = 2.1/2.2
-                """)));
+                """);
         var expected = 2.1 / 2.2;
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -153,120 +153,120 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void AssignBooleanFalse() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 1==2
-                """)));
+                """);
         assertFalse(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignBooleanTrue() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 1==1
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignLess() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 3 < 2
-                """)));
+                """);
         assertFalse(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignLessTrue() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 3 < 3.1
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignLessFalse() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 3.2 < 3.1
-                """)));
+                """);
         assertFalse(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignGreater() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 3 > 2
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignGreaterEq() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 3 >= 2
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignGreaterEqTrue() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 2 >= 2
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignGreaterEqFalse() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 1 >= 2
-                """)));
+                """);
         assertFalse(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignLessEq() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 3 <= 2
-                """)));
+                """);
         assertFalse(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignLessEqTrue() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 2 <= 2
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }
 
     @Test
     void AssignLessEqFalse() {
-        var res = (Boolean) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (Boolean) eval("""
                 var x=0
                 x = 1 <= 2
-                """)));
+                """);
         assertTrue(res);
         log.warn(toJson(res));
     }

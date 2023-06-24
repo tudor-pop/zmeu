@@ -10,7 +10,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = eval("""
                 {
                     fun onClick(callback){
                         var x = 10
@@ -18,7 +18,7 @@ public class LambdaTest extends BaseTest {
                         callback(x+y)
                     }
                     onClick((data)->data*10)
-                }""")));
+                }""");
 
         log.warn(toJson(res));
         assertEquals(300, res);
@@ -26,10 +26,10 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaAssignToVar() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = eval("""
                 var f = (x) -> x*x
                 f(2)
-                """)));
+                """);
 
         log.warn(toJson(res));
         assertEquals(4, res);
@@ -37,30 +37,32 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaInvoke() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = eval("""
                 ((x) -> x*x) (2)
-                """)));
+                """);
 
         log.warn(toJson(res));
         assertEquals(4, res);
     }
+
     @Test
     void lambdaInvokeClojure() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = eval("""
                 {
                 var y = 3
                 ((x) ->{ 
                     var z=3 
                     x*y+z
                     }) (2)
-                }""")));
+                }""");
 
         log.warn(toJson(res));
         assertEquals(9, res);
     }
+
     @Test
     void lambdaInvokeClojure2() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        Object res = eval("""
                 {
                 var y = 3
                 ((x) ->{ 
@@ -68,7 +70,7 @@ public class LambdaTest extends BaseTest {
                     var y=4
                     x*y+z
                     }) (2)
-                }""")));
+                }""");
 
         log.warn(toJson(res));
         assertEquals(11, res);
@@ -76,8 +78,8 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaInvokeClojureWithingFunction() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                
+        Object res = eval("""
+                                
                 var y = 3
                 fun foo(a) {
                     var z=3
@@ -88,16 +90,17 @@ public class LambdaTest extends BaseTest {
                 }
                 var cloj = foo(2)
                 cloj(1)
-                
-                """)));
+                                
+                """);
 
         log.warn(toJson(res));
         assertEquals(9, res);
     }
+
     @Test
     void lambdaInvokeStaticClojure() {
-        Object res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                
+        Object res = eval("""
+                                
                 var x = 10
                 fun foo(){ x }
                 fun bar() {
@@ -106,7 +109,7 @@ public class LambdaTest extends BaseTest {
                     
                 }
                 bar()
-                """)));
+                """);
 
         log.warn(toJson(res));
         assertEquals(30, res);

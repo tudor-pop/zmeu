@@ -9,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BlockTest extends BaseTest{
     @Test
     void evalLastStatement() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 var x=10
                 var y=20
                 x*y+30
-                """)));
+                """);
         assertEquals(230, res);
         log.warn(toJson(res));
     }
     @Test
     void nestedBlock() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x=10
                     {
@@ -27,14 +27,14 @@ public class BlockTest extends BaseTest{
                     }
                     x
                 }
-                """)));
+                """);
         assertEquals(10, res);
         log.warn(toJson(res));
     }
 
     @Test
     void nestedBlockAccess() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var outer=10
                     var res = {
@@ -43,14 +43,14 @@ public class BlockTest extends BaseTest{
                     }
                     res
                 }
-                """)));
+                """);
         assertEquals(20, res);
         log.warn(toJson(res));
     }
 
     @Test
     void nestedBlockSet() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var outer=10
                      {
@@ -58,7 +58,7 @@ public class BlockTest extends BaseTest{
                     }
                     outer
                 }
-                """)));
+                """);
         assertEquals(20, res);
         log.warn(toJson(res));
     }

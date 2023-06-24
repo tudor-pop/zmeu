@@ -105,15 +105,13 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBodyOverlappingWithParam() {
-        Assertions.assertThrows(VarExistsException.class, () -> {
-            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                    fun sqrt(x){
-                       var x = 3
-                       x*x
-                    }
-                    sqrt(2)
-                    """)));
-        });
+        Assertions.assertThrows(VarExistsException.class, () -> eval("""
+                fun sqrt(x){
+                   var x = 3
+                   x*x
+                }
+                sqrt(2)
+                """));
     }
 
     @Test

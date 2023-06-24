@@ -10,7 +10,7 @@ public class WhileTest extends BaseTest {
 
     @Test
     void increment() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 1
                     while (x < 5){
@@ -18,14 +18,14 @@ public class WhileTest extends BaseTest {
                     }      
                     x 
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(5, res);
     }
 
     @Test
     void incrementEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 1
                     while (x <= 5){
@@ -33,7 +33,7 @@ public class WhileTest extends BaseTest {
                     }      
                     x 
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(6, res);
     }

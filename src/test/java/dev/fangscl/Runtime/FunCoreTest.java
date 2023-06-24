@@ -12,9 +12,9 @@ public class FunCoreTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        var res = (String) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (String) eval("""
                 date()
-                """)));
+                """);
 
         log.warn(toJson(res));
         assertEquals(LocalDate.now().toString(), res);

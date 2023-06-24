@@ -10,7 +10,7 @@ public class IfStatementTest extends BaseTest {
 
     @Test
     void consequentLess() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 1
                     var y = 2
@@ -19,14 +19,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(2, res);
     }
 
     @Test
     void consequentLessEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 2
                     var y = 2
@@ -35,14 +35,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(2, res);
     }
 
     @Test
     void consequentGreat() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 3
                     var y = 2
@@ -51,14 +51,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(2, res);
     }
 
     @Test
     void consequentGreatEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 2
                     var y = 2
@@ -67,14 +67,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(3, res);
     }
 
     @Test
     void alternateGreat() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 1
                     var y = 2
@@ -85,14 +85,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(3, res);
     }
 
     @Test
     void alternateGreatEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 1
                     var y = 2
@@ -103,14 +103,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(3, res);
     }
 
     @Test
     void alternateEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 2
                     var y = 1
@@ -121,14 +121,14 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(3  , res);
     }
 
     @Test
     void alternate() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var x = 2
                     var y = 1
@@ -139,7 +139,7 @@ public class IfStatementTest extends BaseTest {
                     }
                     x       
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(3, res);
     }

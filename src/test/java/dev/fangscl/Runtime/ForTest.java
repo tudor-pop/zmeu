@@ -10,37 +10,37 @@ public class ForTest extends BaseTest {
 
     @Test
     void increment() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                  var a = 0
                  var temp
                  for (var b = 1; a < 100; b = temp + b) {
                    temp = a;
                    a = b;
                  }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(233, res);
     }
 
     @Test
     void incrementEq() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                  for (var a = 1; a < 10; a=a+1) {
                    a;
                  }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(10, res);
     }
 
     @Test
     void incrementTestOnly() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 var a = 1
                  for (; a < 10; a=a+1) {
                    a
                  }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(10, res);
     }
