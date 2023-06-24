@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
+import dev.fangscl.Frontend.Lexical.Resolver;
 import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Runtime.Environment.Environment;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,10 @@ public class BaseTest {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected Object eval(String source) {
+        return interpreter.eval(parser.produceAST(tokenizer.tokenize(source)));
     }
 
 //    @Test

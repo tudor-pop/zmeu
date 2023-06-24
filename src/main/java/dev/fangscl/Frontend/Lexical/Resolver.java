@@ -1,4 +1,4 @@
-package dev.fangscl.Runtime;
+package dev.fangscl.Frontend.Lexical;
 
 import dev.fangscl.ErrorSystem;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
@@ -6,6 +6,7 @@ import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
+import dev.fangscl.Runtime.Interpreter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
      * */
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
 
-    Resolver(Interpreter interpreter) {
+    public Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
     }
 
@@ -31,7 +32,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         }
     }
 
-    void resolve(Program program) {
+    public void resolve(Program program) {
         for (var statement : program.getBody()) {
             resolve(statement);
         }
@@ -64,7 +65,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     @Override
     public Void eval(/* VariableExpression*/ Identifier identifier) {
         if (!scopes.isEmpty() && scopes.peek().get(identifier.getSymbol()) == Boolean.FALSE) {
-            ErrorSystem.error("Can't read local variable in its own initializer.", identifier.getSymbol());
+            throw ErrorSystem.error("Can't read local variable in its own initializer.", identifier.getSymbol());
         }
 
         resolveLocal(identifier);
@@ -328,6 +329,11 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         if (scopes.isEmpty()) return;
 
         Map<String, Boolean> scope = scopes.peek();
+
+        if (scope.containsKey(name.getSymbol())) {
+            throw ErrorSystem.error("Already a variable with this name in this scope: ", name.getSymbol());
+        }
+
         scope.put(name.getSymbol(), false);
     }
 

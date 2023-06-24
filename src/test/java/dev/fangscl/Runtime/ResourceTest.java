@@ -16,12 +16,12 @@ public class ResourceTest extends BaseTest {
     @Test
     void newResourceThrowsIfNoNameIsSpecified() {
         Assertions.assertThrows(RuntimeException.class, () -> {
-            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+            eval("""
                     type Vm { }
                     resource Vm {
                         
                     }
-                    """)));
+                    """);
         });
     }
 
@@ -35,12 +35,12 @@ public class ResourceTest extends BaseTest {
      */
     @Test
     void resourceIsDefinedInSchemaEnv() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm { }
                 resource Vm main {
                     
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
@@ -56,7 +56,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceIsDefinedInSchema() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm { 
                     var name
                     var maxCount=0
@@ -69,7 +69,7 @@ public class ResourceTest extends BaseTest {
                     name = "second"
                     maxCount = Vm.main.maxCount
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
@@ -86,22 +86,20 @@ public class ResourceTest extends BaseTest {
     @Test
     @DisplayName("throw if a resource uses a field not defined in the type")
     void resourceThrowsIfFieldNotDefinedInSchema() {
-        assertThrows(NotFoundException.class, () -> {
-            interpreter.eval(parser.produceAST(tokenizer.tokenize("""
-                    type Vm {
-                    }
-                                    
-                    resource Vm main {
-                        x = 3
-                    }
-                    """)));
-        });
+        assertThrows(NotFoundException.class, () -> eval("""
+                type Vm {
+                }
+                                
+                resource Vm main {
+                    x = 3
+                }
+                """));
     }
 
 
     @Test
     void resourceInheritsDefaultSchemaValue() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                    var x = 2
                 }
@@ -109,7 +107,7 @@ public class ResourceTest extends BaseTest {
                 resource Vm main {
                     
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
@@ -120,7 +118,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceMemberAccess() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                    var x = 2
                 }
@@ -131,7 +129,7 @@ public class ResourceTest extends BaseTest {
                 var y = Vm.main
                 var z = Vm.main.x
                 z
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
@@ -157,7 +155,7 @@ public class ResourceTest extends BaseTest {
      */
     @Test
     void resourceSetMemberAccess() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                    var x = 2
                 }
@@ -166,7 +164,7 @@ public class ResourceTest extends BaseTest {
                     
                 }
                 Vm.main.x = 3
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
@@ -183,7 +181,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceInit() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                    var x = 2
                 }
@@ -191,7 +189,7 @@ public class ResourceTest extends BaseTest {
                 resource Vm main {
                     x = 3
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 
@@ -208,7 +206,7 @@ public class ResourceTest extends BaseTest {
     @SneakyThrows
     @Test
     void resourceInitJson() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 type Vm {
                    var x = 2
                 }
@@ -216,7 +214,7 @@ public class ResourceTest extends BaseTest {
                 resource Vm main {
                     x = 3
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         var type = (TypeValue) global.get("Vm");
 

@@ -3,6 +3,7 @@ package dev.fangscl.Runtime;
 import dev.fangscl.Engine.Engine;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
+import dev.fangscl.Frontend.Lexical.Resolver;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.*;
