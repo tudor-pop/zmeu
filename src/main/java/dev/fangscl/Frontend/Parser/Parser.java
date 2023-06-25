@@ -665,7 +665,7 @@ public class Parser {
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
-        eat(TokenType.OpenBraces,"Expect '{' before resource body.");
+        eat(TokenType.OpenBraces,"Expect '{' after resource name.");
         var body = new ArrayList<Statement>();
         while (!IsLookAhead(TokenType.CloseBraces)) {
             if (IsLookAhead(TokenType.lineTerminator())) {

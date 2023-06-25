@@ -52,8 +52,20 @@ public class Factory {
         return AssignmentExpression.of("=", type, name);
     }
 
-    public static Expression assign(String type, String name) {
-        return AssignmentExpression.of("=", Identifier.of(type), StringLiteral.of(name));
+    public static Expression assign(String left, String right) {
+        return AssignmentExpression.of("=", Identifier.of(left), StringLiteral.of(right));
+    }
+
+    public static Expression assign(String left, Expression right) {
+        return AssignmentExpression.of("=", Identifier.of(left), right);
+    }
+
+    public static Expression assign(String type, int right) {
+        return AssignmentExpression.of("=", Identifier.of(type), NumericLiteral.of(right));
+    }
+
+    public static Expression member(String type, String right) {
+        return MemberExpression.of(false, Identifier.of(type), Identifier.of(right));
     }
 
     public static BlockExpression block(Expression operator) {
