@@ -79,7 +79,7 @@ Factor          → Unary ( ( "/" | "*" ) Unary )*
 Unary           → ( "!" | "-" ) Unary  
                 | CallExpression
 
-CallExpression  → Primary ("(" Arguments? ")")*            
+CallExpression  → Primary ("(" Arguments? ")" | "." IDENTIFIER)*            
 
 Arguments       → Expression ("," Expression)*
                 

@@ -341,12 +341,11 @@ public class Interpreter implements
             var value = executeBlock(expression.getObject(), env);
             // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
             // Since that environment points to the parent(type env) it will also find the properties
-            if (value instanceof SchemaValue schemaValue) {
-                return schemaValue.getInstances()
-                        .lookup(resourceName.getSymbol());
+            if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
+                return schemaValue.getInstances().lookup(resourceName.getSymbol());
             } else if (value instanceof IEnvironment iEnvironment) {
                 return iEnvironment.lookup(resourceName.getSymbol());
-            } // else it could be a resource or any other type
+            } // else it could be a resource or any other type like a NumericLiteral or something else
         }
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
     }
@@ -431,7 +430,7 @@ public class Interpreter implements
             executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
             return env.init(name, SchemaValue.of(name, typeEnv)); // install the type into the global env
         }
-        throw new RuntimeException("Invalid type");
+        throw new RuntimeException("Invalid declaration:" + expression.getName().getSymbol());
     }
 
     @Override

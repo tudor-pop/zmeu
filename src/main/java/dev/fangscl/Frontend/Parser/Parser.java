@@ -686,7 +686,7 @@ public class Parser {
     // bird.fly()
     private Expression CallMemberExpression() {
         var primaryIdentifier = MemberExpression(); // .fly
-        while (iterator.hasNext()) {
+        while (true) {
             if (IsLookAhead(TokenType.OpenParenthesis)) { // fly(
                 primaryIdentifier = CallExpression.of(primaryIdentifier, Arguments());
             } else {

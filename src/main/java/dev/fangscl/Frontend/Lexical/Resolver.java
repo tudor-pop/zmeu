@@ -141,12 +141,8 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(MemberExpression expression) {
-//        beginScope();
-//        declare((Identifier) expression.getProperty());
-//        define((Identifier) expression.getProperty());
-//        resolve(expression.getProperty());
+        // Since properties are looked up dynamically, they don’t get resolved
         resolve(expression.getObject());
-//        endScope();
         return null;
     }
 
