@@ -22,11 +22,11 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void test() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) { 
                     x=1
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(BlockExpression.of(
@@ -43,9 +43,9 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testXNoCurly() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) x=1
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(
@@ -59,28 +59,28 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void MissingOpenParenthesisError() {
-        parser.produceAST(tokenizer.tokenize("""
+        parse("""
                 if x) x=1
-                """));
+                """);
         ParseError parseError = ErrorSystem.getErrors().get(0);
         Assertions.assertEquals(TokenType.OpenParenthesis, parseError.getExpected());
     }
 
     @Test
     void MissingCloseParenthesisError() {
-        parser.produceAST(tokenizer.tokenize("""
+        parse("""
                 if (x x=1
-                """));
+                """);
         ParseError parseError = ErrorSystem.getErrors().get(0);
         Assertions.assertEquals(TokenType.CloseParenthesis, parseError.getExpected());
     }
 
     @Test
     void testNoCurly() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) 
                     x=1
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(
@@ -91,13 +91,13 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testIfElseStatementBlocks() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) { 
                     1
                 } else { 
                     2
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(1))),
@@ -108,11 +108,11 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testXBlock() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) {
                     if(y) x=1
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         ExpressionStatement.of(BlockExpression.of(
@@ -130,10 +130,10 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testNoBlockY() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) 
                     if(y) x=1
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         IfStatement.of(
@@ -149,10 +149,10 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testXCurlyY() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) 
                     if(y){ x=1 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         IfStatement.of(
@@ -171,10 +171,10 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testNestedElse() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x)
                  if(y) {} else { }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         IfStatement.of(
@@ -190,10 +190,10 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testNestedElseElse() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) 
                     if(y) {} else { } else {}
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         IfStatement.of(
@@ -210,9 +210,9 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testNestedElseElseInline() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) if(y) {} else { } else {}
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         IfStatement.of(
@@ -229,9 +229,9 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testNestedElseElseAssignInline() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x) if(y) {} else { } else { x=2}
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(Identifier.of("x"),
                         IfStatement.of(
@@ -250,13 +250,13 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testRelationalGt() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x > 1) {
                     x = 2;
                 } else {
                     x += 2
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(
                         BinaryExpression.of("x", 1, ">"),
@@ -272,13 +272,13 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testRelationalGtEq() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x >= 1) {
                     x = 2;
                 } else {
                     x += 2
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(
                         BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(1), ">="),
@@ -294,13 +294,13 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testRelationalLt() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x < 1) {
                     x = 2;
                 } else {
                     x += 2
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(
                         BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(1), "<"),
@@ -316,13 +316,13 @@ public class IfBaseTest extends BaseTest {
 
     @Test
     void testRelationalLtEq() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 if (x <= 1) {
                     x = 2;
                 } else {
                     x += 2
                 }
-                """));
+                """);
         var expected = Program.of(
                 IfStatement.of(
                         BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(1), "<="),

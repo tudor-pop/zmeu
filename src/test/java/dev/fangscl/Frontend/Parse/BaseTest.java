@@ -28,6 +28,10 @@ class BaseTest {
         parser = new Parser();
     }
 
+    protected Object parse(String source) {
+        return parser.produceAST(tokenizer.tokenize(source));
+    }
+
     protected String toJson(Object o) {
         try {
             return gson.writeValueAsString(o);

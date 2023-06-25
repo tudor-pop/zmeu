@@ -21,11 +21,11 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void schemaDeclaration() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 schema square { 
                     var x=1
                 }
-                """));
+                """);
         var expected = Program.of(
                 TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
@@ -39,13 +39,13 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void function() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 schema square { 
                     fun test() {
                     
                     }
                 }
-                """));
+                """);
         var expected = Program.of(
                 TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
@@ -59,13 +59,13 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void initSchema() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 schema square {
                     init() {
 
                     }
                 }
-                """));
+                """);
         var expected = Program.of(
                 TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(
@@ -79,14 +79,14 @@ public class SchemaTest extends BaseTest {
 
     @Test
     void initSchemaWithParams() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 schema square {
                     
                     init(x) {
                         this.x=x    
                     }
                 }
-                """));
+                """);
         var expected = Program.of(
                 TypeDeclaration.of(Identifier.of("square"),
                         BlockExpression.of(

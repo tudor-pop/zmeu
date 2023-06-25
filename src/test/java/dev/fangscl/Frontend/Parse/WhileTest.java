@@ -19,11 +19,11 @@ public class WhileTest extends BaseTest {
 
     @Test
     void test() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 while (x>10) { 
                     x+=1
                 }
-                """));
+                """);
         var expected = Program.of(
                 WhileStatement.builder()
                         .test(BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(10), ">"))
@@ -42,11 +42,11 @@ public class WhileTest extends BaseTest {
 
     @Test
     void testFor() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 for (var i=0; i<10; i+=1) { 
                     x+=1
                 }
-                """));
+                """);
         var expected = Program.of(
                 ForStatement.builder()
                         .init(VariableStatement.builder()
@@ -70,11 +70,11 @@ public class WhileTest extends BaseTest {
 
     @Test
     void testForInfinity() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 for (; ; ) { 
                     x+=1
                 }
-                """));
+                """);
         var expected = Program.of(ForStatement.builder()
                 .init(null)
                 .update(null)

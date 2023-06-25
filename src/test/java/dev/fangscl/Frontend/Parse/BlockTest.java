@@ -15,7 +15,7 @@ public class BlockTest extends BaseTest {
 
     @Test
     void testInteger() {
-        var res = parser.produceAST(tokenizer.tokenize("{ 42 }"));
+        var res = parse("{ 42 }");
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(ExpressionStatement.of(42))));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -23,14 +23,14 @@ public class BlockTest extends BaseTest {
 
     @Test
     void testString() {
-        var res = parser.produceAST(tokenizer.tokenize("{ \"hello\" }"));
+        var res = parse("{ \"hello\" }");
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(ExpressionStatement.of("hello"))));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
     @Test
     void testEmptyBlock() {
-        var res = parser.produceAST(tokenizer.tokenize("{ }    "));
+        var res = parse("{ }    ");
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(Collections.emptyList())));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -39,7 +39,7 @@ public class BlockTest extends BaseTest {
 
     @Test
     void testNestedBlocksString() {
-        var res = parser.produceAST(tokenizer.tokenize("{ { \"hello\" } }"));
+        var res = parse("{ { \"hello\" } }");
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(BlockExpression.of(ExpressionStatement.of("hello")))));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -48,7 +48,7 @@ public class BlockTest extends BaseTest {
 
     @Test
     void testEmptyStatement() {
-        var res = parser.produceAST(tokenizer.tokenize("\n"));
+        var res = parse("\n");
         var expected = Program.of();
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -56,7 +56,7 @@ public class BlockTest extends BaseTest {
 
     @Test
     void testEmptyStatementInBlock() {
-        var res = parser.produceAST(tokenizer.tokenize("{ \n }"));
+        var res = parse("{ \n }");
         var expected = Program.of(ExpressionStatement.of(BlockExpression.of(Collections.emptyList())));
         assertEquals(expected, res);
         log.info(toJson(res));

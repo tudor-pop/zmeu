@@ -17,7 +17,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void testLogicalAnd() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 0 && y < 0"));
+        var res = parse("x > 0 && y < 0");
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("&&",
                         BinaryExpression.of("x", 0, ">"),
@@ -30,7 +30,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void testLogicalOr() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 0 || y < 0"));
+        var res = parse("x > 0 || y < 0");
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("||",
                         BinaryExpression.of("x", 0, ">"),
@@ -43,7 +43,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void testLogical() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 0 || y < 0 && z < 0"));
+        var res = parse("x > 0 || y < 0 && z < 0");
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("||",
                         BinaryExpression.of(">", "x", 0),
@@ -57,7 +57,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void testLogicalOrEquals() {
-        var res = parser.produceAST(tokenizer.tokenize("x = true || false"));
+        var res = parse("x = true || false");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
                         LogicalExpression.of("||", BooleanLiteral.of(true), BooleanLiteral.of(false))
@@ -68,7 +68,7 @@ public class LogicalTest extends BaseTest {
 
     @Test
     void testLogicalAndEquals() {
-        var res = parser.produceAST(tokenizer.tokenize("x = true && false"));
+        var res = parse("x = true && false");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
                         LogicalExpression.of("&&", BooleanLiteral.of(true), BooleanLiteral.of(false))

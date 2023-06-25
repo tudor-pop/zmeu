@@ -16,7 +16,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void testLogicalUnary() {
-        var res = parser.produceAST(tokenizer.tokenize("-x"));
+        var res = parse("-x");
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("-", Identifier.of("x"))
         ));
@@ -26,7 +26,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void testLogicalNot() {
-        var res = parser.produceAST(tokenizer.tokenize("!x"));
+        var res = parse("!x");
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("!", Identifier.of("x"))
         ));
@@ -36,7 +36,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void prefixDecrement() {
-        var res = parser.produceAST(tokenizer.tokenize("--x"));
+        var res = parse("--x");
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("--", Identifier.of("x")))
         );
@@ -46,7 +46,7 @@ public class UnaryTest extends BaseTest {
 
 //    @Test
 //    void postfixDecrement() {
-//        var res = parser.produceAST(tokenizer.tokenize("x--"));
+//        var res = parse("x--");
 //        var expected = Program.of(ExpressionStatement.of(
 //                UnaryExpression.of("--", Identifier.of("x")))
 //        );
@@ -56,7 +56,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void prefixIncrement() {
-        var res = parser.produceAST(tokenizer.tokenize("++x"));
+        var res = parse("++x");
         var expected = Program.of(ExpressionStatement.of(
                 UnaryExpression.of("++", Identifier.of("x"))
         ));
@@ -66,7 +66,7 @@ public class UnaryTest extends BaseTest {
 
 //    @Test
 //    void postfixIncrement() {
-//        var res = parser.produceAST(tokenizer.tokenize("x++"));
+//        var res = parse("x++");
 //        var expected = Program.of(ExpressionStatement.of(
 //                UnaryExpression.of("++", Identifier.of("x"))
 //        ));
@@ -76,7 +76,7 @@ public class UnaryTest extends BaseTest {
 
     @Test
     void testLogicalUnaryHigherPrecedenceThanMultiplication() {
-        var res = parser.produceAST(tokenizer.tokenize("-x * 2"));
+        var res = parse("-x * 2");
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of("*", UnaryExpression.of("-", Identifier.of("x")), NumericLiteral.of(2))
         ));

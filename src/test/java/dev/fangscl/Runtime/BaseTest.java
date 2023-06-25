@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Lexical.Resolver;
 import dev.fangscl.Frontend.Parser.Parser;
+import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Runtime.Environment.Environment;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -43,7 +44,17 @@ public class BaseTest {
     }
 
     protected Object eval(String source) {
+        Program program = parser.produceAST(tokenizer.tokenize(source));
+        resolver.resolve(program);
+        return interpreter.eval(program);
+    }
+
+    protected Object interpret(String source) {
         return interpreter.eval(parser.produceAST(tokenizer.tokenize(source)));
+    }
+
+    protected Object resolve(String source) {
+        return resolver.eval(parser.produceAST(tokenizer.tokenize(source)));
     }
 
 //    @Test

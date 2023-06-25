@@ -7,12 +7,12 @@ class ResolverTest extends BaseTest {
 
     @Test
     void varNameCollision() {
-        var res = resolver.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = resolve("""
                 {
                   var a = "first";
                   var a = "second";
                 }
-                """)));
+                """);
 
         System.out.println(res);
     }

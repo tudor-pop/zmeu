@@ -17,7 +17,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void testFunctionCall() {
-        var res = parser.produceAST(tokenizer.tokenize("foo(x)"));
+        var res = parse("foo(x)");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", "x")));
         assertEquals(expected, res);
@@ -26,7 +26,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void testFunctionCallNumber() {
-        var res = parser.produceAST(tokenizer.tokenize("foo(2)"));
+        var res = parse("foo(2)");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", 2)));
         assertEquals(expected, res);
@@ -35,7 +35,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void testFunctionCallDecimal() {
-        var res = parser.produceAST(tokenizer.tokenize("foo(2.2)"));
+        var res = parse("foo(2.2)");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", 2.2)));
         assertEquals(expected, res);
@@ -44,7 +44,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void functionMultipleArgs() {
-        var res = parser.produceAST(tokenizer.tokenize("foo(x,y)"));
+        var res = parse("foo(x,y)");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of("foo", "x","y")));
         assertEquals(expected, res);
@@ -53,7 +53,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void functionMultipleCalls() {
-        var res = parser.produceAST(tokenizer.tokenize("foo(x)()"));
+        var res = parse("foo(x)()");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of(CallExpression.of("foo", "x"), Collections.emptyList())));
         assertEquals(expected, res);
@@ -62,7 +62,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void functionMultipleCallsArgs() {
-        var res = parser.produceAST(tokenizer.tokenize("foo(x)(y)"));
+        var res = parse("foo(x)(y)");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of(CallExpression.of("foo", "x"), "y")));
         assertEquals(expected, res);
@@ -71,7 +71,7 @@ public class CallExpressionTest extends BaseTest {
 
     @Test
     void testMemberAssignment() {
-        var res = parser.produceAST(tokenizer.tokenize("console.log(x,y)"));
+        var res = parse("console.log(x,y)");
         var expected = Program.of(ExpressionStatement.of(
                 CallExpression.of(
                         MemberExpression.of(false,"console", "log"),

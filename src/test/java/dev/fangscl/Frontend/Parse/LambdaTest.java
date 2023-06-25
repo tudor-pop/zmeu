@@ -22,9 +22,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambda() {
-        var res = parser.produceAST(tokenizer.tokenize("""
-                (x) -> x*x
-                """));
+        var res = parse("(x) -> x*x");
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
@@ -38,9 +36,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaTwoArgs() {
-        var res = parser.produceAST(tokenizer.tokenize("""
-                (x,y) -> x*y
-                """));
+        var res = parse("(x,y) -> x*y");
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
@@ -54,9 +50,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaBlock() {
-        var res = parser.produceAST(tokenizer.tokenize("""
-                (x,y) -> { x*y }
-                """));
+        var res = parse("(x,y) -> { x*y }");
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
@@ -72,11 +66,11 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void testWith2Args() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 (x) -> { 
                     return x*x
                 }
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
@@ -92,11 +86,11 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void testWithoutReturn() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 (x) -> { 
                     return
                 }
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
@@ -110,10 +104,10 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void testWithoutParamsAndReturn() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 () -> { 
                 }
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(),
@@ -125,10 +119,10 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void callExpression() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 ((x) -> x*x)(2) 
                                 
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of(
                         CallExpression.of(
@@ -143,10 +137,10 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void callExpressionEmpty() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 ((x) -> x*x)(2)()
                                 
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of(
                         CallExpression.of(
@@ -163,9 +157,9 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void callExpressionHi() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 ((x) -> x*x)(2)("hi")
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of(
                         CallExpression.of(

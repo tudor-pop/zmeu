@@ -19,11 +19,11 @@ public class FunTest extends BaseTest {
 
     @Test
     void testWithArgs() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 fun square(x) { 
                     return x*x
                 }
-                """));
+                """);
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
@@ -40,11 +40,11 @@ public class FunTest extends BaseTest {
 
     @Test
     void testWith2Args() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 fun square(x,y) { 
                     return x*y
                 }
-                """));
+                """);
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x"), Identifier.of("y")),
@@ -61,11 +61,11 @@ public class FunTest extends BaseTest {
 
     @Test
     void testWithoutReturn() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 fun square(x) { 
                     return
                 }
-                """));
+                """);
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(Identifier.of("x")),
@@ -80,11 +80,11 @@ public class FunTest extends BaseTest {
 
     @Test
     void testWithoutParamsAndReturn() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 fun square() { 
                     return
                 }
-                """));
+                """);
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),
@@ -99,10 +99,10 @@ public class FunTest extends BaseTest {
 
     @Test
     void testEmptyBody() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 fun square() { 
                 }
-                """));
+                """);
         var expected = Program.of(
                 FunctionDeclaration.of(Identifier.of("square"),
                         List.of(),

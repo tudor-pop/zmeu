@@ -15,7 +15,7 @@ public class MemberExpressionTest extends BaseTest {
 
     @Test
     void testMember() {
-        var res = parser.produceAST(tokenizer.tokenize("x.y"));
+        var res = parse("x.y");
         var expected = Program.of(ExpressionStatement.of(
                 MemberExpression.of(false, "x", "y")));
         assertEquals(expected, res);
@@ -24,7 +24,7 @@ public class MemberExpressionTest extends BaseTest {
 
     @Test
     void testMemberAssignment() {
-        var res = parser.produceAST(tokenizer.tokenize("x.y = 1"));
+        var res = parse("x.y = 1");
         var expected = Program.of(ExpressionStatement.of(AssignmentExpression.of(
                 MemberExpression.of(false, "x", "y"),
                 1, "="))
@@ -35,7 +35,7 @@ public class MemberExpressionTest extends BaseTest {
 
     @Test
     void testMemberAssignmentComputed() {
-        var res = parser.produceAST(tokenizer.tokenize("x[0] = 1"));
+        var res = parse("x[0] = 1");
         var expected = Program.of(ExpressionStatement.of(AssignmentExpression.of(
                 MemberExpression.of(true, "x", 0),
                 1, "="))
@@ -46,7 +46,7 @@ public class MemberExpressionTest extends BaseTest {
 
     @Test
     void testMemberComputedNested() {
-        var res = parser.produceAST(tokenizer.tokenize("x.y.z['key']"));
+        var res = parse("x.y.z['key']");
         var expected = Program.of(ExpressionStatement.of(
                         MemberExpression.of(true,
                                 MemberExpression.of(false,
@@ -61,7 +61,7 @@ public class MemberExpressionTest extends BaseTest {
 
     @Test
     void testMemberComputedNestedAssignment() {
-        var res = parser.produceAST(tokenizer.tokenize("x.y.z['key'] = 1"));
+        var res = parse("x.y.z['key'] = 1");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=",
                         MemberExpression.of(true,

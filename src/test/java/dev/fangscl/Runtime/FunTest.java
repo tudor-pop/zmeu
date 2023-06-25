@@ -21,11 +21,11 @@ public class FunTest extends BaseTest {
 
     @Test
     void funDeclaration() {
-        var res = (FunValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (FunValue) eval("""
                 fun myFun(){
                     var x = 1
                 }
-                """)));
+                """);
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
@@ -40,12 +40,12 @@ public class FunTest extends BaseTest {
 
     @Test
     void funReturn() {
-        var res = (FunValue) interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = (FunValue) eval("""
                 fun myFun(){
                    var x = 1
                    x
                 }
-                """)));
+                """);
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
@@ -63,18 +63,18 @@ public class FunTest extends BaseTest {
 
     @Test
     void funEvaluateBlock() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 fun myFun(x){
                    x
                 }
                 myFun(2)
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(2, res);
     }
     @Test
     void funEvaluateBlockWithOuter() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 var x = "global"
                 {
                     fun myFun(){
@@ -86,26 +86,26 @@ public class FunTest extends BaseTest {
                     myFun()
                     
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals("global", res);
     }
 
     @Test
     void funBody() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 fun sqrt(x){
                    x*x
                 }
                 sqrt(2)
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(4, res);
     }
 
     @Test
     void funBodyOverlappingWithParam() {
-        Assertions.assertThrows(VarExistsException.class, () -> eval("""
+        Assertions.assertThrows(VarExistsException.class, () -> interpret("""
                 fun sqrt(x){
                    var x = 3
                    x*x
@@ -116,20 +116,20 @@ public class FunTest extends BaseTest {
 
     @Test
     void funBodyMultiParams() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 fun sqrt(x,y){
                    var z = 1
                    x*y+z
                 }
                 sqrt(2,3)
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(7, res);
     }
 
     @Test
     void funClojure() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 {
                     var a = 100
                     fun calc(x,y){
@@ -142,14 +142,14 @@ public class FunTest extends BaseTest {
                     var fn = calc(10,20)
                     fn(30)
                 }
-                """)));
+                """);
         log.warn(toJson(res));
         assertEquals(160, res);
     }
 
     @Test
     void returnStatement() {
-        var res = interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        var res = eval("""
                 fun fib(n) {
                    if (n <= 1) {
                         return n
@@ -159,7 +159,7 @@ public class FunTest extends BaseTest {
                 var x = fib(6)
                 println("fib result is: ", x)
                 x
-                    """)));
+                    """);
         log.warn(toJson(res));
         assertEquals(8, res);
     }

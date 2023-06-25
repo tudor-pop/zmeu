@@ -13,7 +13,7 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testInteger() {
-        var res = parser.produceAST(tokenizer.tokenize("1"));
+        var res = parse("1");
         var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1)));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -21,16 +21,16 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testDecimal() {
-        var res = parser.produceAST(tokenizer.tokenize("1.11"));
+        var res = parse("1.11");
         var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1.11)));
         assertEquals(expected, res);
     }
 
     @Test
     void testStringStatements() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 "Hello"
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of("Hello")
         );
@@ -40,10 +40,10 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testMultipleStatements() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 "Hello"
                 1
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of("Hello"),
                 ExpressionStatement.of(1)
@@ -55,9 +55,9 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testIntegerStrShouldEvalToString() {
-        var res = parser.produceAST(tokenizer.tokenize(""" 
+        var res = parse(""" 
                 "42" 
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of("42")
         );
@@ -67,9 +67,9 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testSingleQuotesShouldEvalToString() {
-        var res = parser.produceAST(tokenizer.tokenize(""" 
+        var res = parse(""" 
                 '42' 
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of("42")
         );
@@ -79,9 +79,9 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testSingleQuotesWithSpaceShouldEvalToString() {
-        var res = parser.produceAST(tokenizer.tokenize(""" 
+        var res = parse(""" 
                 '  42  ' 
-                """));
+                """);
         var expected = Program.of(
                 ExpressionStatement.of("  42  ")
         );
@@ -91,7 +91,7 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testNumberStringShouldEvalToNumber() {
-        var res = parser.produceAST(tokenizer.tokenize("42"));
+        var res = parse("42");
         var expected = Program.of(
                 ExpressionStatement.of(42)
         );
@@ -101,7 +101,7 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void testNumberStringShouldEvalToNumberWithTrailingSpace() {
-        var res = parser.produceAST(tokenizer.tokenize("   \"  42  \"    "));
+        var res = parse("   \"  42  \"    ");
         var expected = Program.of(
                 ExpressionStatement.of("  42  ")
         );

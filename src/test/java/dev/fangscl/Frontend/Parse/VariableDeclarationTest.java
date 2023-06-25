@@ -17,7 +17,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void testDeclaration() {
-        var res = parser.produceAST(tokenizer.tokenize("var x"));
+        var res = parse("var x");
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"))));
@@ -27,7 +27,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void testDeclarations() {
-        var res = parser.produceAST(tokenizer.tokenize("var x,y"));
+        var res = parse("var x,y");
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x")),
@@ -39,7 +39,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void testDeclarationWithInit() {
-        var res = parser.produceAST(tokenizer.tokenize("var x = 2"));
+        var res = parse("var x = 2");
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(2))));
@@ -49,7 +49,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void testDeclarationsWithValues() {
-        var res = parser.produceAST(tokenizer.tokenize("var x,y=2"));
+        var res = parse("var x,y=2");
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x")),
@@ -61,7 +61,7 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void testInitWithValues() {
-        var res = parser.produceAST(tokenizer.tokenize("var x=3,y=2"));
+        var res = parse("var x=3,y=2");
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(3)),
@@ -74,11 +74,11 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void initVarWithBlockStatement() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 var x={
                     2
                 }
-                """));
+                """);
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
@@ -90,12 +90,12 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void testAssignmentBlockWithStatements() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 var x={
                     var y=2
                     3
                 }
-                """));
+                """);
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
@@ -108,10 +108,10 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void multiVarInitWithValues() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 var x=3
                 var y=2
-                """));
+                """);
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(3))),
@@ -125,10 +125,10 @@ public class VariableDeclarationTest extends BaseTest {
 
     @Test
     void multiVarInitWithValuesAndLineterminator() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 var x=3;
                 var y=2;
-                """));
+                """);
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(3))),

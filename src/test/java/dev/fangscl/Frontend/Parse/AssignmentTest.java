@@ -17,7 +17,7 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testAssignment() {
-        var res = parser.produceAST(tokenizer.tokenize("x=2"));
+        var res = parse("x=2");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"), NumericLiteral.of(2))));
         assertEquals(expected, res);
@@ -26,7 +26,7 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testAssignmentBlock() {
-        var res = parser.produceAST(tokenizer.tokenize("x={2}"));
+        var res = parse("x={2}");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2))))));
         assertEquals(expected, res);
@@ -35,12 +35,12 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testAssignmentBlockWithStatements() {
-        var res = parser.produceAST(tokenizer.tokenize("""
+        var res = parse("""
                 x={
                     y=2
                     2
                 }
-                """));
+                """);
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
                         BlockExpression.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))),
@@ -51,7 +51,7 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testMultipleAssignments() {
-        var res = parser.produceAST(tokenizer.tokenize("x=y=2"));
+        var res = parse("x=y=2");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
                         AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))
@@ -62,7 +62,7 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testMultipleAssignments3() {
-        var res = parser.produceAST(tokenizer.tokenize("x=y=z=2"));
+        var res = parse("x=y=z=2");
         var expected = Program.of(
                 ExpressionStatement.of(
                         AssignmentExpression.of("=", Identifier.of("x"),
@@ -77,7 +77,7 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testVariableAddition() {
-        var res = parser.produceAST(tokenizer.tokenize("x+x"));
+        var res = parse("x+x");
         var expected = Program.of(
                 ExpressionStatement.of(
                         BinaryExpression.of(Identifier.of("x"), Identifier.of("x"), "+")
@@ -89,18 +89,18 @@ public class AssignmentTest extends BaseTest {
 
     @Test
     void testAssignmentOnlyToIdentifiers() {
-        parser.produceAST(tokenizer.tokenize("2=2"));
+        parse("2=2");
     }
 
     @Test
     void assignInvalid() {
-        parser.produceAST(tokenizer.tokenize("1+2=10"));
+        parse("1+2=10");
     }
 
 
     @Test
     void assignInvalidMember() {
-        parser.produceAST(tokenizer.tokenize("a().x+1=10"));
+        parse("a().x+1=10");
     }
 
 

@@ -14,7 +14,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testGreaterThan() {
-        var res = parser.produceAST(tokenizer.tokenize("x>2"));
+        var res = parse("x>2");
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, ">")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -22,7 +22,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testGreaterThanEq() {
-        var res = parser.produceAST(tokenizer.tokenize("x>=2"));
+        var res = parse("x>=2");
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, ">=")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -30,7 +30,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessThan() {
-        var res = parser.produceAST(tokenizer.tokenize("x<2"));
+        var res = parse("x<2");
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, "<")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -38,7 +38,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessThanEq() {
-        var res = parser.produceAST(tokenizer.tokenize("x<=2"));
+        var res = parse("x<=2");
         var expected = Program.of(ExpressionStatement.of(BinaryExpression.of("x", 2, "<=")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -46,7 +46,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessLowerPrecedenceThanAdditive() {
-        var res = parser.produceAST(tokenizer.tokenize("x+2 > 10"));
+        var res = parse("x+2 > 10");
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(BinaryExpression.of("x", 2, "+"), 10, ">")
         ));
@@ -56,7 +56,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessLowerPrecedenceThanAdditiveTrue() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 2 == true"));
+        var res = parse("x > 2 == true");
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), true, "==")
@@ -67,7 +67,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessLowerPrecedenceThanAdditiveFalse() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 2 == false"));
+        var res = parse("x > 2 == false");
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), false, "==")
@@ -78,7 +78,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessLowerPrecedenceThanAdditiveNotFalse() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 2 != false"));
+        var res = parse("x > 2 != false");
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), false, "!=")
@@ -89,7 +89,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLessLowerPrecedenceThanAdditiveNotTrue() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 2 != true"));
+        var res = parse("x > 2 != true");
         var expected = Program.of(ExpressionStatement.of(
                 BinaryExpression.of(
                         BinaryExpression.of("x", 2, ">"), true, "!=")
@@ -100,7 +100,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLogicalAnd() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 0 && y < 0"));
+        var res = parse("x > 0 && y < 0");
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("&&",
                         BinaryExpression.of("x", 0, ">"),
@@ -113,7 +113,7 @@ public class RelationalTest extends BaseTest {
 
     @Test
     void testLogicalOr() {
-        var res = parser.produceAST(tokenizer.tokenize("x > 0 || y < 0"));
+        var res = parse("x > 0 || y < 0");
         var expected = Program.of(ExpressionStatement.of(
                 LogicalExpression.of("||",
                         BinaryExpression.of("x", 0, ">"),
