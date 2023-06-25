@@ -11,71 +11,71 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Log4j2
-public class TypeTest extends BaseTest {
+public class SchemaTest extends BaseTest {
 
     @Test
-    void typeDeclaration() {
+    void declare() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     
                 }
                 """);
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals("Vm", actual.getType().getSymbol());
     }
 
     @Test
-    void typeDeclarationWithFunction() {
+    void declareWithFunction() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     fun test(){
                     
                     }
                 }
                 """);
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals(FunValue.of("test", actual.getEnvironment()), actual.getEnvironment().lookup("test"));
     }
 
     @Test
-    void typeDeclarationWithVariable() {
+    void declareWithVariable() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     var x
                 }
                 """);
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertNull(actual.getEnvironment().get("x"));
     }
 
     @Test
-    void typeDeclarationWithVariableInit() {
+    void declareWithVariableInit() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     var x=20.2
                 }
                 """);
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals(20.2, actual.getEnvironment().get("x"));
     }
 
     @Test
-    void typeDeclarationWithVariableInitString() {
+    void declareWithVariableInitString() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     var x="hello"
                 }
                 """);
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals("hello", actual.getEnvironment().get("x"));
     }
@@ -83,7 +83,7 @@ public class TypeTest extends BaseTest {
     @Test
     void initDeclaration() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     init(){
                        
                     }
@@ -91,14 +91,14 @@ public class TypeTest extends BaseTest {
                 """);
 
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals(FunValue.of("init", actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
     @Test
     void initDeclarationWithParams() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     init(x){
                        
                     }
@@ -106,7 +106,7 @@ public class TypeTest extends BaseTest {
                 """);
 
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
@@ -114,13 +114,13 @@ public class TypeTest extends BaseTest {
     @Test
     void initDeclarationWithParamsAssignment() {
         var res = eval("""
-                type Vm {
+                schema Vm {
                     var x = 1;
                 }
                 """);
 
         log.warn(toJson(res));
-        var actual = (TypeValue) global.get("Vm");
+        var actual = (SchemaValue) global.get("Vm");
 
         assertEquals(res, actual);
     }

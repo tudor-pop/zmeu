@@ -26,11 +26,11 @@ Program        → Declaration* EOF
 Declaration     → VarDeclaration
                 | Statement 
                 | FunDeclaration
-                | TypeDeclaration
+                | SchemaDeclaration
                 | ResourceDeclaration
 
 
-TypeDeclaration → "type" Identifier "{" BlockExpression "}"
+SchemaDeclaration → "schema" Identifier "{" BlockExpression "}"
                
 ResourceDeclaration  →  resource Identifier Identifier? "{" Assignment* "}"  
 

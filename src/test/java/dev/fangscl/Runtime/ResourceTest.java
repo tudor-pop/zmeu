@@ -1,7 +1,7 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Runtime.Values.ResourceValue;
-import dev.fangscl.Runtime.Values.TypeValue;
+import dev.fangscl.Runtime.Values.SchemaValue;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -42,7 +42,7 @@ public class ResourceTest extends BaseTest {
                 }
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         assertNotNull(type);
         assertEquals("Vm", type.getType().getSymbol());
@@ -71,7 +71,7 @@ public class ResourceTest extends BaseTest {
                 }
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         assertNotNull(type);
         assertEquals("Vm", type.getType().getSymbol());
@@ -109,7 +109,7 @@ public class ResourceTest extends BaseTest {
                 }
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         var resource = (ResourceValue) type.getInstances().get("main");
 
@@ -131,7 +131,7 @@ public class ResourceTest extends BaseTest {
                 z
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         var resource = (ResourceValue) type.getInstances().get("main");
         assertSame(2, resource.getParent().get("x"));
@@ -166,7 +166,7 @@ public class ResourceTest extends BaseTest {
                 Vm.main.x = 3
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         var resource = (ResourceValue) type.getInstances().get("main");
 
@@ -191,7 +191,7 @@ public class ResourceTest extends BaseTest {
                 }
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         var resource = (ResourceValue) type.getInstances().get("main");
 
@@ -216,7 +216,7 @@ public class ResourceTest extends BaseTest {
                 }
                 """);
         log.warn(toJson(res));
-        var type = (TypeValue) global.get("Vm");
+        var type = (SchemaValue) global.get("Vm");
 
         var resource = type.getInstances().get("main");
 

@@ -118,7 +118,7 @@ public class Parser {
         try {
             return switch (lookAhead().getType()) {
                 case Fun -> FunctionDeclaration();
-                case Type -> TypeDeclaration();
+                case Schema -> TypeDeclaration();
                 case Resource -> ResourceDeclaration();
                 case Var -> VariableDeclarations();
                 default -> Statement();
@@ -380,7 +380,7 @@ public class Parser {
     }
 
     private Statement TypeDeclaration() {
-        eat(TokenType.Type);
+        eat(TokenType.Schema);
         var test = Identifier();
 
         Expression body = BlockExpression();

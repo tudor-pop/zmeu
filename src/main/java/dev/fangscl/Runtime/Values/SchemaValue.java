@@ -9,26 +9,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class TypeValue implements IEnvironment {
+public class SchemaValue implements IEnvironment {
     @JsonIgnore
     private final Environment environment;
     @JsonIgnore
     private final Environment instances;
     private final Identifier type;
 
-    private TypeValue(Identifier type, Environment environment) {
+    private SchemaValue(Identifier type, Environment environment) {
         this.type = type;
         this.instances = new Environment(environment);
         this.environment = environment;
         this.environment.init("instances", instances);
     }
 
-    public static TypeValue of(Identifier name, Environment environment) {
-        return new TypeValue(name, environment);
+    public static SchemaValue of(Identifier name, Environment environment) {
+        return new SchemaValue(name, environment);
     }
 
-    public static TypeValue of(String name, Environment environment) {
-        return new TypeValue(Identifier.of(name), environment);
+    public static SchemaValue of(String name, Environment environment) {
+        return new SchemaValue(Identifier.of(name), environment);
     }
 
     public String typeString() {

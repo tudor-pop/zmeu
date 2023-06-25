@@ -23,7 +23,7 @@ import dev.fangscl.Runtime.Functions.PrintlnFunction;
 import dev.fangscl.Runtime.Values.FunValue;
 import dev.fangscl.Runtime.Values.NullValue;
 import dev.fangscl.Runtime.Values.ResourceValue;
-import dev.fangscl.Runtime.Values.TypeValue;
+import dev.fangscl.Runtime.Values.SchemaValue;
 import dev.fangscl.Runtime.exceptions.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -74,7 +74,7 @@ public class Interpreter implements
         this.env.init("abs", new AbsFunction());
         this.env.init("date", new DateFunction());
 
-//        this.globals.init("Vm", TypeValue.of("Vm", new Environment(env, new Vm())));
+//        this.globals.init("Vm", SchemaValue.of("Vm", new Environment(env, new Vm())));
     }
 
     @Override
@@ -341,8 +341,8 @@ public class Interpreter implements
             var value = executeBlock(expression.getObject(), env);
             // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
             // Since that environment points to the parent(type env) it will also find the properties
-            if (value instanceof TypeValue typeValue) {
-                return typeValue.getInstances()
+            if (value instanceof SchemaValue schemaValue) {
+                return schemaValue.getInstances()
                         .lookup(resourceName.getSymbol());
             } else if (value instanceof IEnvironment iEnvironment) {
                 return iEnvironment.lookup(resourceName.getSymbol());
@@ -356,12 +356,12 @@ public class Interpreter implements
         if (expression.getName() == null) {
             throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
         }
-        var typeValue = (TypeValue) executeBlock(expression.getType(), env);
+        var schemaValue = (SchemaValue) executeBlock(expression.getType(), env);
 
-        Environment typeEnvironment = typeValue.getEnvironment();
+        Environment typeEnvironment = schemaValue.getEnvironment();
         Environment resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
         try {
-            var init = typeValue.getMethodOrNull("init");
+            var init = schemaValue.getMethodOrNull("init");
             if (init != null) {
                 var args = new ArrayList<>();
                 for (Statement it : expression.getArguments()) {
@@ -372,8 +372,8 @@ public class Interpreter implements
             } else {
                 expression.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            var res = typeValue.initInstance(expression.name(), ResourceValue.of(expression.name(), resourceEnv));
-            engine.process(typeValue.typeString(), resourceEnv.getVariables());
+            var res = schemaValue.initInstance(expression.name(), ResourceValue.of(expression.name(), resourceEnv));
+            engine.process(schemaValue.typeString(), resourceEnv.getVariables());
             return res;
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
@@ -429,7 +429,7 @@ public class Interpreter implements
         Statement body = expression.getBody();
         if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
             executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
-            return env.init(name, TypeValue.of(name, typeEnv)); // install the type into the global env
+            return env.init(name, SchemaValue.of(name, typeEnv)); // install the type into the global env
         }
         throw new RuntimeException("Invalid type");
     }
