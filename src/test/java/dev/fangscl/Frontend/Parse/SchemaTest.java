@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SchemaTest extends BaseTest {
 
     @Test
-    void schemaDeclaration() {
+    void typeDeclaration() {
         var res = parse("""
-                schema square { 
+                type square { 
                     var x=1
                 }
                 """);
@@ -40,7 +40,7 @@ public class SchemaTest extends BaseTest {
     @Test
     void function() {
         var res = parse("""
-                schema square { 
+                type square { 
                     fun test() {
                     
                     }
@@ -60,7 +60,7 @@ public class SchemaTest extends BaseTest {
     @Test
     void initSchema() {
         var res = parse("""
-                schema square {
+                type square {
                     init() {
 
                     }
@@ -80,7 +80,7 @@ public class SchemaTest extends BaseTest {
     @Test
     void initSchemaWithParams() {
         var res = parse("""
-                schema square {
+                type square {
                     
                     init(x) {
                         this.x=x    

@@ -27,9 +27,13 @@ Declaration     → VarDeclaration
                 | Statement 
                 | FunDeclaration
                 | TypeDeclaration
+                | ResourceDeclaration
+
 
 TypeDeclaration → "type" Identifier "{" BlockExpression "}"
                
+ResourceDeclaration  →  resource Identifier Identifier? "{" Assignment* "}"  
+
 FunDeclaration  → "fun" Identifier "(" Parameters? ")" BlockExpression
 
 Parameters      → Identifier ( "," Identifier )*
