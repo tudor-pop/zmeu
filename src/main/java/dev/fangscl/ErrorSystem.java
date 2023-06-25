@@ -13,6 +13,7 @@ import java.util.List;
 
 @Log4j2
 public class ErrorSystem {
+    @Getter
     private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
     @Getter

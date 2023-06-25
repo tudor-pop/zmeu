@@ -17,4 +17,30 @@ class ResolverTest extends BaseTest {
                 """)
         );
     }
+    @Test
+    void returnTopFunctionShouldThrow() {
+        Assertions.assertThrows(ParseError.class, () -> resolve("""
+                return "second";
+                """)
+        );
+    }
+    @Test
+    void returnInsideBlockShouldFail() {
+        Assertions.assertThrows(ParseError.class, () -> resolve("""
+                if (x==2) {
+                    return "second";
+                }
+                """)
+        );
+    }
+
+    @Test
+    void returnInsideFunctionShouldSucceed() {
+        resolve("""
+                fun x() {
+                    return "second";
+                }
+                """);
+    }
+
 }

@@ -16,11 +16,18 @@ import java.util.Stack;
 
 public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Statements.Visitor<Void> {
     private final Interpreter interpreter;
-    /*
+    /**
+     * Tracks how many scopes are we nested within source code. Based on this we know how to properly handle variable declarations/resolution
      * boolean = false => variable declared but not ready to be used
      * boolean = true => variable declared and ready to be used
      * */
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+    /**
+     * Tracks weather we're in a function or not. Based on this we show a syntax
+     * error for example when using a return statement outside a function
+     */
+    private FunctionType currentFunction = FunctionType.NONE;
+
 
     public Resolver(Interpreter interpreter) {
         this.interpreter = interpreter;
@@ -172,7 +179,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(LambdaExpression expression) {
-        resolveFunction(expression.getParams(), expression.getBody());
+        resolveFunction(expression.getParams(), expression.getBody(), FunctionType.FUNCTION);
         return null;
     }
 
@@ -181,8 +188,17 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         declare(statement.getName());
         define(statement.getName());
 
-        resolveFunction(statement.getParams(), statement.getBody());
+        resolveFunction(statement.getParams(), statement.getBody(), FunctionType.FUNCTION);
         return null;
+    }
+
+    private void resolveFunction(List<Identifier> params, Statement body, FunctionType functionType) {
+        FunctionType enclosingFunction = currentFunction;
+        currentFunction = functionType;
+
+        resolveFunction(params, body);
+
+        currentFunction = enclosingFunction;
     }
 
     private void resolveFunction(List<Identifier> params, Statement body) {
@@ -305,6 +321,9 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     @Override
     public Void eval(ReturnStatement statement) {
+        if (currentFunction == FunctionType.NONE) {
+            throw ErrorSystem.error("Can't return from top level code");
+        }
         if (statement.hasArgument()) {
             resolve(statement.getArgument());
         }

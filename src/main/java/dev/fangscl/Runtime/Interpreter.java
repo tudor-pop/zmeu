@@ -1,6 +1,7 @@
 package dev.fangscl.Runtime;
 
 import dev.fangscl.Engine.Engine;
+import dev.fangscl.ErrorSystem;
 import dev.fangscl.Frontend.Lexer.Token;
 import dev.fangscl.Frontend.Lexer.TokenType;
 import dev.fangscl.Frontend.Parser.Expressions.Visitor;
@@ -515,6 +516,9 @@ public class Interpreter implements
     public Object eval(Program program) {
         Object lastEval = new NullValue();
 
+        if (ErrorSystem.isHadError()) {
+            return null;
+        }
         for (Statement i : program.getBody()) {
             lastEval = executeBlock(i, env);
         }
