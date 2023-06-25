@@ -54,7 +54,8 @@ public class BaseTest {
     }
 
     protected Object resolve(String source) {
-        return resolver.eval(parser.produceAST(tokenizer.tokenize(source)));
+         resolver.resolve(parser.produceAST(tokenizer.tokenize(source)));
+         return null;
     }
 
 //    @Test

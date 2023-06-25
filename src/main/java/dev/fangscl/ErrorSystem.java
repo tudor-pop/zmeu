@@ -39,7 +39,7 @@ public class ErrorSystem {
         return parseError;
     }
 
-    public static ParseError error(String message, Object object) {
+    public static ParseError error(String message) {
         hadError = true;
         ParseError parseError = ParseError.builder()
                 .message(message)

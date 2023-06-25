@@ -65,7 +65,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     @Override
     public Void eval(/* VariableExpression*/ Identifier identifier) {
         if (!scopes.isEmpty() && scopes.peek().get(identifier.getSymbol()) == Boolean.FALSE) {
-            throw ErrorSystem.error("Can't read local variable in its own initializer.", identifier.getSymbol());
+            throw ErrorSystem.error("Can't read local variable in its own initializer: " + identifier.getSymbol());
         }
 
         resolveLocal(identifier);
@@ -331,7 +331,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
         Map<String, Boolean> scope = scopes.peek();
 
         if (scope.containsKey(name.getSymbol())) {
-            throw ErrorSystem.error("Already a variable with this name in this scope: ", name.getSymbol());
+            throw ErrorSystem.error("Already a variable with this name in this scope: " + name.getSymbol());
         }
 
         scope.put(name.getSymbol(), false);
