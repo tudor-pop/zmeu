@@ -1,10 +1,11 @@
 package dev.fangscl.Frontend.Parser;
 
-import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
-import dev.fangscl.Frontend.Parser.Expressions.Expression;
-import dev.fangscl.Frontend.Parser.Expressions.UnaryExpression;
+import dev.fangscl.Frontend.Parser.Expressions.*;
 import dev.fangscl.Frontend.Parser.Literals.Identifier;
 import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
+import dev.fangscl.Frontend.Parser.Literals.StringLiteral;
+import dev.fangscl.Frontend.Parser.Statements.BlockExpression;
+import dev.fangscl.Frontend.Parser.Statements.EmptyStatement;
 import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import dev.fangscl.Frontend.Parser.Statements.Statement;
 
@@ -41,5 +42,37 @@ public class Factory {
 
     public static Expression binary(String identifier, int left, String operator) {
         return BinaryExpression.of(operator, Identifier.of(identifier), NumericLiteral.of(left));
+    }
+
+    public static Statement resource(String type, String name, BlockExpression operator) {
+        return ResourceExpression.of(Identifier.of(type), Identifier.of(name), operator);
+    }
+
+    public static Expression assign(Expression type, Expression name) {
+        return AssignmentExpression.of("=", type, name);
+    }
+
+    public static Expression assign(String type, String name) {
+        return AssignmentExpression.of("=", Identifier.of(type), StringLiteral.of(name));
+    }
+
+    public static BlockExpression block(Expression operator) {
+        return (BlockExpression) BlockExpression.of(operator);
+    }
+
+    public static BlockExpression block(String operator) {
+        return (BlockExpression) BlockExpression.of(operator);
+    }
+
+    public static BlockExpression block(Statement operator) {
+        return BlockExpression.of(operator);
+    }
+
+    public static BlockExpression block() {
+        return (BlockExpression) BlockExpression.of();
+    }
+
+    public static Statement empty() {
+        return EmptyStatement.of();
     }
 }

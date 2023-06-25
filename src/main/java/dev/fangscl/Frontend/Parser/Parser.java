@@ -665,9 +665,18 @@ public class Parser {
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
-        var body = BlockExpression();
+        eat(TokenType.OpenBraces,"Expect '{' before resource body.");
+        var body = new ArrayList<Statement>();
+        while (!IsLookAhead(TokenType.CloseBraces)) {
+            if (IsLookAhead(TokenType.lineTerminator())) {
+                eat(TokenType.lineTerminator());
+                continue;
+            }
+            body.add(ExpressionStatement.of(AssignmentExpression()));
+        }
+        eat(TokenType.CloseBraces, "Expect '}' after resource body.");
 
-        return ResourceExpression.of(type, name, (BlockExpression) body);
+        return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
     }
 
     private Expression LeftHandSideExpression() {
@@ -677,7 +686,7 @@ public class Parser {
     // bird.fly()
     private Expression CallMemberExpression() {
         var primaryIdentifier = MemberExpression(); // .fly
-        while (true) {
+        while (iterator.hasNext()) {
             if (IsLookAhead(TokenType.OpenParenthesis)) { // fly(
                 primaryIdentifier = CallExpression.of(primaryIdentifier, Arguments());
             } else {
