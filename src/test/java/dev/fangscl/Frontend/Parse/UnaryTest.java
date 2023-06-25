@@ -1,14 +1,9 @@
 package dev.fangscl.Frontend.Parse;
 
-import dev.fangscl.Frontend.Parser.Expressions.BinaryExpression;
-import dev.fangscl.Frontend.Parser.Expressions.UnaryExpression;
-import dev.fangscl.Frontend.Parser.Literals.Identifier;
-import dev.fangscl.Frontend.Parser.Literals.NumericLiteral;
-import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
+import static dev.fangscl.Frontend.Parser.Factory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
@@ -17,9 +12,7 @@ public class UnaryTest extends BaseTest {
     @Test
     void testLogicalUnary() {
         var res = parse("-x");
-        var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("-", Identifier.of("x"))
-        ));
+        var expected = program(unary("-", "x"));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -27,9 +20,7 @@ public class UnaryTest extends BaseTest {
     @Test
     void testLogicalNot() {
         var res = parse("!x");
-        var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("!", Identifier.of("x"))
-        ));
+        var expected = program(unary("!", "x"));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -37,9 +28,7 @@ public class UnaryTest extends BaseTest {
     @Test
     void prefixDecrement() {
         var res = parse("--x");
-        var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("--", Identifier.of("x")))
-        );
+        var expected = program(unary("--", "x"));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -47,8 +36,8 @@ public class UnaryTest extends BaseTest {
 //    @Test
 //    void postfixDecrement() {
 //        var res = parse("x--");
-//        var expected = Program.of(ExpressionStatement.of(
-//                UnaryExpression.of("--", Identifier.of("x")))
+//        var expected = program()(
+//                unary()("--", "x"))
 //        );
 //        log.info(toJson(res));
 //        assertEquals(expected, res);
@@ -57,9 +46,7 @@ public class UnaryTest extends BaseTest {
     @Test
     void prefixIncrement() {
         var res = parse("++x");
-        var expected = Program.of(ExpressionStatement.of(
-                UnaryExpression.of("++", Identifier.of("x"))
-        ));
+        var expected = program(unary("++", "x"));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -67,8 +54,8 @@ public class UnaryTest extends BaseTest {
 //    @Test
 //    void postfixIncrement() {
 //        var res = parse("x++");
-//        var expected = Program.of(ExpressionStatement.of(
-//                UnaryExpression.of("++", Identifier.of("x"))
+//        var expected = program()(
+//                unary()("++", "x")
 //        ));
 //        log.info(toJson(res));
 //        assertEquals(expected, res);
@@ -77,9 +64,8 @@ public class UnaryTest extends BaseTest {
     @Test
     void testLogicalUnaryHigherPrecedenceThanMultiplication() {
         var res = parse("-x * 2");
-        var expected = Program.of(ExpressionStatement.of(
-                BinaryExpression.of("*", UnaryExpression.of("-", Identifier.of("x")), NumericLiteral.of(2))
-        ));
+        var expected = program(binary("*", unary("-", "x"), 2));
+
         log.info(toJson(res));
         assertEquals(expected, res);
     }
