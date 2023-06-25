@@ -11,7 +11,6 @@ import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Frontend.Parser.Statements.*;
 import dev.fangscl.Runtime.Environment.ActivationEnvironment;
 import dev.fangscl.Runtime.Environment.Environment;
-import dev.fangscl.Runtime.Environment.IEnvironment;
 import dev.fangscl.Runtime.Functions.Cast.BooleanCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.DecimalCastFunction;
 import dev.fangscl.Runtime.Functions.Cast.IntCastFunction;
@@ -343,7 +342,7 @@ public class Interpreter implements
             // Since that environment points to the parent(type env) it will also find the properties
             if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
                 return schemaValue.getInstances().lookup(resourceName.getSymbol());
-            } else if (value instanceof IEnvironment iEnvironment) {
+            } else if (value instanceof ResourceValue iEnvironment) {
                 return iEnvironment.lookup(resourceName.getSymbol());
             } // else it could be a resource or any other type like a NumericLiteral or something else
         }
@@ -497,16 +496,13 @@ public class Interpreter implements
 
         Expression left = expression.getLeft();
         if (left instanceof MemberExpression memberExpression) {
-            var instanceEnv = (IEnvironment) executeBlock(memberExpression.getObject(), env);
-            Expression property = memberExpression.getProperty();
-            if (property instanceof Identifier identifier) {
-                return instanceEnv.assign(identifier.getSymbol(), right);
-            } else {
-                throw new OperationNotImplementedException("Invalid assignment expression");
+            var instanceEnv = executeBlock(memberExpression.getObject(), env);
+            if (instanceEnv instanceof ResourceValue resourceValue) {
+                throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
             }
         } else if (left instanceof Identifier identifier) {
-            Integer distance = locals.get(identifier);
-            return env.assign(identifier.getSymbol(), right, distance);
+//            Integer distance = locals.get(identifier);
+            return env.assign(identifier.getSymbol(), right);
         }
         throw new RuntimeException("Invalid assignment");
     }

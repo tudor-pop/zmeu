@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-public class SchemaValue implements IEnvironment {
+public class SchemaValue {
     @JsonIgnore
     private final Environment environment;
     @JsonIgnore
@@ -57,7 +57,6 @@ public class SchemaValue implements IEnvironment {
         return environment.lookup(varName);
     }
 
-    @Override
     public IEnvironment getParent() {
         return environment.getParent();
     }
@@ -66,7 +65,6 @@ public class SchemaValue implements IEnvironment {
         return environment.get(key);
     }
 
-    @Override
     public Object init(String name, Object value) {
         return environment.init(name,value);
     }

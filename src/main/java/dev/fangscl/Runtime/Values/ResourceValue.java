@@ -2,7 +2,6 @@ package dev.fangscl.Runtime.Values;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.fangscl.Runtime.Environment.Environment;
-import dev.fangscl.Runtime.Environment.IEnvironment;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class ResourceValue implements IEnvironment {
+public class ResourceValue {
     @JsonIgnore
     private Environment parent;
     private String name;
@@ -54,27 +53,22 @@ public class ResourceValue implements IEnvironment {
         return name;
     }
 
-    @Override
     public Object assign(String varName, Object value) {
         return parent.assign(varName, value);
     }
 
-    @Override
     public Object lookup(@Nullable String varName) {
         return parent.lookup(varName);
     }
 
-    @Override
     public Object lookup(@Nullable Object varName) {
         return parent.lookup(varName);
     }
 
-    @Override
     public @Nullable Object get(String key) {
         return parent.get(key);
     }
 
-    @Override
     public Object init(String name, Object value) {
         return parent.init(name, value);
     }
