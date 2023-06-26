@@ -16,6 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Identifier extends Expression {
     private String symbol;
+    private Integer hops; // used to figure out the scope without creating extra classes
 
     public Identifier() {
         this.kind = NodeType.Identifier;

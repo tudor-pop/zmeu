@@ -33,9 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @Log4j2
-public class Interpreter implements
-        Visitor<Object>,
-        dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
+public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
     private final Engine engine;
@@ -605,6 +603,7 @@ public class Interpreter implements
     }
 
     public void resolve(Identifier expression, Integer hops) {
+        expression.setHops(hops);
         locals.put(expression, hops);
     }
 
