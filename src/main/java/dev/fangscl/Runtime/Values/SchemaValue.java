@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Data
 public class SchemaValue {
+    public static final String INSTANCES = "instances";
     @JsonIgnore
     private final Environment environment;
     @JsonIgnore
@@ -20,7 +21,7 @@ public class SchemaValue {
         this.type = type;
         this.instances = new Environment(environment);
         this.environment = environment;
-        this.environment.init("instances", instances);
+        this.environment.init(INSTANCES, instances);
     }
 
     public static SchemaValue of(Identifier name, Environment environment) {
