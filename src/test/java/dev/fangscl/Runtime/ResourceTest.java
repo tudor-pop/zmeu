@@ -18,8 +18,8 @@ public class ResourceTest extends BaseTest {
     void newResourceThrowsIfNoNameIsSpecified() {
         Assertions.assertThrows(RuntimeException.class, () -> {
             eval("""
-                    schema Vm { }
-                    resource Vm {
+                    schema vm { }
+                    resource vm {
                         
                     }
                     """);
@@ -28,25 +28,25 @@ public class ResourceTest extends BaseTest {
 
     /**
      * This checks for the following syntax
-     * Vm.main
+     * vm.main
      * All resources are defined in the schema
      * global env{
-     * Vm : SchemaValue -> variables{ main -> resource Vm}
+     * vm : SchemaValue -> variables{ main -> resource vm}
      * }
      */
     @Test
     void resourceIsDefinedInSchemaEnv() {
         var res = eval("""
-                schema Vm { }
-                resource Vm main {
+                schema vm { }
+                resource vm main {
                     
                 }
                 """);
         log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("Vm");
+        var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("Vm", schema.getType().getSymbol());
+        assertEquals("vm", schema.getType().getSymbol());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -58,24 +58,24 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceIsDefinedInSchema() {
         var res = eval("""
-                schema Vm { 
+                schema vm { 
                     var name
                     var maxCount=0
                 }
-                resource Vm main {
+                resource vm main {
                     name = "first"
                     maxCount=1
                 }
-                resource Vm second {
+                resource vm second {
                     name = "second"
-                    maxCount = Vm.main.maxCount
+                    maxCount = vm.main.maxCount
                 }
                 """);
         log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("Vm");
+        var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("Vm", schema.getType().getSymbol());
+        assertEquals("vm", schema.getType().getSymbol());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -88,10 +88,10 @@ public class ResourceTest extends BaseTest {
     @DisplayName("throw if a resource uses a field not defined in the schema")
     void resourceThrowsIfFieldNotDefinedInSchema() {
         assertThrows(NotFoundException.class, () -> eval("""
-                schema Vm {
+                schema vm {
                 }
                                 
-                resource Vm main {
+                resource vm main {
                     x = 3
                 }
                 """));
@@ -101,16 +101,16 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceInheritsDefaultSchemaValue() {
         var res = eval("""
-                schema Vm {
+                schema vm {
                    var x = 2
                 }
                                 
-                resource Vm main {
+                resource vm main {
                     
                 }
                 """);
         log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("Vm");
+        var schema = (SchemaValue) global.get("vm");
 
         var resource = (ResourceValue) schema.getInstances().get("main");
 
@@ -120,29 +120,29 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceMemberAccess() {
         var res = eval("""
-                schema Vm {
+                schema vm {
                    var x = 2
                 }
                                 
-                resource Vm main {
+                resource vm main {
                     
                 }
-                var y = Vm.main
-                var z = Vm.main.x
+                var y = vm.main
+                var z = vm.main.x
                 z
                 """);
         log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("Vm");
+        var schema = (SchemaValue) global.get("vm");
 
         var resource = (ResourceValue) schema.getInstances().get("main");
         assertSame(2, resource.getParent().get("x"));
         // make sure main's x has been changed
         assertEquals(2, resource.getParent().get("x"));
 
-        // assert y holds reference to Vm.main
+        // assert y holds reference to vm.main
         var y = global.lookup("y");
         assertSame(y, resource);
-        // assert y holds reference to Vm.main
+        // assert y holds reference to vm.main
         var z = global.lookup("z");
         assertSame(z, schema.getEnvironment().get("x"));
 
@@ -157,30 +157,30 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceSetMemberAccess() {
         Assertions.assertThrows(RuntimeError.class, () -> eval("""
-                schema Vm {
+                schema vm {
                    var x = 2
                 }
                                 
-                resource Vm main {
+                resource vm main {
                     
                 }
-                Vm.main.x = 3
+                vm.main.x = 3
                 """));
     }
 
     @Test
     void resourceInit() {
         var res = eval("""
-                schema Vm {
+                schema vm {
                    var x = 2
                 }
                                 
-                resource Vm main {
+                resource vm main {
                     x = 3
                 }
                 """);
         log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("Vm");
+        var schema = (SchemaValue) global.get("vm");
 
         var resource = (ResourceValue) schema.getInstances().get("main");
 
@@ -196,16 +196,16 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceInitJson() {
         var res = eval("""
-                schema Vm {
+                schema vm {
                    var x = 2
                 }
                                 
-                resource Vm main {
+                resource vm main {
                     x = 3
                 }
                 """);
         log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("Vm");
+        var schema = (SchemaValue) global.get("vm");
 
         var resource = schema.getInstances().get("main");
 
