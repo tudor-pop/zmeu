@@ -82,6 +82,15 @@ public class ResourceTest extends BaseTest {
 
         assertNotNull(resource);
         assertEquals("main", resource.getName());
+        assertEquals("first", resource.argVal("name"));
+        assertEquals(1, resource.argVal("maxCount"));
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+
+        assertNotNull(second);
+        assertEquals("second", second.getName());
+        assertEquals("second", second.argVal("name"));
+        assertEquals(1, second.argVal("maxCount"));
     }
 
     @Test
@@ -114,7 +123,7 @@ public class ResourceTest extends BaseTest {
 
         var resource = (ResourceValue) schema.getInstances().get("main");
 
-        assertEquals(2, resource.getParent().lookup("x"));
+        assertEquals(2, resource.getArgs().lookup("x"));
     }
 
     @Test
@@ -135,9 +144,9 @@ public class ResourceTest extends BaseTest {
         var schema = (SchemaValue) global.get("vm");
 
         var resource = (ResourceValue) schema.getInstances().get("main");
-        assertSame(2, resource.getParent().get("x"));
+        assertSame(2, resource.getArgs().get("x"));
         // make sure main's x has been changed
-        assertEquals(2, resource.getParent().get("x"));
+        assertEquals(2, resource.getArgs().get("x"));
 
         // assert y holds reference to vm.main
         var y = global.lookup("y");
