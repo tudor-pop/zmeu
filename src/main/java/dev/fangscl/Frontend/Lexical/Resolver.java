@@ -21,7 +21,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
      * boolean = false => variable declared but not ready to be used
      * boolean = true => variable declared and ready to be used
      * */
-    private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+    private final Stack<Map<Identifier, Boolean>> scopes = new Stack<>();
     /**
      * Tracks weather we're in a function or not. Based on this we show a syntax
      * error for example when using a return statement outside a function
@@ -81,7 +81,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
 
     private void resolveLocal(Identifier identifier) {
         for (int i = scopes.size() - 1; i >= 0; i--) {
-            if (scopes.get(i).containsKey(identifier.getSymbol())) {
+            if (scopes.get(i).containsKey(identifier)) {
                 interpreter.resolve(identifier, scopes.size() - 1 - i);
                 break;
             }
@@ -343,13 +343,13 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     private void declare(Identifier name) {
         if (scopes.isEmpty()) return;
 
-        Map<String, Boolean> scope = scopes.peek();
+        Map<Identifier, Boolean> scope = scopes.peek();
 
-        if (scope.containsKey(name.getSymbol())) {
+        if (scope.containsKey(name)) {
             throw ErrorSystem.error("Already a variable with this name in this scope: " + name.getSymbol());
         }
 
-        scope.put(name.getSymbol(), false);
+        scope.put(name, false);
     }
 
     /**
@@ -358,7 +358,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
      */
     private void define(Identifier name) {
         if (scopes.isEmpty()) return;
-        scopes.peek().put(name.getSymbol(), true);
+        scopes.peek().put(name, true);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class Interpreter implements
     private static boolean hadRuntimeError;
     private Environment env;
     private final Engine engine;
-    private final Map<Expression, Integer> locals = new HashMap<>();
+    private final Map<Identifier, Integer> locals = new HashMap<>();
 
     public Interpreter() {
         this(new Environment());
@@ -604,7 +604,7 @@ public class Interpreter implements
         hadRuntimeError = true;
     }
 
-    public void resolve(Expression expression, int hops) {
+    public void resolve(Identifier expression, Integer hops) {
         locals.put(expression, hops);
     }
 

@@ -5,11 +5,9 @@ import dev.fangscl.Frontend.Parser.Expressions.Visitor;
 import dev.fangscl.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Acts as VariableExpression without creating a new node
@@ -18,10 +16,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class Identifier extends Expression {
     private String symbol;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private UUID id = UUID.randomUUID();
 
     public Identifier() {
         this.kind = NodeType.Identifier;
