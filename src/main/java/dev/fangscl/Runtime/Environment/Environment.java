@@ -129,4 +129,8 @@ public class Environment implements IEnvironment {
     public boolean hasVar(String symbol) {
         return getVariables().keySet().contains(symbol);
     }
+
+    public void remove(String key) {
+        variables.remove(key);
+    }
 }

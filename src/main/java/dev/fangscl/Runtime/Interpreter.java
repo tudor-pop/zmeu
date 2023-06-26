@@ -351,6 +351,7 @@ public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser
 
         Environment typeEnvironment = schemaValue.getEnvironment();
         Environment resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
+        resourceEnv.remove("instances"); // instances should not be available to a resource only to it's schema
         try {
             var init = schemaValue.getMethodOrNull("init");
             if (init != null) {
