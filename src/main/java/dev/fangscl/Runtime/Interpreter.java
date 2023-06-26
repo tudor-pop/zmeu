@@ -27,17 +27,13 @@ import dev.fangscl.Runtime.exceptions.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Log4j2
 public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser.Statements.Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
     private final Engine engine;
-    private final Map<Identifier, Integer> locals = new HashMap<>();
 
     public Interpreter() {
         this(new Environment());
@@ -123,8 +119,7 @@ public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser
     }
 
     private Object lookupVar(Identifier expression) {
-        var hops = locals.get(expression);
-        return env.lookup(expression.getSymbol(), hops);
+        return env.lookup(expression.getSymbol(), expression.getHops());
     }
 
     @Override
@@ -600,11 +595,6 @@ public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser
     static void runtimeError(RuntimeError error) {
         System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().getLine());
         hadRuntimeError = true;
-    }
-
-    public void resolve(Identifier expression, Integer hops) {
-        expression.setHops(hops);
-        locals.put(expression, hops);
     }
 
 }

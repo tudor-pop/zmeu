@@ -82,7 +82,7 @@ public class Resolver implements Visitor<Void>, dev.fangscl.Frontend.Parser.Stat
     private void resolveLocal(Identifier identifier) {
         for (int i = scopes.size() - 1; i >= 0; i--) {
             if (scopes.get(i).containsKey(identifier)) {
-                interpreter.resolve(identifier, scopes.size() - 1 - i);
+                identifier.setHops(scopes.size() - 1 - i);
                 break;
             }
         }
