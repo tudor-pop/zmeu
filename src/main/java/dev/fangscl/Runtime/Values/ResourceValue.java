@@ -1,18 +1,25 @@
 package dev.fangscl.Runtime.Values;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.fangscl.Runtime.Environment.Environment;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class ResourceValue {
-    @JsonIgnore
     private Environment args;
     private String name;
+    private List<String> ids;
+
+    public ResourceValue() {
+    }
 
     private ResourceValue(String name, Environment parent) {
         this.name = name;
@@ -31,7 +38,7 @@ public class ResourceValue {
         return ResourceValue.of(string, new Environment());
     }
 
-    public static Object of(String string, Environment environment) {
+    public static ResourceValue of(String string, Environment environment) {
         return new ResourceValue(string, environment);
     }
 

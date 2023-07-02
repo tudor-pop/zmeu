@@ -12,7 +12,7 @@ public class Engine {
 
     public void process(String resType, Map<String, Object> variables) {
         switch (resType) {
-            case "Vm" -> {
+            case "vm" -> {
                 var resource = new Vm();
                 dag.addVertex(resource);
             }
