@@ -86,7 +86,7 @@ public class Diff {
         if (sourceDiff.isEmpty() && cloudDiff.isEmpty() && stateJson.isEmpty()) {
             return sourceState;
         }
-        if (res.isEmpty()) {
+        if (resDif.isEmpty()) {
             return mapper.readValue(res.toString(), ResourceValue.class);
         }
 
