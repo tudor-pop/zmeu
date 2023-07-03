@@ -78,6 +78,11 @@ public class Diff {
         log.warn(apply1);
 //            log.warn(JsonPatch.apply(resDif, stateJson));
 
+
+        if (sourceDiff.isEmpty()) {
+            return sourceState;
+        }
+
         Ansi ansi = ansi().eraseScreen();
 
         ansi = ansi.render("\n%s {\n".formatted(opWithSymbol(sourceDiff.get(0)).formatted("resource vm " + sourceState.getName())));

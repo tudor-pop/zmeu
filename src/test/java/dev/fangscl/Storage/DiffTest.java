@@ -18,7 +18,7 @@ class DiffTest {
     }
 
     @Test
-    void test() {
+    void noChanges() {
         var localState = ResourceValue.builder()
                 .name("main")
                 .args(new Environment(Map.of("name", "local")))

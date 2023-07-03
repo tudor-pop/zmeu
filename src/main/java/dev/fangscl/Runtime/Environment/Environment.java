@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fangscl.Resources.Resource;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
+import lombok.Data;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Log4j2
+@Data
 public class Environment implements IEnvironment {
     @Nullable
     @Getter
