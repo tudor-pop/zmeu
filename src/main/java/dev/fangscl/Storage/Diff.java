@@ -11,7 +11,6 @@ import com.flipkart.zjsonpatch.CompatibilityFlags;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.flipkart.zjsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -92,13 +91,17 @@ public class Diff {
 
         Ansi ansi = ansi().eraseScreen();
 
-        ansi = ansi.render("\n%s {\n".formatted(opWithSymbol(resDif.get(0)).formatted("resource vm " + sourceState.getName())));
+        Change change = opWithSymbol(resDif.get(0));
+        ansi = ansi.render("""
+                \n%s resource %s %s {
+                """.formatted(change.getColor().formatted(change.getSymbol()), "vm", sourceState.getName()));
         for (JsonNode it : resDif) {
-            var opTextAndColor = opWithSymbol(it);
+            Change opTextAndColor = opWithSymbol(it);
 
 
             String s = StringUtils.substringAfterLast(it.path("path").asText(), "/") + " = " + it.path("value");
-            ansi = ansi.render(opTextAndColor.formatted("\t" + s + "\n"));
+            String formatted = opTextAndColor.getColor().formatted(opTextAndColor.getSymbol() + "\t" + s + "\n");
+            ansi = ansi.render(formatted);
         }
         ansi = ansi.render("}");
 
@@ -108,13 +111,12 @@ public class Diff {
     }
 
     @NotNull
-    private static String opWithSymbol(JsonNode jsonNode) {
-
+    private static Change opWithSymbol(JsonNode jsonNode) {
         return switch (jsonNode.path("op").asText()) {
-            case "replace" -> "@|yellow ± %s|@";
-            case "remove" -> "@|red - %s|@";
-            case "add" -> "@|green + %s|@";
-            default -> "";
+            case "replace" -> Change.CHANGE;
+            case "remove" -> Change.REMOVE;
+            case "add" -> Change.ADD;
+            default -> throw new RuntimeException("Invalid op");
         };
     }
 

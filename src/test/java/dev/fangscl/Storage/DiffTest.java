@@ -33,12 +33,12 @@ class DiffTest {
                 .args(new Environment(Map.of("name", "local")))
                 .build();
 
+
+        var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
                 .args(new Environment(Map.of("name", "local")))
                 .build();
-
-        var res = diff.patch(localState, sourceState, cloudState);
 
         Assertions.assertEquals(expected, res);
     }
@@ -58,12 +58,12 @@ class DiffTest {
                 .args(new Environment(Map.of("name", "local")))
                 .build();
 
+
+        var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
                 .args(new Environment(Map.of("name", "src")))
                 .build();
-
-        var res = diff.patch(localState, sourceState, cloudState);
 
         Assertions.assertEquals(expected, res);
     }
@@ -83,12 +83,12 @@ class DiffTest {
                 .args(new Environment(Map.of("name", "remote")))
                 .build();
 
+
+        var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
                 .args(new Environment(Map.of("name", "local")))
                 .build();
-
-        var res = diff.patch(localState, sourceState, cloudState);
 
         Assertions.assertEquals(expected, res);
     }
@@ -109,12 +109,12 @@ class DiffTest {
                 .args(new Environment(Map.of("name", "remote")))
                 .build();
 
+
+        var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
                 .args(new Environment(Map.of("name", "src")))
                 .build();
-
-        var res = diff.patch(localState, sourceState, cloudState);
 
         Assertions.assertEquals(expected, res);
     }
