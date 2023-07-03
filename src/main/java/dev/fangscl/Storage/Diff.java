@@ -78,19 +78,22 @@ public class Diff {
 
         JsonNode cloud = JsonPatch.apply(cloudDiff, stateJson);
         log.warn(cloud);
-        JsonNode apply1 = JsonPatch.apply(sourceDiff, cloud, EnumSet.of(CompatibilityFlags.ALLOW_MISSING_TARGET_OBJECT_ON_REPLACE));
-        log.warn(apply1);
+        JsonNode res = JsonPatch.apply(resDif, cloud, EnumSet.of(CompatibilityFlags.ALLOW_MISSING_TARGET_OBJECT_ON_REPLACE));
+        log.warn(res);
 //            log.warn(JsonPatch.apply(resDif, stateJson));
 
 
-        if (sourceDiff.isEmpty()) {
+        if (sourceDiff.isEmpty() && cloudDiff.isEmpty() && stateJson.isEmpty()) {
             return sourceState;
+        }
+        if (res.isEmpty()) {
+            return mapper.readValue(res.toString(), ResourceValue.class);
         }
 
         Ansi ansi = ansi().eraseScreen();
 
-        ansi = ansi.render("\n%s {\n".formatted(opWithSymbol(sourceDiff.get(0)).formatted("resource vm " + sourceState.getName())));
-        for (JsonNode it : sourceDiff) {
+        ansi = ansi.render("\n%s {\n".formatted(opWithSymbol(resDif.get(0)).formatted("resource vm " + sourceState.getName())));
+        for (JsonNode it : resDif) {
             var opTextAndColor = opWithSymbol(it);
 
 
@@ -101,7 +104,7 @@ public class Diff {
 
         log.info(ansi);
 
-        return mapper.readValue(apply1.toString(), ResourceValue.class);
+        return mapper.readValue(res.toString(), ResourceValue.class);
     }
 
     @NotNull
