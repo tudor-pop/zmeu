@@ -11,6 +11,7 @@ import com.flipkart.zjsonpatch.CompatibilityFlags;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.flipkart.zjsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -42,15 +43,18 @@ public class Diff {
     }
 
     @SneakyThrows
-    public void patch(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
-        AnsiConsole.systemInstall();
+    public ResourceValue patch(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
+        try {
+            AnsiConsole.systemInstall();
 
-        extracted(localState, sourceState, cloudState);
-
-        AnsiConsole.systemUninstall();
+            return extracted(localState, sourceState, cloudState);
+        } finally {
+            AnsiConsole.systemUninstall();
+        }
     }
 
-    private void extracted(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
+    @SneakyThrows
+    private ResourceValue extracted(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
         var stateJson = mapper.valueToTree(localState);
         var sourceJson = mapper.valueToTree(sourceState);
         var cloudJson = mapper.valueToTree(cloudState);
@@ -59,37 +63,36 @@ public class Diff {
         log.warn(cloudJson);
         log.warn("==========");
 
-        var sourceDiff = JsonDiff.asJson(sourceJson, stateJson);
+        var sourceDiff = JsonDiff.asJson(stateJson, sourceJson);
         var cloudDiff = JsonDiff.asJson(stateJson, cloudJson);
-        var resDif = JsonDiff.asJson(cloudJson, sourceJson,EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
-        for (JsonNode jsonNode : sourceDiff) {
+        var resDif = JsonDiff.asJson(cloudJson, sourceJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
 
-        }
-        log.warn(sourceDiff);
-        log.warn("cloud: {}",cloudDiff);
-        log.warn("res: {}",resDif);
+        log.warn("state: {}", sourceDiff);
+        log.warn("cloud: {}", cloudDiff);
+        log.warn("res: {}", resDif);
         log.warn("==========");
 
         JsonNode apply = JsonPatch.apply(cloudDiff, stateJson);
         log.warn(apply);
         JsonNode apply1 = JsonPatch.apply(sourceDiff, apply, EnumSet.of(CompatibilityFlags.ALLOW_MISSING_TARGET_OBJECT_ON_REPLACE));
         log.warn(apply1);
-        log.warn(JsonPatch.apply(resDif, stateJson));
+//            log.warn(JsonPatch.apply(resDif, stateJson));
 
         Ansi ansi = ansi().eraseScreen();
 
-
         ansi = ansi.render("\n%s {\n".formatted(opWithSymbol(sourceDiff.get(0)).formatted("resource vm " + sourceState.getName())));
-        for (JsonNode jsonNode : sourceDiff) {
-            var opTextAndColor = opWithSymbol(jsonNode);
+        for (JsonNode it : sourceDiff) {
+            var opTextAndColor = opWithSymbol(it);
 
 
-            String s = StringUtils.substringAfterLast(jsonNode.path("path").asText(), "/") + " = " + jsonNode.path("value");
+            String s = StringUtils.substringAfterLast(it.path("path").asText(), "/") + " = " + it.path("value");
             ansi = ansi.render(opTextAndColor.formatted("\t" + s + "\n"));
         }
         ansi = ansi.render("}");
 
         log.info(ansi);
+
+        return mapper.readValue(resDif.textValue(), ResourceValue.class);
     }
 
     @NotNull

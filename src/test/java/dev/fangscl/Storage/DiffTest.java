@@ -2,6 +2,7 @@ package dev.fangscl.Storage;
 
 import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Values.ResourceValue;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,14 +21,26 @@ class DiffTest {
     void test() {
         var localState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local","size", "small")))
+                .args(new Environment(Map.of("name", "local")))
                 .build();
 
         var sourceState = ResourceValue.builder().name("main")
-                .args(new Environment(Map.of("name", "source")))
+                .args(new Environment(Map.of("name", "local")))
                 .build();
-        var cloudState = ResourceValue.of("main", new Environment(Map.of("name", "local","size", "small")));
-        diff.patch(localState, sourceState, cloudState);
+
+        var cloudState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("name", "local")))
+                .build();
+
+        var expected = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("name", "local")))
+                .build();
+
+        var res = diff.patch(localState, sourceState, cloudState);
+
+        Assertions.assertEquals(expected, res);
     }
 
 }
