@@ -42,5 +42,30 @@ class DiffTest {
 
         Assertions.assertEquals(expected, res);
     }
+    @Test
+    void sourceChangeOverridesRemote() {
+        var localState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("name", "local")))
+                .build();
+
+        var sourceState = ResourceValue.builder().name("main")
+                .args(new Environment(Map.of("name", "src")))
+                .build();
+
+        var cloudState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("name", "local")))
+                .build();
+
+        var expected = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("name", "src")))
+                .build();
+
+        var res = diff.patch(localState, sourceState, cloudState);
+
+        Assertions.assertEquals(expected, res);
+    }
 
 }

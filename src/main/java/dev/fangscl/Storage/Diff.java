@@ -63,6 +63,10 @@ public class Diff {
         log.warn(cloudJson);
         log.warn("==========");
 
+//        for (JsonNode jsonNode : sourceJson) {
+//            stateJson.get(jsonNode.)
+//        }
+
         var sourceDiff = JsonDiff.asJson(stateJson, sourceJson);
         var cloudDiff = JsonDiff.asJson(stateJson, cloudJson);
         var resDif = JsonDiff.asJson(cloudJson, sourceJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
@@ -72,9 +76,9 @@ public class Diff {
         log.warn("res: {}", resDif);
         log.warn("==========");
 
-        JsonNode apply = JsonPatch.apply(cloudDiff, stateJson);
-        log.warn(apply);
-        JsonNode apply1 = JsonPatch.apply(sourceDiff, apply, EnumSet.of(CompatibilityFlags.ALLOW_MISSING_TARGET_OBJECT_ON_REPLACE));
+        JsonNode cloud = JsonPatch.apply(cloudDiff, stateJson);
+        log.warn(cloud);
+        JsonNode apply1 = JsonPatch.apply(sourceDiff, cloud, EnumSet.of(CompatibilityFlags.ALLOW_MISSING_TARGET_OBJECT_ON_REPLACE));
         log.warn(apply1);
 //            log.warn(JsonPatch.apply(resDif, stateJson));
 
@@ -97,7 +101,7 @@ public class Diff {
 
         log.info(ansi);
 
-        return mapper.readValue(resDif.textValue(), ResourceValue.class);
+        return mapper.readValue(apply1.toString(), ResourceValue.class);
     }
 
     @NotNull
