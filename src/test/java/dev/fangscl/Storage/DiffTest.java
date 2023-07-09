@@ -21,23 +21,23 @@ class DiffTest {
     void noChanges() {
         var localState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         var sourceState = ResourceValue.builder().name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         var cloudState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -46,23 +46,23 @@ class DiffTest {
     void sourceChangeOverridesRemote() {
         var localState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         var sourceState = ResourceValue.builder().name("main")
-                .args(new Environment(Map.of("name", "src")))
+                .args(new Environment(Map.of("state", "src")))
                 .build();
 
         var cloudState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "src")))
+                .args(new Environment(Map.of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -71,23 +71,23 @@ class DiffTest {
     void remoteChangeIsIgnored() {
         var localState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         var sourceState = ResourceValue.builder().name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         var cloudState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "remote")))
+                .args(new Environment(Map.of("state", "remote")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -97,23 +97,48 @@ class DiffTest {
     void remoteChangeIsOverriddenBySrc() {
         var localState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "local")))
+                .args(new Environment(Map.of("state", "local")))
                 .build();
 
         var sourceState = ResourceValue.builder().name("main")
-                .args(new Environment(Map.of("name", "src")))
+                .args(new Environment(Map.of("state", "src")))
                 .build();
 
         var cloudState = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "remote")))
+                .args(new Environment(Map.of("state", "remote")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = ResourceValue.builder()
                 .name("main")
-                .args(new Environment(Map.of("name", "src")))
+                .args(new Environment(Map.of("state", "src")))
+                .build();
+
+        Assertions.assertEquals(expected, res);
+    }
+    @Test
+    void remoteChangeIsAddBySrc() {
+        var localState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("state", "local")))
+                .build();
+
+        var sourceState = ResourceValue.builder().name("main")
+                .args(new Environment(Map.of("state", "src")))
+                .build();
+
+        var cloudState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment())
+                .build();
+
+
+        var res = diff.patch(localState, sourceState, cloudState);
+        var expected = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);

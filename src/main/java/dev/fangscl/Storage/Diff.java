@@ -57,27 +57,22 @@ public class Diff {
         var stateJson = mapper.valueToTree(localState);
         var sourceJson = mapper.valueToTree(sourceState);
         var cloudJson = mapper.valueToTree(cloudState);
-        log.warn(stateJson);
-        log.warn(sourceJson);
-        log.warn(cloudJson);
-        log.warn("==========");
+        log.warn("\n{}\n{}\n{}",stateJson,sourceJson,cloudJson);
+//        log.warn("==========");
 
-//        for (JsonNode jsonNode : sourceJson) {
-//            stateJson.get(jsonNode.)
-//        }
 
-        var sourceDiff = JsonDiff.asJson(stateJson, sourceJson);
-        var cloudDiff = JsonDiff.asJson(stateJson, cloudJson);
+        var sourceDiff = JsonDiff.asJson(stateJson, sourceJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
+        var cloudDiff = JsonDiff.asJson(stateJson, cloudJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
         var resDif = JsonDiff.asJson(cloudJson, sourceJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
 
-        log.warn("state: {}", sourceDiff);
-        log.warn("cloud: {}", cloudDiff);
+//        log.warn("state: {}", sourceDiff);
+//        log.warn("cloud: {}", cloudDiff);
         log.warn("res: {}", resDif);
-        log.warn("==========");
+//        log.warn("==========");
 
         JsonNode cloud = JsonPatch.apply(cloudDiff, stateJson);
         log.warn(cloud);
-        JsonNode res = JsonPatch.apply(resDif, cloud, EnumSet.of(CompatibilityFlags.ALLOW_MISSING_TARGET_OBJECT_ON_REPLACE));
+        JsonNode res = JsonPatch.apply(resDif, cloud);
         log.warn(res);
 //            log.warn(JsonPatch.apply(resDif, stateJson));
 
