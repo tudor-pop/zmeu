@@ -1,4 +1,4 @@
-package dev.fangscl.Storage;
+package dev.fangscl.Diff;
 
 import lombok.Getter;
 

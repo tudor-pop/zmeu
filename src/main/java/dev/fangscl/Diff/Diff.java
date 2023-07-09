@@ -1,4 +1,4 @@
-package dev.fangscl.Storage;
+package dev.fangscl.Diff;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.flipkart.zjsonpatch.CompatibilityFlags;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.flipkart.zjsonpatch.JsonPatch;
@@ -20,6 +19,8 @@ import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -32,6 +33,8 @@ public class Diff {
     private final ObjectMapper mapper = JsonMapper.builder()
             .findAndAddModules()
             .build();
+
+    private final Printer printer = new Printer();
 
     public Diff() {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -75,46 +78,19 @@ public class Diff {
 //        log.warn("==========");
 
 //        JsonNode cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
-        JsonNode res = JsonPatch.apply(srcRemoteDiff, cloudJson);
+        JsonPatch.applyInPlace(srcRemoteDiff, cloudJson);
 //            log.warn(JsonPatch.apply(srcRemoteDiff, stateJson));
 
 
-        if (res.isEmpty()) {
+        if (cloudJson.isEmpty()) {
             return sourceState;
         }
         if (srcRemoteDiff.isEmpty()) {
-            return mapper.readValue(res.toString(), ResourceValue.class);
+            return mapper.readValue(cloudJson.toString(), ResourceValue.class);
         }
 
-        Ansi ansi = ansi().eraseScreen();
+        printer.print(sourceState, srcRemoteDiff);
 
-        Change change = opWithSymbol(srcRemoteDiff.get(0));
-        ansi = ansi.render("""
-                \n%s resource %s %s {
-                """.formatted(change.getColor().formatted(change.getSymbol()), "vm", sourceState.getName()));
-        for (JsonNode it : srcRemoteDiff) {
-            Change opTextAndColor = opWithSymbol(it);
-
-
-            String s = StringUtils.substringAfterLast(it.path("path").asText(), "/") + " = " + it.path("value");
-            String formatted = opTextAndColor.getColor().formatted(opTextAndColor.getSymbol() + "\t" + s + "\n");
-            ansi = ansi.render(formatted);
-        }
-        ansi = ansi.render("}");
-
-        log.info(ansi);
-
-        return mapper.readValue(res.toString(), ResourceValue.class);
+        return mapper.readValue(cloudJson.toString(), ResourceValue.class);
     }
-
-    @NotNull
-    private static Change opWithSymbol(JsonNode jsonNode) {
-        return switch (jsonNode.path("op").asText()) {
-            case "replace" -> Change.CHANGE;
-            case "remove" -> Change.REMOVE;
-            case "add" -> Change.ADD;
-            default -> throw new RuntimeException("Invalid op");
-        };
-    }
-
 }

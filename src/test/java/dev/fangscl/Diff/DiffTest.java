@@ -1,4 +1,4 @@
-package dev.fangscl.Storage;
+package dev.fangscl.Diff;
 
 import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Values.ResourceValue;
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 
 class DiffTest {
