@@ -143,5 +143,30 @@ class DiffTest {
 
         Assertions.assertEquals(expected, res);
     }
+    @Test
+    void localHiddenIsNotRemovedBySrc() {
+        var localState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("state", "local","hidden_state","secret")))
+                .build();
+
+        var sourceState = ResourceValue.builder().name("main")
+                .args(new Environment(Map.of("state", "src")))
+                .build();
+
+        var cloudState = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("state", "local")))
+                .build();
+
+
+        var res = diff.patch(localState, sourceState, cloudState);
+        var expected = ResourceValue.builder()
+                .name("main")
+                .args(new Environment(Map.of("state", "src","hidden_state","secret")))
+                .build();
+
+        Assertions.assertEquals(expected, res);
+    }
 
 }

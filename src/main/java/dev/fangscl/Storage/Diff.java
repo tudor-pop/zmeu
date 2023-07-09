@@ -28,6 +28,7 @@ import static org.fusesource.jansi.Ansi.ansi;
  */
 @Log4j2
 public class Diff {
+    public static final EnumSet<DiffFlags> DIFF_FLAGS = EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE, DiffFlags.OMIT_COPY_OPERATION, DiffFlags.OMIT_MOVE_OPERATION);
     private final ObjectMapper mapper = JsonMapper.builder()
             .findAndAddModules()
             .build();
@@ -57,40 +58,41 @@ public class Diff {
         var stateJson = mapper.valueToTree(localState);
         var sourceJson = mapper.valueToTree(sourceState);
         var cloudJson = mapper.valueToTree(cloudState);
-        log.warn("\n{}\n{}\n{}",stateJson,sourceJson,cloudJson);
+        log.warn("\n{}\n{}\n{}", stateJson, sourceJson, cloudJson);
 //        log.warn("==========");
 
+        // set common base
+        sourceJson = mapper.readerForUpdating(mapper.valueToTree(localState)).readValue(sourceJson);
+        cloudJson = mapper.readerForUpdating(mapper.valueToTree(localState)).readValue(cloudJson);
 
-        var sourceDiff = JsonDiff.asJson(stateJson, sourceJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
-        var cloudDiff = JsonDiff.asJson(stateJson, cloudJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
-        var resDif = JsonDiff.asJson(cloudJson, sourceJson, EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE));
+//        var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
+//        var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);
+        var srcRemoteDiff = JsonDiff.asJson(cloudJson, sourceJson, DIFF_FLAGS);
 
-//        log.warn("state: {}", sourceDiff);
-//        log.warn("cloud: {}", cloudDiff);
-        log.warn("res: {}", resDif);
+//        log.warn("state: {}", sourceLocalDiff);
+//        log.warn("cloud: {}", remoteLocalDiff);
+        log.warn("res: {}", srcRemoteDiff);
 //        log.warn("==========");
 
-        JsonNode cloud = JsonPatch.apply(cloudDiff, stateJson);
-        log.warn(cloud);
-        JsonNode res = JsonPatch.apply(resDif, cloud);
-        log.warn(res);
-//            log.warn(JsonPatch.apply(resDif, stateJson));
+//        JsonNode cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
+        JsonNode res = JsonPatch.apply(srcRemoteDiff, cloudJson);
+//            log.warn(JsonPatch.apply(srcRemoteDiff, stateJson));
 
 
-        if (sourceDiff.isEmpty() && cloudDiff.isEmpty() && stateJson.isEmpty()) {
+        if (res.isEmpty()) {
             return sourceState;
         }
-        if (resDif.isEmpty()) {
+        if (srcRemoteDiff.isEmpty()) {
             return mapper.readValue(res.toString(), ResourceValue.class);
         }
 
         Ansi ansi = ansi().eraseScreen();
 
-        Change change = opWithSymbol(resDif.get(0));
+        Change change = opWithSymbol(srcRemoteDiff.get(0));
         ansi = ansi.render("""
                 \n%s resource %s %s {
                 """.formatted(change.getColor().formatted(change.getSymbol()), "vm", sourceState.getName()));
-        for (JsonNode it : resDif) {
+        for (JsonNode it : srcRemoteDiff) {
             Change opTextAndColor = opWithSymbol(it);
 
 
