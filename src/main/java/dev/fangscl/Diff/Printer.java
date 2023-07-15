@@ -1,9 +1,7 @@
 package dev.fangscl.Diff;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import dev.fangscl.Runtime.Values.ResourceValue;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.NotNull;
@@ -15,15 +13,16 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
 public class Printer {
-    private final Map<ResourceValue, JsonNode> diffs = new HashMap<>();
+    private final Map<JsonNode, JsonNode> diffs = new HashMap<>();
 
-    void print(ResourceValue value, JsonNode node) {
+    void print(JsonNode value, JsonNode node) {
         Ansi ansi = ansi().eraseScreen();
 
         Change change = opWithSymbol(node.get(0));
         ansi = ansi.render("""
                 \n%s resource %s %s {
-                """.formatted(change.getColor().formatted(change.getSymbol()), "vm", value.getName()));
+                """.formatted(change.getColor().formatted(change.getSymbol()), value.get("type").asText(), value.get("name").asText()));
+
         for (JsonNode it : node) {
             Change opTextAndColor = opWithSymbol(it);
 

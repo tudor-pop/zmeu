@@ -7,6 +7,7 @@ import dev.fangscl.Runtime.exceptions.NotFoundException;
 import dev.fangscl.Runtime.exceptions.VarExistsException;
 import lombok.Data;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,7 @@ public class Environment implements IEnvironment {
     @Nullable
     @Getter
     @JsonIgnore
+    @ToString.Exclude
     private final Environment parent;
 
     @Getter

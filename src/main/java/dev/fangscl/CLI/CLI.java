@@ -2,14 +2,14 @@ package dev.fangscl.CLI;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import dev.fangscl.Backend.Resource;
+import dev.fangscl.Backend.State;
 import dev.fangscl.Diff.Diff;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Frontend.Parser.Program;
-import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Interpreter;
 import dev.fangscl.Runtime.Values.ResourceValue;
-import dev.fangscl.State;
 import lombok.extern.log4j.Log4j2;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -59,22 +59,27 @@ class CLI implements Callable<String> {
         for (File sourceFile : sourceFiles) {
             var lines = Files.readString(sourceFile.toPath());
             Program program = parser.produceAST(tokenizer.tokenize(lines));
-            var evalRes = interpreter.eval(program);
+            var evalRes = (ResourceValue) interpreter.eval(program);
 
 //            System.out.println(evalRes);
             State state = stateStr.isEmpty() ? new State(mapper.valueToTree(evalRes)) : mapper.readValue(stateStr, State.class);
-            ResourceValue cloud = ResourceValue.builder().name("main").properties(new Environment(Map.of("name", "maikn"))).build();
+            Resource cloud = Resource.builder().name("main").properties(Map.of("name", "maikn")).build();
 //            if (cloudStr.isEmpty()) {
-//                cloud = ResourceValue.builder().build();
+//                cloud = Resource.builder().build();
 //            } else {
-//                cloud = mapper.readValue(cloudStr, ResourceValue.class);
+//                cloud = mapper.readValue(cloudStr, Resource.class);
 //            }
-            ResourceValue src = (ResourceValue) evalRes;
+            var src = Resource.builder()
+                    .schema(evalRes.getSchema())
+                    .type(evalRes.getSchema())
+                    .properties(evalRes.getProperties().getVariables())
+                    .name(evalRes.getName())
+                    .build();
 
             var resources = state.getResources();
             var res = new ArrayList<JsonNode>(resources.size());
             for (var resource : resources) {
-                var it = mapper.readValue(resource.toString(), ResourceValue.class);
+                var it = mapper.readValue(resource.toString(), Resource.class);
                 var jsonNode = diff.patch(it, src, cloud);
                 res.add(jsonNode);
             }
@@ -121,6 +126,5 @@ class CLI implements Callable<String> {
 
     public static void main(String... args) {
         int exitCode = new CommandLine(new CLI()).execute(args);
-        System.exit(exitCode);
     }
 }

@@ -1,7 +1,6 @@
 package dev.fangscl.Diff;
 
-import dev.fangscl.Runtime.Environment.Environment;
-import dev.fangscl.Runtime.Values.ResourceValue;
+import dev.fangscl.Backend.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,75 +17,77 @@ class DiffTest {
 
     @Test
     void noChanges() {
-        var localState = ResourceValue.builder()
+        var localState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var sourceState = ResourceValue.builder().name("main")
-                .properties(new Environment(Map.of("state", "local")))
+        var sourceState = Resource.builder().name("main")
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var cloudState = ResourceValue.builder()
+        var cloudState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
-        var expected = ResourceValue.builder()
+        var expected = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
         Assertions.assertEquals(expected, res);
     }
+
     @Test
     void sourceChangeOverridesRemote() {
-        var localState = ResourceValue.builder()
+        var localState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var sourceState = ResourceValue.builder().name("main")
-                .properties(new Environment(Map.of("state", "src")))
+        var sourceState = Resource.builder().name("main")
+                .properties((Map.of("state", "src")))
                 .build();
 
-        var cloudState = ResourceValue.builder()
+        var cloudState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
-        var expected = ResourceValue.builder()
+        var expected = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "src")))
+                .properties((Map.of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);
     }
+
     @Test
     void remoteChangeIsIgnored() {
-        var localState = ResourceValue.builder()
+        var localState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var sourceState = ResourceValue.builder().name("main")
-                .properties(new Environment(Map.of("state", "local")))
+        var sourceState = Resource.builder().name("main")
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var cloudState = ResourceValue.builder()
+        var cloudState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "remote")))
+                .properties((Map.of("state", "remote")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
-        var expected = ResourceValue.builder()
+        var expected = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -94,75 +95,77 @@ class DiffTest {
 
     @Test
     void remoteChangeIsOverriddenBySrc() {
-        var localState = ResourceValue.builder()
+        var localState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var sourceState = ResourceValue.builder().name("main")
-                .properties(new Environment(Map.of("state", "src")))
+        var sourceState = Resource.builder().name("main")
+                .properties((Map.of("state", "src")))
                 .build();
 
-        var cloudState = ResourceValue.builder()
+        var cloudState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "remote")))
+                .properties((Map.of("state", "remote")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
-        var expected = ResourceValue.builder()
+        var expected = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "src")))
+                .properties((Map.of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);
     }
+
     @Test
     void remoteChangeIsAddBySrc() {
-        var localState = ResourceValue.builder()
+        var localState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
-        var sourceState = ResourceValue.builder().name("main")
-                .properties(new Environment(Map.of("state", "src")))
+        var sourceState = Resource.builder().name("main")
+                .properties((Map.of("state", "src")))
                 .build();
 
-        var cloudState = ResourceValue.builder()
+        var cloudState = Resource.builder()
                 .name("main")
-                .properties(new Environment())
+                .properties(Map.of())
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
-        var expected = ResourceValue.builder()
+        var expected = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "src")))
+                .properties((Map.of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);
     }
+
     @Test
     void localHiddenIsNotRemovedBySrc() {
-        var localState = ResourceValue.builder()
+        var localState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local","hidden_state","secret")))
+                .properties((Map.of("state", "local", "hidden_state", "secret")))
                 .build();
 
-        var sourceState = ResourceValue.builder().name("main")
-                .properties(new Environment(Map.of("state", "src")))
+        var sourceState = Resource.builder().name("main")
+                .properties((Map.of("state", "src")))
                 .build();
 
-        var cloudState = ResourceValue.builder()
+        var cloudState = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "local")))
+                .properties((Map.of("state", "local")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
-        var expected = ResourceValue.builder()
+        var expected = Resource.builder()
                 .name("main")
-                .properties(new Environment(Map.of("state", "src","hidden_state","secret")))
+                .properties((Map.of("state", "src", "hidden_state", "secret")))
                 .build();
 
         Assertions.assertEquals(expected, res);

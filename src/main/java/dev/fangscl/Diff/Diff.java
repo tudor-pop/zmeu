@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.flipkart.zjsonpatch.JsonPatch;
-import dev.fangscl.Runtime.Values.ResourceValue;
+import dev.fangscl.Backend.Resource;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.AnsiConsole;
@@ -39,27 +39,25 @@ public class Diff {
     }
 
     @SneakyThrows
-    public JsonNode patch(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
+    public JsonNode patch(Resource localState, Resource sourceState, Resource cloudState) {
         try {
             AnsiConsole.systemInstall();
-
-            return extracted(localState, sourceState, cloudState);
+            var stateJson = mapper.valueToTree(localState);
+            var sourceJson = mapper.valueToTree(sourceState);
+            var cloudJson = mapper.valueToTree(cloudState);
+            log.warn("\nstate{}\nsrc{}\ncloud{}", stateJson, sourceJson, cloudJson);
+            //        log.warn("==========");
+            return extracted(stateJson, sourceJson, cloudJson);
         } finally {
             AnsiConsole.systemUninstall();
         }
     }
 
     @SneakyThrows
-    private JsonNode extracted(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
-        var stateJson = mapper.valueToTree(localState);
-        var sourceJson = mapper.valueToTree(sourceState);
-        var cloudJson = mapper.valueToTree(cloudState);
-        log.warn("\nstate{}\nsrc{}\ncloud{}", stateJson, sourceJson, cloudJson);
-//        log.warn("==========");
-
+    private JsonNode extracted(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
         // set common base
-        sourceJson = mapper.readerForUpdating(mapper.valueToTree(localState)).readValue(sourceJson);
-        cloudJson = mapper.readerForUpdating(mapper.valueToTree(localState)).readValue(cloudJson);
+        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson.toString())).readValue(sourceJson);
+        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson.toString())).readValue(cloudJson);
 
 //        var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
 //        var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);
@@ -82,7 +80,7 @@ public class Diff {
             return cloudJson;
         }
 
-        printer.print(sourceState, srcRemoteDiff);
+        printer.print(stateJson, srcRemoteDiff);
 
         return cloudJson;
     }

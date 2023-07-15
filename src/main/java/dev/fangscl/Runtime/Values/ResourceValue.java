@@ -77,4 +77,9 @@ public class ResourceValue {
         return new Data(this.name(), args);
     }
 
+
+    public String getSchema() {
+        return (String) properties.getParent().lookup("name");
+    }
+
 }
