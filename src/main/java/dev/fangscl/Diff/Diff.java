@@ -3,7 +3,6 @@ package dev.fangscl.Diff;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -13,16 +12,8 @@ import com.flipkart.zjsonpatch.JsonPatch;
 import dev.fangscl.Runtime.Values.ResourceValue;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.AnsiConsole;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.fusesource.jansi.Ansi.ansi;
 
 /**
  *
@@ -48,11 +39,11 @@ public class Diff {
     @SneakyThrows
     public ResourceValue patch(ResourceValue localState, ResourceValue sourceState, ResourceValue cloudState) {
         try {
-            AnsiConsole.systemInstall();
+//            AnsiConsole.systemInstall();
 
             return extracted(localState, sourceState, cloudState);
         } finally {
-            AnsiConsole.systemUninstall();
+//            AnsiConsole.systemUninstall();
         }
     }
 
