@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 public class State {
-    private int statefileVersion;
+    private int stateVersion;
     private String cliVersion;
     private List<JsonNode> resources = new ArrayList<>();
 

@@ -2,6 +2,7 @@ package dev.fangscl.CLI;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import dev.fangscl.Backend.Instance;
 import dev.fangscl.Backend.Resource;
 import dev.fangscl.Backend.State;
 import dev.fangscl.Diff.Diff;
@@ -20,6 +21,7 @@ import java.nio.file.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -59,27 +61,34 @@ class CLI implements Callable<String> {
         for (File sourceFile : sourceFiles) {
             var lines = Files.readString(sourceFile.toPath());
             Program program = parser.produceAST(tokenizer.tokenize(lines));
-            var evalRes = (ResourceValue) interpreter.eval(program);
+            var evalRes = List.of((ResourceValue) interpreter.eval(program));
 
 //            System.out.println(evalRes);
-            State state = stateStr.isEmpty() ? new State(mapper.valueToTree(evalRes)) : mapper.readValue(stateStr, State.class);
-            Resource cloud = Resource.builder().name("main").properties(Map.of("name", "maikn")).build();
+            State state = stateStr.isEmpty() ? new State() : mapper.readValue(stateStr, State.class);
+            Resource cloud = Resource.builder()
+                    .name("main")
+                    .type("vm")
+                    .schema("vm")
+                    .instances(List.of(Instance.builder().properties(Map.of("name", "maikn")).build()))
+                    .build();
 //            if (cloudStr.isEmpty()) {
 //                cloud = Resource.builder().build();
 //            } else {
 //                cloud = mapper.readValue(cloudStr, Resource.class);
 //            }
-            var src = Resource.builder()
-                    .schema(evalRes.getSchema())
-                    .type(evalRes.getSchema())
-                    .properties(evalRes.getProperties().getVariables())
-                    .name(evalRes.getName())
-                    .build();
 
             var resources = state.getResources();
             var res = new ArrayList<JsonNode>(resources.size());
-            for (var resource : resources) {
-                var it = mapper.readValue(resource.toString(), Resource.class);
+            for (var srcResource : evalRes) {
+                var src = Resource.builder()
+                        .schema(srcResource.getSchema())
+                        .type(srcResource.getSchema())
+                        .instances(List.of(Instance.builder().properties(srcResource.getProperties().getVariables()).build()))
+                        .name(srcResource.getName())
+                        .build();
+                JsonNode stateResource = resources.stream().filter(it -> it.get("name").equals(src.getName()) && it.get("type").equals(src.getType())).findFirst()
+                        .orElseGet(mapper::createObjectNode);
+                var it = mapper.readValue(stateResource.toString(), Resource.class);
                 var jsonNode = diff.patch(it, src, cloud);
                 res.add(jsonNode);
             }

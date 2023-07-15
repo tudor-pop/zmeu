@@ -22,7 +22,11 @@ import java.util.EnumSet;
  */
 @Log4j2
 public class Diff {
-    public static final EnumSet<DiffFlags> DIFF_FLAGS = EnumSet.of(DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE, DiffFlags.OMIT_COPY_OPERATION, DiffFlags.OMIT_MOVE_OPERATION);
+    public static final EnumSet<DiffFlags> DIFF_FLAGS = EnumSet.of(
+            DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE,
+            DiffFlags.OMIT_COPY_OPERATION,
+            DiffFlags.OMIT_MOVE_OPERATION
+    );
     private final ObjectMapper mapper = JsonMapper.builder()
             .findAndAddModules()
             .build();

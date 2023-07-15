@@ -13,7 +13,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 public class Instance {
-    private String name;
     private List<String> dependencies;
     private Map<String, Object> properties;
 }
