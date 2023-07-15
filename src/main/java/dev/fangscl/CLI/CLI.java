@@ -1,6 +1,7 @@
 package dev.fangscl.CLI;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import dev.fangscl.Diff.Diff;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
@@ -8,6 +9,7 @@ import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Runtime.Environment.Environment;
 import dev.fangscl.Runtime.Interpreter;
 import dev.fangscl.Runtime.Values.ResourceValue;
+import dev.fangscl.State;
 import lombok.extern.log4j.Log4j2;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -46,7 +49,7 @@ class CLI implements Callable<String> {
         var stateStr = Files.readString(state.toPath());
         var cloudStr = "";
 
-        var mapper = new ObjectMapper();
+        var mapper = new YAMLMapper();
         var interpreter = new Interpreter();
         var tokenizer = new Tokenizer();
         var parser = new Parser();
@@ -59,20 +62,25 @@ class CLI implements Callable<String> {
             var evalRes = interpreter.eval(program);
 
 //            System.out.println(evalRes);
-            ResourceValue state;
-            if (stateStr.isEmpty()) {
-                state = new ResourceValue();
-            } else {
-                state = mapper.readValue(stateStr, ResourceValue.class);
-            }
-            ResourceValue cloud = ResourceValue.builder().name("main").args(new Environment(Map.of("name", "main"))).build();
+            State state = stateStr.isEmpty() ? new State(mapper.valueToTree(evalRes)) : mapper.readValue(stateStr, State.class);
+            ResourceValue cloud = ResourceValue.builder().name("main").properties(new Environment(Map.of("name", "maikn"))).build();
 //            if (cloudStr.isEmpty()) {
 //                cloud = ResourceValue.builder().build();
 //            } else {
 //                cloud = mapper.readValue(cloudStr, ResourceValue.class);
 //            }
             ResourceValue src = (ResourceValue) evalRes;
-            diff.patch(state, src, cloud);
+
+            var resources = state.getResources();
+            var res = new ArrayList<JsonNode>(resources.size());
+            for (var resource : resources) {
+                var it = mapper.readValue(resource.toString(), ResourceValue.class);
+                var jsonNode = diff.patch(it, src, cloud);
+                res.add(jsonNode);
+            }
+            state.setResources(res);
+            mapper.writeValue(this.state, state);
+
         }
         return stateStr;
 

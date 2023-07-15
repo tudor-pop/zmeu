@@ -7,31 +7,25 @@ import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class ResourceValue {
-    private Environment args;
+    private Environment properties;
     private String name;
-    private List<String> ids;
 
     public ResourceValue() {
     }
 
     private ResourceValue(String name, Environment parent) {
         this.name = name;
-        this.args = parent;
+        this.properties = parent;
     }
 
     private ResourceValue(String e) {
         this(e, new Environment());
-    }
-
-    public String getRuntimeValue() {
-        return name;
     }
 
     public static Object of(String string) {
@@ -43,7 +37,7 @@ public class ResourceValue {
     }
 
     public Object argVal(String name) {
-        return args.get(name);
+        return properties.get(name);
     }
 
     @Nullable
@@ -52,30 +46,30 @@ public class ResourceValue {
     }
 
     public Object assign(String varName, Object value) {
-        return args.assign(varName, value);
+        return properties.assign(varName, value);
     }
 
     public Object lookup(@Nullable String varName) {
-        return args.lookup(varName);
+        return properties.lookup(varName);
     }
 
     public Object lookup(@Nullable Object varName) {
-        return args.lookup(varName);
+        return properties.lookup(varName);
     }
 
     public @Nullable Object get(String key) {
-        return args.get(key);
+        return properties.get(key);
     }
 
     public Object init(String name, Object value) {
-        return args.init(name, value);
+        return properties.init(name, value);
     }
 
     public record Data(String name, Map<String, Object> args) {
     }
 
     public Data asData() {
-        var entries = args.getVariables().entrySet();
+        var entries = properties.getVariables().entrySet();
         var args = new HashMap<String, Object>(entries.size());
         for (var it : entries) {
             args.put(it.getKey(), it.getValue());

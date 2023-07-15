@@ -3,5 +3,5 @@ schema vm {
 }
 
 resource vm main {
-    name = "main"
+    name = "src"
 }

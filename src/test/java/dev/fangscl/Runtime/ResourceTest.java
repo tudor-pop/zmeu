@@ -123,7 +123,7 @@ public class ResourceTest extends BaseTest {
 
         var resource = (ResourceValue) schema.getInstances().get("main");
 
-        assertEquals(2, resource.getArgs().lookup("x"));
+        assertEquals(2, resource.getProperties().lookup("x"));
     }
 
     @Test
@@ -144,9 +144,9 @@ public class ResourceTest extends BaseTest {
         var schema = (SchemaValue) global.get("vm");
 
         var resource = (ResourceValue) schema.getInstances().get("main");
-        assertSame(2, resource.getArgs().get("x"));
+        assertSame(2, resource.getProperties().get("x"));
         // make sure main's x has been changed
-        assertEquals(2, resource.getArgs().get("x"));
+        assertEquals(2, resource.getProperties().get("x"));
 
         // assert y holds reference to vm.main
         var y = global.lookup("y");

@@ -1,5 +1,6 @@
 package dev.fangscl.Runtime.Environment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.fangscl.Resources.Resource;
 import dev.fangscl.Runtime.exceptions.NotFoundException;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class Environment implements IEnvironment {
     @Nullable
     @Getter
+    @JsonIgnore
     private final Environment parent;
 
     @Getter
