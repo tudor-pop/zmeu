@@ -11,6 +11,7 @@ import dev.fangscl.Frontend.Parser.Parser;
 import dev.fangscl.Frontend.Parser.Program;
 import dev.fangscl.Runtime.Interpreter;
 import dev.fangscl.Runtime.Values.ResourceValue;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -23,7 +24,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 import static picocli.CommandLine.Option;
@@ -32,7 +32,7 @@ import static picocli.CommandLine.Parameters;
 @Command(name = "cio", mixinStandardHelpOptions = true, version = "cio 1.0",
         description = "Prints the checksum (SHA-256 by default) of a file to STDOUT.")
 @Log4j2
-class CLI implements Callable<String> {
+class CLI implements Runnable {
     private final static String DIR = ".cloudcode";
     private final static String STATE_FILE = DIR + "/state.yml";
     private final static String SOURCE_FILE = "main.fcl";
@@ -44,8 +44,9 @@ class CLI implements Callable<String> {
     private File[] sourceFiles;
 
 
+    @SneakyThrows
     @Override
-    public String call() throws Exception { // your business logic goes here...
+    public void run() { // your business logic goes here...
         var diff = new Diff();
         createStateIfNotExists();
         var stateStr = Files.readString(state.toPath());
@@ -96,8 +97,7 @@ class CLI implements Callable<String> {
             mapper.writeValue(this.state, state);
 
         }
-        return stateStr;
-
+        log.info(stateStr);
     }
 
     private void createStateIfNotExists() throws IOException {
@@ -134,6 +134,7 @@ class CLI implements Callable<String> {
 
 
     public static void main(String... args) {
-        int exitCode = new CommandLine(new CLI()).execute(args);
+        var commandLine = new CommandLine(new CLI());
+        commandLine.execute(args);
     }
 }

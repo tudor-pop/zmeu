@@ -84,7 +84,7 @@ public class Diff {
             return cloudJson;
         }
 
-        printer.print(stateJson, srcRemoteDiff);
+        printer.print(sourceJson, srcRemoteDiff);
 
         return cloudJson;
     }
