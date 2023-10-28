@@ -433,32 +433,38 @@ public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser
             return switch (op) {
                 case "++" -> {
                     Object res = executeBlock(expression.getValue(), env);
-                    if (res instanceof Integer integer) {
-                        yield 1 + integer;
-                    } else if (res instanceof Double aDouble) {
-                        yield 1 + aDouble;
-                    } else {
-                        throw new RuntimeException("Invalid unary operator: " + res);
+                    switch (res) {
+                        case Integer integer -> {
+                            yield 1 + integer;
+                        }
+                        case Double aDouble -> {
+                            yield 1 + aDouble;
+                        }
+                        case null, default -> throw new RuntimeException("Invalid unary operator: " + res);
                     }
                 }
                 case "--" -> {
                     Object res = executeBlock(expression.getValue(), env);
-                    if (res instanceof Integer integer) {
-                        yield integer - 1;
-                    } else if (res instanceof Double aDouble) {
-                        yield BigDecimal.valueOf(aDouble).subtract(BigDecimal.ONE).doubleValue();
-                    } else {
-                        throw new RuntimeException("Invalid unary operator: " + res);
+                    switch (res) {
+                        case Integer integer -> {
+                            yield integer - 1;
+                        }
+                        case Double aDouble -> {
+                            yield BigDecimal.valueOf(aDouble).subtract(BigDecimal.ONE).doubleValue();
+                        }
+                        case null, default -> throw new RuntimeException("Invalid unary operator: " + res);
                     }
                 }
                 case "-" -> {
                     Object res = executeBlock(expression.getValue(), env);
-                    if (res instanceof Integer r) {
-                        yield -r;
-                    } else if (res instanceof Double r) {
-                        yield BigDecimal.valueOf(r).negate().doubleValue();
-                    } else {
-                        throw new RuntimeException("Invalid unary operator: " + res);
+                    switch (res) {
+                        case Integer r -> {
+                            yield -r;
+                        }
+                        case Double r -> {
+                            yield BigDecimal.valueOf(r).negate().doubleValue();
+                        }
+                        case null, default -> throw new RuntimeException("Invalid unary operator: " + res);
                     }
                 }
                 case "!" -> {
@@ -488,15 +494,19 @@ public class Interpreter implements Visitor<Object>, dev.fangscl.Frontend.Parser
     public Object eval(AssignmentExpression expression) {
         Object right = executeBlock(expression.getRight(), env);
 
-        Expression left = expression.getLeft();
-        if (left instanceof MemberExpression memberExpression) {
-            var instanceEnv = executeBlock(memberExpression.getObject(), env);
-            if (instanceEnv instanceof ResourceValue resourceValue) {
-                throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
+        switch (expression.getLeft()) {
+            case MemberExpression memberExpression -> {
+                var instanceEnv = executeBlock(memberExpression.getObject(), env);
+                if (instanceEnv instanceof ResourceValue resourceValue) {
+                    throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
+                }
             }
-        } else if (left instanceof Identifier identifier) {
+            case Identifier identifier -> {
 //            Integer distance = locals.get(identifier);
-            return env.assign(identifier.getSymbol(), right);
+                return env.assign(identifier.getSymbol(), right);
+            }
+            case null, default -> {
+            }
         }
         throw new RuntimeException("Invalid assignment");
     }
