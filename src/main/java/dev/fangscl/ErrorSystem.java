@@ -56,4 +56,8 @@ public class ErrorSystem {
         }
         return ErrorList.builder().errors(list).build();
     }
+
+    public static void clear() {
+        errors.clear();
+    }
 }

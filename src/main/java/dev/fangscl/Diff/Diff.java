@@ -60,8 +60,8 @@ public class Diff {
     @SneakyThrows
     private JsonNode extracted(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
         // set common base
-        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson.toString())).readValue(sourceJson);
-        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson.toString())).readValue(cloudJson);
+        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
+        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
 
 //        var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
 //        var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);

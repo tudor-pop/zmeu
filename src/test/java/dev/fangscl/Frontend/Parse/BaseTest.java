@@ -2,6 +2,7 @@ package dev.fangscl.Frontend.Parse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.fangscl.ErrorSystem;
 import dev.fangscl.Frontend.Lexer.Tokenizer;
 import dev.fangscl.Frontend.Parser.Parser;
 import org.apache.logging.log4j.Level;
@@ -26,6 +27,7 @@ class BaseTest {
     void init() {
         tokenizer = new Tokenizer();
         parser = new Parser();
+        ErrorSystem.clear();
     }
 
     protected Object parse(String source) {
