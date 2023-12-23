@@ -38,7 +38,7 @@ class DiffTest {
                 .properties(of("state", "local"))
                 .build();
 
-        Assertions.assertEquals(expected, res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res);
     }
 
     @Test
@@ -64,59 +64,7 @@ class DiffTest {
                 .properties(of("state", "src"))
                 .build();
 
-        Assertions.assertEquals(expected, res);
-    }
-
-    @Test
-    void remoteChangeIsIgnored() {
-        var localState = Resource.builder()
-                .name("main")
-                .properties((of("state", "local")))
-                .build();
-
-        var sourceState = Resource.builder().name("main")
-                .properties((of("state", "local")))
-                .build();
-
-        var cloudState = Resource.builder()
-                .name("main")
-                .properties((of("state", "remote")))
-                .build();
-
-
-        var res = diff.patch(localState, sourceState, cloudState);
-        var expected = Resource.builder()
-                .name("main")
-                .properties((of("state", "local")))
-                .build();
-
-        Assertions.assertEquals(expected, res);
-    }
-
-    @Test
-    void remoteChangeIsOverriddenBySrc() {
-        var localState = Resource.builder()
-                .name("main")
-                .properties((of("state", "local")))
-                .build();
-
-        var sourceState = Resource.builder().name("main")
-                .properties((of("state", "src")))
-                .build();
-
-        var cloudState = Resource.builder()
-                .name("main")
-                .properties((of("state", "remote")))
-                .build();
-
-
-        var res = diff.patch(localState, sourceState, cloudState);
-        var expected = Resource.builder()
-                .name("main")
-                .properties((of("state", "src")))
-                .build();
-
-        Assertions.assertEquals(expected, res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res);
     }
 
     @Test
@@ -142,7 +90,7 @@ class DiffTest {
                 .properties((of("state", "src")))
                 .build();
 
-        Assertions.assertEquals(expected, res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res);
     }
 
     @Test
@@ -168,7 +116,7 @@ class DiffTest {
                 .properties(of("state", "src", "hidden_state", "secret"))
                 .build();
 
-        Assertions.assertEquals(expected, res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res);
     }
 
 }

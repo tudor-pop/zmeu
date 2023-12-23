@@ -88,4 +88,8 @@ public class Diff {
 
         return cloudJson;
     }
+
+    public JsonNode toJsonNode(Object object) {
+        return mapper.valueToTree(object);
+    }
 }

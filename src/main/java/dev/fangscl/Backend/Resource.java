@@ -15,7 +15,8 @@ import java.util.Map;
 public class Resource {
     private String name;
     private String schema;
-    private String type;
+    @Builder.Default
+    private String type="Schema";
     private List<Instance> instances;
     private Map<String, Object> properties;
 }

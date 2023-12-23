@@ -2,15 +2,22 @@ package dev.fangscl.Diff;
 
 import lombok.Getter;
 
+@Getter
 public enum Change {
     CHANGE("±", "@|yellow %s|@"), REMOVE("-", "@|red %s|@"), ADD("+", "@|green %s|@");
-    @Getter
     private final String symbol;
-    @Getter
     private final String color;
 
     Change(String symbol, String color) {
         this.symbol = symbol;
         this.color = color;
+    }
+
+    public String coloredOperation() {
+        return color.formatted(symbol);
+    }
+
+    public String color(String string) {
+        return color.formatted(string);
     }
 }

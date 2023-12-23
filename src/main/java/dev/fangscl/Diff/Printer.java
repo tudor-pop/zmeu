@@ -18,18 +18,18 @@ public class Printer {
     void print(JsonNode value, JsonNode node) {
         Ansi ansi = ansi().eraseScreen();
 
-        Change change = opWithSymbol(node.get(0));
-        ansi = ansi.render("""
-                \n%s resource %s %s {
-                """.formatted(change.getColor().formatted(change.getSymbol()), value.get("type").asText(), value.get("name").asText()));
+        Change change = opWithSymbol(node);
+        ansi = ansi.newline()
+                .render("""
+                %s resource %s %s {
+                """.formatted(change.coloredOperation(), value.get("type").asText(), value.get("name").asText()));
 
         for (JsonNode it : node) {
             Change opTextAndColor = opWithSymbol(it);
 
-
-            String s = StringUtils.substringAfterLast(it.path("path").asText(), "/") + " = " + it.path("value");
-            String formatted = opTextAndColor.getColor().formatted(opTextAndColor.getSymbol() + "\t" + s + "\n");
-            ansi = ansi.render(formatted);
+            String s = "%s = %s".formatted(StringUtils.substringAfterLast(it.path("path").asText(), "/"), it.path("value"));
+            String formatted = opTextAndColor.color(opTextAndColor.getSymbol() + "\t" + s);
+            ansi = ansi.render(formatted).newline();
         }
         ansi = ansi.render("}");
 
@@ -38,7 +38,7 @@ public class Printer {
 
     @NotNull
     private static Change opWithSymbol(JsonNode jsonNode) {
-        return switch (jsonNode.path("op").asText()) {
+        return switch (jsonNode.findValue("op").asText()) {
             case "replace" -> Change.CHANGE;
             case "remove" -> Change.REMOVE;
             case "add" -> Change.ADD;
