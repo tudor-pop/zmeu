@@ -32,7 +32,7 @@ class DiffTest {
                 .build();
 
 
-        var res = diff.patch(localState, sourceState, cloudState);
+        var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("state", "local"))
@@ -58,7 +58,7 @@ class DiffTest {
                 .build();
 
 
-        var res = diff.patch(localState, sourceState, cloudState);
+        var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("state", "src"))
@@ -71,23 +71,17 @@ class DiffTest {
     void remoteChangeIsAddBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((of("state", "src")))
+                .properties(of("state", "src"))
                 .build();
 
-        var cloudState = Resource.builder()
-                .name("main")
-                .properties(of())
-                .build();
-
-
-        var res = diff.patch(localState, sourceState, cloudState);
+        var res = diff.apply(localState, sourceState, null);
         var expected = Resource.builder()
                 .name("main")
-                .properties((of("state", "src")))
+                .properties(of("state", "src"))
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(expected), res);
@@ -97,20 +91,20 @@ class DiffTest {
     void localHiddenIsNotRemovedBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((of("state", "local", "hidden_state", "secret")))
+                .properties(of("state", "local", "hidden_state", "secret"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((of("state", "src")))
+                .properties(of("state", "src"))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties((of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
 
-        var res = diff.patch(localState, sourceState, cloudState);
+        var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("state", "src", "hidden_state", "secret"))

@@ -31,7 +31,7 @@ public class Printer {
             String formatted = opTextAndColor.color(opTextAndColor.getSymbol() + "\t" + s);
             ansi = ansi.render(formatted).newline();
         }
-        ansi = ansi.render("}");
+        ansi = ansi.render(change.coloredOperation() + " }");
 
         log.info(ansi);
     }

@@ -90,7 +90,7 @@ class CLI implements Runnable {
                 JsonNode stateResource = resources.stream().filter(it -> it.get("name").equals(src.getName()) && it.get("type").equals(src.getType())).findFirst()
                         .orElseGet(mapper::createObjectNode);
                 var it = mapper.readValue(stateResource.toString(), Resource.class);
-                var jsonNode = diff.patch(it, src, cloud);
+                var jsonNode = diff.apply(it, src, cloud);
                 res.add(jsonNode);
             }
             state.setResources(res);

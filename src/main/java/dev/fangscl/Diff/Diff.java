@@ -14,6 +14,7 @@ import dev.fangscl.Backend.Resource;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.AnsiConsole;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
@@ -43,13 +44,13 @@ public class Diff {
     }
 
     @SneakyThrows
-    public JsonNode patch(Resource localState, Resource sourceState, Resource cloudState) {
+    public JsonNode apply(Resource localState, Resource sourceState, @Nullable Resource cloudState) {
         try {
             AnsiConsole.systemInstall();
             var stateJson = mapper.valueToTree(localState);
             var sourceJson = mapper.valueToTree(sourceState);
             var cloudJson = mapper.valueToTree(cloudState);
-            log.warn("\nstate{}\nsrc{}\ncloud{}", stateJson, sourceJson, cloudJson);
+            log.warn("\nstate {}\nsrc {}\ncloud {}", stateJson, sourceJson, cloudJson);
             //        log.warn("==========");
             return extracted(stateJson, sourceJson, cloudJson);
         } finally {
@@ -60,19 +61,21 @@ public class Diff {
     @SneakyThrows
     private JsonNode extracted(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
         // set common base
-        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
-        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
+//        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
+//        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
 
-//        var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
-//        var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);
-        var srcRemoteDiff = JsonDiff.asJson(cloudJson, sourceJson, DIFF_FLAGS);
+        var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
+        var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);
+
+        var cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
+        var src = JsonPatch.apply(sourceLocalDiff, stateJson);
+        var srcRemoteDiff = JsonDiff.asJson(src, cloud, DIFF_FLAGS);
 
 //        log.warn("state: {}", sourceLocalDiff);
 //        log.warn("cloud: {}", remoteLocalDiff);
         log.warn("res: {}", srcRemoteDiff);
 //        log.warn("==========");
 
-//        JsonNode cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
         JsonPatch.applyInPlace(srcRemoteDiff, cloudJson);
 //            log.warn(JsonPatch.apply(srcRemoteDiff, stateJson));
 
