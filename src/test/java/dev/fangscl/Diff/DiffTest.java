@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import static java.util.Map.of;
 
 class DiffTest {
     private Diff diff;
@@ -19,23 +19,23 @@ class DiffTest {
     void noChanges() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((Map.of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -45,23 +45,23 @@ class DiffTest {
     void sourceChangeOverridesRemote() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((Map.of("state", "src")))
+                .properties(of("state", "src"))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties(of("state", "local"))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "src")))
+                .properties(of("state", "src"))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -71,23 +71,23 @@ class DiffTest {
     void remoteChangeIsIgnored() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties((of("state", "local")))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((Map.of("state", "local")))
+                .properties((of("state", "local")))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "remote")))
+                .properties((of("state", "remote")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties((of("state", "local")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -97,23 +97,23 @@ class DiffTest {
     void remoteChangeIsOverriddenBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties((of("state", "local")))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((Map.of("state", "src")))
+                .properties((of("state", "src")))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "remote")))
+                .properties((of("state", "remote")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "src")))
+                .properties((of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -123,23 +123,23 @@ class DiffTest {
     void remoteChangeIsAddBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties((of("state", "local")))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((Map.of("state", "src")))
+                .properties((of("state", "src")))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties(Map.of())
+                .properties(of())
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "src")))
+                .properties((of("state", "src")))
                 .build();
 
         Assertions.assertEquals(expected, res);
@@ -149,23 +149,23 @@ class DiffTest {
     void localHiddenIsNotRemovedBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local", "hidden_state", "secret")))
+                .properties((of("state", "local", "hidden_state", "secret")))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties((Map.of("state", "src")))
+                .properties((of("state", "src")))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "local")))
+                .properties((of("state", "local")))
                 .build();
 
 
         var res = diff.patch(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties((Map.of("state", "src", "hidden_state", "secret")))
+                .properties(of("state", "src", "hidden_state", "secret"))
                 .build();
 
         Assertions.assertEquals(expected, res);
