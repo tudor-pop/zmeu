@@ -91,7 +91,7 @@ class DiffTest {
     void localHiddenIsNotRemovedBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local", "hidden_state", "secret"))
+                .properties(of("state", "local", "hidden", "secret"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
@@ -107,7 +107,7 @@ class DiffTest {
         var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties(of("state", "src", "hidden_state", "secret"))
+                .properties(of("state", "src", "hidden", "secret"))
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(expected), res);

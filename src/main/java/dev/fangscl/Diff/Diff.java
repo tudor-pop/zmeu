@@ -52,24 +52,24 @@ public class Diff {
             var cloudJson = mapper.valueToTree(cloudState);
             log.warn("\nstate {}\nsrc {}\ncloud {}", stateJson, sourceJson, cloudJson);
             //        log.warn("==========");
-            return extracted(stateJson, sourceJson, cloudJson);
+            return threeWayMerge(stateJson, sourceJson, cloudJson);
         } finally {
             AnsiConsole.systemUninstall();
         }
     }
 
     @SneakyThrows
-    private JsonNode extracted(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
+    private JsonNode threeWayMerge(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
         // set common base
 //        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
 //        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
-
+//        sourceJson = mapper.readerForUpdating(sourceJson.findValue("properties")).readValue(stateJson.findValue("hidden"));
         var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
         var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);
 
         var cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
         var src = JsonPatch.apply(sourceLocalDiff, stateJson);
-        var srcRemoteDiff = JsonDiff.asJson(src, cloud, DIFF_FLAGS);
+        var srcRemoteDiff = JsonDiff.asJson(cloud, src, DIFF_FLAGS);
 
 //        log.warn("state: {}", sourceLocalDiff);
 //        log.warn("cloud: {}", remoteLocalDiff);
