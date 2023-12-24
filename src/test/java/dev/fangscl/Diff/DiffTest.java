@@ -19,23 +19,23 @@ class DiffTest {
     void noChanges() {
         var localState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
 
         var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(expected), res);
@@ -45,23 +45,23 @@ class DiffTest {
     void sourceChangeOverridesRemote() {
         var localState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties(of("state", "src"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
 
         var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties(of("state", "src"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(expected), res);
@@ -71,17 +71,17 @@ class DiffTest {
     void remoteChangeIsAddBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties(of("state", "src"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         var res = diff.apply(localState, sourceState, null);
         var expected = Resource.builder()
                 .name("main")
-                .properties(of("state", "src"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(expected), res);
@@ -91,23 +91,23 @@ class DiffTest {
     void localHiddenIsNotRemovedBySrc() {
         var localState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local", "hidden", "secret"))
+                .properties(of("clusterName", "local", "hidden", "secret"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
-                .properties(of("state", "src"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         var cloudState = Resource.builder()
                 .name("main")
-                .properties(of("state", "local"))
+                .properties(of("clusterName", "local"))
                 .build();
 
 
         var res = diff.apply(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
-                .properties(of("state", "src", "hidden", "secret"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(expected), res);

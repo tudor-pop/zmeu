@@ -2,7 +2,6 @@ package dev.fangscl.CLI;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import dev.fangscl.Backend.Instance;
 import dev.fangscl.Backend.Resource;
 import dev.fangscl.Backend.State;
 import dev.fangscl.Diff.Diff;
@@ -23,7 +22,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static picocli.CommandLine.Option;
@@ -69,8 +67,6 @@ class CLI implements Runnable {
             Resource cloud = Resource.builder()
                     .name("main")
                     .type("vm")
-                    .schema("vm")
-                    .instances(List.of(Instance.builder().properties(Map.of("name", "maikn")).build()))
                     .build();
 //            if (cloudStr.isEmpty()) {
 //                cloud = Resource.builder().build();
@@ -82,9 +78,7 @@ class CLI implements Runnable {
             var res = new ArrayList<JsonNode>(resources.size());
             for (var srcResource : evalRes) {
                 var src = Resource.builder()
-                        .schema(srcResource.getSchema())
                         .type(srcResource.getSchema())
-                        .instances(List.of(Instance.builder().properties(srcResource.getProperties().getVariables()).build()))
                         .name(srcResource.getName())
                         .build();
                 JsonNode stateResource = resources.stream().filter(it -> it.get("name").equals(src.getName()) && it.get("type").equals(src.getType())).findFirst()
