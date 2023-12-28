@@ -39,8 +39,9 @@ public class Printer {
             String str = switch (opTextAndColor) {
                 case ADD -> it.findValue("properties")
                         .properties()
-                        .stream().map(String::valueOf)
-                        .collect(Collectors.joining("="," "," "));
+                        .stream()
+                        .map(Printer::formatNode)
+                        .collect(Collectors.joining());
                 default -> "%s = %s".formatted(StringUtils.substringAfterLast(it.path("path").asText(), "/"),
                         it.path("value"));
             };
@@ -50,6 +51,11 @@ public class Printer {
         ansi = ansi.render(change.coloredOperation() + " }");
 
         log.info(ansi);
+    }
+
+    @NotNull
+    private static String formatNode(Map.Entry<String, JsonNode> stringJsonNodeEntry) {
+        return stringJsonNodeEntry.getKey() + " = " + stringJsonNodeEntry.getValue();
     }
 
     @NotNull
