@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.flipkart.zjsonpatch.DiffFlags;
 import com.flipkart.zjsonpatch.JsonDiff;
 import com.flipkart.zjsonpatch.JsonPatch;
@@ -32,8 +33,6 @@ public class Diff {
             .findAndAddModules()
             .build();
 
-    private final Printer printer = new Printer();
-
     public Diff() {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
@@ -44,7 +43,7 @@ public class Diff {
     }
 
     @SneakyThrows
-    public JsonNode apply(Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+    public Plan plan(Resource localState, Resource sourceState, @Nullable Resource cloudState) {
         try {
             AnsiConsole.systemInstall();
             var stateJson = mapper.valueToTree(localState);
@@ -52,14 +51,14 @@ public class Diff {
             var cloudJson = mapper.valueToTree(cloudState);
             log.warn("\nstate {}\nsrc {}\ncloud {}", stateJson, sourceJson, cloudJson);
             //        log.warn("==========");
-            return threeWayMerge(stateJson, sourceJson, cloudJson);
+            return plan(stateJson, sourceJson, cloudJson);
         } finally {
             AnsiConsole.systemUninstall();
         }
     }
 
     @SneakyThrows
-    private JsonNode threeWayMerge(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
+    private Plan plan(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
         // set common base
 //        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
 //        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
@@ -69,27 +68,25 @@ public class Diff {
 
         var cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
         var src = JsonPatch.apply(sourceLocalDiff, stateJson);
-        var srcRemoteDiff = JsonDiff.asJson(cloud, src, DIFF_FLAGS);
+        var srcRemoteDiff = JsonDiff.asJson(cloud instanceof NullNode ? null : cloud, src, DIFF_FLAGS);
 
 //        log.warn("state: {}", sourceLocalDiff);
 //        log.warn("cloud: {}", remoteLocalDiff);
         log.warn("res: {}", srcRemoteDiff);
 //        log.warn("==========");
 
-        JsonPatch.applyInPlace(srcRemoteDiff, cloudJson);
+//        JsonPatch.applyInPlace(srcRemoteDiff, cloudJson);
 //            log.warn(JsonPatch.apply(srcRemoteDiff, stateJson));
 
 
-        if (cloudJson.isEmpty()) {
-            return sourceJson;
-        }
+//        if (cloudJson.isEmpty()) {
+//            return sourceJson;
+//        }
         if (srcRemoteDiff.isEmpty()) {
-            return cloudJson;
+            return new Plan(src, null);
         }
 
-        printer.print(sourceJson, srcRemoteDiff);
-
-        return cloudJson;
+        return new Plan(src, srcRemoteDiff);
     }
 
     public JsonNode toJsonNode(Object object) {

@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,14 @@ import static org.fusesource.jansi.Ansi.ansi;
 public class Printer {
     private final Map<JsonNode, JsonNode> diffs = new HashMap<>();
 
-    void print(JsonNode value, JsonNode node) {
+    public void print(Plan plan) {
+        print(plan.sourceCode(), plan.diffResults());
+    }
+
+    void print(@Nullable JsonNode value, @Nullable JsonNode node) {
+        if (node == null || value == null) {
+            return;
+        }
         Ansi ansi = ansi().eraseScreen();
 
         Change change = opWithSymbol(node);

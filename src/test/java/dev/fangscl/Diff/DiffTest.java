@@ -9,6 +9,7 @@ import static java.util.Map.of;
 
 class DiffTest {
     private Diff diff;
+    private final Printer printer = new Printer();
 
     @BeforeEach
     void init() {
@@ -32,13 +33,13 @@ class DiffTest {
                 .build();
 
 
-        var res = diff.apply(localState, sourceState, cloudState);
+        var res = diff.plan(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "local"))
                 .build();
-
-        Assertions.assertEquals(diff.toJsonNode(expected), res);
+        printer.print(res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
     }
 
     @Test
@@ -58,13 +59,14 @@ class DiffTest {
                 .build();
 
 
-        var res = diff.apply(localState, sourceState, cloudState);
+        var res = diff.plan(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
                 .build();
+        printer.print(res);
 
-        Assertions.assertEquals(diff.toJsonNode(expected), res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
     }
 
     @Test
@@ -78,13 +80,14 @@ class DiffTest {
                 .properties(of("clusterName", "src"))
                 .build();
 
-        var res = diff.apply(localState, sourceState, null);
+        var res = diff.plan(localState, sourceState, null);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
                 .build();
+        printer.print(res);
 
-        Assertions.assertEquals(diff.toJsonNode(expected), res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
     }
 
     @Test
@@ -104,13 +107,14 @@ class DiffTest {
                 .build();
 
 
-        var res = diff.apply(localState, sourceState, cloudState);
+        var res = diff.plan(localState, sourceState, cloudState);
         var expected = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
                 .build();
+        printer.print(res);
 
-        Assertions.assertEquals(diff.toJsonNode(expected), res);
+        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
     }
 
 }
