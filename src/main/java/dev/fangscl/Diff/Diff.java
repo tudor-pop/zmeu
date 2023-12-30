@@ -63,12 +63,12 @@ public class Diff {
 //        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
 //        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
 //        sourceJson = mapper.readerForUpdating(sourceJson.findValue("properties")).readValue(stateJson.findValue("hidden"));
-        var sourceLocalDiff = JsonDiff.asJson(stateJson, sourceJson, DIFF_FLAGS);
-        var remoteLocalDiff = JsonDiff.asJson(stateJson, cloudJson, DIFF_FLAGS);
+        var sourceLocalDiff = JsonDiff.asJson(toNull(stateJson), sourceJson, DIFF_FLAGS);
+        var remoteLocalDiff = JsonDiff.asJson(toNull(stateJson), cloudJson, DIFF_FLAGS);
 
         var cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
         var src = JsonPatch.apply(sourceLocalDiff, stateJson);
-        var srcRemoteDiff = JsonDiff.asJson(cloud instanceof NullNode ? null : cloud, src, DIFF_FLAGS);
+        var srcRemoteDiff = JsonDiff.asJson(toNull(cloud), src, DIFF_FLAGS);
 
 //        log.warn("state: {}", sourceLocalDiff);
 //        log.warn("cloud: {}", remoteLocalDiff);
@@ -87,6 +87,11 @@ public class Diff {
         }
 
         return new Plan(src, srcRemoteDiff);
+    }
+
+    @Nullable
+    private static JsonNode toNull(JsonNode cloud) {
+        return cloud instanceof NullNode ? null : cloud;
     }
 
     public JsonNode toJsonNode(Object object) {

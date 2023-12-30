@@ -3,6 +3,7 @@ package dev.fangscl.Diff;
 import dev.fangscl.Backend.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static java.util.Map.of;
@@ -34,12 +35,12 @@ class DiffTest {
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var expected = Resource.builder()
+        var plan = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "local"))
                 .build();
         printer.print(res);
-        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
     @Test
@@ -60,20 +61,20 @@ class DiffTest {
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var expected = Resource.builder()
+        var plan = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
                 .build();
         printer.print(res);
 
-        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
     @Test
-    void remoteChangeIsAddBySrc() {
+    void addResourceToRemote() {
         var localState = Resource.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .properties(of("clusterName", "src"))
                 .build();
 
         var sourceState = Resource.builder().name("main")
@@ -81,13 +82,48 @@ class DiffTest {
                 .build();
 
         var res = diff.plan(localState, sourceState, null);
-        var expected = Resource.builder()
+        var plan = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
                 .build();
         printer.print(res);
 
-        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
+    }
+    @Test
+    void addResourceToLocal() {
+        var sourceState = Resource.builder().name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+        var remoteState = Resource.builder()
+                .name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+        var res = diff.plan(null, sourceState, remoteState);
+        var plan = Resource.builder()
+                .name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+        printer.print(res);
+
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
+    }
+
+    @Test
+    @DisplayName("First apply creates remote and local states")
+    void addResourceToLocalAndRemote() {
+        var sourceState = Resource.builder().name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+
+        var res = diff.plan(null, sourceState, null);
+        var plan = Resource.builder()
+                .name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+        printer.print(res);
+
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
     @Test
@@ -108,13 +144,13 @@ class DiffTest {
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var expected = Resource.builder()
+        var plan = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
                 .build();
         printer.print(res);
 
-        Assertions.assertEquals(diff.toJsonNode(expected), res.sourceCode());
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
 }
