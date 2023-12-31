@@ -90,6 +90,7 @@ class DiffTest {
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
+
     @Test
     void addResourceToLocal() {
         var sourceState = Resource.builder().name("main")
@@ -120,6 +121,31 @@ class DiffTest {
         var plan = Resource.builder()
                 .name("main")
                 .properties(of("clusterName", "src"))
+                .build();
+        printer.print(res);
+
+        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
+    }
+
+    @Test
+    @DisplayName("Deleting src must delete local and remote regardless of their state")
+    void removeResourcePropertiesFromSrc() {
+        var localState = Resource.builder()
+                .name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+        var srcState = Resource.builder()
+                .name("main")
+                .properties(of())
+                .build();
+        var remoteState = Resource.builder()
+                .name("main")
+                .properties(of("clusterName", "src"))
+                .build();
+        var res = diff.plan(localState, srcState, remoteState);
+        var plan = Resource.builder()
+                .name("main")
+                .properties(of())
                 .build();
         printer.print(res);
 
