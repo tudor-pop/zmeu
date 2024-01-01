@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -12,6 +13,13 @@ import java.util.Map;
 public class Resource {
     private String name;
     @Builder.Default
-    private String type="Cluster";
-    private Map<String, Object> properties;
+    protected Map<String, Object> properties = new HashMap<>();
+
+    public void setProperty(String key, Object value) {
+        properties.put(key, value);
+    }
+
+    public Resource() {
+        properties = new HashMap<>();
+    }
 }

@@ -66,7 +66,7 @@ class CLI implements Runnable {
             State state = stateStr.isEmpty() ? new State() : mapper.readValue(stateStr, State.class);
             Resource cloud = Resource.builder()
                     .name("main")
-                    .type("vm")
+//                    .type("vm")
                     .build();
 //            if (cloudStr.isEmpty()) {
 //                cloud = Resource.builder().build();
@@ -78,12 +78,12 @@ class CLI implements Runnable {
             var res = new ArrayList<JsonNode>(resources.size());
             for (var srcResource : evalRes) {
                 var src = Resource.builder()
-                        .type(srcResource.getSchema())
+//                        .type(srcResource.getSchema())
                         .name(srcResource.getName())
                         .build();
-                JsonNode stateResource = resources.stream().filter(it -> it.get("name").equals(src.getName()) && it.get("type").equals(src.getType())).findFirst()
-                        .orElseGet(mapper::createObjectNode);
-                var it = mapper.readValue(stateResource.toString(), Resource.class);
+//                JsonNode stateResource = resources.stream().filter(it -> it.get("name").equals(src.getName()) )
+//                        .orElseGet(mapper::createObjectNode);
+//                var it = mapper.readValue(stateResource.toString(), Resource.class);
 //                var jsonNode = diff.plan(it, src, cloud);
 //                res.add(jsonNode);
             }
