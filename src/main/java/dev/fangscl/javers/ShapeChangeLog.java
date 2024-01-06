@@ -86,13 +86,13 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     @Override
     public void onNewObject(NewObject newObject) {
         var resource = StringUtils.split(newObject.getAffectedGlobalId().value(), "/");
-        appendln("+ resource %s %s { ".formatted(resource[0], resource[1]));
+        appendln(dev.fangscl.Diff.Change.ADD.coloredOperation() + " resource %s %s { ".formatted(resource[0], resource[1]));
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
         var resource = StringUtils.split(objectRemoved.getAffectedGlobalId().value(), "/");
-        appendln("- resource %s %s { ".formatted(resource[0], resource[1]));
+        appendln(dev.fangscl.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource[0], resource[1]));
     }
 
     @Override

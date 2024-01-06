@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 @Log4j2
 class DiffTest {
     private Diff diff;
-    private final Printer printer = new Printer();
 
     @SneakyThrows
     @BeforeEach
@@ -24,14 +23,17 @@ class DiffTest {
         var localState = VPC.builder()
                 .name("main")
                 .cidrBlock("local")
+                .id("id")
                 .build();
 
         var sourceState = VPC.builder().name("main")
                 .cidrBlock("local")
+                .id("id")
                 .build();
 
         var cloudState = VPC.builder()
                 .name("main")
+                .id("id")
                 .cidrBlock("local")
                 .build();
 
@@ -39,9 +41,9 @@ class DiffTest {
         var res = diff.plan(localState, sourceState, cloudState);
         var plan = VPC.builder()
                 .name("main")
+                .id("id")
                 .cidrBlock("local")
                 .build();
-        printer.print(res);
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
@@ -50,24 +52,27 @@ class DiffTest {
         var localState = VPC.builder()
                 .name("main")
                 .cidrBlock("local")
+                .id("id")
                 .build();
 
         var sourceState = VPC.builder().name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
 
         var cloudState = VPC.builder()
                 .name("main")
                 .cidrBlock("local")
+                .id("id")
                 .build();
 
 
         var res = diff.plan(localState, sourceState, cloudState);
         var plan = VPC.builder()
                 .name("main")
+                .id("id")
                 .cidrBlock("src")
                 .build();
-        printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
@@ -77,9 +82,11 @@ class DiffTest {
         var localState = VPC.builder()
                 .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
 
         var sourceState = VPC.builder().name("main")
+                .id("id")
                 .cidrBlock("src")
                 .build();
 
@@ -87,27 +94,30 @@ class DiffTest {
         var plan = VPC.builder()
                 .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
-        printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
     @Test
     void addClusterToLocal() {
-        var sourceState = VPC.builder().name("main")
+        var sourceState = VPC.builder()
+                .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
         var remoteState = VPC.builder()
                 .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
         var res = diff.plan(null, sourceState, remoteState);
         var plan = VPC.builder()
                 .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
-        printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
@@ -117,21 +127,25 @@ class DiffTest {
     void addClusterToLocalAndRemote() {
         var sourceState = VPC.builder().name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
 
         var res = diff.plan(null, sourceState, null);
         var plan = VPC.builder()
                 .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
-        printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
+    /**
+     * Overrides local state with remote state and then compares local state with src state
+     */
     @SneakyThrows
     @Test
-    public void shouldCompareTwoEntities() {
+    public void shouldDo3WayDiff() {
         var localState = VPC.builder()
                 .id("main")
                 .name("main")
@@ -164,16 +178,18 @@ class DiffTest {
                 .build();
         var srcState = VPC.builder()
                 .name("main")
+                .id("id")
                 .build();
         var remoteState = VPC.builder()
                 .name("main")
                 .cidrBlock("src")
+                .id("id")
                 .build();
         var res = diff.plan(localState, srcState, remoteState);
         var plan = VPC.builder()
                 .name("main")
+                .id("id")
                 .build();
-        printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
@@ -181,15 +197,18 @@ class DiffTest {
     @Test
     void localHiddenIsNotRemovedBySrc() {
         var localState = VPC.builder()
+                .id("id")
                 .name("main")
                 .cidrBlock("local")
                 .build();
 
         var sourceState = VPC.builder().name("main")
+                .id("id")
                 .cidrBlock("src")
                 .build();
 
         var cloudState = VPC.builder()
+                .id("id")
                 .name("main")
                 .cidrBlock("local")
                 .build();
@@ -197,10 +216,10 @@ class DiffTest {
 
         var res = diff.plan(localState, sourceState, cloudState);
         var plan = VPC.builder()
+                .id("id")
                 .name("main")
                 .cidrBlock("src")
                 .build();
-        printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }

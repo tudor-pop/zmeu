@@ -67,6 +67,9 @@ public class Diff {
     public Diff() {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
@@ -74,7 +77,8 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan plan(Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+    public Plan plan(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+        localState = localState == null ? Resource.builder().id("1").build() : localState;
         // overwrite local state with remote state - in memory -
         mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         var diff = this.javers.compare(localState, sourceState);
