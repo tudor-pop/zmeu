@@ -61,7 +61,7 @@ public class Printer {
     @NotNull
     private static Change opWithSymbol(JsonNode jsonNode) {
         return switch (jsonNode.findValue("op").asText()) {
-            case "replace" -> Change.CHANGE;
+            case "replace" -> Change.COLORED_OPERATION;
             case "remove" -> Change.REMOVE;
             case "add" -> Change.ADD;
             default -> throw new RuntimeException("Invalid op");

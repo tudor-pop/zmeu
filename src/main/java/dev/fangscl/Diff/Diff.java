@@ -7,31 +7,62 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.flipkart.zjsonpatch.DiffFlags;
-import com.flipkart.zjsonpatch.JsonDiff;
-import com.flipkart.zjsonpatch.JsonPatch;
 import dev.fangscl.Backend.Resource;
+import dev.fangscl.javers.ShapeChangeLog;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.fusesource.jansi.AnsiConsole;
+import org.javers.core.Javers;
+import org.javers.core.JaversBuilder;
+import org.javers.core.diff.ListCompareAlgorithm;
+import org.javers.repository.sql.ConnectionProvider;
+import org.javers.repository.sql.DialectName;
+import org.javers.repository.sql.SqlRepositoryBuilder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 /**
  *
  */
 @Log4j2
 public class Diff {
-    public static final EnumSet<DiffFlags> DIFF_FLAGS = EnumSet.of(
-            DiffFlags.ADD_ORIGINAL_VALUE_ON_REPLACE,
-            DiffFlags.OMIT_COPY_OPERATION,
-            DiffFlags.OMIT_MOVE_OPERATION
-    );
+    private Javers javers;
+    @Getter
     private final ObjectMapper mapper = JsonMapper.builder()
             .findAndAddModules()
             .build();
+
+    @SneakyThrows
+    public Diff(String connection, String username, String password) {
+        this();
+        var dbConnection = DriverManager.getConnection(connection, username, password);
+
+        var connectionProvider = new ConnectionProvider() {
+            @Override
+            public Connection getConnection() {
+                //suitable only for testing!
+                return dbConnection;
+            }
+        };
+        var sqlRepository = SqlRepositoryBuilder
+                .sqlRepository()
+                .withConnectionProvider(connectionProvider)
+                .withDialect(DialectName.POSTGRES)
+                .withCommitTableName("shape_commit")
+                .withGlobalIdTableName("shape_global_id")
+                .withSnapshotTableName("shape_snapshot")
+                .withCommitPropertyTableName("shape_commit_property")
+                .build();
+
+        //given
+        javers = JaversBuilder.javers()
+                .withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
+                .registerJaversRepository(sqlRepository)
+                .withPrettyPrint(true)
+                .build();
+    }
 
     public Diff() {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -44,54 +75,11 @@ public class Diff {
 
     @SneakyThrows
     public Plan plan(Resource localState, Resource sourceState, @Nullable Resource cloudState) {
-        try {
-            AnsiConsole.systemInstall();
-            var stateJson = mapper.valueToTree(localState);
-            var sourceJson = mapper.valueToTree(sourceState);
-            var cloudJson = mapper.valueToTree(cloudState);
-            log.warn("\nstate {}\nsrc {}\ncloud {}", stateJson, sourceJson, cloudJson);
-            //        log.warn("==========");
-            return plan(stateJson, sourceJson, cloudJson);
-        } finally {
-            AnsiConsole.systemUninstall();
-        }
-    }
-
-    @SneakyThrows
-    private Plan plan(JsonNode stateJson, JsonNode sourceJson, JsonNode cloudJson) {
-        // set common base
-//        sourceJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(sourceJson);
-//        cloudJson = mapper.readerForUpdating(mapper.valueToTree(stateJson)).readValue(cloudJson);
-//        sourceJson = mapper.readerForUpdating(sourceJson.findValue("properties")).readValue(stateJson.findValue("hidden"));
-        var sourceLocalDiff = JsonDiff.asJson(toNull(stateJson), sourceJson, DIFF_FLAGS);
-        var remoteLocalDiff = JsonDiff.asJson(toNull(stateJson), cloudJson, DIFF_FLAGS);
-
-        var cloud = JsonPatch.apply(remoteLocalDiff, stateJson);
-        var src = JsonPatch.apply(sourceLocalDiff, stateJson);
-        var srcRemoteDiff = JsonDiff.asJson(toNull(cloud), src, DIFF_FLAGS);
-
-//        log.warn("state: {}", sourceLocalDiff);
-//        log.warn("cloud: {}", remoteLocalDiff);
-        log.warn("res: {}", srcRemoteDiff);
-//        log.warn("==========");
-
-//        JsonPatch.applyInPlace(srcRemoteDiff, cloudJson);
-//            log.warn(JsonPatch.apply(srcRemoteDiff, stateJson));
-
-
-//        if (cloudJson.isEmpty()) {
-//            return sourceJson;
-//        }
-        if (srcRemoteDiff.isEmpty()) {
-            return new Plan(src, null);
-        }
-
-        return new Plan(src, srcRemoteDiff);
-    }
-
-    @Nullable
-    private static JsonNode toNull(JsonNode cloud) {
-        return cloud instanceof NullNode ? null : cloud;
+        // overwrite local state with remote state - in memory -
+        mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
+        var diff = this.javers.compare(localState, sourceState);
+        var res = javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
+        return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(res));
     }
 
     public JsonNode toJsonNode(Object object) {

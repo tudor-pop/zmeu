@@ -1,43 +1,45 @@
 package dev.fangscl.Diff;
 
-import dev.fangscl.Backend.Resource;
+import dev.fangscl.Backend.VPC;
+import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Map.of;
-
+@Log4j2
 class DiffTest {
     private Diff diff;
     private final Printer printer = new Printer();
 
+    @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff();
+        diff = new Diff("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
     }
 
     @Test
     void noChanges() {
-        var localState = Resource.builder()
+        var localState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .cidrBlock("local")
                 .build();
 
-        var sourceState = Resource.builder().name("main")
-                .properties(of("clusterName", "local"))
+        var sourceState = VPC.builder().name("main")
+                .cidrBlock("local")
                 .build();
 
-        var cloudState = Resource.builder()
+        var cloudState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .cidrBlock("local")
                 .build();
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .cidrBlock("local")
                 .build();
         printer.print(res);
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
@@ -45,25 +47,25 @@ class DiffTest {
 
     @Test
     void sourceChangeOverridesRemote() {
-        var localState = Resource.builder()
+        var localState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .cidrBlock("local")
                 .build();
 
-        var sourceState = Resource.builder().name("main")
-                .properties(of("clusterName", "src"))
+        var sourceState = VPC.builder().name("main")
+                .cidrBlock("src")
                 .build();
 
-        var cloudState = Resource.builder()
+        var cloudState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .cidrBlock("local")
                 .build();
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         printer.print(res);
 
@@ -71,20 +73,20 @@ class DiffTest {
     }
 
     @Test
-    void addResourceToRemote() {
-        var localState = Resource.builder()
+    void addClusterToRemote() {
+        var localState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
 
-        var sourceState = Resource.builder().name("main")
-                .properties(of("clusterName", "src"))
+        var sourceState = VPC.builder().name("main")
+                .cidrBlock("src")
                 .build();
 
         var res = diff.plan(localState, sourceState, null);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         printer.print(res);
 
@@ -92,18 +94,18 @@ class DiffTest {
     }
 
     @Test
-    void addResourceToLocal() {
-        var sourceState = Resource.builder().name("main")
-                .properties(of("clusterName", "src"))
+    void addClusterToLocal() {
+        var sourceState = VPC.builder().name("main")
+                .cidrBlock("src")
                 .build();
-        var remoteState = Resource.builder()
+        var remoteState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         var res = diff.plan(null, sourceState, remoteState);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         printer.print(res);
 
@@ -112,40 +114,64 @@ class DiffTest {
 
     @Test
     @DisplayName("First apply creates remote and local states")
-    void addResourceToLocalAndRemote() {
-        var sourceState = Resource.builder().name("main")
-                .properties(of("clusterName", "src"))
+    void addClusterToLocalAndRemote() {
+        var sourceState = VPC.builder().name("main")
+                .cidrBlock("src")
                 .build();
 
         var res = diff.plan(null, sourceState, null);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         printer.print(res);
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
+    @SneakyThrows
+    @Test
+    public void shouldCompareTwoEntities() {
+        var localState = VPC.builder()
+                .id("main")
+                .name("main")
+                .cidrBlock("src")
+                .build();
+
+        var sourceState = VPC.builder()
+                .id("main")
+                .name("main")
+                .build();
+
+        var remoteState = VPC.builder()
+                .id("main")
+                .name("main")
+                .cidrBlock("remote")
+                .build();
+//        var commit = javers.commit("tudor", remoteState);
+        var res = this.diff.plan(localState, sourceState, remoteState);
+
+        //then
+        Assertions.assertEquals(res.sourceCode(), this.diff.getMapper().valueToTree(sourceState));
+    }
+
     @Test
     @DisplayName("Deleting src must delete local and remote regardless of their state")
-    void removeResourcePropertiesFromSrc() {
-        var localState = Resource.builder()
+    void removeClusterPropertiesFromSrc() {
+        var localState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
-        var srcState = Resource.builder()
+        var srcState = VPC.builder()
                 .name("main")
-                .properties(of())
                 .build();
-        var remoteState = Resource.builder()
+        var remoteState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         var res = diff.plan(localState, srcState, remoteState);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of())
                 .build();
         printer.print(res);
 
@@ -154,25 +180,25 @@ class DiffTest {
 
     @Test
     void localHiddenIsNotRemovedBySrc() {
-        var localState = Resource.builder()
+        var localState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local", "hidden", "secret"))
+                .cidrBlock("local")
                 .build();
 
-        var sourceState = Resource.builder().name("main")
-                .properties(of("clusterName", "src"))
+        var sourceState = VPC.builder().name("main")
+                .cidrBlock("src")
                 .build();
 
-        var cloudState = Resource.builder()
+        var cloudState = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "local"))
+                .cidrBlock("local")
                 .build();
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var plan = Resource.builder()
+        var plan = VPC.builder()
                 .name("main")
-                .properties(of("clusterName", "src"))
+                .cidrBlock("src")
                 .build();
         printer.print(res);
 

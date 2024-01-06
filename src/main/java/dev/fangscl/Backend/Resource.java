@@ -1,25 +1,29 @@
 package dev.fangscl.Backend;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-
-import java.util.HashMap;
-import java.util.Map;
+import lombok.experimental.SuperBuilder;
+import org.javers.core.metamodel.annotation.Entity;
+import org.javers.core.metamodel.annotation.Id;
 
 @Data
-@Builder
-@AllArgsConstructor
+@SuperBuilder
+@Entity
 public class Resource {
+    @Id
+    private String id;
     private String name;
-    @Builder.Default
-    protected Map<String, Object> properties = new HashMap<>();
-
-    public void setProperty(String key, Object value) {
-        properties.put(key, value);
-    }
+    protected String type;
 
     public Resource() {
-        properties = new HashMap<>();
+        type = getClass().getName();
+    }
+
+    public Resource(String name, String type) {
+        this(name);
+    }
+
+    public Resource(String name) {
+        this();
+        this.name = name;
     }
 }

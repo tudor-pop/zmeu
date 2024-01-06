@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Change {
-    CHANGE("±", "@|yellow %s|@"), REMOVE("-", "@|red %s|@"), ADD("+", "@|green %s|@");
+    COLORED_OPERATION("~", "@|yellow %s|@"), REMOVE("-", "@|red %s|@"), ADD("+", "@|green %s|@");
     private final String symbol;
     private final String color;
 
