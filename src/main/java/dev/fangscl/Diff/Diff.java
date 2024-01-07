@@ -82,8 +82,8 @@ public class Diff {
         // overwrite local state with remote state - in memory -
         mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         var diff = this.javers.compare(localState, sourceState);
-        var res = javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
-        return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(res));
+        javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
+        return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(localState));
     }
 
     public JsonNode toJsonNode(Object object) {
