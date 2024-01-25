@@ -2,6 +2,7 @@ package dev.fangscl.Backend;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
@@ -12,18 +13,14 @@ public class Resource {
     @Id
     private String id;
     private String name;
-    protected String type;
+
+    @DiffIgnore
+    private String canonicalType;
 
     public Resource() {
-        type = getClass().getName();
-    }
-
-    public Resource(String name, String type) {
-        this(name);
     }
 
     public Resource(String name) {
-        this();
         this.name = name;
     }
 }

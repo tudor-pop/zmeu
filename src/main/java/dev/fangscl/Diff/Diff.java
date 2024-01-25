@@ -2,10 +2,7 @@ package dev.fangscl.Diff;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import dev.fangscl.Backend.Resource;
 import dev.fangscl.javers.ShapeChangeLog;
@@ -78,12 +75,30 @@ public class Diff {
 
     @SneakyThrows
     public Plan plan(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
-        localState = localState == null ? Resource.builder().id("1").build() : localState;
+        localState = handleNullState(localState);
         // overwrite local state with remote state - in memory -
+        cloudState.setCanonicalType(cloudState.getClass().getName());
         mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         var diff = this.javers.compare(localState, sourceState);
-        javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
+        var changes = javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
+
         return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(localState));
+    }
+
+    private static Resource handleNullState(@Nullable Resource localState) {
+        return localState == null ? Resource.builder().id("1").build() : localState;
+    }
+
+    @SneakyThrows
+    public Plan apply(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+        var plan = plan(localState, sourceState, cloudState);
+
+        JsonNode jsonNode = plan.diffResults();
+        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode.path("canonicalType").asText());
+        var res = mapper.treeToValue(jsonNode, type);
+
+        javers.commit("Tudor", res);
+        return plan;
     }
 
     public JsonNode toJsonNode(Object object) {

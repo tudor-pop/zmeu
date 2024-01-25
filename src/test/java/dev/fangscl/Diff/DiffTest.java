@@ -168,6 +168,31 @@ class DiffTest {
         //then
         Assertions.assertEquals(res.sourceCode(), this.diff.getMapper().valueToTree(sourceState));
     }
+    @SneakyThrows
+    @Test
+    public void shouldApply() {
+        var localState = VPC.builder()
+                .id("main")
+                .name("main")
+                .cidrBlock("src")
+                .build();
+
+        var sourceState = VPC.builder()
+                .id("main")
+                .name("main")
+                .build();
+
+        var remoteState = VPC.builder()
+                .id("main")
+                .name("main")
+                .cidrBlock("remote")
+                .build();
+//        var commit = javers.commit("tudor", remoteState);
+        var res = this.diff.apply(localState, sourceState, remoteState);
+
+        //then
+        Assertions.assertEquals(res.sourceCode(), this.diff.getMapper().valueToTree(sourceState));
+    }
 
     @Test
     @DisplayName("Deleting src must delete local and remote regardless of their state")

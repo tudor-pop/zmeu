@@ -8,8 +8,20 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class VPC extends Resource {
     private String cidrBlock;
+
+    public VPC(String cidrBlock) {
+        this();
+        this.cidrBlock = cidrBlock;
+    }
+
+    public VPC(String name, String cidrBlock) {
+        super(name);
+        this.cidrBlock = cidrBlock;
+    }
+
+    public VPC() {
+        super();
+    }
 }

@@ -38,7 +38,8 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     public void onAffectedObject(GlobalId globalId) {
         newLine();
         var resource = StringUtils.split(globalId.value(), "/");
-        appendln(type + " resource %s %s { ".formatted(resource[0], resource[1]));
+        String s = StringUtils.substringAfterLast(resource[0],".");
+        appendln(type + " resource %s %s { ".formatted(s, resource[1]));
     }
 
     void newLine() {
