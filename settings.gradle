@@ -1,3 +1,5 @@
 rootProject.name = 'fangscl'
 
 include 'api'
+include 'plugins'
+include 'plugins:files'

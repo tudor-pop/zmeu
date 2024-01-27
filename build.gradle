@@ -9,7 +9,11 @@ repositories {
     mavenCentral()
 }
 
+def pf4jVersion = "3.10.0"
+
 dependencies {
+    implementation project(':api')
+
     implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
@@ -24,6 +28,8 @@ dependencies {
     implementation 'software.amazon.awssdk:aws-core:2.20.83'
     implementation 'org.fusesource.jansi:jansi:2.4.0'
 //    implementation 'org.javers:javers-core:7.0.1'
+    implementation "org.pf4j:pf4j:${pf4jVersion}"
+    annotationProcessor "org.pf4j:pf4j:${pf4jVersion}"
 
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
     implementation 'info.picocli:picocli:4.7.5'
