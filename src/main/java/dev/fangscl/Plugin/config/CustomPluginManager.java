@@ -29,7 +29,6 @@ public class CustomPluginManager extends DefaultPluginManager {
 
     public CustomPluginManager(List<Path> pluginsRoots) {
         super(pluginsRoots);
-        System.out.println(pluginsRoots);
     }
 
     @Override
