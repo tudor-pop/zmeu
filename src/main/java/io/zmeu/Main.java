@@ -1,14 +1,16 @@
 package io.zmeu;
 
 import io.zmeu.Plugin.config.CustomPluginManager;
+import io.zmeu.api.Provider;
+import io.zmeu.file.FileResource;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.pf4j.PluginWrapper;
-import io.zmeu.api.Provider;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Log4j2
@@ -60,8 +62,16 @@ public class Main {
         // retrieves the extensions for Greeting extension point
         List<Provider> providers = pluginManager.getExtensions(Provider.class);
         log.info(String.format("Found %d extensions for extension point '%s'", providers.size(), Provider.class.getName()));
-        for (Provider provider : providers) {
+        for (var provider : providers) {
             log.info(">>> " + provider.getResources());
+            var declaration = new FileResource();
+            declaration.setName("fisier.txt");
+//            declaration.setContent(Attribute.builder().value().build());
+            try {
+                var read = provider.read(declaration);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         // // print extensions from classpath (non plugin)

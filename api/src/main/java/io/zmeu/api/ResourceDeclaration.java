@@ -1,9 +1,5 @@
 package io.zmeu.api;
 
-import lombok.Data;
+public abstract interface ResourceDeclaration extends Output {
 
-@Data
-public class ResourceDeclaration {
-    protected Metadata metadata;
-    protected Schema schema;
 }

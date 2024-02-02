@@ -17,12 +17,15 @@ package io.zmeu.api;
 
 import org.pf4j.ExtensionPoint;
 
+import java.io.FileNotFoundException;
+
 /**
  * @author Decebal Suiu
  */
-public interface Provider extends ExtensionPoint {
+public interface Provider<T extends ResourceDeclaration, R extends Output> extends ExtensionPoint {
 
     Resources getResources();
 
+    T read(T declaration) throws FileNotFoundException;
 
 }
