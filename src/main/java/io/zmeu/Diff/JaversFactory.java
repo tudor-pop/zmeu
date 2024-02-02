@@ -27,10 +27,10 @@ public class JaversFactory {
                 .sqlRepository()
                 .withConnectionProvider(connectionProvider)
                 .withDialect(DialectName.POSTGRES)
-                .withCommitTableName("shape_commit")
-                .withGlobalIdTableName("shape_global_id")
-                .withSnapshotTableName("shape_snapshot")
-                .withCommitPropertyTableName("shape_commit_property")
+                .withCommitTableName("zmeu_commit")
+                .withGlobalIdTableName("zmeu_global_id")
+                .withSnapshotTableName("zmeu_snapshot")
+                .withCommitPropertyTableName("zmeu_commit_property")
                 .build();
 
         //given
