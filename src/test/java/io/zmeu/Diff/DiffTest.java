@@ -145,13 +145,15 @@ class DiffTest {
                 .content("src")
                 .build();
 
-        var sourceState = FileResource.builder().id("main")
+        var sourceState = FileResource.builder()
+                .id("main")
                 .name("main")
                 .build();
 
 
         var remoteState = FileResource.builder()
-                .name("main").id("main")
+                .id("main")
+                .name("main")
                 .content("remote")
                 .build();
 

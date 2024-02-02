@@ -1,7 +1,6 @@
 package io.zmeu.javers;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.fusesource.jansi.Ansi;
 import org.javers.core.changelog.AbstractTextChangeLog;
 import org.javers.core.diff.Change;
@@ -14,14 +13,16 @@ import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
 import org.javers.core.metamodel.object.InstanceId;
 
-import static io.zmeu.Diff.Change.COLORED_OPERATION;
+import static io.zmeu.Diff.Change.CHANGE;
+import static io.zmeu.Diff.Change.NO_OP;
 import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
 public class ShapeChangeLog extends AbstractTextChangeLog {
-    private String type = COLORED_OPERATION.coloredOperation();
+    private String type = NO_OP.coloredOperation();
     private Ansi ansi;
     private boolean enableStdout;
+    private InstanceId globalId;
 
     public ShapeChangeLog(boolean enableStdout) {
         this.enableStdout = enableStdout;
@@ -38,7 +39,9 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void afterChangeList() {
-        append(type + " }");
+        if (!type.isEmpty()) {
+            append(type + " }");
+        }
         ansi = ansi.render(result());
         if (enableStdout) {
             log.info(ansi);
@@ -47,9 +50,8 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onAffectedObject(GlobalId globalId) {
-        var resource = StringUtils.split(globalId.value(), "/");
-        String s = StringUtils.substringAfterLast(resource[0], ".");
-        appendln(type + " resource %s %s { ".formatted(s, resource[1]));
+        this.globalId = (InstanceId) globalId;
+//        appendln(type + " resource %s %s { ".formatted(this.globalId.getTypeName(), this.globalId.getCdoId()));
     }
 
     void newLine() {
@@ -60,15 +62,13 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     public void beforeChange(Change change) {
         this.type = switch (change) {
             case InitialValueChange newObject -> io.zmeu.Diff.Change.ADD.coloredOperation();
-            case ValueChange valueChange -> COLORED_OPERATION.coloredOperation();
-            case ListChange listChange -> COLORED_OPERATION.coloredOperation();
-            case MapChange mapChange -> COLORED_OPERATION.coloredOperation();
-            case ArrayChange arrayChange -> COLORED_OPERATION.coloredOperation();
-            case SetChange setChange -> COLORED_OPERATION.coloredOperation();
-            case ReferenceChange referenceChange -> COLORED_OPERATION.coloredOperation();
             case ObjectRemoved objectRemoved -> io.zmeu.Diff.Change.REMOVE.coloredOperation();
             case NewObject newObject -> io.zmeu.Diff.Change.ADD.coloredOperation();
-            default -> COLORED_OPERATION.coloredOperation();
+            default -> {
+                var res=CHANGE.coloredOperation();
+                appendln(res + " resource %s %s { ".formatted(globalId.getTypeName(), globalId.getCdoId()));
+                yield res;
+            }
         };
     }
 
@@ -82,14 +82,13 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
             case InitialValueChange valueChange ->
                     append(type + "\t" + change.getPropertyName() + " = " + change.getRight());
             default ->
-                    appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+                    append(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
         }
     }
 
     @Override
     public void onReferenceChange(ReferenceChange change) {
         appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
-
     }
 
     @Override
@@ -100,8 +99,8 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        var resource = StringUtils.split(objectRemoved.getAffectedGlobalId().value(), "/");
-        appendln(io.zmeu.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource[0], resource[1]));
+        var resource = (InstanceId) objectRemoved.getAffectedGlobalId();
+        appendln(io.zmeu.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource.getTypeName(), resource.getCdoId()));
     }
 
     @Override
