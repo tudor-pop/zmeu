@@ -15,7 +15,7 @@ class DiffTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        diff = new Diff(JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres"));
     }
 
     @Test

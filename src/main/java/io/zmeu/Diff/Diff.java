@@ -10,15 +10,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Javers;
-import org.javers.core.JaversBuilder;
-import org.javers.core.diff.ListCompareAlgorithm;
-import org.javers.repository.sql.ConnectionProvider;
-import org.javers.repository.sql.DialectName;
-import org.javers.repository.sql.SqlRepositoryBuilder;
 import org.jetbrains.annotations.Nullable;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 /**
  *
@@ -32,33 +24,9 @@ public class Diff {
             .build();
 
     @SneakyThrows
-    public Diff(String connection, String username, String password) {
+    public Diff(Javers javers) {
         this();
-        var dbConnection = DriverManager.getConnection(connection, username, password);
-
-        var connectionProvider = new ConnectionProvider() {
-            @Override
-            public Connection getConnection() {
-                //suitable only for testing!
-                return dbConnection;
-            }
-        };
-        var sqlRepository = SqlRepositoryBuilder
-                .sqlRepository()
-                .withConnectionProvider(connectionProvider)
-                .withDialect(DialectName.POSTGRES)
-                .withCommitTableName("shape_commit")
-                .withGlobalIdTableName("shape_global_id")
-                .withSnapshotTableName("shape_snapshot")
-                .withCommitPropertyTableName("shape_commit_property")
-                .build();
-
-        //given
-        javers = JaversBuilder.javers()
-                .withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
-                .registerJaversRepository(sqlRepository)
-                .withPrettyPrint(true)
-                .build();
+        this.javers = javers;
     }
 
     public Diff() {
