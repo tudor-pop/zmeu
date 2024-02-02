@@ -79,7 +79,10 @@ public class Diff {
         if (cloudState != null) {
             cloudState.setCanonicalType(cloudState.getClass().getName());
         }
-        if (localState != null){
+        if (cloudState == null) {
+            localState = null; // local state is invalid because the cloud resource doesn't exist anymore
+        }
+        if (localState != null) {
             mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
         var diff = this.javers.compare(localState, sourceState);

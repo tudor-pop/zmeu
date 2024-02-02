@@ -12,6 +12,7 @@ import org.javers.core.diff.changetype.container.ListChange;
 import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
+import org.javers.core.metamodel.object.InstanceId;
 
 import static io.zmeu.Diff.Change.COLORED_OPERATION;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -32,13 +33,22 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     @Override
     public void beforeChangeList() {
         ansi = ansi().eraseScreen();
+        newLine();
+    }
+
+    @Override
+    public void afterChangeList() {
+        append(type + " }");
+        ansi = ansi.render(result());
+        if (enableStdout) {
+            log.info(ansi);
+        }
     }
 
     @Override
     public void onAffectedObject(GlobalId globalId) {
-        newLine();
         var resource = StringUtils.split(globalId.value(), "/");
-        String s = StringUtils.substringAfterLast(resource[0],".");
+        String s = StringUtils.substringAfterLast(resource[0], ".");
         appendln(type + " resource %s %s { ".formatted(s, resource[1]));
     }
 
@@ -47,16 +57,9 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     }
 
     @Override
-    public void afterChangeList() {
-        ansi = ansi.render(result());
-        if (enableStdout) {
-            log.info(ansi);
-        }
-    }
-
-    @Override
     public void beforeChange(Change change) {
         this.type = switch (change) {
+            case InitialValueChange newObject -> io.zmeu.Diff.Change.ADD.coloredOperation();
             case ValueChange valueChange -> COLORED_OPERATION.coloredOperation();
             case ListChange listChange -> COLORED_OPERATION.coloredOperation();
             case MapChange mapChange -> COLORED_OPERATION.coloredOperation();
@@ -71,11 +74,16 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void afterChange(Change change) {
-        appendln(type + " }");
+        append("\n");
     }
 
     public void onValueChange(ValueChange change) {
-        appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        switch (change) {
+            case InitialValueChange valueChange ->
+                    append(type + "\t" + change.getPropertyName() + " = " + change.getRight());
+            default ->
+                    appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        }
     }
 
     @Override
@@ -86,8 +94,8 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onNewObject(NewObject newObject) {
-        var resource = StringUtils.split(newObject.getAffectedGlobalId().value(), "/");
-        appendln(io.zmeu.Diff.Change.ADD.coloredOperation() + " resource %s %s { ".formatted(resource[0], resource[1]));
+        InstanceId id = (InstanceId) newObject.getAffectedGlobalId();
+        append(io.zmeu.Diff.Change.ADD.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId()));
     }
 
     @Override
