@@ -2,7 +2,7 @@ package io.zmeu.CLI;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.zmeu.Backend.Resource;
+import io.zmeu.api.Resource;
 import io.zmeu.Backend.State;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Frontend.Lexer.Tokenizer;
@@ -65,7 +65,7 @@ class CLI implements Runnable {
 //            System.out.println(evalRes);
             State state = stateStr.isEmpty() ? new State() : mapper.readValue(stateStr, State.class);
             Resource cloud = Resource.builder()
-                    .name("main")
+                    .id("main")
 //                    .type("vm")
                     .build();
 //            if (cloudStr.isEmpty()) {
@@ -79,7 +79,7 @@ class CLI implements Runnable {
             for (var srcResource : evalRes) {
                 var src = Resource.builder()
 //                        .type(srcResource.getSchema())
-                        .name(srcResource.getName())
+                        .id(srcResource.getName())
                         .build();
 //                JsonNode stateResource = resources.stream().filter(it -> it.get("name").equals(src.getName()) )
 //                        .orElseGet(mapper::createObjectNode);

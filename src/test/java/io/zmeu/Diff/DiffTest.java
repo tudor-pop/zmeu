@@ -1,6 +1,6 @@
 package io.zmeu.Diff;
 
-import io.zmeu.Backend.VPC;
+import io.zmeu.file.FileResource;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
@@ -20,58 +20,49 @@ class DiffTest {
 
     @Test
     void noChanges() {
-        var localState = VPC.builder()
+        var localState = FileResource.builder().id("main")
                 .name("main")
-                .cidrBlock("local")
-                .id("id")
+                .content("local")
                 .build();
 
-        var sourceState = VPC.builder().name("main")
-                .cidrBlock("local")
-                .id("id")
+        var sourceState = FileResource.builder().name("main").id("main")
+                .content("local")
                 .build();
 
-        var cloudState = VPC.builder()
+        var cloudState = FileResource.builder().id("main")
                 .name("main")
-                .id("id")
-                .cidrBlock("local")
+                .content("local")
                 .build();
-
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var plan = VPC.builder()
+        var plan = FileResource.builder().id("main")
                 .name("main")
-                .id("id")
-                .cidrBlock("local")
+                .content("local")
                 .build();
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
     }
 
     @Test
     void sourceChangeOverridesRemote() {
-        var localState = VPC.builder()
+        var localState = FileResource.builder().id("main")
                 .name("main")
-                .cidrBlock("local")
-                .id("id")
+                .content("local")
                 .build();
 
-        var sourceState = VPC.builder().name("main")
-                .cidrBlock("src")
-                .id("id")
-                .build();
-
-        var cloudState = VPC.builder()
+        var sourceState = FileResource.builder().id("main")
                 .name("main")
-                .cidrBlock("local")
-                .id("id")
+                .content("src")
                 .build();
 
+        var cloudState = FileResource.builder().id("main")
+                .name("main")
+                .content("local")
+                .build();
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var plan = VPC.builder()
+        var plan = FileResource.builder().id("main")
                 .name("main")
-                .id("id")
-                .cidrBlock("src")
+                .content("src")
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
@@ -79,22 +70,23 @@ class DiffTest {
 
     @Test
     void addClusterToRemote() {
-        var localState = VPC.builder()
+        var localState = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
 
-        var sourceState = VPC.builder().name("main")
-                .id("id")
-                .cidrBlock("src")
+        var sourceState = FileResource.builder()
+                .id("main")
+                .name("main")
+                .content("src")
                 .build();
 
         var res = diff.plan(localState, sourceState, null);
-        var plan = VPC.builder()
+        var plan = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
@@ -102,21 +94,21 @@ class DiffTest {
 
     @Test
     void addClusterToLocal() {
-        var sourceState = VPC.builder()
+        var sourceState = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
-        var remoteState = VPC.builder()
+        var remoteState = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
         var res = diff.plan(null, sourceState, remoteState);
-        var plan = VPC.builder()
+        var plan = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
@@ -125,16 +117,17 @@ class DiffTest {
     @Test
     @DisplayName("First apply creates remote and local states")
     void addClusterToLocalAndRemote() {
-        var sourceState = VPC.builder().name("main")
-                .cidrBlock("src")
-                .id("id")
+        var sourceState = FileResource.builder()
+                .id("main")
+                .name("main")
+                .content("src")
                 .build();
 
         var res = diff.plan(null, sourceState, null);
-        var plan = VPC.builder()
+        var plan = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
@@ -146,46 +139,47 @@ class DiffTest {
     @SneakyThrows
     @Test
     public void shouldDo3WayDiff() {
-        var localState = VPC.builder()
+        var localState = FileResource.builder()
                 .id("main")
                 .name("main")
-                .cidrBlock("src")
+                .content("src")
                 .build();
 
-        var sourceState = VPC.builder()
-                .id("main")
+        var sourceState = FileResource.builder().id("main")
                 .name("main")
                 .build();
 
-        var remoteState = VPC.builder()
-                .id("main")
-                .name("main")
-                .cidrBlock("remote")
+
+        var remoteState = FileResource.builder()
+                .name("main").id("main")
+                .content("remote")
                 .build();
+
 //        var commit = javers.commit("tudor", remoteState);
         var res = this.diff.plan(localState, sourceState, remoteState);
 
         //then
         Assertions.assertEquals(res.sourceCode(), this.diff.getMapper().valueToTree(sourceState));
     }
+
     @SneakyThrows
     @Test
     public void shouldApply() {
-        var localState = VPC.builder()
-                .id("main")
+        var localState = FileResource.builder()
                 .name("main")
-                .cidrBlock("src")
+                .id("main")
+                .content("src")
                 .build();
 
-        var sourceState = VPC.builder()
-                .id("main")
+        var sourceState = FileResource.builder()
                 .name("main")
+                .id("main")
                 .build();
 
-        var remoteState = VPC.builder()
-                .id("main")
+        var remoteState = FileResource.builder()
                 .name("main")
-                .cidrBlock("remote")
+                .id("main")
+                .content("remote")
                 .build();
 //        var commit = javers.commit("tudor", remoteState);
         var res = this.diff.apply(localState, sourceState, remoteState);
@@ -197,23 +191,26 @@ class DiffTest {
     @Test
     @DisplayName("Deleting src must delete local and remote regardless of their state")
     void removeClusterPropertiesFromSrc() {
-        var localState = VPC.builder()
+        var localState = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
+                .content("src")
                 .build();
-        var srcState = VPC.builder()
+
+        var srcState = FileResource.builder()
+                .id("main")
                 .name("main")
-                .id("id")
                 .build();
-        var remoteState = VPC.builder()
+
+        var remoteState = FileResource.builder()
+                .id("main")
                 .name("main")
-                .cidrBlock("src")
-                .id("id")
+                .content("src")
                 .build();
+
         var res = diff.plan(localState, srcState, remoteState);
-        var plan = VPC.builder()
+        var plan =  FileResource.builder().id("main")
                 .name("main")
-                .id("id")
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
@@ -221,29 +218,25 @@ class DiffTest {
 
     @Test
     void localHiddenIsNotRemovedBySrc() {
-        var localState = VPC.builder()
-                .id("id")
+        var localState =  FileResource.builder().id("main")
                 .name("main")
-                .cidrBlock("local")
+                .content("local")
                 .build();
 
-        var sourceState = VPC.builder().name("main")
-                .id("id")
-                .cidrBlock("src")
+        var sourceState =  FileResource.builder().name("main").id("main")
+                .content("src")
                 .build();
 
-        var cloudState = VPC.builder()
-                .id("id")
+        var cloudState =  FileResource.builder().id("main")
                 .name("main")
-                .cidrBlock("local")
+                .content("local")
                 .build();
 
 
         var res = diff.plan(localState, sourceState, cloudState);
-        var plan = VPC.builder()
-                .id("id")
+        var plan = FileResource.builder().id("main")
                 .name("main")
-                .cidrBlock("src")
+                .content("src")
                 .build();
 
         Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());

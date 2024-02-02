@@ -1,4 +1,4 @@
-package io.zmeu.Backend;
+package io.zmeu.api;
 
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -12,7 +12,6 @@ import org.javers.core.metamodel.annotation.Id;
 public class Resource {
     @Id
     private String id;
-    private String name;
 
     @DiffIgnore
     private String canonicalType;
@@ -20,7 +19,4 @@ public class Resource {
     public Resource() {
     }
 
-    public Resource(String name) {
-        this.name = name;
-    }
 }

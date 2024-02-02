@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 public class Resources {
 
-    List<ResourceDeclaration> resources;
+    List<Resource> resources;
 
 }

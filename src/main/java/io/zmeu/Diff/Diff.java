@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.zmeu.Backend.Resource;
+import io.zmeu.api.Resource;
 import io.zmeu.javers.ShapeChangeLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -75,18 +75,22 @@ public class Diff {
 
     @SneakyThrows
     public Plan plan(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
-        localState = handleNullState(localState);
         // overwrite local state with remote state - in memory -
-        cloudState.setCanonicalType(cloudState.getClass().getName());
-        mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
+        if (cloudState != null) {
+            cloudState.setCanonicalType(cloudState.getClass().getName());
+        }
+        if (localState != null){
+            mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
+        }
         var diff = this.javers.compare(localState, sourceState);
         var changes = javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
 
+        localState = handleNullState(localState);
         return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(localState));
     }
 
     private static Resource handleNullState(@Nullable Resource localState) {
-        return localState == null ? Resource.builder().id("1").build() : localState;
+        return localState == null ? Resource.builder().build() : localState;
     }
 
     @SneakyThrows

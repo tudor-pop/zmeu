@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
 /**
  * @author Decebal Suiu
  */
-public interface Provider<T extends ResourceDeclaration, R extends Output> extends ExtensionPoint {
+public interface Provider<T extends Resource> extends ExtensionPoint {
 
     Resources getResources();
 
