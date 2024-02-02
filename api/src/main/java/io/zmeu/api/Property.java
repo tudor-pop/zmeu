@@ -14,6 +14,7 @@ public @interface Property {
     String deprecationMessage() default "";
 
     boolean optional() default true;
+    boolean readonly() default false;
 
     boolean hidden() default false;
 

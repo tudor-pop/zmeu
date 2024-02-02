@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'dev.fangscl'
+group 'io.zmeu'
 version '0.1.0'
 
 repositories {

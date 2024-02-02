@@ -1,4 +1,4 @@
-rootProject.name = 'fangscl'
+rootProject.name = 'zmeu'
 
 include 'api'
 include 'plugins'
