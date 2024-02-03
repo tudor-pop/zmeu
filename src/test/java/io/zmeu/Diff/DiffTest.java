@@ -211,7 +211,8 @@ class DiffTest {
                 .build();
 
         var res = diff.plan(localState, srcState, remoteState);
-        var plan =  FileResource.builder().id("main")
+        var plan =  FileResource.builder()
+                .id("main")
                 .name("main")
                 .build();
 

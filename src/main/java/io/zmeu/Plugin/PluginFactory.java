@@ -9,7 +9,7 @@ import java.util.List;
 
 @Log4j2
 public class PluginFactory {
-    public static void create() {
+    public static CustomPluginManager create() {
         var pluginManager = new CustomPluginManager();
         pluginManager.loadPlugins();
 
@@ -22,7 +22,10 @@ public class PluginFactory {
         log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
 
         for (var provider : providers) {
-            log.info(">>> " + provider.getResources());
+            log.info("Resources: ");
+//            provider.getResources()
+//                    .getResources()
+//                    .forEach(message -> log.info("\t" + AnnotationProcessor.process(message)));
 //            declaration.setContent(Attribute.builder().value().build());
 //            try {
 //                var read = provider.read(declaration);
@@ -35,15 +38,15 @@ public class PluginFactory {
         List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
         for (PluginWrapper plugin : startedPlugins) {
             String pluginId = plugin.getDescriptor().getPluginId();
-            log.info(String.format("Extensions added by plugin '%s':", pluginId));
-            log.info(String.format("Extensions added by plugin version '%s':", plugin.getDescriptor().getVersion()));
+            log.info("Extensions added by plugin {}", pluginId);
             var extensionClassNames = pluginManager.getExtensionClassNames(pluginId);
             for (String extension : extensionClassNames) {
-                log.info("   " + extension);
+                log.info("\t\t" + extension);
             }
         }
 
         // stop the plugins
-        pluginManager.stopPlugins();
+//        pluginManager.stopPlugins();
+        return pluginManager;
     }
 }
