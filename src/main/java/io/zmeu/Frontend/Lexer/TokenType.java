@@ -101,6 +101,7 @@ public enum TokenType {
 
     /*****   Operators   ******/
     OptionalOperator("?"),
+    AT("@"),
     Plus("+"), Increment("++"), Decrement("--"), Minus("-"),
     Lambda("->"), Multiply("*"), Division("/"), Modulo("%"),
     Null("null"),
@@ -131,6 +132,7 @@ public enum TokenType {
             case '[' -> OpenBrackets;
             case ']' -> CloseBrackets;
             case '?' -> OptionalOperator;
+            case '@' -> AT;
             case '+' -> Plus;
             case '-' -> Minus;
             case '*' -> Multiply;

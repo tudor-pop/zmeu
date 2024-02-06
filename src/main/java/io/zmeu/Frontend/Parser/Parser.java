@@ -381,7 +381,7 @@ public class Parser {
 
     private Statement TypeDeclaration() {
         eat(TokenType.Schema);
-        var test = Identifier();
+        var test = PackageIdentifier();
 
         Expression body = BlockExpression();
         return TypeDeclaration.of(test, body);
@@ -665,7 +665,7 @@ public class Parser {
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
-        eat(TokenType.OpenBraces,"Expect '{' after resource name.");
+        eat(TokenType.OpenBraces, "Expect '{' after resource name.");
         var body = new ArrayList<Statement>();
         while (!IsLookAhead(TokenType.CloseBraces)) {
             if (IsLookAhead(TokenType.lineTerminator())) {
@@ -677,6 +677,19 @@ public class Parser {
         eat(TokenType.CloseBraces, "Expect '}' after resource body.");
 
         return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
+    }
+
+    private PackageIdentifier PackageIdentifier() {
+        var identifier = new PackageIdentifier();
+        for (var next = eat(TokenType.Identifier); IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT);next = eat(TokenType.Identifier)) {
+            if (IsLookAhead(TokenType.OpenBraces)) {
+                identifier.setSymbol(next.getValue().toString());
+                break;
+            }
+            identifier.addPackage(String.valueOf(next.getValue()));
+            eat(TokenType.Dot);
+        }
+        return identifier;
     }
 
     private Expression LeftHandSideExpression() {
