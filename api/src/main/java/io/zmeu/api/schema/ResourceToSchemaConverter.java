@@ -22,7 +22,7 @@ public class ResourceToSchemaConverter {
             }
             properties.append(name);
             properties.append("\t:\t");
-            properties.append(property.type());
+            properties.append(property.type().name());
             properties.append("\n");
         }
         properties.append("} \n");

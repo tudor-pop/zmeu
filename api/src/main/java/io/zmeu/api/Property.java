@@ -1,5 +1,7 @@
 package io.zmeu.api;
 
+import io.zmeu.api.types.Types;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,7 +12,7 @@ import java.lang.annotation.Target;
 public @interface Property {
     String name() default "";
 
-    String type();
+    Types type();
 
     String description() default "";
 
