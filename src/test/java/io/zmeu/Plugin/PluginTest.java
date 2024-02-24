@@ -40,7 +40,7 @@ public class PluginTest extends BaseTest {
         var schema = (SchemaValue) global.get("File");
 
         assertNotNull(schema);
-        assertEquals("File", schema.getType().getSymbol());
+        assertEquals("File", schema.getType().getPackageNameString());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");

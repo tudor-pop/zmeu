@@ -25,7 +25,7 @@ public class SchemaTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
-        assertEquals("Vm", actual.getType().getSymbol());
+        assertEquals("Vm", actual.getType().getPackageNameString());
     }
 
     @Test

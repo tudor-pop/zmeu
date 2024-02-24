@@ -1,7 +1,7 @@
 package io.zmeu.Runtime.Values;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Expressions.PackageIdentifier;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Environment.IEnvironment;
 import lombok.Data;
@@ -15,25 +15,25 @@ public class SchemaValue {
     private final Environment environment;
     @JsonIgnore
     private final Environment instances;
-    private final Identifier type;
+    private final PackageIdentifier type;
 
-    private SchemaValue(Identifier type, Environment environment) {
+    private SchemaValue(PackageIdentifier type, Environment environment) {
         this.type = type;
         this.instances = new Environment(environment);
         this.environment = environment;
         this.environment.init(INSTANCES, instances);
     }
 
-    public static SchemaValue of(Identifier name, Environment environment) {
+    public static SchemaValue of(PackageIdentifier name, Environment environment) {
         return new SchemaValue(name, environment);
     }
 
     public static SchemaValue of(String name, Environment environment) {
-        return new SchemaValue(Identifier.of(name), environment);
+        return new SchemaValue(PackageIdentifier.of(name), environment);
     }
 
     public String typeString() {
-        return type.getSymbol();
+        return type.getType();
     }
 
     @NotNull

@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
-import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,10 +23,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @AllArgsConstructor
-public class PackageIdentifier extends Identifier {
+public class PackageIdentifier extends Expression {
     @Builder.Default
     private List<String> packageName = new ArrayList<>();
+    private StringBuilder packageNameString = new StringBuilder();
     private LocalDate date;
+    private String type;
 
     public PackageIdentifier() {
         this.kind = NodeType.SimplePathExpression;
@@ -36,12 +37,16 @@ public class PackageIdentifier extends Identifier {
 
     private PackageIdentifier(String type, LocalDate date) {
         this();
-        this.setSymbol(type);
+        this.type = type;
         this.date = date;
     }
 
     public static Expression of(String object, LocalDate property) {
         return new PackageIdentifier(object, property);
+    }
+
+    public static PackageIdentifier of(String object) {
+        return new PackageIdentifier(object, null);
     }
 
     @Override
@@ -51,6 +56,10 @@ public class PackageIdentifier extends Identifier {
 
     public void addPackage(String value) {
         this.packageName.add(value);
+        packageNameString.append(value);
     }
 
+    public String getPackageNameString() {
+        return packageNameString.toString();
+    }
 }

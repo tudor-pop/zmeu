@@ -307,7 +307,7 @@ public class Resolver implements Visitor<Void>, io.zmeu.Frontend.Parser.Statemen
     }
 
     @Override
-    public Void eval(TypeDeclaration statement) {
+    public Void eval(SchemaDeclaration statement) {
 //        beginScope();
 //        resolve(statement.getName());
 //        resolveNoBlock(statement.getBody());

@@ -1,9 +1,6 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Expressions.AssignmentExpression;
-import io.zmeu.Frontend.Parser.Expressions.MemberExpression;
-import io.zmeu.Frontend.Parser.Expressions.ThisExpression;
-import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
+import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
 import io.zmeu.Frontend.Parser.Program;
@@ -27,7 +24,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """);
         var expected = Program.of(
-                TypeDeclaration.of(Identifier.of("square"),
+                SchemaDeclaration.of(PackageIdentifier.of("square"),
                         BlockExpression.of(
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)))
                         )
@@ -47,7 +44,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """);
         var expected = Program.of(
-                TypeDeclaration.of(Identifier.of("square"),
+                SchemaDeclaration.of(PackageIdentifier.of("square"),
                         BlockExpression.of(
                                 FunctionDeclaration.of(Identifier.of("test"), Collections.emptyList(), BlockExpression.of())
                         )
@@ -67,7 +64,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """);
         var expected = Program.of(
-                TypeDeclaration.of(Identifier.of("square"),
+                SchemaDeclaration.of(PackageIdentifier.of("square"),
                         BlockExpression.of(
                                 InitStatement.of(Collections.emptyList(), BlockExpression.of())
                         )
@@ -88,7 +85,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """);
         var expected = Program.of(
-                TypeDeclaration.of(Identifier.of("square"),
+                SchemaDeclaration.of(PackageIdentifier.of("square"),
                         BlockExpression.of(
                                 InitStatement.of(List.of(Identifier.of("x")),
                                         BlockExpression.of(
