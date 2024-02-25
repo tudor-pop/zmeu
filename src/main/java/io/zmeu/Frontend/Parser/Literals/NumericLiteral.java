@@ -3,6 +3,7 @@ package io.zmeu.Frontend.Parser.Literals;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Expressions.Visitor;
 import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.api.types.Types;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -107,6 +108,11 @@ public class NumericLiteral extends Literal {
     @Override
     public Object getVal() {
         return value;
+    }
+
+    @Override
+    public Types type() {
+        return Types.Number;
     }
 
     @Override

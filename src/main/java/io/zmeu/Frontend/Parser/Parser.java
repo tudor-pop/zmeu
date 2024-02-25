@@ -7,9 +7,11 @@ import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.errors.InvalidTypeInitException;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -77,7 +79,7 @@ public class Parser {
     }
 
     private Program Program() {
-        var statements = StatementList(TokenType.EOF);
+        var statements = StatementList(EOF);
         program.setBody(statements);
         return program;
     }
@@ -127,14 +129,15 @@ public class Parser {
                 default -> Statement();
             };
         } catch (RuntimeException error) {
+            ErrorSystem.error(error.getMessage());
             iterator.synchronize();
             return null;
         }
     }
 
     /**
-     * {@snippet :
-     * : Statement
+     * {@snippet
+             *: Statement
      * | EmptyStatement
      * | VariableStatement
      * | IfStatement
@@ -175,10 +178,10 @@ public class Parser {
      * ;
      */
     private Statement WhileStatement() {
-        eat(TokenType.While);
-        eat(TokenType.OpenParenthesis);
+        eat(While);
+        eat(OpenParenthesis);
         var test = Expression();
-        eat(TokenType.CloseParenthesis);
+        eat(CloseParenthesis);
         if (IsLookAhead(NewLine)) {
             /* while(x)
              *   x=2
@@ -196,17 +199,17 @@ public class Parser {
      * ;
      */
     private Statement ForStatement() {
-        eat(TokenType.For);
-        eat(TokenType.OpenParenthesis);
+        eat(For);
+        eat(OpenParenthesis);
 
         Statement init = ForStatementInit();
-        eat(TokenType.SemiColon);
+        eat(SemiColon);
 
         var test = ForStatementTest();
-        eat(TokenType.SemiColon);
+        eat(SemiColon);
 
         var update = ForStatementIncrement();
-        eat(TokenType.CloseParenthesis);
+        eat(CloseParenthesis);
         if (IsLookAhead(NewLine)) {
             /* while(x)
              *   x=2
@@ -225,18 +228,18 @@ public class Parser {
 
     @Nullable
     private Expression ForStatementIncrement() {
-        return IsLookAhead(TokenType.CloseParenthesis) ? null : Expression();
+        return IsLookAhead(CloseParenthesis) ? null : Expression();
     }
 
     @Nullable
     private Expression ForStatementTest() {
-        return IsLookAhead(TokenType.SemiColon) ? null : Expression();
+        return IsLookAhead(SemiColon) ? null : Expression();
     }
 
     private Statement ForStatementInit() {
         return switch (lookAhead().getType()) {
             case Var -> {
-                eat(TokenType.Var);
+                eat(Var);
                 yield VariableStatementInit();
             }
             case SemiColon -> null;
@@ -250,7 +253,7 @@ public class Parser {
      * ;
      */
     private Statement VariableDeclarations() {
-        eat(TokenType.Var);
+        eat(Var);
         var statement = VariableStatementInit();
         iterator.eatLineTerminator();
 //        iterator.prev();
@@ -283,12 +286,12 @@ public class Parser {
      * : Statement* Expression
      */
     private Expression BlockExpression() {
-        eat(TokenType.OpenBraces);
-        var res = IsLookAhead(TokenType.CloseBraces)
+        eat(OpenBraces);
+        var res = IsLookAhead(CloseBraces)
                 ? BlockExpression.of(Collections.emptyList())
-                : BlockExpression.of(StatementList(TokenType.CloseBraces));
-        if (IsLookAhead(TokenType.CloseBraces)) { // ? { } => eat } & return the block
-            eat(TokenType.CloseBraces, "Error");
+                : BlockExpression.of(StatementList(CloseBraces));
+        if (IsLookAhead(CloseBraces)) { // ? { } => eat } & return the block
+            eat(CloseBraces, "Error");
         }
         return res;
     }
@@ -303,7 +306,7 @@ public class Parser {
         var declarations = new ArrayList<VariableDeclaration>();
         do {
             declarations.add(VariableDeclaration());
-        } while (IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
+        } while (IsLookAhead(Comma) && eat(Comma) != null);
         return declarations;
     }
 
@@ -315,7 +318,15 @@ public class Parser {
     private VariableDeclaration VariableDeclaration() {
         var id = Identifier();
         var type = TypeDeclaration();
-        var init = IsLookAhead(TokenType.lineTerminator(), TokenType.Comma, TokenType.EOF) ? null : VariableInitializer();
+        var init = IsLookAhead(lineTerminator(), Comma, EOF) ? null : VariableInitializer();
+        switch (init) {
+            case Literal literal -> {
+                if (!StringUtils.equals(type.getSymbol(), literal.type().name())) {
+                    throw new InvalidTypeInitException(type.getSymbol(), literal.type().name(), literal.getVal());
+                }
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + init);
+        }
         return VariableDeclaration.of(id, type, init);
     }
 
@@ -324,11 +335,10 @@ public class Parser {
      * : (':' TokenType.Number | TokenType.String)
      */
     private TypeIdentifier TypeDeclaration() {
-        if (IsLookAhead(TokenType.Colon)) {
-            eat(TokenType.Colon);
+        if (IsLookAhead(Colon)) {
+            eat(Colon);
 
-            var value = TypeIdentifier();
-            return value;
+            return TypeIdentifier();
         } else {
             return null;
         }
@@ -339,8 +349,8 @@ public class Parser {
      * : SIMPLE_ASSIGN Expression
      */
     private Expression VariableInitializer() {
-        if (IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
-            eat(TokenType.Equal, TokenType.Equal_Complex);
+        if (IsLookAhead(Equal, Equal_Complex)) {
+            eat(Equal, Equal_Complex);
         }
         return Expression();
     }
@@ -358,10 +368,10 @@ public class Parser {
      * ;
      */
     private Statement IfStatement() {
-        eat(TokenType.If);
-        eat(TokenType.OpenParenthesis);
+        eat(If);
+        eat(OpenParenthesis);
         var test = Expression();
-        eat(TokenType.CloseParenthesis);
+        eat(CloseParenthesis);
         if (IsLookAhead(NewLine)) {
             // if(x) x=2
             eat(NewLine);
@@ -373,10 +383,10 @@ public class Parser {
     }
 
     private Statement ElseStatement() {
-        if (IsLookAhead(TokenType.Else)) {
-            eat(TokenType.Else);
+        if (IsLookAhead(Else)) {
+            eat(Else);
             Statement alternate = Statement();
-            iterator.eatIf(TokenType.CloseBraces);
+            iterator.eatIf(CloseBraces);
             return alternate;
         }
         return null;
@@ -388,18 +398,18 @@ public class Parser {
      * ;
      */
     private Statement FunctionDeclaration() {
-        eat(TokenType.Fun, "Fun token expected: " + lookAhead());
+        eat(Fun, "Fun token expected: " + lookAhead());
         var test = Identifier();
-        eat(TokenType.OpenParenthesis, "Expected '(' but got: " + lookAhead());
+        eat(OpenParenthesis, "Expected '(' but got: " + lookAhead());
         var params = OptParameterList();
-        eat(TokenType.CloseParenthesis, "Expected ')' but got: " + lookAhead());
+        eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
 
         Statement body = ExpressionStatement.of(BlockExpression());
         return FunctionDeclaration.of(test, params, body);
     }
 
     private Statement SchemaDeclaration() {
-        eat(TokenType.Schema);
+        eat(Schema);
         var packageIdentifier = TypeIdentifier();
 
         Expression body = BlockExpression();
@@ -412,17 +422,17 @@ public class Parser {
      * ;
      */
     private Statement InitStatement() {
-        eat(TokenType.Init);
-        eat(TokenType.OpenParenthesis);
+        eat(Init);
+        eat(OpenParenthesis);
         var params = OptParameterList();
-        eat(TokenType.CloseParenthesis);
+        eat(CloseParenthesis);
 
         Statement body = ExpressionStatement.of(BlockExpression());
         return InitStatement.of(params, body);
     }
 
     private List<Identifier> OptParameterList() {
-        return IsLookAhead(TokenType.CloseParenthesis) ? Collections.emptyList() : ParameterList();
+        return IsLookAhead(CloseParenthesis) ? Collections.emptyList() : ParameterList();
     }
 
     /**
@@ -435,20 +445,20 @@ public class Parser {
         var params = new ArrayList<Identifier>();
         do {
             params.add(Identifier());
-        } while (IsLookAhead(TokenType.Comma) && eat(TokenType.Comma) != null);
+        } while (IsLookAhead(Comma) && eat(Comma) != null);
 
         return params;
     }
 
     private Statement ReturnStatement() {
-        eat(TokenType.Return);
+        eat(Return);
         var arg = OptExpression();
         iterator.eatLineTerminator();
         return ReturnStatement.of(arg);
     }
 
     private Expression OptExpression() {
-        return IsLookAhead(TokenType.lineTerminator()) ? null : Expression();
+        return IsLookAhead(lineTerminator()) ? null : Expression();
     }
 
     /**
@@ -458,22 +468,22 @@ public class Parser {
      * ;
      */
     private Expression LambdaExpression() {
-        eat(TokenType.OpenParenthesis);
-        if (IsLookAhead(TokenType.OpenParenthesis)) {
+        eat(OpenParenthesis);
+        if (IsLookAhead(OpenParenthesis)) {
             var expression = LambdaExpression();
-            eat(TokenType.CloseParenthesis); // eat CloseParenthesis after lambda body
+            eat(CloseParenthesis); // eat CloseParenthesis after lambda body
             return CallExpression.of(expression, Arguments());
         }
 
         var params = OptParameterList();
-        eat(TokenType.CloseParenthesis);
-        eat(TokenType.Lambda, "Expected -> but got: " + lookAhead().getValue());
+        eat(CloseParenthesis);
+        eat(Lambda, "Expected -> but got: " + lookAhead().getValue());
 
         return LambdaExpression.of(params, LambdaBody());
     }
 
     private Statement LambdaBody() {
-        return IsLookAhead(TokenType.OpenBraces) ? Statement() : ExpressionStatement();
+        return IsLookAhead(OpenBraces) ? Statement() : ExpressionStatement();
     }
 
     /**
@@ -502,7 +512,7 @@ public class Parser {
      */
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
-        if (IsLookAhead(TokenType.Equal, TokenType.Equal_Complex)) {
+        if (IsLookAhead(Equal, Equal_Complex)) {
             var operator = AssignmentOperator().getValue();
             Expression rhs = Expression();
 
@@ -514,7 +524,7 @@ public class Parser {
     // x || y
     private Expression OrExpression() {
         var expression = AndExpression();
-        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Logical_Or)) {
+        while (!IsLookAhead(EOF) && IsLookAhead(Logical_Or)) {
             var operator = eat();
             Expression right = AndExpression();
             expression = LogicalExpression.of(operator.getValue().toString(), expression, right);
@@ -525,7 +535,7 @@ public class Parser {
     // x && y
     private Expression AndExpression() {
         var expression = EqualityExpression();
-        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Logical_And)) {
+        while (!IsLookAhead(EOF) && IsLookAhead(Logical_And)) {
             var operator = eat();
             Expression right = EqualityExpression();
             expression = LogicalExpression.of(operator.getValue(), expression, right);
@@ -539,7 +549,7 @@ public class Parser {
      */
     private Expression EqualityExpression() {
         var expression = RelationalExpression();
-        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.Equality_Operator)) {
+        while (!IsLookAhead(EOF) && IsLookAhead(Equality_Operator)) {
             var operator = eat();
             Expression right = EqualityExpression();
             expression = BinaryExpression.of(expression, right, operator.getValue().toString());
@@ -555,7 +565,7 @@ public class Parser {
      */
     private Expression RelationalExpression() {
         var expression = AdditiveExpression();
-        while (!IsLookAhead(TokenType.EOF) && IsLookAhead(TokenType.RelationalOperator)) {
+        while (!IsLookAhead(EOF) && IsLookAhead(RelationalOperator)) {
             var operator = eat();
             Expression right = RelationalExpression();
             expression = BinaryExpression.of(expression, right, operator.getValue().toString());
@@ -630,10 +640,10 @@ public class Parser {
 
     private Expression UnaryExpression() {
         var operator = switch (lookAhead().getType()) {
-            case Minus -> eat(TokenType.Minus);
-            case Increment -> eat(TokenType.Increment);
-            case Decrement -> eat(TokenType.Decrement);
-            case Logical_Not -> eat(TokenType.Logical_Not);
+            case Minus -> eat(Minus);
+            case Increment -> eat(Increment);
+            case Decrement -> eat(Decrement);
+            case Logical_Not -> eat(Logical_Not);
             default -> null;
         };
         if (operator != null) {
@@ -673,34 +683,34 @@ public class Parser {
      * ;
      */
     private Expression ThisExpression() {
-        eat(TokenType.This);
+        eat(This);
         return ThisExpression.of();
     }
 
     private Statement ResourceDeclaration() {
-        eat(TokenType.Resource);
+        eat(Resource);
         Identifier type = Identifier();
         Identifier name = null;
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
-        eat(TokenType.OpenBraces, "Expect '{' after resource name.");
+        eat(OpenBraces, "Expect '{' after resource name.");
         var body = new ArrayList<Statement>();
-        while (!IsLookAhead(TokenType.CloseBraces)) {
-            if (IsLookAhead(TokenType.lineTerminator())) {
-                eat(TokenType.lineTerminator());
+        while (!IsLookAhead(CloseBraces)) {
+            if (IsLookAhead(lineTerminator())) {
+                eat(lineTerminator());
                 continue;
             }
             body.add(ExpressionStatement.of(AssignmentExpression()));
         }
-        eat(TokenType.CloseBraces, "Expect '}' after resource body.");
+        eat(CloseBraces, "Expect '}' after resource body.");
 
         return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
     }
 
     private TypeIdentifier TypeIdentifier() {
         var identifier = new TypeIdentifier();
-        for (var next = eat(TokenType.Identifier);/* IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF)*/; next = eat(TokenType.Identifier)) {
+        for (var next = eat(TokenType.Identifier);/* IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF)*/ ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case Dot -> {
                     identifier.addPackage(next.getValue().toString());
@@ -725,7 +735,7 @@ public class Parser {
     private Expression CallMemberExpression() {
         var primaryIdentifier = MemberExpression(); // .fly
         while (true) {
-            if (IsLookAhead(TokenType.OpenParenthesis)) { // fly(
+            if (IsLookAhead(OpenParenthesis)) { // fly(
                 primaryIdentifier = CallExpression.of(primaryIdentifier, Arguments());
             } else {
                 break;
@@ -735,14 +745,14 @@ public class Parser {
     }
 
     private List<Expression> Arguments() {
-        eat(TokenType.OpenParenthesis, "Expect '(' before arguments.");
+        eat(OpenParenthesis, "Expect '(' before arguments.");
         var list = ArgumentList();
-        eat(TokenType.CloseParenthesis, "Expect ')' after arguments.");
+        eat(CloseParenthesis, "Expect ')' after arguments.");
         return list;
     }
 
     private List<Expression> ArgumentList() {
-        if (IsLookAhead(TokenType.CloseParenthesis)) return Collections.emptyList();
+        if (IsLookAhead(CloseParenthesis)) return Collections.emptyList();
 
         var arguments = new ArrayList<Expression>();
         do {
@@ -750,7 +760,7 @@ public class Parser {
                 throw Error(lookAhead(), "Can't have more than 128 arguments");
             }
             arguments.add(Expression());
-        } while (match(TokenType.Comma) && eat(TokenType.Comma, "Expect ',' after argument: " + iterator.getCurrent().getRaw()) != null);
+        } while (match(Comma) && eat(Comma, "Expect ',' after argument: " + iterator.getCurrent().getRaw()) != null);
 
         return arguments;
     }
@@ -761,7 +771,7 @@ public class Parser {
      */
     private Expression MemberExpression() {
         var object = PrimaryExpression();
-        for (var next = lookAhead(); IsLookAhead(TokenType.Dot, TokenType.OpenBrackets); next = lookAhead()) {
+        for (var next = lookAhead(); IsLookAhead(Dot, OpenBrackets); next = lookAhead()) {
             object = switch (next.getType()) {
                 case Dot -> {
                     var property = MemberProperty();
@@ -778,14 +788,14 @@ public class Parser {
     }
 
     private Expression MemberPropertyIndex() {
-        eat(TokenType.OpenBrackets);
+        eat(OpenBrackets);
         var property = Expression();
-        eat(TokenType.CloseBrackets);
+        eat(CloseBrackets);
         return property;
     }
 
     private Expression MemberProperty() {
-        eat(TokenType.Dot);
+        eat(Dot);
         return Identifier();
     }
 
@@ -795,15 +805,15 @@ public class Parser {
     }
 
     private Expression ParenthesizedExpression() {
-        if (IsLookAheadAfter(TokenType.CloseParenthesis, TokenType.Lambda)) {
+        if (IsLookAheadAfter(CloseParenthesis, Lambda)) {
             return LambdaExpression();
         }
-        eat(TokenType.OpenParenthesis);
+        eat(OpenParenthesis);
         var res = Expression();
-        if (IsLookAhead(TokenType.CloseParenthesis)) {
-            eat(TokenType.CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
-        } else if (IsLookAhead(TokenType.CloseBraces)) {
-            eat(TokenType.CloseBraces, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        if (IsLookAhead(CloseParenthesis)) {
+            eat(CloseParenthesis, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
+        } else if (IsLookAhead(CloseBraces)) {
+            eat(CloseBraces, "Unexpected token found inside parenthesized expression. Expected closed parenthesis.");
         }
         return res;
     }

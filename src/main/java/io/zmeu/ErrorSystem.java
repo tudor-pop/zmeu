@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class ErrorSystem {
@@ -60,4 +61,9 @@ public class ErrorSystem {
     public static void clear() {
         errors.clear();
     }
+
+    public static String errors() {
+        return errors.stream().map(ParseError::getMessage).collect(Collectors.joining("\n"));
+    }
+
 }

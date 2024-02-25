@@ -1,5 +1,5 @@
 package io.zmeu.api.types;
 
 public enum Types {
-    String, Number;
+    String, Number, Boolean, Null;
 }
