@@ -4,10 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Frontend.Parser.Statements.BlockExpression;
-import io.zmeu.Frontend.Parser.Statements.EmptyStatement;
-import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
-import io.zmeu.Frontend.Parser.Statements.Statement;
+import io.zmeu.Frontend.Parser.Statements.*;
 
 import java.util.Arrays;
 
@@ -47,6 +44,7 @@ public class Factory {
     public static Statement resource(String type, String name, BlockExpression operator) {
         return ResourceExpression.of(Identifier.of(type), Identifier.of(name), operator);
     }
+
     public static TypeIdentifier type(String type) {
         return TypeIdentifier.of(type);
     }
@@ -78,9 +76,26 @@ public class Factory {
     public static BlockExpression block(String operator) {
         return (BlockExpression) BlockExpression.of(operator);
     }
-    public static BlockExpression var(String operator) {
-        return (BlockExpression) BlockExpression.of(operator);
+
+    public static VariableStatement var(Identifier id, TypeIdentifier type, Expression init) {
+        return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type, init));
     }
+
+    public static Identifier id(String id) {
+        return Identifier.of(id);
+    }
+
+    public static VariableStatement var(Identifier id, TypeIdentifier type) {
+        return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type));
+    }
+    public static SchemaDeclaration schema(TypeIdentifier type, Statement statement) {
+        return (SchemaDeclaration) SchemaDeclaration.of(type, statement);
+    }
+
+    public static SchemaDeclaration schema(TypeIdentifier type, Expression statement) {
+        return (SchemaDeclaration) SchemaDeclaration.of(type, statement);
+    }
+
 
     public static BlockExpression block(Statement operator) {
         return BlockExpression.of(operator);

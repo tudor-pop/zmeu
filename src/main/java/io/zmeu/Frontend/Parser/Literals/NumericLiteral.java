@@ -72,6 +72,10 @@ public class NumericLiteral extends Literal {
         return new NumericLiteral(value);
     }
 
+    public static Expression number(int value) {
+        return new NumericLiteral(value);
+    }
+
     public static Literal of(float value) {
         return new NumericLiteral(value);
     }

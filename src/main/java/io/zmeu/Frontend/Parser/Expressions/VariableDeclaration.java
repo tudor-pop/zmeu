@@ -21,6 +21,11 @@ public class VariableDeclaration extends Expression {
         this.id = (Identifier) id;
         this.init = init;
     }
+    private VariableDeclaration(Expression id, TypeIdentifier type) {
+        this();
+        this.id = (Identifier) id;
+        this.type = type;
+    }
 
     private VariableDeclaration(Expression id, TypeIdentifier type, Expression init) {
         this();
@@ -39,6 +44,9 @@ public class VariableDeclaration extends Expression {
 
     public static VariableDeclaration of(Expression id, TypeIdentifier type, Expression init) {
         return new VariableDeclaration(id, type, init);
+    }
+    public static VariableDeclaration of(Expression id, TypeIdentifier type) {
+        return new VariableDeclaration(id, type);
     }
 
     public static VariableDeclaration of(Expression id) {

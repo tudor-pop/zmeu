@@ -9,12 +9,12 @@ import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static io.zmeu.Frontend.Lexer.TokenType.EOF;
-import static io.zmeu.Frontend.Lexer.TokenType.NewLine;
+import static io.zmeu.Frontend.Lexer.TokenType.*;
 
 
 /**
@@ -700,22 +700,21 @@ public class Parser {
 
     private TypeIdentifier TypeIdentifier() {
         var identifier = new TypeIdentifier();
-        for (var next = eat(TokenType.Identifier); IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF); next = eat(TokenType.Identifier)) {
+        for (var next = eat(TokenType.Identifier);/* IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF)*/; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
-                case OpenBraces -> {
-                    identifier.setType(next.getValue().toString());
+                case Dot -> {
                     identifier.addPackage(next.getValue().toString());
+                    eat(Dot);
                 }
-                case NewLine, EOF -> {
+                case AT -> {
+                    throw new NotImplementedException("case not implemented");
+                }
+                default -> {
                     identifier.setType(next.getValue().toString());
                     return identifier;
                 }
             }
-            if (!IsLookAhead(EOF, NewLine)) {
-                eat(lookAhead().getType());
-            }
         }
-        return identifier;
     }
 
     private Expression LeftHandSideExpression() {

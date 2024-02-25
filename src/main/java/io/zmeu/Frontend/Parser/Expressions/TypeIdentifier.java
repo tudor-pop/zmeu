@@ -1,5 +1,6 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.List;
 public class TypeIdentifier extends Identifier {
     @Builder.Default
     private List<String> packageName = new ArrayList<>();
+    @Builder.Default
     private StringBuilder packageNameString = new StringBuilder();
     private LocalDate date;
 
@@ -63,7 +65,8 @@ public class TypeIdentifier extends Identifier {
         packageNameString.append(value);
     }
 
-    public String getPackageNameString() {
+    @JsonIgnore
+    public String packageNameString() {
         return packageNameString.toString();
     }
 }

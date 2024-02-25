@@ -46,7 +46,7 @@ public class ResourceTest extends BaseTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().getPackageNameString());
+        assertEquals("vm", schema.getType().packageNameString());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -75,7 +75,7 @@ public class ResourceTest extends BaseTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().getPackageNameString());
+        assertEquals("vm", schema.getType().packageNameString());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
