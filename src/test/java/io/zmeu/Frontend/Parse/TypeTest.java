@@ -15,7 +15,7 @@ public class TypeTest extends BaseTest {
     @Test
     void testString() {
         var res = parse("var x:String\n");
-        var expected = program(var(id("x"), type("String")));
+        var expected = program(var(id("x"), packageId("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -23,7 +23,7 @@ public class TypeTest extends BaseTest {
     @Test
     void testStringEOF() {
         var res = parse("var x:String");
-        var expected = program(var(id("x"), type("String")));
+        var expected = program(var(id("x"), packageId("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -31,7 +31,7 @@ public class TypeTest extends BaseTest {
     @Test
     void testStringLineTerminator() {
         var res = parse("var x:String;");
-        var expected = program(var(id("x"), type("String")));
+        var expected = program(var(id("x"), packageId("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -41,7 +41,7 @@ public class TypeTest extends BaseTest {
         var res = parse("""
                 var x:String="test"
                 """);
-        var expected = program(var(id("x"), type("String"), string("test")));
+        var expected = program(var(id("x"), packageId("String"), string("test")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }

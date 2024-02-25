@@ -25,19 +25,19 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @AllArgsConstructor
-public class TypeIdentifier extends Identifier {
+public class PackageIdentifier extends Identifier {
     @Builder.Default
     private List<String> packageName = new ArrayList<>();
     @Builder.Default
     private StringBuilder packageNameString = new StringBuilder();
     private LocalDate date;
 
-    public TypeIdentifier() {
+    public PackageIdentifier() {
         this.kind = NodeType.SimplePathExpression;
         this.packageName = new ArrayList<>();
     }
 
-    private TypeIdentifier(String type, LocalDate date) {
+    private PackageIdentifier(String type, LocalDate date) {
         this();
         setSymbol(type);
         this.date = date;
@@ -48,11 +48,11 @@ public class TypeIdentifier extends Identifier {
     }
 
     public static Expression of(String object, LocalDate property) {
-        return new TypeIdentifier(object, property);
+        return new PackageIdentifier(object, property);
     }
 
-    public static TypeIdentifier of(String object) {
-        return new TypeIdentifier(object, null);
+    public static PackageIdentifier of(String object) {
+        return new PackageIdentifier(object, null);
     }
 
     @Override

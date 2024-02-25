@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 public class VariableDeclaration extends Expression {
     private Identifier id;
     private Expression init;
-    private TypeIdentifier type;
+    private PackageIdentifier type;
 
     public VariableDeclaration() {
         this.kind = NodeType.VariableDeclaration;
@@ -21,13 +21,13 @@ public class VariableDeclaration extends Expression {
         this.id = (Identifier) id;
         this.init = init;
     }
-    private VariableDeclaration(Expression id, TypeIdentifier type) {
+    private VariableDeclaration(Expression id, PackageIdentifier type) {
         this();
         this.id = (Identifier) id;
         this.type = type;
     }
 
-    private VariableDeclaration(Expression id, TypeIdentifier type, Expression init) {
+    private VariableDeclaration(Expression id, PackageIdentifier type, Expression init) {
         this();
         this.id = (Identifier) id;
         this.init = init;
@@ -42,10 +42,10 @@ public class VariableDeclaration extends Expression {
         return new VariableDeclaration(id, init);
     }
 
-    public static VariableDeclaration of(Expression id, TypeIdentifier type, Expression init) {
+    public static VariableDeclaration of(Expression id, PackageIdentifier type, Expression init) {
         return new VariableDeclaration(id, type, init);
     }
-    public static VariableDeclaration of(Expression id, TypeIdentifier type) {
+    public static VariableDeclaration of(Expression id, PackageIdentifier type) {
         return new VariableDeclaration(id, type);
     }
 

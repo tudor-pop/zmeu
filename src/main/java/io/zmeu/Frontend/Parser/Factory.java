@@ -45,8 +45,8 @@ public class Factory {
         return ResourceExpression.of(Identifier.of(type), Identifier.of(name), operator);
     }
 
-    public static TypeIdentifier type(String type) {
-        return TypeIdentifier.of(type);
+    public static PackageIdentifier packageId(String type) {
+        return PackageIdentifier.of(type);
     }
 
     public static Expression assign(Expression type, Expression name) {
@@ -77,7 +77,7 @@ public class Factory {
         return (BlockExpression) BlockExpression.of(operator);
     }
 
-    public static VariableStatement var(Identifier id, TypeIdentifier type, Expression init) {
+    public static VariableStatement var(Identifier id, PackageIdentifier type, Expression init) {
         return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type, init));
     }
 
@@ -85,14 +85,14 @@ public class Factory {
         return Identifier.of(id);
     }
 
-    public static VariableStatement var(Identifier id, TypeIdentifier type) {
+    public static VariableStatement var(Identifier id, PackageIdentifier type) {
         return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type));
     }
-    public static SchemaDeclaration schema(TypeIdentifier type, Statement statement) {
+    public static SchemaDeclaration schema(PackageIdentifier type, Statement statement) {
         return (SchemaDeclaration) SchemaDeclaration.of(type, statement);
     }
 
-    public static SchemaDeclaration schema(TypeIdentifier type, Expression statement) {
+    public static SchemaDeclaration schema(PackageIdentifier type, Expression statement) {
         return (SchemaDeclaration) SchemaDeclaration.of(type, statement);
     }
 

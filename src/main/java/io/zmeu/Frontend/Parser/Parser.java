@@ -3,18 +3,19 @@ package io.zmeu.Frontend.Parser;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
-import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.errors.InvalidTypeInitException;
+import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
 
@@ -319,14 +320,11 @@ public class Parser {
         var id = Identifier();
         var type = TypeDeclaration();
         var init = IsLookAhead(lineTerminator(), Comma, EOF) ? null : VariableInitializer();
-        switch (init) {
-            case Literal literal -> {
-                if (!StringUtils.equals(type.getSymbol(), literal.type().name())) {
-                    throw new InvalidTypeInitException(type.getSymbol(), literal.type().name(), literal.getVal());
-                }
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + init);
-        }
+//        if (Objects.requireNonNull(init) instanceof Literal literal) {
+//            if (!StringUtils.equals(type.getSymbol(), literal.type().name())) {
+//                throw new InvalidTypeInitException(type.getSymbol(), literal.type().name(), literal.getVal());
+//            }
+//        }
         return VariableDeclaration.of(id, type, init);
     }
 
@@ -334,7 +332,7 @@ public class Parser {
      * TypeDeclaration
      * : (':' TokenType.Number | TokenType.String)
      */
-    private TypeIdentifier TypeDeclaration() {
+    private PackageIdentifier TypeDeclaration() {
         if (IsLookAhead(Colon)) {
             eat(Colon);
 
@@ -708,8 +706,8 @@ public class Parser {
         return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
     }
 
-    private TypeIdentifier TypeIdentifier() {
-        var identifier = new TypeIdentifier();
+    private PackageIdentifier TypeIdentifier() {
+        var identifier = new PackageIdentifier();
         for (var next = eat(TokenType.Identifier);/* IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF)*/ ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case Dot -> {
