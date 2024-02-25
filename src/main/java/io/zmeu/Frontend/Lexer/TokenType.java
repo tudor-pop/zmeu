@@ -9,6 +9,7 @@ public enum TokenType {
     Number("number"),
     Identifier("symbol"),
     String("string"),
+    Type("type"),
     WhiteSpace("whitespace"),
     Comment("//"),
     NewLine("\n"),
@@ -16,6 +17,7 @@ public enum TokenType {
      * ;
      */
     SemiColon(";"),
+    Colon(":"),
 
     /******   Expressions   ******/
     Equal("="),

@@ -47,6 +47,9 @@ public class Factory {
     public static Statement resource(String type, String name, BlockExpression operator) {
         return ResourceExpression.of(Identifier.of(type), Identifier.of(name), operator);
     }
+    public static PackageIdentifier type(String type) {
+        return PackageIdentifier.of(type);
+    }
 
     public static Expression assign(Expression type, Expression name) {
         return AssignmentExpression.of("=", type, name);
@@ -73,6 +76,9 @@ public class Factory {
     }
 
     public static BlockExpression block(String operator) {
+        return (BlockExpression) BlockExpression.of(operator);
+    }
+    public static BlockExpression var(String operator) {
         return (BlockExpression) BlockExpression.of(operator);
     }
 

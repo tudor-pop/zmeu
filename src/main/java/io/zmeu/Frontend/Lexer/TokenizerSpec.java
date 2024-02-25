@@ -25,6 +25,7 @@ class TokenizerSpec {
 // ---------------------------------- Literals ----------------------------------------------
             // match string: " str ", ' str '
             new Entry("^(\"|')[^(\"|')]*(\"|')", TokenType.String),
+//            new Entry("^\\w+", TokenType.Type),
             // match numbers: 1, 111.222
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
 
@@ -34,6 +35,7 @@ class TokenizerSpec {
             new Entry("^;", TokenType.SemiColon),
 
 // --------------------------------- Assignment --------------------------------------------------------
+            new Entry("^:", TokenType.Colon),
             new Entry("^[!=]=", TokenType.Equality_Operator),
             // =, +=, -=, /=, *=
             new Entry("^=", TokenType.Equal),

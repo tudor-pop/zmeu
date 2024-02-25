@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static io.zmeu.Frontend.Lexer.TokenType.EOF;
+import static io.zmeu.Frontend.Lexer.TokenType.NewLine;
+
 
 /**
  * Name         Operators       Associates
@@ -118,7 +121,7 @@ public class Parser {
         try {
             return switch (lookAhead().getType()) {
                 case Fun -> FunctionDeclaration();
-                case Schema -> TypeDeclaration();
+                case Schema -> SchemaDeclaration();
                 case Resource -> ResourceDeclaration();
                 case Var -> VariableDeclarations();
                 default -> Statement();
@@ -176,11 +179,11 @@ public class Parser {
         eat(TokenType.OpenParenthesis);
         var test = Expression();
         eat(TokenType.CloseParenthesis);
-        if (IsLookAhead(TokenType.NewLine)) {
+        if (IsLookAhead(NewLine)) {
             /* while(x)
              *   x=2
              */
-            eat(TokenType.NewLine);
+            eat(NewLine);
         }
 
         var statement = Statement();
@@ -204,11 +207,11 @@ public class Parser {
 
         var update = ForStatementIncrement();
         eat(TokenType.CloseParenthesis);
-        if (IsLookAhead(TokenType.NewLine)) {
+        if (IsLookAhead(NewLine)) {
             /* while(x)
              *   x=2
              */
-            eat(TokenType.NewLine);
+            eat(NewLine);
         }
 
         var body = Statement();
@@ -311,8 +314,24 @@ public class Parser {
      */
     private VariableDeclaration VariableDeclaration() {
         var id = Identifier();
+        var type = TypeDeclaration();
         var init = IsLookAhead(TokenType.lineTerminator(), TokenType.Comma, TokenType.EOF) ? null : VariableInitializer();
-        return VariableDeclaration.of(id, init);
+        return VariableDeclaration.of(id, type, init);
+    }
+
+    /**
+     * TypeDeclaration
+     * : (':' TokenType.Number | TokenType.String)
+     */
+    private PackageIdentifier TypeDeclaration() {
+        if (IsLookAhead(TokenType.Colon)) {
+            eat(TokenType.Colon);
+
+            var value = PackageIdentifier();
+            return value;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -343,9 +362,9 @@ public class Parser {
         eat(TokenType.OpenParenthesis);
         var test = Expression();
         eat(TokenType.CloseParenthesis);
-        if (IsLookAhead(TokenType.NewLine)) {
+        if (IsLookAhead(NewLine)) {
             // if(x) x=2
-            eat(TokenType.NewLine);
+            eat(NewLine);
         }
 
         Statement ifBlock = Statement();
@@ -379,12 +398,12 @@ public class Parser {
         return FunctionDeclaration.of(test, params, body);
     }
 
-    private Statement TypeDeclaration() {
+    private Statement SchemaDeclaration() {
         eat(TokenType.Schema);
-        var test = PackageIdentifier();
+        var packageIdentifier = PackageIdentifier();
 
         Expression body = BlockExpression();
-        return TypeDeclaration.of(test, body);
+        return SchemaDeclaration.of(packageIdentifier, body);
     }
 
     /**
@@ -681,13 +700,20 @@ public class Parser {
 
     private PackageIdentifier PackageIdentifier() {
         var identifier = new PackageIdentifier();
-        for (var next = eat(TokenType.Identifier); IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT);next = eat(TokenType.Identifier)) {
-            if (IsLookAhead(TokenType.OpenBraces)) {
-                identifier.setSymbol(next.getValue().toString());
-                break;
+        for (var next = eat(TokenType.Identifier); IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF); next = eat(TokenType.Identifier)) {
+            switch (lookAhead().getType()) {
+                case OpenBraces -> {
+                    identifier.setType(next.getValue().toString());
+                    identifier.addPackage(next.getValue().toString());
+                }
+                case NewLine, EOF -> {
+                    identifier.setType(next.getValue().toString());
+                    return identifier;
+                }
             }
-            identifier.addPackage(String.valueOf(next.getValue()));
-            eat(TokenType.Dot);
+            if (!IsLookAhead(EOF, NewLine)) {
+                eat(lookAhead().getType());
+            }
         }
         return identifier;
     }
