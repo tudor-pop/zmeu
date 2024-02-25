@@ -47,8 +47,8 @@ public class Factory {
     public static Statement resource(String type, String name, BlockExpression operator) {
         return ResourceExpression.of(Identifier.of(type), Identifier.of(name), operator);
     }
-    public static PackageIdentifier type(String type) {
-        return PackageIdentifier.of(type);
+    public static TypeIdentifier type(String type) {
+        return TypeIdentifier.of(type);
     }
 
     public static Expression assign(Expression type, Expression name) {

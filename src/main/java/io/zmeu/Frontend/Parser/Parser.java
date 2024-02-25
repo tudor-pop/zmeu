@@ -323,11 +323,11 @@ public class Parser {
      * TypeDeclaration
      * : (':' TokenType.Number | TokenType.String)
      */
-    private PackageIdentifier TypeDeclaration() {
+    private TypeIdentifier TypeDeclaration() {
         if (IsLookAhead(TokenType.Colon)) {
             eat(TokenType.Colon);
 
-            var value = PackageIdentifier();
+            var value = TypeIdentifier();
             return value;
         } else {
             return null;
@@ -400,7 +400,7 @@ public class Parser {
 
     private Statement SchemaDeclaration() {
         eat(TokenType.Schema);
-        var packageIdentifier = PackageIdentifier();
+        var packageIdentifier = TypeIdentifier();
 
         Expression body = BlockExpression();
         return SchemaDeclaration.of(packageIdentifier, body);
@@ -698,8 +698,8 @@ public class Parser {
         return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
     }
 
-    private PackageIdentifier PackageIdentifier() {
-        var identifier = new PackageIdentifier();
+    private TypeIdentifier TypeIdentifier() {
+        var identifier = new TypeIdentifier();
         for (var next = eat(TokenType.Identifier); IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF); next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case OpenBraces -> {

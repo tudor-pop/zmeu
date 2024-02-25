@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SchemaTest extends BaseTest {
 
     @Test
-    void typeDeclaration() {
+    void schemaDeclaration() {
         var res = parse("""
-                type square { 
-                    var x=1
+                schema square { 
+                    var x:Number=1
                 }
                 """);
         var expected = Program.of(
-                SchemaDeclaration.of(PackageIdentifier.of("square"),
+                SchemaDeclaration.of(TypeIdentifier.of("square"),
                         BlockExpression.of(
                                 VariableStatement.of(VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1)))
                         )
@@ -37,14 +37,14 @@ public class SchemaTest extends BaseTest {
     @Test
     void function() {
         var res = parse("""
-                type square { 
+                schema square { 
                     fun test() {
                     
                     }
                 }
                 """);
         var expected = Program.of(
-                SchemaDeclaration.of(PackageIdentifier.of("square"),
+                SchemaDeclaration.of(TypeIdentifier.of("square"),
                         BlockExpression.of(
                                 FunctionDeclaration.of(Identifier.of("test"), Collections.emptyList(), BlockExpression.of())
                         )
@@ -57,14 +57,14 @@ public class SchemaTest extends BaseTest {
     @Test
     void initSchema() {
         var res = parse("""
-                type square {
+                schema square {
                     init() {
 
                     }
                 }
                 """);
         var expected = Program.of(
-                SchemaDeclaration.of(PackageIdentifier.of("square"),
+                SchemaDeclaration.of(TypeIdentifier.of("square"),
                         BlockExpression.of(
                                 InitStatement.of(Collections.emptyList(), BlockExpression.of())
                         )
@@ -77,7 +77,7 @@ public class SchemaTest extends BaseTest {
     @Test
     void initSchemaWithParams() {
         var res = parse("""
-                type square {
+                schema square {
                     
                     init(x) {
                         this.x=x    
@@ -85,7 +85,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """);
         var expected = Program.of(
-                SchemaDeclaration.of(PackageIdentifier.of("square"),
+                SchemaDeclaration.of(TypeIdentifier.of("square"),
                         BlockExpression.of(
                                 InitStatement.of(List.of(Identifier.of("x")),
                                         BlockExpression.of(

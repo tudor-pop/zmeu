@@ -9,7 +9,7 @@ public enum TokenType {
     Number("number"),
     Identifier("symbol"),
     String("string"),
-    Type("type"),
+//    Type("type"),
     WhiteSpace("whitespace"),
     Comment("//"),
     NewLine("\n"),
