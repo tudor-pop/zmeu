@@ -47,7 +47,7 @@ public class TypeTest extends BaseTest {
     }
 
     @Test
-    void testStringInitWrongTypeString() {
+    void testStringInitWrongTypeInt() {
         parse("""
                 var x:String=1
                 """);
@@ -56,6 +56,18 @@ public class TypeTest extends BaseTest {
         Assertions.assertFalse(errors.isEmpty());
 
     }
+
+    @Test
+    void testStringInitWrongTypeDecimal() {
+        parse("""
+                var x:String=1
+                """);
+        var errors = ErrorSystem.getErrors();
+        log.info(ErrorSystem.errors());
+        Assertions.assertFalse(errors.isEmpty());
+
+    }
+
     @Test
     void testStringInitWrongType() {
         var actual = parse("""
@@ -65,6 +77,18 @@ public class TypeTest extends BaseTest {
         log.info(actual);
         log.info(ErrorSystem.errors());
         Assertions.assertFalse(errors.isEmpty());
+
+    }
+
+    @Test
+    void testNumberInitDouble() {
+        var actual = parse("""
+                var x:Number=0.2
+                """);
+        var errors = ErrorSystem.getErrors();
+        log.info(actual);
+        log.info(ErrorSystem.errors());
+        Assertions.assertTrue(errors.isEmpty());
 
     }
 

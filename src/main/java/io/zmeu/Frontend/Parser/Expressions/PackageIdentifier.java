@@ -21,8 +21,8 @@ import java.util.List;
  * SimplePathExpression:
  *  Identifier.?(Identifier.)*(@yyyy-mm-dd)?
  */
-@Data
 @EqualsAndHashCode(callSuper = true)
+@Data
 @Builder
 @AllArgsConstructor
 public class PackageIdentifier extends Identifier {
@@ -68,5 +68,17 @@ public class PackageIdentifier extends Identifier {
     @JsonIgnore
     public String packageNameString() {
         return packageNameString.toString();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PackageIdentifier{");
+        sb.append("packageName=").append(packageName);
+        sb.append(", packageNameString=").append(packageNameString);
+        sb.append(", date=").append(date);
+        sb.append(", kind=").append(kind);
+        sb.append(", symbol=").append(getSymbol());
+        sb.append('}');
+        return sb.toString();
     }
 }
