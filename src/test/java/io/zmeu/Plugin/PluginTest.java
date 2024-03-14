@@ -42,7 +42,6 @@ public class PluginTest extends BaseTest {
         assertNotNull(schema);
         assertEquals("File", schema.getType().packageNameString());
 
-
         var resource = (ResourceValue) schema.getInstances().get("main");
 
         assertNotNull(resource);

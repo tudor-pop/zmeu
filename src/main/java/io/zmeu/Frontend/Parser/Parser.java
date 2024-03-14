@@ -686,6 +686,13 @@ public class Parser {
         return ThisExpression.of();
     }
 
+    /**
+     * ResourceDeclaration
+     * : resource Type name '{'
+     * :    VariableDeclaration
+     * : '}'
+     * ;
+     */
     private Statement ResourceDeclaration() {
         eat(Resource);
         Identifier type = Identifier();
