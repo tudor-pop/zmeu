@@ -91,12 +91,23 @@ public class TypeTest extends BaseTest {
         Assertions.assertTrue(errors.isEmpty());
 
     }
+
     @Test
     void testNumberFromStd() {
         var actual = parse("""
                 var x:std.Number
                 """);
         var expected = program(var(id("x"), packageId("std.Number")));
+        assertEquals(expected, actual);
+        log.info(toJson(actual));
+    }
+
+    @Test
+    void testNumberFromStdInit() {
+        var actual = parse("""
+                var x:std.Number=2
+                """);
+        var expected = program(var(id("x"), packageId("std.Number"), number(2)));
         assertEquals(expected, actual);
         log.info(toJson(actual));
     }
