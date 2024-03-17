@@ -423,9 +423,9 @@ public class Interpreter implements Visitor<Object>, io.zmeu.Frontend.Parser.Sta
         Statement body = expression.getBody();
         if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
             executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
-            return env.init(name.packageNameString(), SchemaValue.of(name, typeEnv)); // install the type into the global env
+            return env.init(name.getSymbol(), SchemaValue.of(name, typeEnv)); // install the type into the global env
         }
-        throw new RuntimeException("Invalid declaration:" + expression.getName().packageNameString());
+        throw new RuntimeException("Invalid declaration:" + expression.getName());
     }
 
     @Override

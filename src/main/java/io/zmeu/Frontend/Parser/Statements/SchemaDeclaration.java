@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.Expressions.PathIdentifier;
+import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
@@ -12,16 +12,16 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SchemaDeclaration extends Statement {
-    private PathIdentifier name;
+    private Identifier name;
     private Statement body;
 
-    public SchemaDeclaration(PathIdentifier name, @Nullable Statement body) {
+    public SchemaDeclaration(Identifier name, @Nullable Statement body) {
         this();
         this.name = name;
         this.body = body;
     }
 
-    public SchemaDeclaration(PathIdentifier name, @Nullable Expression body) {
+    public SchemaDeclaration(Identifier name, @Nullable Expression body) {
         this(name, ExpressionStatement.of(body));
     }
 
@@ -29,19 +29,19 @@ public class SchemaDeclaration extends Statement {
         this.kind = NodeType.SchemaDeclaration;
     }
 
-    public static Statement of(PathIdentifier test, Expression body) {
+    public static Statement of(Identifier test, Expression body) {
         return new SchemaDeclaration(test, body);
     }
 
-    public static Statement of(PathIdentifier test, Statement body) {
+    public static Statement of(Identifier test, Statement body) {
         return new SchemaDeclaration(test, body);
     }
 
-    public static Statement of(PathIdentifier test, int value) {
+    public static Statement of(Identifier test, int value) {
         return new SchemaDeclaration(test, NumericLiteral.of(value));
     }
 
-    public static Statement of(PathIdentifier test, double value) {
+    public static Statement of(Identifier test, double value) {
         return new SchemaDeclaration(test, NumericLiteral.of(value));
     }
 
@@ -49,11 +49,11 @@ public class SchemaDeclaration extends Statement {
         return new SchemaDeclaration();
     }
 
-    public static Statement of(PathIdentifier test, float value) {
+    public static Statement of(Identifier test, float value) {
         return new SchemaDeclaration(test, NumericLiteral.of(value));
     }
 
-    public static Statement of(PathIdentifier test, String value) {
+    public static Statement of(Identifier test, String value) {
         return new SchemaDeclaration(test, StringLiteral.of(value));
     }
 

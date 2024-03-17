@@ -412,7 +412,7 @@ public class Parser {
 
     private Statement SchemaDeclaration() {
         eat(Schema);
-        var packageIdentifier = TypeIdentifier();
+        var packageIdentifier = Identifier();
 
         Expression body = BlockExpression();
         return SchemaDeclaration.of(packageIdentifier, body);
