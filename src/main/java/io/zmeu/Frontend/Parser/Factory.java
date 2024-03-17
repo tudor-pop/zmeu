@@ -91,11 +91,11 @@ public class Factory {
     public static VariableStatement var(Identifier id, PathIdentifier type) {
         return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type));
     }
-    public static SchemaDeclaration schema(PathIdentifier type, Statement statement) {
+    public static SchemaDeclaration schema(Identifier type, Statement statement) {
         return (SchemaDeclaration) SchemaDeclaration.of(type, statement);
     }
 
-    public static SchemaDeclaration schema(PathIdentifier type, Expression statement) {
+    public static SchemaDeclaration schema(Identifier type, Expression statement) {
         return (SchemaDeclaration) SchemaDeclaration.of(type, statement);
     }
 

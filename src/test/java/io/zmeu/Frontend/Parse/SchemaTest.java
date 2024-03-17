@@ -19,7 +19,7 @@ public class SchemaTest extends BaseTest {
                 }
                 """);
         var expected = program(
-                schema(packageId("square"), block(
+                schema(id("square"), block(
                         var(id("x"), packageId("Number"), number(1)))
                 )
         );
