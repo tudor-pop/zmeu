@@ -1,11 +1,16 @@
 package io.zmeu;
 
+import io.zmeu.Import.Dependencies;
+import io.zmeu.Import.Dependency;
+import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
+
+import java.util.List;
 
 @Log4j2
 public class Main {
@@ -40,6 +45,7 @@ public class Main {
     }
 
     public static void run() {
-        PluginFactory.create();
+        var zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("./"))));
+        PluginFactory.create(zmeufile);
     }
 }

@@ -21,7 +21,7 @@ public class ResourceToSchemaConverter {
                 properties.append("\tvar ");
             }
             properties.append(name);
-            properties.append("\t:\t");
+            properties.append("\t:");
             properties.append(property.type().name());
             properties.append("\n");
         }

@@ -1,16 +1,20 @@
 package io.zmeu.Plugin;
 
+import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.pf4j.PluginWrapper;
 
 import java.util.List;
 
 @Log4j2
+@AllArgsConstructor
 public class PluginFactory {
-    public static CustomPluginManager create() {
-        var pluginManager = new CustomPluginManager();
+
+    public static CustomPluginManager create(Zmeufile zmeufile) {
+        var pluginManager = new CustomPluginManager(zmeufile.pluginsPath());
         pluginManager.loadPlugins();
 
 //        pluginManager.enablePlugin("welcome-plugin");
