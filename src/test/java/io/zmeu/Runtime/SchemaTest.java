@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
 public class SchemaTest extends BaseTest {
@@ -124,6 +123,36 @@ public class SchemaTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
+        assertEquals(res, actual);
+    }
+
+    @Test
+    void initDeclarationWithPathType() {
+        var res = eval("""
+                schema Vm {
+                    var x:Number = 1;
+                }
+                """);
+
+        log.warn(toJson(res));
+        var actual = (SchemaValue) global.get("Vm");
+
+        assertNotNull(res);
+        assertEquals(res, actual);
+    }
+
+    @Test
+    void initDeclarationWithWrontInit() {
+        var res = eval("""
+                schema Vm {
+                    var x:Number = "test";
+                }
+                """);
+
+        log.warn(toJson(res));
+        var actual = (SchemaValue) global.get("Vm");
+
+        assertNull(res);
         assertEquals(res, actual);
     }
 
