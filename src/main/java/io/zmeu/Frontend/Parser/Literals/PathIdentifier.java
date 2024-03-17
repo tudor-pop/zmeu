@@ -1,7 +1,7 @@
-package io.zmeu.Frontend.Parser.Expressions;
+package io.zmeu.Frontend.Parser.Literals;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Expressions.Visitor;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
