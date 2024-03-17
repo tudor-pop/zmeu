@@ -333,7 +333,7 @@ public class Parser {
      * TypeDeclaration
      * : (':' TokenType.Number | TokenType.String)
      */
-    private PackageIdentifier TypeDeclaration() {
+    private PathIdentifier TypeDeclaration() {
         if (IsLookAhead(Colon)) {
             eat(Colon);
 
@@ -714,8 +714,8 @@ public class Parser {
         return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
     }
 
-    private PackageIdentifier TypeIdentifier() {
-        var identifier = new PackageIdentifier();
+    private PathIdentifier TypeIdentifier() {
+        var identifier = new PathIdentifier();
         for (var next = eat(TokenType.Identifier);/* IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF)*/ ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case Dot -> {

@@ -22,21 +22,21 @@ import java.util.Objects;
 @Data
 @Builder
 @AllArgsConstructor
-public class PackageIdentifier extends Identifier {
+public class PathIdentifier extends Identifier {
     @Builder.Default
     private StringBuilder packageName = new StringBuilder();
 
-    public PackageIdentifier() {
-        this.kind = NodeType.SimplePathExpression;
+    public PathIdentifier() {
+        this.kind = NodeType.Path;
         this.packageName = new StringBuilder();
     }
 
-    private PackageIdentifier(String type) {
+    private PathIdentifier(String type) {
         this();
         setSymbol(type);
     }
 
-    private PackageIdentifier(String typePrefix, String type) {
+    private PathIdentifier(String typePrefix, String type) {
         this();
         addPackage(typePrefix);
         setSymbol(type);
@@ -46,10 +46,10 @@ public class PackageIdentifier extends Identifier {
         setSymbol(type);
     }
 
-    public static PackageIdentifier of(String object) {
+    public static PathIdentifier of(String object) {
         var prefix = StringUtils.substringBeforeLast(object, ".");
         var type = StringUtils.substringAfterLast(object, ".");
-        return new PackageIdentifier(prefix, type);
+        return new PathIdentifier(prefix, type);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class PackageIdentifier extends Identifier {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         if (!super.equals(object)) return false;
-        PackageIdentifier that = (PackageIdentifier) object;
+        PathIdentifier that = (PathIdentifier) object;
         return StringUtils.equals(getPackageName(), that.getPackageName());
     }
 
