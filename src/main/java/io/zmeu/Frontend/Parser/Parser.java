@@ -10,11 +10,13 @@ import io.zmeu.Frontend.Parser.errors.InvalidTypeInitException;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
 
@@ -104,11 +106,11 @@ public class Parser {
                     break;
                 }
             }
-            if (iterator.getCurrent().isLineTerminator()) { // if we eat too much - going beyond lineTerminator -> go back 1 token
-                iterator.prev();
-            }
+//            if (iterator.getCurrent().isLineTerminator()) { // if we eat too much - going beyond lineTerminator -> go back 1 token
+//                iterator.prev();
+//            }
             statementList.add(statement);
-            if (IsLookAhead(endTokenType)) {
+            if (IsLookAhead(endTokenType) || iterator.getCurrent().getType() == EOF) {
                 // after some work is done, before calling iterator.next(),
                 // we must check for EOF again or else we risk going outside the iterators bounds
                 break;
@@ -331,7 +333,8 @@ public class Parser {
 
     /**
      * TypeDeclaration
-     * : (':' TokenType.Number | TokenType.String)
+     * : (':' PathIdentifier)?
+     * ;
      */
     private PathIdentifier TypeDeclaration() {
         if (IsLookAhead(Colon)) {
@@ -722,8 +725,7 @@ public class Parser {
                     identifier.addPackage(next.getValue().toString());
                     eat(Dot);
                 }
-                case AT -> {
-                    throw new NotImplementedException("case not implemented");
+                case null -> {
                 }
                 default -> {
                     identifier.setType(next.getValue().toString());

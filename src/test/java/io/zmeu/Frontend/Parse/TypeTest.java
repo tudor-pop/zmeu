@@ -111,6 +111,15 @@ public class TypeTest extends BaseTest {
         assertEquals(expected, actual);
         log.info(toJson(actual));
     }
+    @Test
+    void testSpace() {
+        var actual = parse("""
+                var x    : std.Number=2
+                """);
+        var expected = program(var(id("x"), packageId("std.Number"), number(2)));
+        assertEquals(expected, actual);
+        log.info(toJson(actual));
+    }
 
 
 }

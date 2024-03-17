@@ -7,11 +7,11 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ArrayUtils;
 
+@Getter
 @ToString
 @EqualsAndHashCode
 public abstract class Expression {
 
-    @Getter
     @Setter
     protected NodeType kind;
 

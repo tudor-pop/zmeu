@@ -9,14 +9,15 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * A path is a sequence of one or more path segments logically separated by a package qualifier (.)
  * If a path has multiple segments it always refers to an item. If there are no multiple segments it refers to an
  * item in the local scope.
  * This usually holds a package name when importing a package or when using a schema/resource
- * SimplePathExpression:
- * (Identifier.)+
+ * PathIdentifier:
+ * ; .?Identifier(.Identifier)*
  */
 //@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true )
 @Data
@@ -24,21 +25,21 @@ import java.util.Objects;
 @AllArgsConstructor
 public class PathIdentifier extends Identifier {
     @Builder.Default
-    private StringBuilder packageName = new StringBuilder();
+    private StringBuilder path = new StringBuilder();
 
     public PathIdentifier() {
         this.kind = NodeType.Path;
-        this.packageName = new StringBuilder();
+        this.path = new StringBuilder();
     }
 
-    private PathIdentifier(String type) {
+    private PathIdentifier(String path) {
         this();
-        setSymbol(type);
+        setSymbol(path);
     }
 
-    private PathIdentifier(String typePrefix, String type) {
+    private PathIdentifier(String path, String type) {
         this();
-        addPackage(typePrefix);
+        addPackage(path);
         setSymbol(type);
     }
 
@@ -47,6 +48,9 @@ public class PathIdentifier extends Identifier {
     }
 
     public static PathIdentifier of(String object) {
+        if (object.indexOf('.') == -1) {
+            return new PathIdentifier(object);
+        }
         var prefix = StringUtils.substringBeforeLast(object, ".");
         var type = StringUtils.substringAfterLast(object, ".");
         return new PathIdentifier(prefix, type);
@@ -58,25 +62,32 @@ public class PathIdentifier extends Identifier {
     }
 
     public void addPackage(String value) {
-        packageName.append(value);
+        path.append(value);
     }
 
     @JsonIgnore
     public String packageNameString() {
-        return packageName.toString();
+        return path.toString();
     }
 
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-        PathIdentifier that = (PathIdentifier) object;
-        return StringUtils.equals(getPackageName(), that.getPackageName());
+        var that = (PathIdentifier) object;
+        return StringUtils.equals(getPath(), that.getPath()) && StringUtils.equals(super.getSymbol(), that.getSymbol());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPackageName());
+        return Objects.hash(super.hashCode(), getPath());
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", PathIdentifier.class.getSimpleName() + "[", "]")
+                .add("path=" + path + getSymbol())
+                .add("kind=" + kind)
+                .toString();
     }
 }
