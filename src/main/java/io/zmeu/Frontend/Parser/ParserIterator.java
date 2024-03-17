@@ -112,7 +112,7 @@ public class ParserIterator {
     }
 
     public void eatLineTerminator() {
-        while (IsLookAhead(TokenType.lineTerminator(), TokenType.SemiColon)) {
+        while (IsLookAhead(TokenType.SemiColon)) {
             eat();
         }
     }
