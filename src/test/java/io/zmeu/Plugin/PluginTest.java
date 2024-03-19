@@ -35,11 +35,11 @@ public class PluginTest extends BaseTest {
             var extensions = pluginManager.getExtensions(Provider.class, dependency.uri());
             var providerSchema = extensions.getFirst().schemasString();
             var res = eval(providerSchema + """
-                    resource File main {
+                    resource Std.File main {
                         name = "first"
                         content = "provider schema"
                     }
-                    resource File second {
+                    resource Std.File second {
                         name = "second"
                         content = File.main.content
                     }

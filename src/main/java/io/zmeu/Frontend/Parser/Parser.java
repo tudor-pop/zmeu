@@ -412,7 +412,7 @@ public class Parser {
 
     private Statement SchemaDeclaration() {
         eat(Schema);
-        var packageIdentifier = Identifier();
+        var packageIdentifier = TypeIdentifier();
 
         Expression body = BlockExpression();
         return SchemaDeclaration.of(packageIdentifier, body);
@@ -691,14 +691,14 @@ public class Parser {
 
     /**
      * ResourceDeclaration
-     * : resource Type name '{'
+     * : resource TypeIdentifier name '{'
      * :    VariableDeclaration
      * : '}'
      * ;
      */
     private Statement ResourceDeclaration() {
         eat(Resource);
-        Identifier type = Identifier();
+        Identifier type = TypeIdentifier();
         Identifier name = null;
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
