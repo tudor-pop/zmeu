@@ -18,29 +18,25 @@ package io.zmeu.api;
 import io.zmeu.api.schema.ResourceToSchemaConverter;
 import org.pf4j.ExtensionPoint;
 
-import java.io.FileNotFoundException;
 import java.util.stream.Collectors;
 
-/**
- * @author Decebal Suiu
- */
 public interface Provider<T extends Resource> extends ExtensionPoint {
 
-    Resources items();
+    Resources resources();
 
     default Schemas schemas() {
         return new Schemas(
-                items().getResources().stream()
+                resources().list().stream()
                         .map(ResourceToSchemaConverter::toSchema)
                         .toList()
         );
     }
     default String schemasString() {
-        return items().getResources().stream()
+        return resources().list().stream()
                 .map(ResourceToSchemaConverter::toSchema)
                 .collect(Collectors.joining());
     }
 
-    T read(T declaration) throws FileNotFoundException;
+    T read(T declaration);
 
 }
