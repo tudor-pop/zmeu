@@ -25,7 +25,7 @@ public class PluginTest extends BaseTest {
 
     @BeforeEach
     void init() {
-        zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("files-0.0.1"))));
+        zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("files@0.0.1"))));
         pluginManager = PluginFactory.create(zmeufile);
     }
 
@@ -35,11 +35,11 @@ public class PluginTest extends BaseTest {
             var extensions = pluginManager.getExtensions(Provider.class, dependency.uri());
             var providerSchema = extensions.getFirst().schemasString();
             var res = eval(providerSchema + """
-                    resource Std.File main {
+                    resource File main {
                         name = "first"
                         content = "provider schema"
                     }
-                    resource Std.File second {
+                    resource File second {
                         name = "second"
                         content = File.main.content
                     }
