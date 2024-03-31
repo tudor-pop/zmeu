@@ -50,14 +50,14 @@ public class PluginTest extends BaseTest {
             assertNotNull(schema);
             assertEquals("File", schema.getType().getSymbol());
 
-            var resource = (ResourceValue) schema.getInstances().get("main");
+            ResourceValue resource = schema.getInstance("main");
 
             assertNotNull(resource);
             assertEquals("main", resource.getName());
             assertEquals("first", resource.argVal("name"));
             assertEquals("provider schema", resource.argVal("content"));
 
-            var second = (ResourceValue) schema.getInstances().get("second");
+            ResourceValue second = schema.getInstance("second");
 
             assertNotNull(second);
             assertEquals("second", second.getName());
@@ -70,4 +70,19 @@ public class PluginTest extends BaseTest {
 
         }
     }
+//    @Test
+//    void resourceDiffApply() {
+//        for (Dependency dependency : zmeufile.dependencies().list()) {
+//            var extensions = pluginManager.getExtensions(Provider.class, dependency.uri());
+//            var providerSchema = extensions.getFirst().schemasString();
+//            var res = eval(providerSchema + """
+//                    resource File main {
+//                        name    = "fisier.txt"
+//                        content = "provider schema"
+//                    }
+//                    """);
+//            extensions.getFirst().schemas();
+//            log.warn(toJson(res));
+//        }
+//    }
 }

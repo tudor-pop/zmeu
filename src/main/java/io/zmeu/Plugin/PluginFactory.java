@@ -21,23 +21,6 @@ public class PluginFactory {
 
         pluginManager.startPlugins();
 
-        log.info("Plugin directory: " + pluginManager.getPluginsRoot());
-        List<Provider> providers = pluginManager.getExtensions(Provider.class);
-        log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
-
-        for (var provider : providers) {
-            log.info("Resources: ");
-//            provider.getResources()
-//                    .getResources()
-//                    .forEach(message -> log.info("\t" + AnnotationProcessor.process(message)));
-//            declaration.setContent(Attribute.builder().value().build());
-//            try {
-//                var read = provider.read(declaration);
-//            } catch (FileNotFoundException e) {
-//                throw new RuntimeException(e);
-//            }
-        }
-
         // print extensions for each started plugin
         List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
         for (PluginWrapper plugin : startedPlugins) {
@@ -48,6 +31,22 @@ public class PluginFactory {
                 log.info("\t\t" + extension);
             }
         }
+
+        log.info("Plugin directory: " + pluginManager.getPluginsRoot());
+        List<Provider> providers = pluginManager.getExtensions(Provider.class);
+        log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
+
+        for (var provider : providers) {
+            log.info("Resources: ");
+            provider.resources()
+                    .list()
+                    .forEach(message -> log.info("\t" + message));
+//            var read = provider.read(FileResource.builder()
+//                    .name("fisier.txt")
+//                    .path("./")
+//                    .build());
+        }
+
 
         // stop the plugins
 //        pluginManager.stopPlugins();

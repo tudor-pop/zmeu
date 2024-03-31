@@ -1,9 +1,11 @@
 package io.zmeu.Runtime.Values;
 
+import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
 import io.zmeu.Runtime.Environment.Environment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -14,6 +16,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class ResourceValue {
     private Environment properties;
+    private SchemaValue schema;
     private String name;
 
     public ResourceValue() {
@@ -22,6 +25,12 @@ public class ResourceValue {
     private ResourceValue(String name, Environment parent) {
         this.name = name;
         this.properties = parent;
+    }
+
+    private ResourceValue(String name, Environment parent, @NonNull SchemaValue schema) {
+        this.name = name;
+        this.properties = parent;
+        this.schema = schema;
     }
 
     private ResourceValue(String e) {
@@ -34,6 +43,9 @@ public class ResourceValue {
 
     public static ResourceValue of(String string, Environment environment) {
         return new ResourceValue(string, environment);
+    }
+    public static ResourceValue of(String string, Environment environment, SchemaValue schema) {
+        return new ResourceValue(string, environment, schema);
     }
 
     public Object argVal(String name) {
@@ -78,8 +90,11 @@ public class ResourceValue {
     }
 
 
-    public String getSchema() {
-        return (String) properties.getParent().lookup("name");
+    public PathIdentifier type() {
+        return (PathIdentifier) this.schema.getType();
+    }
+    public String typeString() {
+        return this.schema.typeString();
     }
 
 }

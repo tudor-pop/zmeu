@@ -77,4 +77,8 @@ public class SchemaValue {
     public Object initInstance(String name, Object instance) {
         return this.instances.init(name, instance);
     }
+
+    public ResourceValue getInstance(String name) {
+        return (ResourceValue) instances.get(name);
+    }
 }

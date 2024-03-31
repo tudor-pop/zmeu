@@ -345,29 +345,31 @@ public class Interpreter implements Visitor<Object>, io.zmeu.Frontend.Parser.Sta
     }
 
     @Override
-    public Object eval(ResourceExpression expression) {
-        if (expression.getName() == null) {
-            throw new InvalidInitException("Resource does not have a name: " + expression.getType().getSymbol());
+    public Object eval(ResourceExpression resource) {
+        if (resource.getName() == null) {
+            throw new InvalidInitException("Resource does not have a name: " + resource.getType().getSymbol());
         }
-        var schemaValue = (SchemaValue) executeBlock(expression.getType(), env);
+        // SchemaValue already installed globally when evaluating a SchemaDeclaration. This means the schema must be declared before the resource
+        var installedSchema = (SchemaValue) executeBlock(resource.getType(), env);
 
-        Environment typeEnvironment = schemaValue.getEnvironment();
+        Environment typeEnvironment = installedSchema.getEnvironment();
+        // clone all properties from schema properties to the new resource
         Environment resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
         resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
         try {
-            var init = schemaValue.getMethodOrNull("init");
+            var init = installedSchema.getMethodOrNull("init");
             if (init != null) {
                 var args = new ArrayList<>();
-                for (Statement it : expression.getArguments()) {
+                for (Statement it : resource.getArguments()) {
                     Object objectRuntimeValue = executeBlock(it, resourceEnv);
                     args.add(objectRuntimeValue);
                 }
                 functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
             } else {
-                expression.getArguments().forEach(it -> executeBlock(it, resourceEnv));
+                resource.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            var res = schemaValue.initInstance(expression.name(), ResourceValue.of(expression.name(), resourceEnv));
-            engine.process(schemaValue.typeString(), resourceEnv.getVariables());
+            var res = installedSchema.initInstance(resource.name(), ResourceValue.of(resource.name(), resourceEnv, installedSchema));
+            engine.process(installedSchema.typeString(), resourceEnv.getVariables());
             return res;
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
