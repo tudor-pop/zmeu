@@ -417,13 +417,16 @@ public class Interpreter implements Visitor<Object>, io.zmeu.Frontend.Parser.Sta
 
     @Override
     public Object eval(SchemaDeclaration expression) {
-        var name = expression.getName();
-        var typeEnv = new Environment(env);
+        switch (expression.getBody()) {
+            case ExpressionStatement statement when statement.getStatement() instanceof BlockExpression blockExpression -> {
+                Identifier name = expression.getName();
+                var typeEnv = new Environment(env);
+                executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
 
-        Statement body = expression.getBody();
-        if (body instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
-            executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
-            return env.init(name.getSymbol(), SchemaValue.of(name, typeEnv)); // install the type into the global env
+                return env.init(name.symbolWithType(), SchemaValue.of(name, typeEnv)); // install the type into the global env
+            }
+            case null, default -> {
+            }
         }
         throw new RuntimeException("Invalid declaration:" + expression.getName());
     }
@@ -517,7 +520,7 @@ public class Interpreter implements Visitor<Object>, io.zmeu.Frontend.Parser.Sta
     public Object eval(Program program) {
         Object lastEval = new NullValue();
 
-        if (ErrorSystem.isHadError()) {
+        if (ErrorSystem.hadErrors()) {
             return null;
         }
         for (Statement i : program.getBody()) {

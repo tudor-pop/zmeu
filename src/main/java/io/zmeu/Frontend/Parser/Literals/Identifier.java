@@ -52,4 +52,8 @@ public class Identifier extends Expression {
         return visitor.eval(this);
     }
 
+    public String symbolWithType() {
+        return symbol;
+    }
+
 }

@@ -6,11 +6,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Lexical.Resolver;
 import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Runtime.Environment.Environment;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 public class BaseTest {
@@ -33,6 +35,11 @@ public class BaseTest {
 
         gson.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         gson.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+    }
+
+    @AfterEach
+    void cleanup() {
+        ErrorSystem.clear();
     }
 
     protected String toJson(Object o) {

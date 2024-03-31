@@ -66,8 +66,9 @@ public class PathIdentifier extends Identifier {
     }
 
     @JsonIgnore
-    public String packageNameString() {
-        return path.toString();
+    @Override
+    public String symbolWithType() {
+        return path.toString() + getSymbol();
     }
 
     @Override

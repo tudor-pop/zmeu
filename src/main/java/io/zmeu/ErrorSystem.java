@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class ErrorSystem {
-    @Getter
-    private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
     @Getter
     private static final List<ParseError> errors = new ArrayList<>();
@@ -31,7 +29,6 @@ public class ErrorSystem {
         } else {
             log.error("Line: " + token.getLine() + " at  " + token.getRaw() + ": " + message);
         }
-        hadError = true;
         ParseError parseError = ParseError.builder()
                 .actual(token)
                 .message(message)
@@ -42,7 +39,6 @@ public class ErrorSystem {
     }
 
     public static ParseError error(String message) {
-        hadError = true;
         ParseError parseError = ParseError.builder()
                 .message(message)
                 .build();
@@ -60,6 +56,10 @@ public class ErrorSystem {
 
     public static void clear() {
         errors.clear();
+    }
+
+    public static boolean hadErrors() {
+        return !errors.isEmpty();
     }
 
     public static String errors() {
