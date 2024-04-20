@@ -5,6 +5,8 @@ import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Environment.IEnvironment;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +14,12 @@ import org.jetbrains.annotations.Nullable;
 public class SchemaValue {
     public static final String INSTANCES = "instances";
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final Environment environment;
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final Environment instances;
     private final Identifier type;
 

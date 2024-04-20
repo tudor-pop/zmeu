@@ -15,7 +15,7 @@
  */
 package io.zmeu.api;
 
-import io.zmeu.api.schema.ResourceToSchemaConverter;
+import io.zmeu.api.schema.SchemaDefinition;
 import org.pf4j.ExtensionPoint;
 
 import java.util.stream.Collectors;
@@ -27,13 +27,13 @@ public interface Provider<T extends Resource> extends ExtensionPoint {
     default Schemas schemas() {
         return new Schemas(
                 resources().list().stream()
-                        .map(ResourceToSchemaConverter::toSchema)
+                        .map(SchemaDefinition::toSchemaDefinition)
                         .toList()
         );
     }
     default String schemasString() {
         return resources().list().stream()
-                .map(ResourceToSchemaConverter::toSchema)
+                .map(SchemaDefinition::toSchema)
                 .collect(Collectors.joining());
     }
 

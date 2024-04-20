@@ -70,18 +70,23 @@ public class PluginTest extends BaseTest {
 
         }
     }
+
 //    @Test
 //    void resourceDiffApply() {
 //        for (Dependency dependency : zmeufile.dependencies().list()) {
 //            var extensions = pluginManager.getExtensions(Provider.class, dependency.uri());
-//            var providerSchema = extensions.getFirst().schemasString();
+//            Provider first = extensions.getFirst();
+//            var providerSchema = first.schemasString();
 //            var res = eval(providerSchema + """
 //                    resource File main {
 //                        name    = "fisier.txt"
 //                        content = "provider schema"
 //                    }
 //                    """);
-//            extensions.getFirst().schemas();
+//            var schema = (SchemaValue) global.get("File");
+//            var pname = extensions.getFirst().resources().list().getFirst().getClass().getName();
+//            var file = ReflectionUtil.classForName(pname);
+//
 //            log.warn(toJson(res));
 //        }
 //    }
