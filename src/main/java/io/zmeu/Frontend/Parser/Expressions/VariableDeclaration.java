@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +11,7 @@ import lombok.EqualsAndHashCode;
 public class VariableDeclaration extends Expression {
     private Identifier id;
     private Expression init;
-    private Identifier type;
+    private PathIdentifier type;
 
     public VariableDeclaration() {
         this.kind = NodeType.VariableDeclaration;
@@ -21,13 +22,13 @@ public class VariableDeclaration extends Expression {
         this.id = (Identifier) id;
         this.init = init;
     }
-    private VariableDeclaration(Expression id, Identifier type) {
+    private VariableDeclaration(Expression id, PathIdentifier type) {
         this();
         this.id = (Identifier) id;
         this.type = type;
     }
 
-    private VariableDeclaration(Expression id, Identifier type, Expression init) {
+    private VariableDeclaration(Expression id, PathIdentifier type, Expression init) {
         this();
         this.id = (Identifier) id;
         this.init = init;
@@ -42,10 +43,10 @@ public class VariableDeclaration extends Expression {
         return new VariableDeclaration(id, init);
     }
 
-    public static VariableDeclaration of(Expression id, Identifier type, Expression init) {
+    public static VariableDeclaration of(Expression id, PathIdentifier type, Expression init) {
         return new VariableDeclaration(id, type, init);
     }
-    public static VariableDeclaration of(Expression id, Identifier type) {
+    public static VariableDeclaration of(Expression id, PathIdentifier type) {
         return new VariableDeclaration(id, type);
     }
 
