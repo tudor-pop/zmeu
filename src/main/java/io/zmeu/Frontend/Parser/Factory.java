@@ -46,7 +46,7 @@ public class Factory {
     }
 
     public static Statement resource(String type, String name, BlockExpression operator) {
-        return ResourceExpression.of(Identifier.of(type), Identifier.of(name), operator);
+        return ResourceExpression.of(PathIdentifier.of(type), Identifier.of(name), operator);
     }
 
     public static PathIdentifier packageId(String type) {
