@@ -1,13 +1,13 @@
 package io.zmeu.Frontend.Parser.Literals;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.zmeu.Frontend.Parser.Expressions.Visitor;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -26,9 +26,10 @@ import java.util.StringJoiner;
 public class PathIdentifier extends Identifier {
     @Builder.Default
     private StringBuilder path = new StringBuilder();
+    private LocalDate date;
 
     public PathIdentifier() {
-        this.kind = NodeType.Path;
+        this.kind = NodeType.Identifier;
         this.path = new StringBuilder();
     }
 
@@ -56,13 +57,31 @@ public class PathIdentifier extends Identifier {
         return new PathIdentifier(prefix, type);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
-
     public void addPackage(String value) {
         path.append(value);
+    }
+
+    private static PathIdentifier fromParent(String type) {
+        var split = type.split("/");
+        var pathIdentifier = PathIdentifier.of(split[0]);
+        if (split.length > 1) { // PluginName.Module/resource@date
+            pathIdentifier.setSymbol(split[1]);
+        }
+        return pathIdentifier;
+    }
+
+    public static PathIdentifier from(String type) {
+        var split = type.split("@");
+        PathIdentifier pathIdentifier = fromParent(split[0]);
+        if (split.length == 2) {
+            pathIdentifier.setDate(split[1]);
+        }
+        return pathIdentifier;
+    }
+
+
+    public void setDate(String date) {
+        this.date = LocalDate.parse(date);
     }
 
     @JsonIgnore

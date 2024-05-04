@@ -26,7 +26,6 @@ public enum NodeType {
     NullLiteral,
     //    BooleanLiteral,
     Identifier,
-    Path,
     BinaryExpression,
     LogicalExpression,
     GroupExpression,
@@ -34,6 +33,7 @@ public enum NodeType {
     AssignmentExpression,
     ThisExpression,
     ResourceExpression,
+    ModuleExpression,
     MemberExpression,
     CallExpression
 }

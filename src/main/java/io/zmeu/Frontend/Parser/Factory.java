@@ -1,10 +1,7 @@
 package io.zmeu.Frontend.Parser;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
-import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
-import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
-import io.zmeu.Frontend.Parser.Literals.StringLiteral;
+import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
 
 import java.util.Arrays;
@@ -47,6 +44,11 @@ public class Factory {
 
     public static Statement resource(String type, String name, BlockExpression operator) {
         return ResourceExpression.of(PathIdentifier.of(type), Identifier.of(name), operator);
+    }
+
+    public static Statement module(String type, String name, BlockExpression operator) {
+        PathIdentifier build = packageId(type);
+        return ModuleExpression.of(build, Identifier.of(name), operator);
     }
 
     public static PathIdentifier packageId(String type) {

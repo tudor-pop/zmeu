@@ -127,6 +127,7 @@ public class Parser {
                 case Fun -> FunctionDeclaration();
                 case Schema -> SchemaDeclaration();
                 case Resource -> ResourceDeclaration();
+                case Module -> ModuleDeclaration();
                 case Var -> VariableDeclarations();
                 default -> Statement();
             };
@@ -717,13 +718,43 @@ public class Parser {
         return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
     }
 
+
+    /**
+     * ModuleDeclaration
+     * : module '?ComplexIdentifier'? name '{'
+     * :    Inputs
+     * : '}'
+     * ;
+     */
+    private Statement ModuleDeclaration() {
+        eat(Module);
+        var moduleIdentifier = TypeIdentifier();
+        var name = Identifier();
+        eat(OpenBraces, "Expect '{' after module name.");
+//        var body = new ArrayList<Statement>();
+//        while (!IsLookAhead(CloseBraces)) {
+//            if (IsLookAhead(lineTerminator())) {
+//                eat(lineTerminator());
+//                continue;
+//            }
+//            body.add(ExpressionStatement.of(AssignmentExpression()));
+//        }
+        eat(CloseBraces, "Expect '}' after module body.");
+
+        return ModuleExpression.of(moduleIdentifier, name, (BlockExpression) BlockExpression.of());
+    }
+
     private PathIdentifier TypeIdentifier() {
         var identifier = new PathIdentifier();
-        for (var next = eat(TokenType.Identifier);/* IsLookAhead(TokenType.Dot, TokenType.OpenBraces, TokenType.AT, TokenType.lineTerminator(), EOF)*/ ; next = eat(TokenType.Identifier)) {
+        for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case Dot -> {
                     identifier.addPackage(next.getValue().toString());
                     eat(Dot);
+                }
+                case String ->{
+                    var token = eat(String);
+                    return PathIdentifier.from(token.getValue().toString());
                 }
                 case null -> {
                 }
