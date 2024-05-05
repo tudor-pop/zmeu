@@ -2,6 +2,10 @@ package io.zmeu.Frontend.Parse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
@@ -15,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 class BaseTest {
     protected Parser parser;
     protected Tokenizer tokenizer;
-    protected ObjectMapper gson = new ObjectMapper();
+    protected ObjectMapper mapper = new ObjectMapper();
 
 
     @BeforeAll
@@ -27,6 +31,11 @@ class BaseTest {
     void init() {
         tokenizer = new Tokenizer();
         parser = new Parser();
+        mapper =  JsonMapper.builder() // or different mapper for other format
+                .addModule(new ParameterNamesModule())
+                .addModule(new Jdk8Module())
+                .addModule(new JavaTimeModule())
+                .build();
         ErrorSystem.clear();
     }
 
@@ -36,7 +45,7 @@ class BaseTest {
 
     protected String toJson(Object o) {
         try {
-            return gson.writeValueAsString(o);
+            return mapper.writeValueAsString(o);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

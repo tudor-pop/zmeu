@@ -9,8 +9,9 @@ repositories {
     mavenCentral()
 }
 
-def pf4jVersion = "3.10.0"
-def lombok = '1.18.30'
+def pf4jVersion = '3.11.0'
+def jackson = '2.17.0'
+def lombok = '1.18.32'
 
 dependencies {
     implementation project(':api')
@@ -18,17 +19,19 @@ dependencies {
 
     implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation 'org.jetbrains:annotations:24.0.1'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.15.2'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.jetbrains:annotations:24.1.0'
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jackson"
+    implementation "com.fasterxml.jackson.module:jackson-module-parameter-names:$jackson"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jackson"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jackson"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jackson"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jackson"
     implementation 'software.amazon.awssdk:ec2:2.20.83'
     implementation 'software.amazon.awssdk:sdk-core:2.20.83'
     implementation 'software.amazon.awssdk:aws-core:2.20.83'
-    implementation 'org.fusesource.jansi:jansi:2.4.0'
+    implementation 'org.fusesource.jansi:jansi:2.4.1'
 //    implementation 'org.javers:javers-core:7.0.1'
     implementation "org.pf4j:pf4j:${pf4jVersion}"
     annotationProcessor "org.pf4j:pf4j:${pf4jVersion}"
@@ -36,9 +39,9 @@ dependencies {
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
     implementation 'info.picocli:picocli:4.7.5'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
-    implementation 'org.javers:javers-core:7.3.7'
-    implementation 'org.javers:javers-persistence-sql:7.3.7'
-    implementation 'org.postgresql:postgresql:42.7.1'
+    implementation 'org.javers:javers-core:7.4.2'
+    implementation 'org.javers:javers-persistence-sql:7.4.2'
+    implementation 'org.postgresql:postgresql:42.7.3'
 
 
 
@@ -48,9 +51,9 @@ dependencies {
 
     testCompileOnly "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.10.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0-M1'
+    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.10.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
 }
 
 test {

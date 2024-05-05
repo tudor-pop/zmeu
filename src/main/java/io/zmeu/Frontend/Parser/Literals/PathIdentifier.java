@@ -77,7 +77,7 @@ public class PathIdentifier extends Identifier {
 
 
     public void setDate(String date) {
-        this.date = LocalDate.parse(date);
+        this.date = LocalDate.parse(date.substring(0, date.length() - 1));
     }
 
     @JsonIgnore
@@ -105,6 +105,7 @@ public class PathIdentifier extends Identifier {
                 .add("provider=" + provider)
                 .add("type=" + type)
                 .add("symbol=" + getSymbol())
+                .add("date=" + getDate())
                 .add("kind=" + kind)
                 .toString();
     }

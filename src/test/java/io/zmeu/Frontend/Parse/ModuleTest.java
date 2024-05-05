@@ -41,19 +41,26 @@ public class ModuleTest extends BaseTest {
         log.info(toJson(res));
     }
 
-
+    /*
+     * import S3 from 'Aws.Storage'
+     *
+     * resource S3.Bucket prod {
+     *
+     * }
+     *
+     * */
     @Test
-    void moduleProviderResourceNamespacedQuoted() {
-        /*
-        * import S3 from 'Aws.Storage'
-        *
-        * resource S3.Bucket prod {
-        *
-        * }
-        *
-        * */
+    void moduleProviderWithResourceNamespaced() {
         var res = parse("module 'Aws.Storage/S3.Bucket' api {}");
         var expected = program(module("'Aws.Storage/S3.Bucket'", "api", block()));
+        assertEquals(expected, res);
+        log.info(toJson(res));
+    }
+
+    @Test
+    void moduleProviderResourceNamespacedWithDate() {
+        var res = parse("module 'Aws.Storage/S3.Bucket@2022-01-20' api {}");
+        var expected = program(module("'Aws.Storage/S3.Bucket@2022-01-20'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
