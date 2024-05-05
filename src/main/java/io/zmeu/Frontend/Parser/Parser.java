@@ -762,16 +762,19 @@ public class Parser {
 
     private @NotNull PathIdentifier PathIdentifier() {
         var identifier = new PathIdentifier();
+        var type = new StringBuilder();
         for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case Dot -> {
-                    identifier.addPackage(next.getValue().toString());
+                    type.append(next.getValue().toString());
+                    type.append(".");
                     eat(Dot);
                 }
                 case null -> {
                 }
                 default -> {
-                    identifier.setType(next.getValue().toString());
+                    type.append(next.getValue().toString());
+                    identifier.setType(type.toString());
                     return identifier;
                 }
             }

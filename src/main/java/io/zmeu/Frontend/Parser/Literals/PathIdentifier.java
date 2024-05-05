@@ -48,25 +48,18 @@ public class PathIdentifier extends Identifier {
         setSymbol(type);
     }
 
-    public static PathIdentifier of(String object) {
-        if (object.indexOf('.') == -1) {
-            return new PathIdentifier(object);
-        }
-        var prefix = StringUtils.substringBeforeLast(object, ".");
-        var type = StringUtils.substringAfterLast(object, ".");
-        return new PathIdentifier(prefix, type);
-    }
-
     public void addPackage(String value) {
         provider.append(value);
     }
 
-    private static PathIdentifier fromParent(String type) {
-        var split = type.split("/");
-        if (split.length > 1) { // PluginName.Module/resource@date
-            return new PathIdentifier(split[0], split[1]);
-        }
-        return new PathIdentifier(split[0]);
+    public static PathIdentifier of(String object) {
+        return from(object);
+//        if (object.indexOf('.') == -1) {
+//            return new PathIdentifier(object);
+//        }
+//        var prefix = StringUtils.substringBeforeLast(object, ".");
+//        var type = StringUtils.substringAfterLast(object, ".");
+//        return new PathIdentifier(prefix, type);
     }
 
     public static PathIdentifier from(String type) {
@@ -76,6 +69,14 @@ public class PathIdentifier extends Identifier {
             pathIdentifier.setDate(split[1]);
         }
         return pathIdentifier;
+    }
+
+    private static PathIdentifier fromParent(String type) {
+        var split = type.split("/");
+        if (split.length > 1) { // PluginName.Module/resource@date
+            return new PathIdentifier(split[0], split[1]);
+        }
+        return new PathIdentifier(split[0]);
     }
 
 
