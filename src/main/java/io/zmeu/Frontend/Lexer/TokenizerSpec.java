@@ -1,7 +1,5 @@
 package io.zmeu.Frontend.Lexer;
 
-import lombok.Data;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -78,14 +76,15 @@ class TokenizerSpec {
             new Entry("^\\w+", TokenType.Identifier)
     );
 
-    @Data
-    static class Entry {
-        private final Pattern pattern;
-        private final TokenType type;
 
-        Entry(String pattern, TokenType type) {
-            this.pattern = matcher(pattern);
+    record Entry(Pattern pattern, TokenType type) {
+        public Entry(Pattern pattern, TokenType type) {
+            this.pattern = pattern;
             this.type = type;
+        }
+
+        public Entry(String pattern, TokenType type) {
+            this(matcher(pattern), type);
         }
 
         private static Pattern matcher(String sequence) {

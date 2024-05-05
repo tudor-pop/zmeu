@@ -111,7 +111,7 @@ public class Parser {
 //                iterator.prev();
 //            }
             statementList.add(statement);
-            if (IsLookAhead(endTokenType) || iterator.getCurrent().getType() == EOF) {
+            if (IsLookAhead(endTokenType) || iterator.getCurrent().type() == EOF) {
                 // after some work is done, before calling iterator.next(),
                 // we must check for EOF again or else we risk going outside the iterators bounds
                 break;
@@ -124,7 +124,7 @@ public class Parser {
 
     private Statement Declaration() {
         try {
-            return switch (lookAhead().getType()) {
+            return switch (lookAhead().type()) {
                 case Fun -> FunctionDeclaration();
                 case Schema -> SchemaDeclaration();
                 case Resource -> ResourceDeclaration();
@@ -156,7 +156,7 @@ public class Parser {
      */
     @Nullable
     private Statement Statement() {
-        return switch (lookAhead().getType()) {
+        return switch (lookAhead().type()) {
             case NewLine -> new EmptyStatement();
 //            case OpenBraces -> BlockStatement();
             case If -> IfStatement();
@@ -169,7 +169,7 @@ public class Parser {
     }
 
     private Statement IterationStatement() {
-        return switch (lookAhead().getType()) {
+        return switch (lookAhead().type()) {
             case While -> WhileStatement();
             case For -> ForStatement();
             default -> throw new SyntaxError();
@@ -241,7 +241,7 @@ public class Parser {
     }
 
     private Statement ForStatementInit() {
-        return switch (lookAhead().getType()) {
+        return switch (lookAhead().type()) {
             case Var -> {
                 eat(Var);
                 yield VariableStatementInit();
@@ -360,7 +360,7 @@ public class Parser {
     }
 
     private Expression Expression() {
-        return switch (lookAhead().getType()) {
+        return switch (lookAhead().type()) {
             case OpenBraces -> BlockExpression();
             default -> AssignmentExpression();
         };
@@ -481,7 +481,7 @@ public class Parser {
 
         var params = OptParameterList();
         eat(CloseParenthesis);
-        eat(Lambda, "Expected -> but got: " + lookAhead().getValue());
+        eat(Lambda, "Expected -> but got: " + lookAhead().value());
 
         return LambdaExpression.of(params, LambdaBody());
     }
@@ -517,7 +517,7 @@ public class Parser {
     private Expression AssignmentExpression() {
         Expression left = OrExpression();
         if (IsLookAhead(Equal, Equal_Complex)) {
-            var operator = AssignmentOperator().getValue();
+            var operator = AssignmentOperator().value();
             Expression rhs = Expression();
 
             left = AssignmentExpression.of(isValidAssignmentTarget(left, operator), rhs, operator);
@@ -531,7 +531,7 @@ public class Parser {
         while (!IsLookAhead(EOF) && IsLookAhead(Logical_Or)) {
             var operator = eat();
             Expression right = AndExpression();
-            expression = LogicalExpression.of(operator.getValue().toString(), expression, right);
+            expression = LogicalExpression.of(operator.value().toString(), expression, right);
         }
         return expression;
     }
@@ -542,7 +542,7 @@ public class Parser {
         while (!IsLookAhead(EOF) && IsLookAhead(Logical_And)) {
             var operator = eat();
             Expression right = EqualityExpression();
-            expression = LogicalExpression.of(operator.getValue(), expression, right);
+            expression = LogicalExpression.of(operator.value(), expression, right);
         }
         return expression;
     }
@@ -556,7 +556,7 @@ public class Parser {
         while (!IsLookAhead(EOF) && IsLookAhead(Equality_Operator)) {
             var operator = eat();
             Expression right = EqualityExpression();
-            expression = BinaryExpression.of(expression, right, operator.getValue().toString());
+            expression = BinaryExpression.of(expression, right, operator.value().toString());
         }
         return expression;
     }
@@ -572,7 +572,7 @@ public class Parser {
         while (!IsLookAhead(EOF) && IsLookAhead(RelationalOperator)) {
             var operator = eat();
             Expression right = RelationalExpression();
-            expression = BinaryExpression.of(expression, right, operator.getValue().toString());
+            expression = BinaryExpression.of(expression, right, operator.value().toString());
         }
         return expression;
     }
@@ -583,7 +583,7 @@ public class Parser {
     private Token AssignmentOperator() {
         Token token = lookAhead();
         if (token.isAssignment()) {
-            return eat(token.getType());
+            return eat(token.type());
         }
         throw Error(token, "Unrecognized token");
     }
@@ -592,7 +592,7 @@ public class Parser {
         if (target.is(NodeType.Identifier, NodeType.MemberExpression)) {
             return target;
         }
-        Object value = iterator.getCurrent().getValue();
+        Object value = iterator.getCurrent().value();
         if (target instanceof Literal n) {
             throw Error("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, value));
         } else {
@@ -623,7 +623,7 @@ public class Parser {
         while (match("+", "-")) {
             var operator = eat();
             Expression right = this.MultiplicativeExpression();
-            left = BinaryExpression.of(left, right, operator.getValue().toString());
+            left = BinaryExpression.of(left, right, operator.value().toString());
         }
 
         return left;
@@ -636,14 +636,14 @@ public class Parser {
         while (match("*", "/", "%")) {
             var operator = eat();
             Expression right = UnaryExpression();
-            left = new BinaryExpression(left, right, operator.getValue().toString());
+            left = new BinaryExpression(left, right, operator.value().toString());
         }
 
         return left;
     }
 
     private Expression UnaryExpression() {
-        var operator = switch (lookAhead().getType()) {
+        var operator = switch (lookAhead().type()) {
             case Minus -> eat(Minus);
             case Increment -> eat(Increment);
             case Decrement -> eat(Decrement);
@@ -651,7 +651,7 @@ public class Parser {
             default -> null;
         };
         if (operator != null) {
-            return UnaryExpression.of(operator.getValue(), UnaryExpression());
+            return UnaryExpression.of(operator.value(), UnaryExpression());
         }
 
         return LeftHandSideExpression();
@@ -663,7 +663,7 @@ public class Parser {
             return null;
         }
         iterator.eatLineTerminator();
-        return switch (lookAhead().getType()) {
+        return switch (lookAhead().type()) {
             case OpenParenthesis, OpenBrackets -> ParenthesizedExpression();
             case Equal -> {
                 eat();
@@ -746,17 +746,17 @@ public class Parser {
     }
 
     private PathIdentifier TypeIdentifier() {
-        switch (lookAhead().getType()) {
+        switch (lookAhead().type()) {
             case String -> {
                 var token = eat(String);
-                PathIdentifier from = PathIdentifier.from(token.getValue().toString());
+                PathIdentifier from = PathIdentifier.from(token.value().toString());
 
                 return from;
             }
             case Identifier -> {
                 return PathIdentifier();
             }
-            case null, default -> throw new RuntimeException("Unexpected token type: " + lookAhead().getType());
+            case null, default -> throw new RuntimeException("Unexpected token type: " + lookAhead().type());
         }
     }
 
@@ -764,17 +764,17 @@ public class Parser {
         var identifier = new PathIdentifier();
         var type = new StringBuilder();
         for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
-            switch (lookAhead().getType()) {
+            switch (lookAhead().type()) {
                 case Dot -> {
-                    type.append(next.getValue().toString());
+                    type.append(next.value().toString());
                     type.append(".");
                     eat(Dot);
                 }
                 case null -> {
                 }
                 default -> {
-                    type.append(next.getValue().toString());
-                    identifier.setType(next.getValue().toString());
+                    type.append(next.value().toString());
+                    identifier.setType(next.value().toString());
                     identifier.setSymbol(type.toString());
                     return identifier;
                 }
@@ -815,7 +815,7 @@ public class Parser {
                 throw Error(lookAhead(), "Can't have more than 128 arguments");
             }
             arguments.add(Expression());
-        } while (match(Comma) && eat(Comma, "Expect ',' after argument: " + iterator.getCurrent().getRaw()) != null);
+        } while (match(Comma) && eat(Comma, "Expect ',' after argument: " + iterator.getCurrent().raw()) != null);
 
         return arguments;
     }
@@ -827,7 +827,7 @@ public class Parser {
     private Expression MemberExpression() {
         var object = PrimaryExpression();
         for (var next = lookAhead(); IsLookAhead(Dot, OpenBrackets); next = lookAhead()) {
-            object = switch (next.getType()) {
+            object = switch (next.type()) {
                 case Dot -> {
                     var property = MemberProperty();
                     yield MemberExpression.of(false, object, property);
@@ -836,7 +836,7 @@ public class Parser {
                     var property = MemberPropertyIndex();
                     yield MemberExpression.of(true, object, property);
                 }
-                default -> throw new IllegalStateException("Unexpected value: " + next.getType());
+                default -> throw new IllegalStateException("Unexpected value: " + next.type());
             };
         }
         return object;
@@ -856,7 +856,7 @@ public class Parser {
 
     private Identifier Identifier() {
         var id = eat(TokenType.Identifier);
-        return new Identifier(id.getValue());
+        return new Identifier(id.value());
     }
 
     private Expression ParenthesizedExpression() {
@@ -875,18 +875,18 @@ public class Parser {
 
     private Expression Literal() {
         Token current = iterator.getCurrent();
-        return switch (current.getType()) {
+        return switch (current.type()) {
             case True, False -> BooleanLiteral();
             case Null -> NullLiteral.of();
-            case Number -> NumericLiteral.of(current.getValue());
-            case String -> new StringLiteral(current.getValue());
-            default -> new ErrorExpression(current.getValue());
+            case Number -> NumericLiteral.of(current.value());
+            case String -> new StringLiteral(current.value());
+            default -> new ErrorExpression(current.value());
         };
     }
 
     private Expression BooleanLiteral() {
 //        var literal = eat();
-        return BooleanLiteral.of(iterator.getCurrent().getValue());
+        return BooleanLiteral.of(iterator.getCurrent().value());
     }
 
     boolean IsLookAheadAfter(TokenType after, TokenType... type) {
@@ -902,7 +902,7 @@ public class Parser {
     }
 
     Token eat(TokenType... type) {
-        return iterator.eat("Expected token: %s but it was %s".formatted(Arrays.toString(type).replaceAll("\\]?\\[?", ""), lookAhead().getRaw()), type);
+        return iterator.eat("Expected token: %s but it was %s".formatted(Arrays.toString(type).replaceAll("\\]?\\[?", ""), lookAhead().raw()), type);
     }
 
     Token eat(TokenType type, String error) {

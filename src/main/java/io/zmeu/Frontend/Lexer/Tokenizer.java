@@ -61,11 +61,11 @@ public class Tokenizer {
 
         for (var it : TokenizerSpec.spec) {
             CharBuffer str = source.subSequence(iterator.getIndex(), iterator.getEndIndex());
-            var value = match(it.getPattern(), str);
+            var value = match(it.pattern(), str);
             if (value == null) {
                 continue;
             }
-            TokenType type = it.getType();
+            TokenType type = it.type();
             if (TokenType.isAny(type, TokenType.WhiteSpace, TokenType.Comment)) {
                 return null;
             }

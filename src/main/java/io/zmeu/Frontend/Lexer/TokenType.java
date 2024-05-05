@@ -119,7 +119,7 @@ public enum TokenType {
         return field;
     }
 
-    private String field;
+    private final String field;
 
     TokenType(String field) {
         this.field = field;

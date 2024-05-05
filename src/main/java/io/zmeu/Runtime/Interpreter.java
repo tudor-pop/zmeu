@@ -611,7 +611,7 @@ public class Interpreter implements Visitor<Object>, io.zmeu.Frontend.Parser.Sta
     }
 
     static void runtimeError(RuntimeError error) {
-        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().getLine());
+        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().line());
         hadRuntimeError = true;
     }
 

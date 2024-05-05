@@ -19,15 +19,15 @@ public class ErrorSystem {
     private static final List<ParseError> errors = new ArrayList<>();
 
     public static void runtimeError(RuntimeError error) {
-        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().getLine());
+        System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().line());
         hadRuntimeError = true;
     }
 
     public static ParseError error(String message, Token token, TokenType type) {
         if (token.is(TokenType.EOF)) {
-            log.error("Line: " + token.getLine() + " at end. " + message);
+            log.error("Line: " + token.line() + " at end. " + message);
         } else {
-            log.error("Line: " + token.getLine() + " at  " + token.getRaw() + ": " + message);
+            log.error("Line: " + token.line() + " at  " + token.raw() + ": " + message);
         }
         ParseError parseError = ParseError.builder()
                 .actual(token)
