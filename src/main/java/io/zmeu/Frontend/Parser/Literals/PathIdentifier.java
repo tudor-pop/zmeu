@@ -102,7 +102,9 @@ public class PathIdentifier extends Identifier {
     @Override
     public String toString() {
         return new StringJoiner(", ", PathIdentifier.class.getSimpleName() + "[", "]")
-                .add("path=" + provider + getSymbol())
+                .add("provider=" + provider)
+                .add("type=" + type)
+                .add("symbol=" + getSymbol())
                 .add("kind=" + kind)
                 .toString();
     }
