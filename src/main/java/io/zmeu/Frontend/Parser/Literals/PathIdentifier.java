@@ -24,8 +24,8 @@ import java.util.StringJoiner;
 @Builder
 @AllArgsConstructor
 public class PathIdentifier extends Identifier {
-    @Builder.Default
-    private StringBuilder provider = new StringBuilder();
+    private StringBuilder provider;
+    private String type;
     private LocalDate date;
 
     public PathIdentifier() {
@@ -41,10 +41,6 @@ public class PathIdentifier extends Identifier {
     private PathIdentifier(String provider, String type) {
         this();
         addPackage(provider);
-        setSymbol(type);
-    }
-
-    public void setType(String type) {
         setSymbol(type);
     }
 

@@ -325,8 +325,8 @@ public class Parser {
         var init = IsLookAhead(lineTerminator(), Comma, EOF) ? null : VariableInitializer();
         if (type != null && init != null) { // if type is declared
             if (init instanceof Literal literal) {
-                if (!StringUtils.equals(type.getSymbol(), literal.type().name())) {
-                    throw new InvalidTypeInitException(type.getSymbol(), literal.type().name(), literal.getVal());
+                if (!StringUtils.equals(type.getType(), literal.type().name())) {
+                    throw new InvalidTypeInitException(type.getType(), literal.type().name(), literal.getVal());
                 }
             }
         }
@@ -414,7 +414,7 @@ public class Parser {
 
     private Statement SchemaDeclaration() {
         eat(Schema);
-        var packageIdentifier = TypeIdentifier();
+        var packageIdentifier = Identifier();
 
         Expression body = BlockExpression();
         return SchemaDeclaration.of(packageIdentifier, body);
@@ -774,7 +774,8 @@ public class Parser {
                 }
                 default -> {
                     type.append(next.getValue().toString());
-                    identifier.setType(type.toString());
+                    identifier.setType(next.getValue().toString());
+                    identifier.setSymbol(type.toString());
                     return identifier;
                 }
             }
