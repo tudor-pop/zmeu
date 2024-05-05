@@ -25,22 +25,23 @@ import java.util.StringJoiner;
 @AllArgsConstructor
 public class PathIdentifier extends Identifier {
     @Builder.Default
-    private StringBuilder path = new StringBuilder();
+    private StringBuilder fullType = new StringBuilder();
+    private String provider;
     private LocalDate date;
 
     public PathIdentifier() {
         this.kind = NodeType.Identifier;
-        this.path = new StringBuilder();
+        this.fullType = new StringBuilder();
     }
 
-    private PathIdentifier(String path) {
+    private PathIdentifier(String fullType) {
         this();
-        setSymbol(path);
+        setSymbol(fullType);
     }
 
-    private PathIdentifier(String path, String type) {
+    private PathIdentifier(String fullType, String type) {
         this();
-        addPackage(path);
+        addPackage(fullType);
         setSymbol(type);
     }
 
@@ -58,7 +59,7 @@ public class PathIdentifier extends Identifier {
     }
 
     public void addPackage(String value) {
-        path.append(value);
+        fullType.append(value);
     }
 
     private static PathIdentifier fromParent(String type) {
@@ -86,7 +87,7 @@ public class PathIdentifier extends Identifier {
     @JsonIgnore
     @Override
     public String symbolWithType() {
-        return path.toString() + getSymbol();
+        return fullType.toString() + getSymbol();
     }
 
     @Override
@@ -94,18 +95,18 @@ public class PathIdentifier extends Identifier {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         var that = (PathIdentifier) object;
-        return StringUtils.equals(getPath(), that.getPath()) && StringUtils.equals(super.getSymbol(), that.getSymbol());
+        return StringUtils.equals(getFullType(), that.getFullType()) && StringUtils.equals(super.getSymbol(), that.getSymbol());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getPath());
+        return Objects.hash(super.hashCode(), getFullType());
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", PathIdentifier.class.getSimpleName() + "[", "]")
-                .add("path=" + path + getSymbol())
+                .add("path=" + fullType + getSymbol())
                 .add("kind=" + kind)
                 .toString();
     }
