@@ -25,23 +25,22 @@ import java.util.StringJoiner;
 @AllArgsConstructor
 public class PathIdentifier extends Identifier {
     @Builder.Default
-    private StringBuilder fullType = new StringBuilder();
-    private String provider;
+    private StringBuilder provider = new StringBuilder();
     private LocalDate date;
 
     public PathIdentifier() {
         this.kind = NodeType.Identifier;
-        this.fullType = new StringBuilder();
+        this.provider = new StringBuilder();
     }
 
-    private PathIdentifier(String fullType) {
+    private PathIdentifier(String provider) {
         this();
-        setSymbol(fullType);
+        setSymbol(provider);
     }
 
-    private PathIdentifier(String fullType, String type) {
+    private PathIdentifier(String provider, String type) {
         this();
-        addPackage(fullType);
+        addPackage(provider);
         setSymbol(type);
     }
 
@@ -59,7 +58,7 @@ public class PathIdentifier extends Identifier {
     }
 
     public void addPackage(String value) {
-        fullType.append(value);
+        provider.append(value);
     }
 
     private static PathIdentifier fromParent(String type) {
@@ -87,7 +86,7 @@ public class PathIdentifier extends Identifier {
     @JsonIgnore
     @Override
     public String symbolWithType() {
-        return fullType.toString() + getSymbol();
+        return provider.toString() + getSymbol();
     }
 
     @Override
@@ -95,18 +94,18 @@ public class PathIdentifier extends Identifier {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         var that = (PathIdentifier) object;
-        return StringUtils.equals(getFullType(), that.getFullType()) && StringUtils.equals(super.getSymbol(), that.getSymbol());
+        return StringUtils.equals(getProvider(), that.getProvider()) && StringUtils.equals(super.getSymbol(), that.getSymbol());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getFullType());
+        return Objects.hash(super.hashCode(), getProvider());
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", PathIdentifier.class.getSimpleName() + "[", "]")
-                .add("path=" + fullType + getSymbol())
+                .add("path=" + provider + getSymbol())
                 .add("kind=" + kind)
                 .toString();
     }
