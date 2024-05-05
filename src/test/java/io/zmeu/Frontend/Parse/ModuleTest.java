@@ -65,4 +65,17 @@ public class ModuleTest extends BaseTest {
         log.info(toJson(res));
     }
 
+    @Test
+    void moduleWithBody() {
+        var res = parse("""
+                module 'Aws.Storage/S3.Bucket@2022-01-20' api {
+                    name = "bucket-prod"
+                }
+                """);
+        var expected = program(module("'Aws.Storage/S3.Bucket@2022-01-20'", "api",
+                block(assign("name", "bucket-prod"))));
+        assertEquals(expected, res);
+        log.info(toJson(res));
+    }
+
 }

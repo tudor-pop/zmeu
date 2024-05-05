@@ -290,12 +290,16 @@ public class Parser {
      * : Statement* Expression
      */
     private Expression BlockExpression() {
-        eat(OpenBraces);
+        return BlockExpression(null, "Error");
+    }
+
+    private Expression BlockExpression(String errorOpen, String errorClose) {
+        eat(OpenBraces, errorOpen);
         var res = IsLookAhead(CloseBraces)
                 ? BlockExpression.of(Collections.emptyList())
                 : BlockExpression.of(StatementList(CloseBraces));
         if (IsLookAhead(CloseBraces)) { // ? { } => eat } & return the block
-            eat(CloseBraces, "Error");
+            eat(CloseBraces, errorClose);
         }
         return res;
     }
@@ -705,18 +709,9 @@ public class Parser {
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
-        eat(OpenBraces, "Expect '{' after resource name.");
-        var body = new ArrayList<Statement>();
-        while (!IsLookAhead(CloseBraces)) {
-            if (IsLookAhead(lineTerminator())) {
-                eat(lineTerminator());
-                continue;
-            }
-            body.add(ExpressionStatement.of(AssignmentExpression()));
-        }
-        eat(CloseBraces, "Expect '}' after resource body.");
+        var body = BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body.");
 
-        return ResourceExpression.of(type, name, (BlockExpression) BlockExpression.of(body));
+        return ResourceExpression.of(type, name, (BlockExpression) body);
     }
 
 
@@ -731,18 +726,9 @@ public class Parser {
         eat(Module);
         var moduleType = TypeIdentifier();
         var name = Identifier();
-        eat(OpenBraces, "Expect '{' after module name.");
-//        var body = new ArrayList<Statement>();
-//        while (!IsLookAhead(CloseBraces)) {
-//            if (IsLookAhead(lineTerminator())) {
-//                eat(lineTerminator());
-//                continue;
-//            }
-//            body.add(ExpressionStatement.of(AssignmentExpression()));
-//        }
-        eat(CloseBraces, "Expect '}' after module body.");
+        var body = BlockExpression("Expect '{' after module name.", "Expect '}' after module body.");
 
-        return ModuleExpression.of(moduleType, name, (BlockExpression) BlockExpression.of());
+        return ModuleExpression.of(moduleType, name, (BlockExpression) body);
     }
 
     private PathIdentifier TypeIdentifier() {
