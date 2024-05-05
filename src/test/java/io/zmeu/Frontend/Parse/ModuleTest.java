@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.ErrorSystem;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ModuleTest extends BaseTest {
 
     @Test
-    void moduleDeclarationUnquoted() {
+    void moduleUnquoted() {
         var res = parse("module Backend api {}");
         var expected = program(module("Backend", "api", block()));
         assertEquals(expected, res);
@@ -19,7 +18,7 @@ public class ModuleTest extends BaseTest {
     }
 
     @Test
-    void moduleDeclarationQuoted() {
+    void moduleQuoted() {
         var res = parse("module 'Backend' api {}");
         var expected = program(module("'Backend'", "api", block()));
         assertEquals(expected, res);
@@ -27,52 +26,36 @@ public class ModuleTest extends BaseTest {
     }
 
     @Test
-    void missingLeftBracketError() {
-        parse("resource vm main   }");
-        var leftErr = ErrorSystem.getErrors().get(0);
-    }
-
-    @Test
-    void resourceWithStringAssignment() {
-        var res = parse("""
-                    resource vm main { 
-                        name = "main" 
-                    }
-                """);
-        var expected = program(resource("vm", "main", block(
-                assign("name", "main")
-        )));
+    void moduleProviderNamespacedQuoted() {
+        var res = parse("module 'Aws.Storage' api {}");
+        var expected = program(module("'Aws.Storage'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
 
     @Test
-    void resourceWithNumberAssignment() {
-        var res = parse("""
-                    resource vm main { 
-                        name = 1
-                    }
-                """);
-        var expected = program(resource("vm", "main", block(
-                assign("name", 1)
-        )));
+    void moduleProviderNamespacedUnquoted() {
+        var res = parse("module Aws.Storage api {}");
+        var expected = program(module("Aws.Storage", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
+
 
     @Test
-    void resourceWithMemberAssignment() {
-        var res = parse("""
-                    resource vm main { 
-                        name = a.b
-                    }
-                """);
-        var expected = program(resource("vm", "main", block(
-                assign("name", member("a", "b"))
-        )));
+    void moduleProviderResourceNamespacedQuoted() {
+        /*
+        * import S3 from 'Aws.Storage'
+        *
+        * resource S3.Bucket prod {
+        *
+        * }
+        *
+        * */
+        var res = parse("module 'Aws.Storage/S3.Bucket' api {}");
+        var expected = program(module("'Aws.Storage/S3.Bucket'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
-
 
 }

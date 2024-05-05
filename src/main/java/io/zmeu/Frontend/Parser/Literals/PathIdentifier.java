@@ -63,11 +63,10 @@ public class PathIdentifier extends Identifier {
 
     private static PathIdentifier fromParent(String type) {
         var split = type.split("/");
-        var pathIdentifier = PathIdentifier.of(split[0]);
         if (split.length > 1) { // PluginName.Module/resource@date
-            pathIdentifier.setSymbol(split[1]);
+            return new PathIdentifier(split[0], split[1]);
         }
-        return pathIdentifier;
+        return new PathIdentifier(split[0]);
     }
 
     public static PathIdentifier from(String type) {

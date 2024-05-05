@@ -11,6 +11,7 @@ import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -721,14 +722,14 @@ public class Parser {
 
     /**
      * ModuleDeclaration
-     * : module '?ComplexIdentifier'? name '{'
+     * : module TypeIdentifier name '{'
      * :    Inputs
      * : '}'
      * ;
      */
     private Statement ModuleDeclaration() {
         eat(Module);
-        var moduleIdentifier = TypeIdentifier();
+        var moduleType = TypeIdentifier();
         var name = Identifier();
         eat(OpenBraces, "Expect '{' after module name.");
 //        var body = new ArrayList<Statement>();
@@ -741,20 +742,31 @@ public class Parser {
 //        }
         eat(CloseBraces, "Expect '}' after module body.");
 
-        return ModuleExpression.of(moduleIdentifier, name, (BlockExpression) BlockExpression.of());
+        return ModuleExpression.of(moduleType, name, (BlockExpression) BlockExpression.of());
     }
 
     private PathIdentifier TypeIdentifier() {
+        switch (lookAhead().getType()) {
+            case String -> {
+                var token = eat(String);
+                PathIdentifier from = PathIdentifier.from(token.getValue().toString());
+
+                return from;
+            }
+            case Identifier -> {
+                return PathIdentifier();
+            }
+            case null, default -> throw new RuntimeException("Unexpected token type: " + lookAhead().getType());
+        }
+    }
+
+    private @NotNull PathIdentifier PathIdentifier() {
         var identifier = new PathIdentifier();
         for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().getType()) {
                 case Dot -> {
                     identifier.addPackage(next.getValue().toString());
                     eat(Dot);
-                }
-                case String ->{
-                    var token = eat(String);
-                    return PathIdentifier.from(token.getValue().toString());
                 }
                 case null -> {
                 }
