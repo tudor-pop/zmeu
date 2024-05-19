@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.Frontend.Parser.Expressions.Visitor;
 import io.zmeu.Frontend.Parser.NodeType;
-import io.zmeu.api.types.Types;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;

@@ -4,130 +4,125 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
+import io.zmeu.types.Types;
 
-public class TypeChecker implements Visitor<TypeValue> {
+public class TypeChecker implements Visitor<Types> {
 
     public TypeChecker() {
     }
 
     @Override
-    public TypeValue eval(Expression expression) {
+    public Types eval(Expression expression) {
         return expression.accept(this);
     }
 
     @Override
-    public TypeValue eval(NumericLiteral expression) {
-        if (expression.isInteger()) {
-            return TypeValue.INTEGER;
-        } else if (expression.isDecimal()) {
-            return TypeValue.DECIMAL;
-        } else {
-            throw new TypeError(expression);
-        }
+    public Types eval(NumericLiteral expression) {
+       return Types.Number;
     }
 
     @Override
-    public TypeValue eval(BooleanLiteral expression) {
-        return TypeValue.BOOLEAN;
+    public Types eval(BooleanLiteral expression) {
+        return Types.Boolean;
     }
 
     @Override
-    public TypeValue eval(Identifier expression) {
+    public Types eval(Identifier expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(NullLiteral expression) {
+    public Types eval(NullLiteral expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(StringLiteral expression) {
+    public Types eval(StringLiteral expression) {
+        return Types.String;
+    }
+
+    @Override
+    public Types eval(LambdaExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(LambdaExpression expression) {
+    public Types eval(BlockExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(BlockExpression expression) {
+    public Types eval(GroupExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(GroupExpression expression) {
+    public Types eval(BinaryExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(BinaryExpression expression) {
+    public Types eval(CallExpression<Expression> expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(CallExpression<Expression> expression) {
+    public Types eval(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(ErrorExpression expression) {
+    public Types eval(LogicalExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(LogicalExpression expression) {
+    public Types eval(MemberExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(MemberExpression expression) {
+    public Types eval(ThisExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(ThisExpression expression) {
+    public Types eval(UnaryExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(UnaryExpression expression) {
+    public Types eval(VariableDeclaration expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(VariableDeclaration expression) {
+    public Types eval(AssignmentExpression expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(AssignmentExpression expression) {
+    public Types eval(float expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(float expression) {
+    public Types eval(double expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(double expression) {
+    public Types eval(int expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(int expression) {
+    public Types eval(boolean expression) {
         return null;
     }
 
     @Override
-    public TypeValue eval(boolean expression) {
-        return null;
-    }
-
-    @Override
-    public TypeValue eval(String expression) {
+    public Types eval(String expression) {
         return null;
     }
 }

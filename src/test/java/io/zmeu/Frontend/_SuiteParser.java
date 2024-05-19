@@ -4,5 +4,5 @@ import org.junit.platform.suite.api.SelectPackages;
 
 @org.junit.platform.suite.api.Suite
 @SelectPackages({"io.zmeu.Frontend.Parse"})
-public class ParserSuite {
+public class _SuiteParser {
 }

@@ -1,6 +1,6 @@
 package io.zmeu.api;
 
-import io.zmeu.api.types.Types;
+import io.zmeu.types.Types;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
