@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Expressions.Visitor;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -58,11 +58,11 @@ public class BlockExpression extends Expression {
     }
 
     public static Expression of(int value) {
-        return new BlockExpression(NumericLiteral.of(value));
+        return new BlockExpression(NumberLiteral.of(value));
     }
 
     public static Expression of(double value) {
-        return new BlockExpression(NumericLiteral.of(value));
+        return new BlockExpression(NumberLiteral.of(value));
     }
 
     public static Expression of() {
@@ -70,7 +70,7 @@ public class BlockExpression extends Expression {
     }
 
     public static Expression of(float value) {
-        return new BlockExpression(NumericLiteral.of(value));
+        return new BlockExpression(NumberLiteral.of(value));
     }
 
     public static Expression of(String value) {

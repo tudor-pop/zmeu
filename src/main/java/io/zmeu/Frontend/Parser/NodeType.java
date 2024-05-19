@@ -19,8 +19,7 @@ public enum NodeType {
 
     EmptyStatement,
     //    NullLiteral,
-    DecimalLiteral,
-    IntegerLiteral,
+    NumberLiteral,
     StringLiteral,
     BooleanLiteral,
     NullLiteral,

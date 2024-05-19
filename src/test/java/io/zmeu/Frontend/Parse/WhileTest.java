@@ -4,7 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.AssignmentExpression;
 import io.zmeu.Frontend.Parser.Expressions.BinaryExpression;
 import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import lombok.extern.log4j.Log4j2;
@@ -26,11 +26,11 @@ public class WhileTest extends BaseTest {
                 """);
         var expected = Program.of(
                 WhileStatement.builder()
-                        .test(BinaryExpression.of(Identifier.of("x"), NumericLiteral.of(10), ">"))
+                        .test(BinaryExpression.of(Identifier.of("x"), NumberLiteral.of(10), ">"))
                         .body(ExpressionStatement.of(BlockExpression
                                 .of(ExpressionStatement
                                         .of(AssignmentExpression
-                                                .of("+=", Identifier.of("x"), NumericLiteral.of(1))
+                                                .of("+=", Identifier.of("x"), NumberLiteral.of(1))
                                         )
                                 )
                         )).build()
@@ -50,13 +50,13 @@ public class WhileTest extends BaseTest {
         var expected = Program.of(
                 ForStatement.builder()
                         .init(VariableStatement.builder()
-                                .declarations(List.of(VariableDeclaration.of(Identifier.of("i"), NumericLiteral.of(0))))
+                                .declarations(List.of(VariableDeclaration.of(Identifier.of("i"), NumberLiteral.of(0))))
                                 .build())
-                        .test(BinaryExpression.of(Identifier.of("i"), NumericLiteral.of(10), "<"))
-                        .update(AssignmentExpression.of("+=", Identifier.of("i"), NumericLiteral.of(1)))
+                        .test(BinaryExpression.of(Identifier.of("i"), NumberLiteral.of(10), "<"))
+                        .update(AssignmentExpression.of("+=", Identifier.of("i"), NumberLiteral.of(1)))
                         .body(ExpressionStatement.of(BlockExpression.of(
                                 ExpressionStatement.of(
-                                        AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(1))
+                                        AssignmentExpression.of("+=", Identifier.of("x"), NumberLiteral.of(1))
                                 )
                         )))
                         .build()
@@ -80,7 +80,7 @@ public class WhileTest extends BaseTest {
                 .update(null)
                 .body(ExpressionStatement.of(BlockExpression.of(
                         ExpressionStatement.of(
-                                AssignmentExpression.of("+=", Identifier.of("x"), NumericLiteral.of(1))
+                                AssignmentExpression.of("+=", Identifier.of("x"), NumberLiteral.of(1))
                         )
                 )))
                 .build()

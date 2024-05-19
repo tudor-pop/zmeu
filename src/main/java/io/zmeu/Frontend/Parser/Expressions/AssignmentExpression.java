@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,7 +31,7 @@ public class AssignmentExpression extends Expression {
         return new AssignmentExpression(left, right, operator);
     }
     public static Expression of(Expression left, int right, Object operator) {
-        return new AssignmentExpression(left, NumericLiteral.of(right), operator);
+        return new AssignmentExpression(left, NumberLiteral.of(right), operator);
     }
     public static Expression of(Object operator, Expression left, Expression right) {
         return new AssignmentExpression(left, right, operator);
@@ -40,7 +40,7 @@ public class AssignmentExpression extends Expression {
         return new AssignmentExpression(left, Identifier.of(right), operator);
     }
     public static Expression of(Object operator, Expression left, int right) {
-        return new AssignmentExpression(left, NumericLiteral.of(right), operator);
+        return new AssignmentExpression(left, NumberLiteral.of(right), operator);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -51,11 +51,11 @@ public class IfStatement extends Statement {
     }
 
     public static Statement of(Expression test, int value) {
-        return new IfStatement(test, NumericLiteral.of(value), null);
+        return new IfStatement(test, NumberLiteral.of(value), null);
     }
 
     public static Statement of(Expression test, double value) {
-        return new IfStatement(test,NumericLiteral.of(value), null);
+        return new IfStatement(test, NumberLiteral.of(value), null);
     }
 
     public static Statement of() {
@@ -63,7 +63,7 @@ public class IfStatement extends Statement {
     }
 
     public static Statement of(Expression test, float value) {
-        return new IfStatement(test,NumericLiteral.of(value), null);
+        return new IfStatement(test, NumberLiteral.of(value), null);
     }
 
     public static Statement of(Expression test, String value) {

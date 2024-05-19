@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parse;
 
 import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
@@ -42,7 +42,7 @@ public class VariableDeclarationTest extends BaseTest {
         var res = parse("var x = 2");
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(2))));
+                        VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(2))));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -53,7 +53,7 @@ public class VariableDeclarationTest extends BaseTest {
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x")),
-                        VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
+                        VariableDeclaration.of(Identifier.of("y"), NumberLiteral.of(2))
                 ));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -64,8 +64,8 @@ public class VariableDeclarationTest extends BaseTest {
         var res = parse("var x=3,y=2");
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(3)),
-                        VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
+                        VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(3)),
+                        VariableDeclaration.of(Identifier.of("y"), NumberLiteral.of(2))
                 ));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -82,7 +82,7 @@ public class VariableDeclarationTest extends BaseTest {
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
-                                ExpressionStatement.of(NumericLiteral.of(2)))))
+                                ExpressionStatement.of(NumberLiteral.of(2)))))
         );
         log.warn(toJson(res));
         assertEquals(expected, res);
@@ -99,8 +99,8 @@ public class VariableDeclarationTest extends BaseTest {
         var expected = Program.of(
                 VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), BlockExpression.of(
-                                VariableStatement.of(VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))),
-                                ExpressionStatement.of(NumericLiteral.of(3)))))
+                                VariableStatement.of(VariableDeclaration.of(Identifier.of("y"), NumberLiteral.of(2))),
+                                ExpressionStatement.of(NumberLiteral.of(3)))))
         );
         log.warn(toJson(res));
         assertEquals(expected, res);
@@ -114,9 +114,9 @@ public class VariableDeclarationTest extends BaseTest {
                 """);
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(3))),
+                        VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(3))),
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
+                        VariableDeclaration.of(Identifier.of("y"), NumberLiteral.of(2))
                 )
         );
         assertEquals(expected, res);
@@ -131,9 +131,9 @@ public class VariableDeclarationTest extends BaseTest {
                 """);
         var expected = Program.of(
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(3))),
+                        VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(3))),
                 VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("y"), NumericLiteral.of(2))
+                        VariableDeclaration.of(Identifier.of("y"), NumberLiteral.of(2))
                 )
         );
         assertEquals(expected, res);

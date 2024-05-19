@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Builder;
 import lombok.Data;
@@ -30,17 +30,17 @@ public class MemberExpression extends Expression {
         return new MemberExpression(computed, object, property);
     }
     public static Expression of(boolean computed, Expression object, int property) {
-        return new MemberExpression(computed, object, NumericLiteral.of(property));
+        return new MemberExpression(computed, object, NumberLiteral.of(property));
     }
     public static Expression of(boolean computed, Expression object, String property) {
         return new MemberExpression(computed, object, Identifier.of(property));
     }
     public static Expression of(boolean computed, String object, int property) {
-        return new MemberExpression(computed, Identifier.of(object), NumericLiteral.of(property));
+        return new MemberExpression(computed, Identifier.of(object), NumberLiteral.of(property));
     }
 
     public static Expression of(boolean computed, int object, int property) {
-        return new MemberExpression(computed, NumericLiteral.of(object), NumericLiteral.of(property));
+        return new MemberExpression(computed, NumberLiteral.of(object), NumberLiteral.of(property));
     }
 
     public static Expression of(boolean computed, String object, String property) {

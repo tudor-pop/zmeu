@@ -2,7 +2,7 @@ package io.zmeu.Runtime;
 
 import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import io.zmeu.Frontend.Parser.Statements.VariableStatement;
@@ -30,7 +30,7 @@ public class FunTest extends BaseTest {
                 Identifier.of("myFun"),
                 List.of(),
                 ExpressionStatement.of(BlockExpression.of(VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))))),
+                        VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(1))))),
                 global
         );
         log.warn(toJson(res));
@@ -50,7 +50,7 @@ public class FunTest extends BaseTest {
                 Identifier.of("myFun"),
                 List.of(),
                 ExpressionStatement.of(BlockExpression.of(VariableStatement.of(
-                                VariableDeclaration.of(Identifier.of("x"), NumericLiteral.of(1))
+                                VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(1))
                         ),
                         ExpressionStatement.of(Identifier.of("x")))),
                 global

@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Builder;
@@ -30,15 +30,15 @@ public class CallExpression<E extends Expression> extends Expression {
     }
 
     public static Expression of(Expression callee, int arguments) {
-        return new CallExpression(callee, List.of(NumericLiteral.of(arguments)));
+        return new CallExpression(callee, List.of(NumberLiteral.of(arguments)));
     }
 
     public static Expression of(Expression callee, double arguments) {
-        return new CallExpression(callee, List.of(NumericLiteral.of(arguments)));
+        return new CallExpression(callee, List.of(NumberLiteral.of(arguments)));
     }
 
     public static Expression of(Expression callee, float arguments) {
-        return new CallExpression(callee, List.of(NumericLiteral.of(arguments)));
+        return new CallExpression(callee, List.of(NumberLiteral.of(arguments)));
     }
 
     public static Expression of(Expression callee, String arguments) {
@@ -49,14 +49,14 @@ public class CallExpression<E extends Expression> extends Expression {
     }
 
     public static Expression of(String callee, int arguments) {
-        return new CallExpression(Identifier.of(callee), List.of(NumericLiteral.of(arguments)));
+        return new CallExpression(Identifier.of(callee), List.of(NumberLiteral.of(arguments)));
     }
     public static Expression of(String callee, double arguments) {
-        return new CallExpression(Identifier.of(callee), List.of(NumericLiteral.of(arguments)));
+        return new CallExpression(Identifier.of(callee), List.of(NumberLiteral.of(arguments)));
     }
 
     public static Expression of(int callee, int arguments) {
-        return new CallExpression(NumericLiteral.of(callee), List.of(NumericLiteral.of(arguments)));
+        return new CallExpression(NumberLiteral.of(callee), List.of(NumberLiteral.of(arguments)));
     }
 
     public static Expression of(String callee, String... arguments) {

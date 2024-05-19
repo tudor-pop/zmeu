@@ -15,94 +15,83 @@ import java.text.DecimalFormat;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class NumericLiteral extends Literal {
+public class NumberLiteral extends Literal {
     private static DecimalFormat df = new DecimalFormat("#######.#######");
     private Number value;
 
-    private NumericLiteral() {
+    private NumberLiteral() {
     }
 
-    private NumericLiteral(double value) {
-        setDecimal(value);
+    private NumberLiteral(double value) {
+        setNumber(value);
     }
 
-    private NumericLiteral(float value) {
-        setDecimal(value);
+    private NumberLiteral(float value) {
+        setNumber(value);
     }
 
-    private void setDecimal(float value) {
-        setDecimal(Double.parseDouble(String.valueOf(value)));
+    private NumberLiteral(int value) {
+        setNumber(value);
     }
 
-    private void setDecimal(double value) {
-        this.kind = NodeType.DecimalLiteral;
+    private void setNumber(float value) {
+        setNumber(Double.parseDouble(String.valueOf(value)));
+    }
+
+    private void setNumber(double value) {
+        this.kind = NodeType.NumberLiteral;
         this.value = Double.valueOf(df.format(value));
     }
 
-    private NumericLiteral(int value) {
-        setInteger(value);
-    }
-
-    private void setInteger(int value) {
-        this.kind = NodeType.IntegerLiteral;
+    private void setNumber(int value) {
+        this.kind = NodeType.NumberLiteral;
         this.value = value;
     }
 
-    private NumericLiteral(String value) {
+    private NumberLiteral(String value) {
         setValue(value);
     }
 
-    private NumericLiteral(Object value) {
+    private NumberLiteral(Object value) {
         if (value instanceof String s) {
             setValue(s);
         } else if (value instanceof Integer i) {
-            setInteger(i);
+            setNumber(i);
         } else if (value instanceof Double i) {
-            setDecimal(i);
+            setNumber(i);
         } else if (value instanceof Float i) {
-            setDecimal(i);
+            setNumber(i);
         }
     }
 
     public static Expression of(Object value) {
-        return new NumericLiteral(value);
+        return new NumberLiteral(value);
     }
 
     public static Expression of(int value) {
-        return new NumericLiteral(value);
+        return new NumberLiteral(value);
     }
 
     public static Expression number(int value) {
-        return new NumericLiteral(value);
+        return new NumberLiteral(value);
     }
 
     public static Literal of(float value) {
-        return new NumericLiteral(value);
+        return new NumberLiteral(value);
     }
 
     public static Literal of(double value) {
-        return new NumericLiteral(value);
+        return new NumberLiteral(value);
     }
 
     private void setValue(String value) {
+        this.kind = NodeType.NumberLiteral;
         if (value.indexOf('.') != -1) { // string contains . => is a float/double
             this.value = Double.parseDouble(value);
-            this.kind = NodeType.DecimalLiteral;
         } else {
             this.value = Integer.parseInt(value);
-            this.kind = NodeType.IntegerLiteral;
         }
     }
-
-    public boolean isDecimal() {
-        return this.kind == NodeType.DecimalLiteral;
-    }
-
-    public boolean isInteger() {
-        return this.kind == NodeType.IntegerLiteral;
-    }
-
-
 
     @Override
     public Object getVal() {

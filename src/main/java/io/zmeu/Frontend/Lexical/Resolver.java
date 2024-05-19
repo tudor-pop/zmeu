@@ -60,7 +60,7 @@ public class Resolver implements Visitor<Void>, io.zmeu.Frontend.Parser.Statemen
     }
 
     @Override
-    public Void eval(NumericLiteral expression) {
+    public Void eval(NumberLiteral expression) {
         return null;
     }
 

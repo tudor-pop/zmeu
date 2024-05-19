@@ -3,7 +3,7 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Expressions.Visitor;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -47,11 +47,11 @@ public class LambdaExpression extends Expression {
     }
 
     public static Expression of(List<Identifier> params, int value) {
-        return new LambdaExpression(params, NumericLiteral.of(value));
+        return new LambdaExpression(params, NumberLiteral.of(value));
     }
 
     public static Expression of(List<Identifier> params, double value) {
-        return new LambdaExpression(params, NumericLiteral.of(value));
+        return new LambdaExpression(params, NumberLiteral.of(value));
     }
 
     public static Expression of() {
@@ -59,7 +59,7 @@ public class LambdaExpression extends Expression {
     }
 
     public static Expression of(List<Identifier> params, float value) {
-        return new LambdaExpression(params, NumericLiteral.of(value));
+        return new LambdaExpression(params, NumberLiteral.of(value));
     }
 
     public static Expression of(List<Identifier> params, String value) {

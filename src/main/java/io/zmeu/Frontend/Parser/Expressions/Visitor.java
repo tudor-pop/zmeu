@@ -7,7 +7,7 @@ import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
 public interface Visitor<R> {
     R eval(Expression expression);
 
-    R eval(NumericLiteral expression);
+    R eval(NumberLiteral expression);
 
     R eval(BooleanLiteral expression);
 

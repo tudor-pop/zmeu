@@ -27,7 +27,7 @@ public class Factory {
         return UnaryExpression.of(operator, Identifier.of(left));
     }
     public static Expression number(int number) {
-        return NumericLiteral.number(number);
+        return NumberLiteral.number(number);
     }
 
     public static Expression binary(String operator, Expression left, Expression right) {
@@ -35,11 +35,11 @@ public class Factory {
     }
 
     public static Expression binary(String operator, Expression left, int right) {
-        return BinaryExpression.of(operator, left, NumericLiteral.of(right));
+        return BinaryExpression.of(operator, left, NumberLiteral.of(right));
     }
 
     public static Expression binary(String identifier, int left, String operator) {
-        return BinaryExpression.of(operator, Identifier.of(identifier), NumericLiteral.of(left));
+        return BinaryExpression.of(operator, Identifier.of(identifier), NumberLiteral.of(left));
     }
 
     public static Statement resource(String type, String name, BlockExpression operator) {
@@ -68,7 +68,7 @@ public class Factory {
     }
 
     public static Expression assign(String type, int right) {
-        return AssignmentExpression.of("=", Identifier.of(type), NumericLiteral.of(right));
+        return AssignmentExpression.of("=", Identifier.of(type), NumberLiteral.of(right));
     }
 
     public static Expression member(String type, String right) {

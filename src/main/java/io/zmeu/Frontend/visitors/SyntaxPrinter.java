@@ -92,7 +92,7 @@ public class SyntaxPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(NumericLiteral expression) {
+    public String eval(NumberLiteral expression) {
         if (expression.getVal() == null) {
             return "null";
         }

@@ -3,7 +3,7 @@ package io.zmeu.Frontend.Parse;
 import io.zmeu.Frontend.Parser.Expressions.AssignmentExpression;
 import io.zmeu.Frontend.Parser.Expressions.BinaryExpression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
@@ -19,7 +19,7 @@ public class AssignmentTest extends BaseTest {
     void testAssignment() {
         var res = parse("x=2");
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of("=", Identifier.of("x"), NumericLiteral.of(2))));
+                AssignmentExpression.of("=", Identifier.of("x"), NumberLiteral.of(2))));
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
@@ -28,7 +28,7 @@ public class AssignmentTest extends BaseTest {
     void testAssignmentBlock() {
         var res = parse("x={2}");
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumericLiteral.of(2))))));
+                AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumberLiteral.of(2))))));
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
@@ -43,8 +43,8 @@ public class AssignmentTest extends BaseTest {
                 """);
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
-                        BlockExpression.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))),
-                                ExpressionStatement.of(NumericLiteral.of(2))))));
+                        BlockExpression.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumberLiteral.of(2))),
+                                ExpressionStatement.of(NumberLiteral.of(2))))));
         log.warn(toJson(res));
         assertEquals(expected, res);
     }
@@ -54,7 +54,7 @@ public class AssignmentTest extends BaseTest {
         var res = parse("x=y=2");
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
-                        AssignmentExpression.of("=", Identifier.of("y"), NumericLiteral.of(2))
+                        AssignmentExpression.of("=", Identifier.of("y"), NumberLiteral.of(2))
                 )));
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -67,7 +67,7 @@ public class AssignmentTest extends BaseTest {
                 ExpressionStatement.of(
                         AssignmentExpression.of("=", Identifier.of("x"),
                                 AssignmentExpression.of("=", Identifier.of("y"),
-                                        AssignmentExpression.of("=", Identifier.of("z"), NumericLiteral.of(2)))
+                                        AssignmentExpression.of("=", Identifier.of("z"), NumberLiteral.of(2)))
                         )
                 )
         );

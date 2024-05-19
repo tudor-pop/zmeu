@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
@@ -14,7 +14,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void testInteger() {
         var res = parse("1");
-        var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1)));
+        var expected = Program.of(ExpressionStatement.of(NumberLiteral.of(1)));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -22,7 +22,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void testDecimal() {
         var res = parse("1.11");
-        var expected = Program.of(ExpressionStatement.of(NumericLiteral.of(1.11)));
+        var expected = Program.of(ExpressionStatement.of(NumberLiteral.of(1.11)));
         assertEquals(expected, res);
     }
 

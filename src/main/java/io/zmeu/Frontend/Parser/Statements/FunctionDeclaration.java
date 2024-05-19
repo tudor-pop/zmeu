@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -52,11 +52,11 @@ public class FunctionDeclaration extends Statement {
     }
 
     public static Statement of(Identifier test, List<Identifier> params, int value) {
-        return FunctionDeclaration.of(test, params, NumericLiteral.of(value));
+        return FunctionDeclaration.of(test, params, NumberLiteral.of(value));
     }
 
     public static Statement of(Identifier test, List<Identifier> params, double value) {
-        return FunctionDeclaration.of(test, params, NumericLiteral.of(value));
+        return FunctionDeclaration.of(test, params, NumberLiteral.of(value));
     }
 
     public static Statement of() {
@@ -64,7 +64,7 @@ public class FunctionDeclaration extends Statement {
     }
 
     public static Statement of(Identifier test, List<Identifier> params, float value) {
-        return FunctionDeclaration.of(test, params, NumericLiteral.of(value));
+        return FunctionDeclaration.of(test, params, NumberLiteral.of(value));
     }
 
     public static Statement of(Identifier test, List<Identifier> params, String value) {

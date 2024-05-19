@@ -1,7 +1,7 @@
 package io.zmeu.Runtime;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Runtime.Values.NullValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void integerLiteral() {
-        var res = interpreter.eval(NumericLiteral.of(10));
+        var res = interpreter.eval(NumberLiteral.of(10));
         Assertions.assertEquals(10, res);
     }
 

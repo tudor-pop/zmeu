@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -37,11 +37,11 @@ public class ReturnStatement extends Statement {
     }
 
     public static Statement of(int value) {
-        return new ReturnStatement(NumericLiteral.of(value));
+        return new ReturnStatement(NumberLiteral.of(value));
     }
 
     public static Statement of(double value) {
-        return new ReturnStatement(NumericLiteral.of(value));
+        return new ReturnStatement(NumberLiteral.of(value));
     }
 
     public static Statement of() {
@@ -49,7 +49,7 @@ public class ReturnStatement extends Statement {
     }
 
     public static Statement of(float value) {
-        return new ReturnStatement(NumericLiteral.of(value));
+        return new ReturnStatement(NumberLiteral.of(value));
     }
 
     public static Statement of(String value) {

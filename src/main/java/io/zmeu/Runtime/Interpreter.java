@@ -103,9 +103,9 @@ public class Interpreter implements Visitor<Object>, io.zmeu.Frontend.Parser.Sta
     }
 
     @Override
-    public Object eval(NumericLiteral expression) {
+    public Object eval(NumberLiteral expression) {
         return switch (expression.getKind()) {
-            case NodeType.IntegerLiteral, NodeType.DecimalLiteral -> expression.getValue();
+            case NodeType.NumberLiteral -> expression.getValue();
             default -> throw new IllegalStateException("Unexpected value: " + expression.getKind());
         };
     }

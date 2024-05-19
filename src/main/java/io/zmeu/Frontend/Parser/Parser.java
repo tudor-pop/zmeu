@@ -867,7 +867,7 @@ public class Parser {
         return switch (current.type()) {
             case True, False -> BooleanLiteral();
             case Null -> NullLiteral.of();
-            case Number -> NumericLiteral.of(current.value());
+            case Number -> NumberLiteral.of(current.value());
             case String -> new StringLiteral(current.value());
             default -> new ErrorExpression(current.value());
         };

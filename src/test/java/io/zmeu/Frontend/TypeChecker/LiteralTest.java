@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Literals.BooleanLiteral;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.types.Types;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,13 +17,13 @@ class LiteralTest {
 
     @Test
     void testInteger() {
-        var t1 = typeChecker.eval(NumericLiteral.of(1));
+        var t1 = typeChecker.eval(NumberLiteral.of(1));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testDecimal() {
-        var t1 = typeChecker.eval(NumericLiteral.of(1.1));
+        var t1 = typeChecker.eval(NumberLiteral.of(1.1));
         Assertions.assertEquals(t1, Types.Number);
     }
     @Test

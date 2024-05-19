@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumericLiteral;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -38,11 +38,11 @@ public class SchemaDeclaration extends Statement {
     }
 
     public static Statement of(Identifier test, int value) {
-        return new SchemaDeclaration(test, NumericLiteral.of(value));
+        return new SchemaDeclaration(test, NumberLiteral.of(value));
     }
 
     public static Statement of(Identifier test, double value) {
-        return new SchemaDeclaration(test, NumericLiteral.of(value));
+        return new SchemaDeclaration(test, NumberLiteral.of(value));
     }
 
     public static Statement of() {
@@ -50,7 +50,7 @@ public class SchemaDeclaration extends Statement {
     }
 
     public static Statement of(Identifier test, float value) {
-        return new SchemaDeclaration(test, NumericLiteral.of(value));
+        return new SchemaDeclaration(test, NumberLiteral.of(value));
     }
 
     public static Statement of(Identifier test, String value) {

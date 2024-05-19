@@ -17,7 +17,7 @@ public class TypeChecker implements Visitor<Types> {
     }
 
     @Override
-    public Types eval(NumericLiteral expression) {
+    public Types eval(NumberLiteral expression) {
        return Types.Number;
     }
 
