@@ -10,7 +10,7 @@ repositories {
 }
 
 def pf4jVersion = '3.11.0'
-def jackson = '2.17.0'
+def jackson = '2.17.1'
 def lombok = '1.18.32'
 
 dependencies {
@@ -37,8 +37,8 @@ dependencies {
     annotationProcessor "org.pf4j:pf4j:${pf4jVersion}"
 
     implementation 'org.jgrapht:jgrapht-core:1.5.2'
-    implementation 'info.picocli:picocli:4.7.5'
-    annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
+    implementation 'info.picocli:picocli:4.7.6'
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
     implementation 'org.javers:javers-core:7.4.2'
     implementation 'org.javers:javers-persistence-sql:7.4.2'
     implementation 'org.postgresql:postgresql:42.7.3'

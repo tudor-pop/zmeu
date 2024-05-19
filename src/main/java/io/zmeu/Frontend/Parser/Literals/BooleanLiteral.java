@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Literals;
 import io.zmeu.Frontend.Parser.Expressions.Visitor;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.SyntaxError;
-import io.zmeu.api.types.Types;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -36,15 +35,9 @@ public class BooleanLiteral extends Literal {
         }
     }
 
-
     @Override
     public Object getVal() {
         return value;
-    }
-
-    @Override
-    public Types type() {
-        return Types.Boolean;
     }
 
     @Override

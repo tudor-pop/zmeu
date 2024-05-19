@@ -111,11 +111,6 @@ public class NumericLiteral extends Literal {
     }
 
     @Override
-    public Types type() {
-        return Types.Number;
-    }
-
-    @Override
     public <R> R accept(Visitor<R> visitor) {
         return visitor.eval(this);
     }

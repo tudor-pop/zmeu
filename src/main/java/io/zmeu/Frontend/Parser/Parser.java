@@ -6,11 +6,10 @@ import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.errors.InvalidTypeInitException;
+import io.zmeu.Frontend.TypeChecker.TypeChecker;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,6 +63,7 @@ public class Parser {
     private ParserIterator iterator;
     private Program program = new Program();
     private SyntaxPrinter printer = new SyntaxPrinter();
+    private TypeChecker typeChecker = new TypeChecker();
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -329,9 +329,10 @@ public class Parser {
         var init = IsLookAhead(lineTerminator(), Comma, EOF) ? null : VariableInitializer();
         if (type != null && init != null) { // if type is declared
             if (init instanceof Literal literal) {
-                if (!StringUtils.equals(type.getType(), literal.type().name())) {
-                    throw new InvalidTypeInitException(type.getType(), literal.type().name(), literal.getVal());
-                }
+                typeChecker.eval(literal);
+//                if (!StringUtils.equals(type.getType(), literal.type().name())) {
+//                    throw new InvalidTypeInitException(type.getType(), literal.type().name(), literal.getVal());
+//                }
             }
         }
         return VariableDeclaration.of(id, type, init);

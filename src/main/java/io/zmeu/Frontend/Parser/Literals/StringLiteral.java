@@ -59,11 +59,6 @@ public class StringLiteral extends Literal {
     }
 
     @Override
-    public Types type() {
-        return Types.String;
-    }
-
-    @Override
     public <R> R accept(Visitor<R> visitor) {
         return visitor.eval(this);
     }
