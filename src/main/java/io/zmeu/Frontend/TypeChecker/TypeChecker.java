@@ -4,9 +4,13 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
+import io.zmeu.Frontend.visitors.LanguageAstPrinter;
 import io.zmeu.types.Types;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TypeChecker implements Visitor<Types> {
+    private LanguageAstPrinter printer = new LanguageAstPrinter();
 
     public TypeChecker() {
     }
@@ -18,7 +22,7 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(NumberLiteral expression) {
-       return Types.Number;
+        return Types.Number;
     }
 
     @Override
@@ -58,7 +62,24 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(BinaryExpression expression) {
-        return null;
+        var op = expression.getOperator();
+        Expression right = expression.getRight();
+        Expression left = expression.getLeft();
+        if (left == null || right == null) {
+            throw new TypeError("\nOperator " + op + " expects 2 arguments");
+        }
+        var t1 = eval(left);
+        var t2 = eval(right);
+        return expect(t1, t2, printer.eval(left), printer.eval(expression));
+    }
+
+    private static Types expect(Types actualType, Types expectedType, Object expectedVal, Object actualVal) {
+        if (actualType != expectedType) {
+            String string = "\nExpected '" + expectedType + "' for " + expectedVal + " but got '" + actualType + "' in expression " + actualVal;
+            log.error(string);
+            throw new TypeError(string);
+        }
+        return actualType;
     }
 
     @Override

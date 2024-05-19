@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 
-class BaseTest {
+public class BaseTest {
     protected Parser parser;
     protected Tokenizer tokenizer;
     protected ObjectMapper mapper = new ObjectMapper();
