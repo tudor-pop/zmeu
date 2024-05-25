@@ -47,12 +47,8 @@ public class Factory {
     }
 
     public static Statement module(String type, String name, BlockExpression operator) {
-        PathIdentifier build = packageId(type);
+        PathIdentifier build = PathIdentifier.type(type);
         return ModuleExpression.of(build, Identifier.of(name), operator);
-    }
-
-    public static PathIdentifier packageId(String type) {
-        return PathIdentifier.of(type);
     }
 
     public static Expression assign(Expression type, Expression name) {
@@ -81,14 +77,6 @@ public class Factory {
 
     public static BlockExpression block(String operator) {
         return (BlockExpression) BlockExpression.of(operator);
-    }
-
-    public static VariableStatement var(Identifier id, PathIdentifier type, Expression init) {
-        return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type, init));
-    }
-
-    public static Identifier id(String id) {
-        return Identifier.of(id);
     }
 
     public static VariableStatement var(Identifier id, PathIdentifier type) {

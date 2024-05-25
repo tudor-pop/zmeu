@@ -3,6 +3,7 @@ package io.zmeu.Frontend.Parser.Expressions;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
 import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.Frontend.Parser.Statements.VariableStatement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,6 +23,7 @@ public class VariableDeclaration extends Expression {
         this.id = (Identifier) id;
         this.init = init;
     }
+
     private VariableDeclaration(Expression id, PathIdentifier type) {
         this();
         this.id = (Identifier) id;
@@ -42,9 +44,11 @@ public class VariableDeclaration extends Expression {
     public static VariableDeclaration of(Expression id, Expression init) {
         return new VariableDeclaration(id, init);
     }
+
     public static VariableDeclaration var(Expression id, Expression init) {
         return new VariableDeclaration(id, init);
     }
+
     public static VariableDeclaration var(String id, Expression init) {
         return new VariableDeclaration(Identifier.of(id), init);
     }
@@ -56,6 +60,7 @@ public class VariableDeclaration extends Expression {
     public static VariableDeclaration of(Expression id, PathIdentifier type, Expression init) {
         return new VariableDeclaration(id, type, init);
     }
+
     public static VariableDeclaration of(Expression id, PathIdentifier type) {
         return new VariableDeclaration(id, type);
     }
@@ -72,6 +77,14 @@ public class VariableDeclaration extends Expression {
         return new VariableDeclaration(Identifier.of(id));
     }
 
+    public static VariableStatement var(Identifier id, PathIdentifier type, Expression init) {
+        return (VariableStatement) VariableStatement.of(of(id, type, init));
+    }
+
+    public static VariableDeclaration var(String id, PathIdentifier type, Expression init) {
+        return VariableDeclaration.of(Identifier.of(id), type, init);
+    }
+
     public boolean hasInit() {
         return init != null;
     }
@@ -81,4 +94,7 @@ public class VariableDeclaration extends Expression {
         return visitor.eval(this);
     }
 
+    public boolean hasType() {
+        return type != null;
+    }
 }

@@ -5,23 +5,37 @@ import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
+import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.types.Types;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 public class TypeChecker implements Visitor<Types> {
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
+    @Getter
+    private final TypeEnvironment environment;
 
     public TypeChecker() {
+        environment = new TypeEnvironment();
+        environment.init(Types.String.getValue(), Types.String);
+        environment.init(Types.Number.getValue(), Types.Number);
+        environment.init(Types.Boolean.getValue(), Types.Boolean);
+        environment.init(Types.Null.getValue(), Types.Null);
+    }
+
+    public TypeChecker(TypeEnvironment environment) {
+        this.environment = environment;
     }
 
     @Override
     public Types eval(Expression expression) {
         try {
             return expression.accept(this);
-        } catch (TypeError typeError) {
+        } catch (TypeError | NotFoundException typeError) {
             log.error(typeError.getMessage());
             throw typeError;
         }
@@ -30,12 +44,18 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(Identifier expression) {
-        return null;
+        try {
+            var type = (Types) environment.lookup(expression.getSymbol());
+            return Objects.requireNonNullElseGet(type, () -> Types.valueOf(expression.getSymbol()));
+        } catch (NotFoundException typeError) {
+            log.error(typeError.getMessage());
+            throw typeError;
+        }
     }
 
     @Override
     public Types eval(NullLiteral expression) {
-        return null;
+        return Types.Null;
     }
 
     @Override
@@ -92,7 +112,7 @@ public class TypeChecker implements Visitor<Types> {
     private Types expect(Types actualType, Types expectedType, Expression expectedVal, Expression actualVal) {
         if (actualType != expectedType) {
             // only evaluate printing if we need to
-            String string = "Expected type " + expectedType + " for " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
             throw new TypeError(string);
         }
         return actualType;
@@ -130,8 +150,19 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(VariableDeclaration expression) {
-
-        return null;
+        try {
+            var implicitType = eval(expression.getInit());
+            String var = expression.getId().getSymbol();
+            if (expression.hasType()) {
+                var explicitType = eval(expression.getType());
+                expect(implicitType, explicitType, expression.getInit(), expression);
+                return (Types) environment.init(var, explicitType);
+            }
+            return (Types) environment.init(var, implicitType);
+        } catch (TypeError typeError) {
+            log.error(typeError.getMessage());
+            throw typeError;
+        }
     }
 
     @Override

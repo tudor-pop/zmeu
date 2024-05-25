@@ -44,6 +44,10 @@ public class PathIdentifier extends Identifier {
         setSymbol(type);
     }
 
+    public static PathIdentifier type(String type) {
+        return of(type);
+    }
+
     public void addPackage(String value) {
         provider.append(value);
     }

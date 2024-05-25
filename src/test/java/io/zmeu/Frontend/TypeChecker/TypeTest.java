@@ -2,11 +2,16 @@ package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Parse.BaseTest;
+import io.zmeu.Frontend.Parser.Factory;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static io.zmeu.Frontend.Parser.Factory.*;
+import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
+import static io.zmeu.Frontend.Parser.Factory.number;
+import static io.zmeu.Frontend.Parser.Factory.program;
+import static io.zmeu.Frontend.Parser.Literals.PathIdentifier.id;
+import static io.zmeu.Frontend.Parser.Literals.PathIdentifier.type;
 import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,7 +21,7 @@ public class TypeTest extends BaseTest {
     @Test
     void testString() {
         var res = parse("var x:String\n");
-        var expected = program(var(id("x"), packageId("String")));
+        var expected = program(Factory.var(id("x"), type("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -24,7 +29,7 @@ public class TypeTest extends BaseTest {
     @Test
     void testStringEOF() {
         var res = parse("var x:String");
-        var expected = program(var(id("x"), packageId("String")));
+        var expected = program(Factory.var(id("x"), type("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -32,7 +37,7 @@ public class TypeTest extends BaseTest {
     @Test
     void testStringLineTerminator() {
         var res = parse("var x:String;");
-        var expected = program(var(id("x"), packageId("String")));
+        var expected = program(Factory.var(id("x"), type("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -42,7 +47,7 @@ public class TypeTest extends BaseTest {
         var res = parse("""
                 var x:String="test"
                 """);
-        var expected = program(var(id("x"), packageId("String"), string("test")));
+        var expected = program(var(id("x"), type("String"), string("test")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -98,7 +103,7 @@ public class TypeTest extends BaseTest {
         var actual = parse("""
                 var x:std.Number
                 """);
-        var expected = program(var(id("x"), packageId("std.Number")));
+        var expected = program(Factory.var(id("x"), type("std.Number")));
         assertEquals(expected, actual);
         log.info(toJson(actual));
     }
@@ -108,7 +113,7 @@ public class TypeTest extends BaseTest {
         var actual = parse("""
                 var x:std.Number=2
                 """);
-        var expected = program(var(id("x"), packageId("std.Number"), number(2)));
+        var expected = program(var(id("x"), type("std.Number"), number(2)));
         assertEquals(expected, actual);
         log.info(toJson(actual));
     }
@@ -117,7 +122,7 @@ public class TypeTest extends BaseTest {
         var actual = parse("""
                 var x    : std.Number=2
                 """);
-        var expected = program(var(id("x"), packageId("std.Number"), number(2)));
+        var expected = program(var(id("x"), type("std.Number"), number(2)));
         assertEquals(expected, actual);
         log.info(toJson(actual));
     }

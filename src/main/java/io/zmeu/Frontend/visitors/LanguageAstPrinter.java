@@ -53,7 +53,14 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(VariableDeclaration expression) {
-        return null;
+        StringBuilder var = new StringBuilder("var " + expression.getId().getSymbol());
+        if (expression.hasType()) {
+            var.append(" :").append(expression.getType().getSymbol());
+        }
+        if (expression.hasInit()) {
+            var.append(" = ").append(eval(expression.getInit()));
+        }
+        return var.toString();
     }
 
     @Override

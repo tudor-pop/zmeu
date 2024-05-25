@@ -1,10 +1,13 @@
 package io.zmeu.Frontend.Parse;
 
+import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
+import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
 import io.zmeu.Frontend.Parser.Program;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
 import static io.zmeu.Frontend.Parser.Factory.*;
+import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
 import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,7 +23,7 @@ public class SchemaTest extends BaseTest {
                 """);
         var expected = program(
                 schema(id("square"), block(
-                        var(id("x"), packageId("Number"), number(1)))
+                        VariableDeclaration.var(id("x"), PathIdentifier.type("Number"), number(1)))
                 )
         );
         log.warn(toJson(actual));
