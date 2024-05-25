@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
+import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,14 @@ public class VariableStatement extends Statement {
     public static Statement of(VariableDeclaration... expression) {
         return new VariableStatement(List.of(expression));
     }
+    public static Statement statement(VariableDeclaration... expression) {
+        return new VariableStatement(List.of(expression));
+    }
+
+    public static Statement statement(Identifier expression) {
+        return new VariableStatement(List.of(VariableDeclaration.of(expression)));
+    }
+
     public static Statement of(List<VariableDeclaration> expression) {
         return new VariableStatement(expression);
     }

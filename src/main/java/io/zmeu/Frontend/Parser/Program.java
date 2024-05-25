@@ -29,6 +29,10 @@ public class Program extends Statement {
         return new Program(Arrays.stream(body).toList());
     }
 
+    public static Program program(Statement... body) {
+        return new Program(Arrays.stream(body).toList());
+    }
+
     public void addStatement(Statement statement) {
         this.body.add(statement);
     }

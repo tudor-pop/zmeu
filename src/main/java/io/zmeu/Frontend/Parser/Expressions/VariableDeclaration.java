@@ -42,6 +42,16 @@ public class VariableDeclaration extends Expression {
     public static VariableDeclaration of(Expression id, Expression init) {
         return new VariableDeclaration(id, init);
     }
+    public static VariableDeclaration var(Expression id, Expression init) {
+        return new VariableDeclaration(id, init);
+    }
+    public static VariableDeclaration var(String id, Expression init) {
+        return new VariableDeclaration(Identifier.of(id), init);
+    }
+
+    public static VariableDeclaration var(String id) {
+        return new VariableDeclaration(Identifier.of(id));
+    }
 
     public static VariableDeclaration of(Expression id, PathIdentifier type, Expression init) {
         return new VariableDeclaration(id, type, init);
@@ -51,6 +61,10 @@ public class VariableDeclaration extends Expression {
     }
 
     public static VariableDeclaration of(Expression id) {
+        return new VariableDeclaration(id);
+    }
+
+    public static VariableDeclaration var(Expression id) {
         return new VariableDeclaration(id);
     }
 

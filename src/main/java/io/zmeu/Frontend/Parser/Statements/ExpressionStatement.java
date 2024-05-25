@@ -31,6 +31,9 @@ public class ExpressionStatement extends Statement {
     public static Statement of(Expression expression) {
         return new ExpressionStatement(expression);
     }
+    public static Statement expressionStatement(Expression expression) {
+        return new ExpressionStatement(expression);
+    }
     public static Statement of() {
         return new ExpressionStatement();
     }

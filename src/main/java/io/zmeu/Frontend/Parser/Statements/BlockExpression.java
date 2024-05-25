@@ -49,7 +49,14 @@ public class BlockExpression extends Expression {
         return new BlockExpression(expression);
     }
 
+    public static BlockExpression block(Statement expression) {
+        return new BlockExpression(expression);
+    }
+
     public static BlockExpression of(Statement... expression) {
+        return new BlockExpression(expression);
+    }
+    public static BlockExpression block(Statement... expression) {
         return new BlockExpression(expression);
     }
 
