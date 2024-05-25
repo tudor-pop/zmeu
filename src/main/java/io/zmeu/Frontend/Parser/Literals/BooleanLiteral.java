@@ -24,6 +24,9 @@ public class BooleanLiteral extends Literal {
     public static BooleanLiteral of(boolean value) {
         return new BooleanLiteral(value);
     }
+    public static BooleanLiteral bool(boolean value) {
+        return new BooleanLiteral(value);
+    }
 
     public static BooleanLiteral of(Object value) {
         if (value instanceof String string) {

@@ -33,6 +33,10 @@ public class BinaryExpression extends Expression {
         return new BinaryExpression(left, right, operator);
     }
 
+    public static Expression binary(String operator, Expression left, Expression right) {
+        return new BinaryExpression(left, right, operator);
+    }
+
     public static Expression of(Expression left, int right, String operator) {
         return of(left, NumberLiteral.of(right), operator);
     }
@@ -62,6 +66,9 @@ public class BinaryExpression extends Expression {
     }
 
     public static Expression of(int left, int right, String operator) {
+        return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
+    }
+    public static Expression binary(int left, int right, String operator) {
         return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
     }
 

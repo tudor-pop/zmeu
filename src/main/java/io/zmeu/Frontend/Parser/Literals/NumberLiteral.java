@@ -76,6 +76,14 @@ public class NumberLiteral extends Literal {
         return new NumberLiteral(value);
     }
 
+    public static Expression number(double value) {
+        return new NumberLiteral(value);
+    }
+
+    public static Expression number(float value) {
+        return new NumberLiteral(value);
+    }
+
     public static Literal of(float value) {
         return new NumberLiteral(value);
     }

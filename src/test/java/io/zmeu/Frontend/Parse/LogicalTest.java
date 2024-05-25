@@ -10,6 +10,8 @@ import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
+import static io.zmeu.Frontend.Parser.Expressions.Expressions.binary;
+import static io.zmeu.Frontend.Parser.Expressions.Expressions.logical;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
@@ -19,9 +21,9 @@ public class LogicalTest extends BaseTest {
     void testLogicalAnd() {
         var res = parse("x > 0 && y < 0");
         var expected = Program.of(ExpressionStatement.of(
-                LogicalExpression.of("&&",
-                        BinaryExpression.of("x", 0, ">"),
-                        BinaryExpression.of("y", 0, "<")
+                logical("&&",
+                        binary("x", 0, ">"),
+                        binary("y", 0, "<")
                 )
         ));
         log.info(toJson(res));

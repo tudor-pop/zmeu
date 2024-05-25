@@ -111,7 +111,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(StringLiteral expression) {
-        return expression.getValue();
+        return "\"" + expression.getValue() + "\"";
     }
 
     @Override

@@ -10,14 +10,19 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TypeChecker implements Visitor<Types> {
-    private LanguageAstPrinter printer = new LanguageAstPrinter();
+    private final LanguageAstPrinter printer = new LanguageAstPrinter();
 
     public TypeChecker() {
     }
 
     @Override
     public Types eval(Expression expression) {
-        return expression.accept(this);
+        try {
+            return expression.accept(this);
+        } catch (TypeError typeError) {
+            log.error(typeError.getMessage());
+            throw typeError;
+        }
     }
 
     @Override
@@ -66,7 +71,7 @@ public class TypeChecker implements Visitor<Types> {
         Expression right = expression.getRight();
         Expression left = expression.getLeft();
         if (left == null || right == null) {
-            throw new TypeError("\nOperator " + op + " expects 2 arguments");
+            throw new TypeError("Operator " + op + " expects 2 arguments");
         }
         var t1 = eval(left);
         var t2 = eval(right);
@@ -75,8 +80,7 @@ public class TypeChecker implements Visitor<Types> {
 
     private static Types expect(Types actualType, Types expectedType, Object expectedVal, Object actualVal) {
         if (actualType != expectedType) {
-            String string = "\nExpected '" + expectedType + "' for " + expectedVal + " but got '" + actualType + "' in expression " + actualVal;
-            log.error(string);
+            String string = "Expected type " + expectedType + " for " + expectedVal + " but got " + actualType + " in expression: " + actualVal;
             throw new TypeError(string);
         }
         return actualType;
