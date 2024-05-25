@@ -91,8 +91,14 @@ public class BinaryExpression extends Expression {
     public static Expression of(String operator, String left, int right) {
         return of(operator, Identifier.of(left), NumberLiteral.of(right));
     }
+    public static Expression binary(String operator, String left, int right) {
+        return of(operator, Identifier.of(left), NumberLiteral.of(right));
+    }
 
     public static Expression of(String identifier, int left, String operator) {
+        return of(operator, Identifier.of(identifier), NumberLiteral.of(left));
+    }
+    public static Expression binary(String identifier, int left, String operator) {
         return of(operator, Identifier.of(identifier), NumberLiteral.of(left));
     }
 

@@ -27,6 +27,10 @@ public class LogicalExpression extends Expression {
         return new LogicalExpression(left, right, TokenType.toSymbol(operator.toString()));
     }
 
+    public static Expression logical(Object operator, Expression left, Expression right) {
+        return new LogicalExpression(left, right, TokenType.toSymbol(operator.toString()));
+    }
+
     @Override
     public <R> R accept(Visitor<R> visitor) {
         return visitor.eval(this);

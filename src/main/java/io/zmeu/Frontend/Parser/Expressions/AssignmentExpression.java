@@ -36,6 +36,9 @@ public class AssignmentExpression extends Expression {
     public static Expression of(Object operator, Expression left, Expression right) {
         return new AssignmentExpression(left, right, operator);
     }
+    public static Expression assignment(Object operator, Expression left, Expression right) {
+        return new AssignmentExpression(left, right, operator);
+    }
     public static Expression of(Object operator, Expression left, String right) {
         return new AssignmentExpression(left, Identifier.of(right), operator);
     }
