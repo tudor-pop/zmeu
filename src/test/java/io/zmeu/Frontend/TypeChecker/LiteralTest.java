@@ -11,12 +11,60 @@ import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
 import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
 
 @Log4j2
-class LiteralTest extends BaseChecker{
+class LiteralTest extends BaseChecker {
 
     @Test
     void testInteger() {
         var t1 = checker.eval(number(1));
         Assertions.assertEquals(t1, Types.Number);
+    }
+
+    @Test
+    void testIntegerLiteral() {
+        var t1 = checker.eval(1);
+        Assertions.assertEquals(t1, Types.Number);
+    }
+
+    @Test
+    void testFloatLiteral() {
+        var t1 = checker.eval(1.1);
+        Assertions.assertEquals(t1, Types.Number);
+    }
+
+    @Test
+    void testDoubleLiteral() {
+        var t1 = checker.eval(1.1);
+        Assertions.assertEquals(t1, Types.Number);
+    }
+
+    @Test
+    void testBooleanTrueLiteral() {
+        var t1 = checker.eval(true);
+        Assertions.assertEquals(t1, Types.Boolean);
+    }
+
+    @Test
+    void testBooleanFalseLiteral() {
+        var t1 = checker.eval(false);
+        Assertions.assertEquals(t1, Types.Boolean);
+    }
+
+    @Test
+    void testBoolTrue() {
+        var t1 = checker.eval(bool(true));
+        Assertions.assertEquals(t1, Types.Boolean);
+    }
+
+    @Test
+    void testBoolFalseLiteral() {
+        var t1 = checker.eval(true);
+        Assertions.assertEquals(t1, Types.Boolean);
+    }
+
+    @Test
+    void testStringLiteral() {
+        var t1 = checker.eval("hello");
+        Assertions.assertEquals(t1, Types.String);
     }
 
     @Test

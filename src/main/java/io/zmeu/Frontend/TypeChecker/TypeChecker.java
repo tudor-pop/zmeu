@@ -27,15 +27,6 @@ public class TypeChecker implements Visitor<Types> {
         }
     }
 
-    @Override
-    public Types eval(NumberLiteral expression) {
-        return Types.Number;
-    }
-
-    @Override
-    public Types eval(BooleanLiteral expression) {
-        return Types.Boolean;
-    }
 
     @Override
     public Types eval(Identifier expression) {
@@ -139,6 +130,7 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(VariableDeclaration expression) {
+
         return null;
     }
 
@@ -148,27 +140,37 @@ public class TypeChecker implements Visitor<Types> {
     }
 
     @Override
+    public Types eval(NumberLiteral expression) {
+        return Types.Number;
+    }
+
+    @Override
+    public Types eval(BooleanLiteral expression) {
+        return Types.Boolean;
+    }
+
+    @Override
     public Types eval(float expression) {
-        return null;
+        return Types.Number;
     }
 
     @Override
     public Types eval(double expression) {
-        return null;
+        return Types.Number;
     }
 
     @Override
     public Types eval(int expression) {
-        return null;
+        return Types.Number;
     }
 
     @Override
     public Types eval(boolean expression) {
-        return null;
+        return Types.Boolean;
     }
 
     @Override
     public Types eval(String expression) {
-        return null;
+        return Types.String;
     }
 }

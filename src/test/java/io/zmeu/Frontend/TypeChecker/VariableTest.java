@@ -14,4 +14,9 @@ public class VariableTest extends BaseChecker{
         var type = checker.eval(var("x", number(10)));
         assertEquals(type, Types.Number);
     }
+    @Test
+    void testGlobalVarEmptyString() {
+        var type = checker.eval(var("VERSION"));
+        assertEquals(type, Types.String);
+    }
 }
