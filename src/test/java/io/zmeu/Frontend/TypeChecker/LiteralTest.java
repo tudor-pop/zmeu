@@ -53,30 +53,78 @@ class LiteralTest {
 
     @Test
     void testDivision() {
-        var t1 = typeChecker.eval(binary(1, 1, "-"));
+        var t1 = typeChecker.eval(binary(1, 1, "/"));
+        Assertions.assertEquals(t1, Types.Number);
+    }
+
+    @Test
+    void testMod() {
+        var t1 = typeChecker.eval(binary(1, 1, "%"));
+        Assertions.assertEquals(t1, Types.Number);
+    }
+
+    @Test
+    void testEq() {
+        var t1 = typeChecker.eval(binary(1, 1, "=="));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testMultiplication() {
-        var t1 = typeChecker.eval(binary(1, 1, "-"));
+        var t1 = typeChecker.eval(binary(1, 1, "*"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
-    void testNumberWithStringError() {
+    void testNumberWithStringAddition() {
         Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("+", string("1"), number(1))));
     }
 
     @Test
-    void testStringWithNumberError() {
+    void testStringWithNumberAddition() {
         Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("+", number(1), string("1"))));
     }
 
     @Test
-    void testStringWithString() {
+    void testStringWithNumberEq() {
+        Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("==", number(1), string("1"))));
+    }
+
+    @Test
+    void testStringWithNumberMod() {
+        Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("%", number(1), string("1"))));
+    }
+
+    @Test
+    void testStringWithStringAddition() {
         var actual = typeChecker.eval(binary("+", string("hello"), string("world")));
         Assertions.assertEquals(actual, Types.String);
+    }
+
+    @Test
+    void testStringWithStringSubstraction() {
+        Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("-", string("hello"), string("world"))));
+    }
+
+    @Test
+    void testStringWithStringDivision() {
+        Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("/", string("hello"), string("world"))));
+    }
+
+    @Test
+    void testStringWithStringMultiplication() {
+        Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("*", string("hello"), string("world"))));
+    }
+
+    @Test
+    void testStringWithStringMod() {
+        Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("%", string("hello"), string("world"))));
+    }
+
+    @Test
+    void testStringWithStringEq() {
+        var type = typeChecker.eval(binary("==", string("hello"), string("world")));
+        Assertions.assertEquals(type, Types.String);
     }
 
 }

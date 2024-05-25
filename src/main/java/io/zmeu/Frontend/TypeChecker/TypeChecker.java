@@ -8,6 +8,8 @@ import io.zmeu.Frontend.visitors.LanguageAstPrinter;
 import io.zmeu.types.Types;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @Slf4j
 public class TypeChecker implements Visitor<Types> {
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
@@ -75,7 +77,25 @@ public class TypeChecker implements Visitor<Types> {
         }
         var t1 = eval(left);
         var t2 = eval(right);
+
+        var allowedTypes = allowTypes(op);
+        this.expectOperatorType(t1, allowedTypes, expression);
+        this.expectOperatorType(t2, allowedTypes, expression);
         return expect(t1, t2, left, expression);
+    }
+
+    private void expectOperatorType(Types type, List<Types> allowedTypes, BinaryExpression expression) {
+        if (!allowedTypes.contains(type)) {
+            throw new TypeError("Unexpected type: " + type + " in expression " + printer.eval(expression) + ". Allowed types: " + allowedTypes);
+        }
+    }
+
+    private List<Types> allowTypes(String op) {
+        return switch (op) {
+            case "+", "==" -> List.of(Types.Number, Types.String); // allow addition for numbers and string
+            case "-", "/", "*", "%" -> List.of(Types.Number);
+            default -> throw new TypeError("Unknown operator " + op);
+        };
     }
 
     private Types expect(Types actualType, Types expectedType, Expression expectedVal, Expression actualVal) {

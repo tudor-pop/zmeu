@@ -18,7 +18,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(BinaryExpression expression) {
-        return eval(expression.getLeft()) + expression.getOperator() + eval(expression.getRight());
+        return eval(expression.getLeft()) + " "+expression.getOperator()+ " " + eval(expression.getRight());
     }
 
     @Override
