@@ -35,9 +35,9 @@ public class TypeChecker implements Visitor<Types> {
     public Types eval(Expression expression) {
         try {
             return expression.accept(this);
-        } catch (TypeError | NotFoundException typeError) {
-            log.error(typeError.getMessage());
-            throw typeError;
+        } catch (NotFoundException exception) {
+            log.error(exception.getMessage());
+            throw exception;
         }
     }
 
@@ -47,9 +47,9 @@ public class TypeChecker implements Visitor<Types> {
         try {
             var type = (Types) environment.lookup(expression.getSymbol());
             return Objects.requireNonNullElseGet(type, () -> Types.valueOf(expression.getSymbol()));
-        } catch (NotFoundException typeError) {
-            log.error(typeError.getMessage());
-            throw typeError;
+        } catch (NotFoundException exception) {
+            log.error(exception.getMessage());
+            throw exception;
         }
     }
 
@@ -113,6 +113,7 @@ public class TypeChecker implements Visitor<Types> {
         if (actualType != expectedType) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            log.error(string);
             throw new TypeError(string);
         }
         return actualType;
@@ -150,19 +151,14 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(VariableDeclaration expression) {
-        try {
-            var implicitType = eval(expression.getInit());
-            String var = expression.getId().getSymbol();
-            if (expression.hasType()) {
-                var explicitType = eval(expression.getType());
-                expect(implicitType, explicitType, expression.getInit(), expression);
-                return (Types) environment.init(var, explicitType);
-            }
-            return (Types) environment.init(var, implicitType);
-        } catch (TypeError typeError) {
-            log.error(typeError.getMessage());
-            throw typeError;
+        var implicitType = eval(expression.getInit());
+        String var = expression.getId().getSymbol();
+        if (expression.hasType()) {
+            var explicitType = eval(expression.getType());
+            expect(implicitType, explicitType, expression.getInit(), expression);
+            return (Types) environment.init(var, explicitType);
         }
+        return (Types) environment.init(var, implicitType);
     }
 
     @Override
