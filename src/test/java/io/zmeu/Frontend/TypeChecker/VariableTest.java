@@ -1,10 +1,12 @@
 package io.zmeu.Frontend.TypeChecker;
 
+import io.zmeu.Frontend.Parser.Literals.NullLiteral;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.types.Types;
 import org.junit.jupiter.api.Test;
 
 import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
+import static io.zmeu.Frontend.Parser.Literals.BooleanLiteral.bool;
 import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
 import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
 import static io.zmeu.Frontend.Parser.Literals.PathIdentifier.type;
@@ -13,6 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VariableTest extends BaseChecker {
+
+    @Test
+    void testGlobalVarEmptyString() {
+        checker = new TypeChecker(new TypeEnvironment());
+        checker.getEnvironment().init("VERSION", Types.String);
+        var type = checker.eval(id("VERSION"));
+        assertEquals(type, Types.String);
+    }
 
     @Test
     void testVarInt() {
@@ -41,18 +51,20 @@ public class VariableTest extends BaseChecker {
     @Test
     void testVarExplicitTypeWrongNumberAssignment() {
         assertThrows(TypeError.class, () -> checker.eval(var("x", type("String"), number(10))));
+        assertThrows(TypeError.class, () -> checker.eval(var("x", type("String"), number(10.1))));
+        assertThrows(TypeError.class, () -> checker.eval(var("x", type("String"), bool(true))));
+        assertThrows(TypeError.class, () -> checker.eval(var("x", type("String"), bool(false))));
     }
+
     @Test
     void testVarExplicitTypeWrongStringAssignment() {
         assertThrows(TypeError.class, () -> checker.eval(var("x", type("Number"), string("10"))));
     }
 
     @Test
-    void testGlobalVarEmptyString() {
-        checker = new TypeChecker(new TypeEnvironment());
-        checker.getEnvironment().init("VERSION", Types.String);
-        var type = checker.eval(id("VERSION"));
-        assertEquals(type, Types.String);
+    void testExplicitTypeWrongBoolAssignment() {
+        assertThrows(TypeError.class, () -> checker.eval(var("x", type("Number"), bool(false))));
+        assertThrows(TypeError.class, () -> checker.eval(var("x", type("Number"), bool(true))));
     }
 
     @Test
@@ -61,4 +73,17 @@ public class VariableTest extends BaseChecker {
         assertThrows(NotFoundException.class, () -> checker.eval(id("VERSION")));
     }
 
+    @Test
+    void testNull() {
+        var t = checker.eval(var("x", type("String"), NullLiteral.of()));
+        assertEquals(t, Types.String);
+    }
+
+    @Test
+    void testInferTypeFromAnotherVar() {
+        var t1 = checker.eval(var("x", type("String"), string("first")));
+        var t2 = checker.eval(var("y", type("String"), id("x")));
+        assertEquals(t1, Types.String);
+        assertEquals(t2, Types.String);
+    }
 }

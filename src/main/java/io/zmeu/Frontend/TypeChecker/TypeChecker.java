@@ -110,6 +110,9 @@ public class TypeChecker implements Visitor<Types> {
     }
 
     private Types expect(Types actualType, Types expectedType, Expression expectedVal, Expression actualVal) {
+        if (actualType == Types.Null) {
+            return expectedType;
+        }
         if (actualType != expectedType) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
