@@ -73,4 +73,10 @@ class LiteralTest {
         Assertions.assertThrows(TypeError.class, () -> typeChecker.eval(binary("+", number(1), string("1"))));
     }
 
+    @Test
+    void testStringWithString() {
+        var actual = typeChecker.eval(binary("+", string("hello"), string("world")));
+        Assertions.assertEquals(actual, Types.String);
+    }
+
 }

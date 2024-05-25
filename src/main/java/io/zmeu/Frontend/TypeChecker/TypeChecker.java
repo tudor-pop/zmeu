@@ -75,12 +75,13 @@ public class TypeChecker implements Visitor<Types> {
         }
         var t1 = eval(left);
         var t2 = eval(right);
-        return expect(t1, t2, printer.eval(left), printer.eval(expression));
+        return expect(t1, t2, left, expression);
     }
 
-    private static Types expect(Types actualType, Types expectedType, Object expectedVal, Object actualVal) {
+    private Types expect(Types actualType, Types expectedType, Expression expectedVal, Expression actualVal) {
         if (actualType != expectedType) {
-            String string = "Expected type " + expectedType + " for " + expectedVal + " but got " + actualType + " in expression: " + actualVal;
+            // only evaluate printing if we need to
+            String string = "Expected type " + expectedType + " for " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
             throw new TypeError(string);
         }
         return actualType;
