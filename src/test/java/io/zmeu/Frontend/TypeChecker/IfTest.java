@@ -17,6 +17,7 @@ public class IfTest extends BaseChecker {
                 } else {
                    y = 3
                 }
+                y
                 """));
         assertEquals(Types.Number, actual);
     }
