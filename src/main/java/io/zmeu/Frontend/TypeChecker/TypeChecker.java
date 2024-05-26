@@ -82,7 +82,7 @@ public class TypeChecker implements Visitor<Types> {
     }
 
     @NotNull
-    Types executeBlock(List<Statement> statements, TypeEnvironment environment) {
+    private Types executeBlock(List<Statement> statements, TypeEnvironment environment) {
         TypeEnvironment previous = this.env;
         try {
             this.env = environment;
@@ -96,7 +96,7 @@ public class TypeChecker implements Visitor<Types> {
         }
     }
 
-    Types executeBlock(Expression statement, TypeEnvironment environment) {
+    private Types executeBlock(Expression statement, TypeEnvironment environment) {
         TypeEnvironment previous = this.env;
         try {
             this.env = environment;
@@ -106,7 +106,7 @@ public class TypeChecker implements Visitor<Types> {
         }
     }
 
-    Types executeBlock(Statement statement, TypeEnvironment environment) {
+    private Types executeBlock(Statement statement, TypeEnvironment environment) {
         TypeEnvironment previous = this.env;
         try {
             this.env = environment;
@@ -197,7 +197,11 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(Program program) {
-        return null;
+        var type = Types.Null;
+        for (Statement statement : program.getBody()) {
+            type = executeBlock(statement, env);
+        }
+        return type;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
+import io.zmeu.Frontend.Parser.Program;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -40,6 +41,10 @@ public class BaseTest {
     }
 
     protected Object parse(String source) {
+        return parser.produceAST(tokenizer.tokenize(source));
+    }
+
+    protected Program src(String source) {
         return parser.produceAST(tokenizer.tokenize(source));
     }
 

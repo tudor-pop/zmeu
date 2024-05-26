@@ -24,6 +24,7 @@ public class BlockTest extends BaseChecker {
         ));
         assertEquals(Types.Number, actual);
     }
+
     @Test
     void testNestedBlock() {
         var actual = checker.eval(block(
@@ -31,6 +32,18 @@ public class BlockTest extends BaseChecker {
                 expressionStatement(block(statement(var("x", string("hello"))))),
                 expressionStatement(binary("*", "x", 2))
         ));
+        assertEquals(Types.Number, actual);
+    }
+
+    @Test
+    void testScopeChainLookup() {
+        var actual = checker.eval(src("""
+                var x = 10
+                {
+                    var y = 10
+                    x+y
+                }
+                """));
         assertEquals(Types.Number, actual);
     }
 }
