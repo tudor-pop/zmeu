@@ -132,7 +132,7 @@ public class TypeChecker implements Visitor<Types> {
         var t1 = eval(left);
         var t2 = eval(right);
 
-        var allowedTypes = allowTypes(op);
+        List<Types> allowedTypes = allowTypes(op);
         this.expectOperatorType(t1, allowedTypes, expression);
         this.expectOperatorType(t2, allowedTypes, expression);
         return expect(t1, t2, left, expression);

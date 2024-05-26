@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
+import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.*;
 
 
 /**
@@ -281,7 +282,7 @@ public class Parser {
      * ;
      */
     private Statement ExpressionStatement() {
-        return ExpressionStatement.of(Expression());
+        return expressionStatement(Expression());
     }
 
     /**
@@ -415,7 +416,7 @@ public class Parser {
         var params = OptParameterList();
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
 
-        Statement body = ExpressionStatement.of(BlockExpression());
+        Statement body = of(BlockExpression());
         return FunctionDeclaration.of(test, params, body);
     }
 
@@ -438,7 +439,7 @@ public class Parser {
         var params = OptParameterList();
         eat(CloseParenthesis);
 
-        Statement body = ExpressionStatement.of(BlockExpression());
+        Statement body = of(BlockExpression());
         return InitStatement.of(params, body);
     }
 

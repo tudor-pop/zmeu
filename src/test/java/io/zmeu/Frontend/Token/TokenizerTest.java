@@ -98,6 +98,14 @@ public class TokenizerTest {
     }
 
     @Test
+    void testModulo() {
+        var result = tokenizer.tokenizeLiteral("%");
+        Assertions.assertEquals(TokenType.Modulo, result.type());
+        Assertions.assertEquals("%", result.value());
+        log.info(result);
+    }
+
+    @Test
     void testLineTerminatorComplex() {
         var result = tokenizer.tokenize("1+1\n");
         Assertions.assertEquals(TokenType.NewLine, result.get(3).type());

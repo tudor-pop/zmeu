@@ -43,6 +43,7 @@ class TokenizerSpec {
             new Entry("^\\++", TokenType.Increment),
             new Entry("^\\+", TokenType.Plus),
             new Entry("^\\*", TokenType.Multiply),
+            new Entry("^\\%", TokenType.Modulo),
             //todo add exponentiation ^
             new Entry("^--", TokenType.Decrement),
             new Entry("^(->)", TokenType.Lambda),
