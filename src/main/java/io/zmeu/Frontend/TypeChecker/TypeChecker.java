@@ -1,9 +1,10 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
+import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.Frontend.Parser.Statements.BlockExpression;
-import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
+import io.zmeu.Frontend.Parser.Program;
+import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.types.Types;
@@ -54,6 +55,11 @@ public class TypeChecker implements Visitor<Types> {
     }
 
     @Override
+    public Types eval(ResourceExpression expression) {
+        return null;
+    }
+
+    @Override
     public Types eval(NullLiteral expression) {
         return Types.Null;
     }
@@ -70,6 +76,11 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(BlockExpression expression) {
+        Types result = null;
+        for (Statement statement : expression.getExpression()) {
+            result = eval(statement);
+        }
+
         return null;
     }
 
@@ -149,6 +160,61 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(UnaryExpression expression) {
+        return null;
+    }
+
+    @Override
+    public Types eval(Program program) {
+        return null;
+    }
+
+    @Override
+    public Types eval(Statement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(InitStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(FunctionDeclaration statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(ExpressionStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(VariableStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(IfStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(WhileStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(ForStatement statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(SchemaDeclaration statement) {
+        return null;
+    }
+
+    @Override
+    public Types eval(ReturnStatement statement) {
         return null;
     }
 

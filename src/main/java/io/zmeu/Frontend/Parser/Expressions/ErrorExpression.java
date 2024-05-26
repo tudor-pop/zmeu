@@ -1,5 +1,7 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
+import io.zmeu.Frontend.visitors.Visitor;
+
 public class ErrorExpression extends Expression {
     private String msg;
     private int position;

@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -34,10 +35,16 @@ public class ExpressionStatement extends Statement {
     public static Statement expressionStatement(Expression expression) {
         return new ExpressionStatement(expression);
     }
+    public static Statement expressionStatement(String expression) {
+        return of(expression);
+    }
     public static Statement of() {
         return new ExpressionStatement();
     }
     public static Statement of(int value) {
+        return new ExpressionStatement(NumberLiteral.of(value));
+    }
+    public static Statement expressionStatement(int value) {
         return new ExpressionStatement(NumberLiteral.of(value));
     }
 

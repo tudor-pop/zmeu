@@ -1,13 +1,13 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Program;
-import io.zmeu.Frontend.Parser.Statements.BlockExpression;
-import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static io.zmeu.Frontend.Parser.Program.program;
+import static io.zmeu.Frontend.Parser.Statements.BlockExpression.block;
+import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
@@ -16,7 +16,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testInteger() {
         var res = parse("{ 42 }");
-        var expected = Program.of(ExpressionStatement.of(BlockExpression.of(ExpressionStatement.of(42))));
+        var expected = program(expressionStatement(block(expressionStatement(42))));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -24,14 +24,14 @@ public class BlockTest extends BaseTest {
     @Test
     void testString() {
         var res = parse("{ \"hello\" }");
-        var expected = Program.of(ExpressionStatement.of(BlockExpression.of(ExpressionStatement.of("hello"))));
+        var expected = program(expressionStatement(block(expressionStatement("hello"))));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
     @Test
     void testEmptyBlock() {
         var res = parse("{ }    ");
-        var expected = Program.of(ExpressionStatement.of(BlockExpression.of(Collections.emptyList())));
+        var expected = program(expressionStatement(block(Collections.emptyList())));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -40,7 +40,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testNestedBlocksString() {
         var res = parse("{ { \"hello\" } }");
-        var expected = Program.of(ExpressionStatement.of(BlockExpression.of(BlockExpression.of(ExpressionStatement.of("hello")))));
+        var expected = program(expressionStatement(block(block(expressionStatement("hello")))));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -49,7 +49,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testEmptyStatement() {
         var res = parse("\n");
-        var expected = Program.of();
+        var expected = program();
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -57,7 +57,7 @@ public class BlockTest extends BaseTest {
     @Test
     void testEmptyStatementInBlock() {
         var res = parse("{ \n }");
-        var expected = Program.of(ExpressionStatement.of(BlockExpression.of(Collections.emptyList())));
+        var expected = program(expressionStatement(block(Collections.emptyList())));
         assertEquals(expected, res);
         log.info(toJson(res));
     }

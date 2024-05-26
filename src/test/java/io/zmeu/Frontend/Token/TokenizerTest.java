@@ -122,7 +122,7 @@ public class TokenizerTest {
     void testLiteralSingleQuoteString() {
         var result = tokenizer.tokenizeLiteral("'hello'");
         Assertions.assertEquals(TokenType.String, result.type());
-        Assertions.assertEquals("\'hello\'", result.value());
+        Assertions.assertEquals("'hello'", result.value());
         log.info(result);
     }
 

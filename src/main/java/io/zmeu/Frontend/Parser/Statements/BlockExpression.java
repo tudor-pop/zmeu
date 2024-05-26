@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.Expressions.Visitor;
+import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.NodeType;
@@ -44,6 +44,9 @@ public class BlockExpression extends Expression {
     public static Expression of(Expression expression) {
         return new BlockExpression(expression);
     }
+    public static Expression block(Expression expression) {
+        return new BlockExpression(expression);
+    }
 
     public static BlockExpression of(Statement expression) {
         return new BlockExpression(expression);
@@ -61,6 +64,9 @@ public class BlockExpression extends Expression {
     }
 
     public static Expression of(List<Statement> expression) {
+        return new BlockExpression(expression);
+    }
+    public static Expression block(List<Statement> expression) {
         return new BlockExpression(expression);
     }
 

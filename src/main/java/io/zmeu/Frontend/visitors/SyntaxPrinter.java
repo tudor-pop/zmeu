@@ -2,8 +2,8 @@ package io.zmeu.Frontend.visitors;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.Frontend.Parser.Statements.BlockExpression;
-import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
+import io.zmeu.Frontend.Parser.Program;
+import io.zmeu.Frontend.Parser.Statements.*;
 
 public class SyntaxPrinter implements Visitor<String> {
 
@@ -89,6 +89,66 @@ public class SyntaxPrinter implements Visitor<String> {
     @Override
     public String eval(String expression) {
         return String.valueOf(expression);
+    }
+
+    @Override
+    public String eval(Program program) {
+        return "";
+    }
+
+    @Override
+    public String eval(Statement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(InitStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(FunctionDeclaration statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(ExpressionStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(VariableStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(IfStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(WhileStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(ForStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(SchemaDeclaration statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(ReturnStatement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(ResourceExpression expression) {
+        return "";
     }
 
     @Override

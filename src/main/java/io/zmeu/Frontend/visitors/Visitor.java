@@ -1,8 +1,9 @@
-package io.zmeu.Frontend.Parser.Expressions;
+package io.zmeu.Frontend.visitors;
 
+import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.Frontend.Parser.Statements.BlockExpression;
-import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
+import io.zmeu.Frontend.Parser.Program;
+import io.zmeu.Frontend.Parser.Statements.*;
 
 public interface Visitor<R> {
     R eval(Expression expression);
@@ -50,4 +51,36 @@ public interface Visitor<R> {
     R eval(boolean expression);
 
     R eval(String expression);
+
+    R eval(Program program);
+
+    R eval(Statement statement);
+
+    /**
+     * InitStatement
+     * Syntactic sugar for a function
+     */
+    R eval(InitStatement statement);
+
+    R eval(FunctionDeclaration statement);
+
+    R eval(ExpressionStatement statement);
+
+    R eval(VariableStatement statement);
+
+    R eval(IfStatement statement);
+
+    R eval(WhileStatement statement);
+
+    R eval(ForStatement statement);
+
+    R eval(SchemaDeclaration statement);
+
+    R eval(ReturnStatement statement);
+
+    /**
+     * An instance of a Schema is an Environment!
+     * the 'parent' component of the instance environment is set to the class environment making class members accessible
+     */
+    R eval(ResourceExpression expression);
 }
