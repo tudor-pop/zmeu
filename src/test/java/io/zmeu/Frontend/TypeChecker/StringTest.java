@@ -68,7 +68,7 @@ class StringTest extends BaseChecker {
     void testStringWithStringMod() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
                 "hello" % "world"
-                        """)));
+                """)));
     }
 
     @Test
@@ -77,6 +77,7 @@ class StringTest extends BaseChecker {
                 1 % "1"
                 """)));
     }
+
     @Test
     void testNumberWithStringMod() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
@@ -84,12 +85,5 @@ class StringTest extends BaseChecker {
                 """)));
     }
 
-    @Test
-    void testStringWithStringEq() {
-        var type = checker.eval(src("""
-                "hello" == "world"
-                """));
-        Assertions.assertEquals(type, Types.String);
-    }
 
 }

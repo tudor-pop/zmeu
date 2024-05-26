@@ -135,6 +135,11 @@ public class TypeChecker implements Visitor<Types> {
         List<Types> allowedTypes = allowTypes(op);
         this.expectOperatorType(t1, allowedTypes, expression);
         this.expectOperatorType(t2, allowedTypes, expression);
+
+        if (isBooleanOp(op)) { // when is a boolean operation in an if statement, we return a boolean type(the result) else we return the type of the result for a + or *
+            expect(t1, t2, left, expression);
+            return Types.Boolean;
+        }
         return expect(t1, t2, left, expression);
     }
 
@@ -146,9 +151,18 @@ public class TypeChecker implements Visitor<Types> {
 
     private List<Types> allowTypes(String op) {
         return switch (op) {
-            case "+", "==" -> List.of(Types.Number, Types.String); // allow addition for numbers and string
+            case "+" -> List.of(Types.Number, Types.String); // allow addition for numbers and string
             case "-", "/", "*", "%" -> List.of(Types.Number);
+            case "==", "!=" -> List.of(Types.String, Types.Number, Types.Boolean);
+            case "<=", "<", ">", ">=" -> List.of(Types.Number, Types.Boolean);
             default -> throw new TypeError("Unknown operator " + op);
+        };
+    }
+
+    private boolean isBooleanOp(String op) {
+        return switch (op) {
+            case "==", "<=", ">=", "!=", "<", ">" -> true;
+            case null, default -> false;
         };
     }
 
@@ -274,7 +288,6 @@ public class TypeChecker implements Visitor<Types> {
      * Validates value assigned to x is of the same type as init type
      * var x = 1
      * x=2 // should allow number but not string
-     *
      */
     @Override
     public Types eval(AssignmentExpression expression) {
