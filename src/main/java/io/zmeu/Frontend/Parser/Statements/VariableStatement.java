@@ -36,6 +36,7 @@ public class VariableStatement extends Statement {
     public static Statement of(VariableDeclaration... expression) {
         return new VariableStatement(List.of(expression));
     }
+
     public static Statement statement(VariableDeclaration... expression) {
         return new VariableStatement(List.of(expression));
     }

@@ -77,7 +77,8 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(BlockExpression expression) {
-        return executeBlock(expression.getExpression(), this.env);
+        var env = new TypeEnvironment(this.env);
+        return executeBlock(expression.getExpression(), env);
     }
 
     @NotNull
