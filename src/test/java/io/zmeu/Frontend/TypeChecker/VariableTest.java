@@ -19,7 +19,7 @@ public class VariableTest extends BaseChecker {
     @Test
     void testGlobalVarEmptyString() {
         checker = new TypeChecker(new TypeEnvironment());
-        checker.getEnvironment().init("VERSION", Types.String);
+        checker.getEnv().init("VERSION", Types.String);
         var type = checker.eval(id("VERSION"));
         assertEquals(type, Types.String);
     }

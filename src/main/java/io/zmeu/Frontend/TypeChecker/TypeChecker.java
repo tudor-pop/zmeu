@@ -1,15 +1,16 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
-import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
+import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.types.Types;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,18 +19,18 @@ import java.util.Objects;
 public class TypeChecker implements Visitor<Types> {
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     @Getter
-    private final TypeEnvironment environment;
+    private TypeEnvironment env;
 
     public TypeChecker() {
-        environment = new TypeEnvironment();
-        environment.init(Types.String.getValue(), Types.String);
-        environment.init(Types.Number.getValue(), Types.Number);
-        environment.init(Types.Boolean.getValue(), Types.Boolean);
-        environment.init(Types.Null.getValue(), Types.Null);
+        env = new TypeEnvironment();
+        env.init(Types.String.getValue(), Types.String);
+        env.init(Types.Number.getValue(), Types.Number);
+        env.init(Types.Boolean.getValue(), Types.Boolean);
+        env.init(Types.Null.getValue(), Types.Null);
     }
 
     public TypeChecker(TypeEnvironment environment) {
-        this.environment = environment;
+        this.env = environment;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class TypeChecker implements Visitor<Types> {
     @Override
     public Types eval(Identifier expression) {
         try {
-            var type = (Types) environment.lookup(expression.getSymbol());
+            var type = (Types) env.lookup(expression.getSymbol());
             return Objects.requireNonNullElseGet(type, () -> Types.valueOf(expression.getSymbol()));
         } catch (NotFoundException exception) {
             log.error(exception.getMessage());
@@ -76,12 +77,42 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(BlockExpression expression) {
-        Types result = null;
-        for (Statement statement : expression.getExpression()) {
-            result = eval(statement);
-        }
+        return executeBlock(expression.getExpression(), this.env);
+    }
 
-        return null;
+    @NotNull
+    Types executeBlock(List<Statement> statements, TypeEnvironment environment) {
+        TypeEnvironment previous = this.env;
+        try {
+            this.env = environment;
+            Types res = Types.Null;
+            for (Statement statement : statements) {
+                res = eval(statement);
+            }
+            return res;
+        } finally {
+            this.env = previous;
+        }
+    }
+
+    Types executeBlock(Expression statement, TypeEnvironment environment) {
+        TypeEnvironment previous = this.env;
+        try {
+            this.env = environment;
+            return eval(statement);
+        } finally {
+            this.env = previous;
+        }
+    }
+
+    Types executeBlock(Statement statement, TypeEnvironment environment) {
+        TypeEnvironment previous = this.env;
+        try {
+            this.env = environment;
+            return eval(statement);
+        } finally {
+            this.env = previous;
+        }
     }
 
     @Override
@@ -170,7 +201,7 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(Statement statement) {
-        return null;
+        return statement.accept(this);
     }
 
     @Override
@@ -185,12 +216,16 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(ExpressionStatement statement) {
-        return null;
+        return executeBlock(statement.getStatement(), env);
     }
 
     @Override
     public Types eval(VariableStatement statement) {
-        return null;
+        var type = Types.Null;
+        for (VariableDeclaration declaration : statement.getDeclarations()) {
+            type = executeBlock(declaration, this.env);
+        }
+        return type;
     }
 
     @Override
@@ -225,9 +260,9 @@ public class TypeChecker implements Visitor<Types> {
         if (expression.hasType()) {
             var explicitType = eval(expression.getType());
             expect(implicitType, explicitType, expression.getInit(), expression);
-            return (Types) environment.init(var, explicitType);
+            return (Types) env.init(var, explicitType);
         }
-        return (Types) environment.init(var, implicitType);
+        return (Types) env.init(var, implicitType);
     }
 
     @Override

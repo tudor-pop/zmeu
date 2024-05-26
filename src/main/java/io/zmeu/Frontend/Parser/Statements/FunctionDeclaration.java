@@ -51,6 +51,9 @@ public class FunctionDeclaration extends Statement {
     public static Statement of(Identifier test, List<Identifier> params, Statement body) {
         return new FunctionDeclaration(test, params, body);
     }
+    public static Statement fun(Identifier test, List<Identifier> params, Statement body) {
+        return new FunctionDeclaration(test, params, body);
+    }
 
     public static Statement of(Identifier test, List<Identifier> params, int value) {
         return FunctionDeclaration.of(test, params, NumberLiteral.of(value));

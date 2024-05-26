@@ -31,6 +31,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.*;
+
 @Log4j2
 public class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
@@ -539,7 +541,7 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object eval(InitStatement statement) {
-        return eval(FunctionDeclaration.of(statement.getName(), statement.getParams(), statement.getBody()));
+        return eval(fun(statement.getName(), statement.getParams(), statement.getBody()));
     }
 
     @Override
