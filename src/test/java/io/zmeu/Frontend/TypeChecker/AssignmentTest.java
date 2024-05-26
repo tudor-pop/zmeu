@@ -20,8 +20,10 @@ public class AssignmentTest extends BaseChecker {
     @Test
     void testWrongAssignment() {
         assertThrows(TypeError.class, () -> checker.eval(src("""
-                var x = 10 // number
-                x = false // assign boolean should throw exception
+                // init with number type
+                var x = 10 
+                // try to change to boolean should throw
+                x = false 
                 """)));
     }
 
