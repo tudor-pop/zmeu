@@ -88,54 +88,60 @@ class LiteralTest extends BaseChecker {
 
     @Test
     void testAddition() {
-        var t1 = checker.eval(binary(1, 1, "+"));
+        var t1 = checker.eval(src("1+1"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
 
     @Test
     void testSubstraction() {
-        var t1 = checker.eval(binary(1, 1, "-"));
+        var t1 = checker.eval(src("1-1"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testDivision() {
-        var t1 = checker.eval(binary(1, 1, "/"));
+        var t1 = checker.eval(src("1/1"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testMod() {
-        var t1 = checker.eval(binary(1, 1, "%"));
+        var t1 = checker.eval(src("1 % 1"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testEq() {
-        var t1 = checker.eval(binary(1, 1, "=="));
+        var t1 = checker.eval(src("1==1"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testMultiplication() {
-        var t1 = checker.eval(binary(1, 1, "*"));
+        var t1 = checker.eval(src("1*1"));
         Assertions.assertEquals(t1, Types.Number);
     }
 
     @Test
     void testNumberWithStringAddition() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(binary("+", string("1"), number(1))));
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "1"+1
+                """)));
     }
 
     @Test
     void testStringWithNumberAddition() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(binary("+", number(1), string("1"))));
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                1+"1"
+                """)));
     }
 
     @Test
     void testStringWithNumberEq() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(binary("==", number(1), string("1"))));
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                1 == "1"
+                """)));
     }
 
     @Test
@@ -145,18 +151,24 @@ class LiteralTest extends BaseChecker {
 
     @Test
     void testStringWithStringAddition() {
-        var actual = checker.eval(binary("+", string("hello"), string("world")));
+        var actual = checker.eval(src("""
+                "hello" + "world"
+                """));
         Assertions.assertEquals(actual, Types.String);
     }
 
     @Test
     void testStringWithStringSubstraction() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(binary("-", string("hello"), string("world"))));
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" - "world"
+                """)));
     }
 
     @Test
     void testStringWithStringDivision() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(binary("/", string("hello"), string("world"))));
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" / "world"
+                 """)));
     }
 
     @Test
@@ -171,7 +183,9 @@ class LiteralTest extends BaseChecker {
 
     @Test
     void testStringWithStringEq() {
-        var type = checker.eval(binary("==", string("hello"), string("world")));
+        var type = checker.eval(src("""
+                "hello" == "world"
+                """));
         Assertions.assertEquals(type, Types.String);
     }
 
