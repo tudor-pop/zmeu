@@ -233,4 +233,82 @@ class BooleanTest extends BaseChecker {
         assertEquals(actual, Types.Boolean);
     }
 
+    @Test
+    void testStringWithNumberLess() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" < 1
+                """)));
+    }
+
+    @Test
+    void testStringWithNumberLessEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" <= 1
+                """)));
+    }
+
+    @Test
+    void testStringWithNumberGreaterEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" >= 1
+                """)));
+    }
+
+    @Test
+    void testStringWithNumberEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" == 1
+                """)));
+    }
+
+    @Test
+    void testStringWithNumberNotEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "hello" != 1
+                """)));
+    }
+
+    @Test
+    void testBoolWithNumberNotEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                true != 1
+                """)));
+    }
+
+    @Test
+    void testBoolWithNumberEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                true == 1
+                """)));
+    }
+
+    @Test
+    void testBoolWithNumberGreaterEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                true >= 1
+                """)));
+    }
+
+    @Test
+    void testBoolWithNumberGreater() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                true > 1
+                """)));
+    }
+
+    @Test
+    void testBoolWithNumberLess() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                true < 1
+                """)));
+    }
+
+    @Test
+    void testBoolWithNumberLessEq() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                true <= 1
+                """)));
+    }
+
+
 }
