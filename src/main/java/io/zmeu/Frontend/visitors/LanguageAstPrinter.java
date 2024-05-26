@@ -18,7 +18,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(BinaryExpression expression) {
-        return eval(expression.getLeft()) + " "+expression.getOperator()+ " " + eval(expression.getRight());
+        return eval(expression.getLeft()) + " " + expression.getOperator() + " " + eval(expression.getRight());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(Statement statement) {
-        return "";
+        return statement.accept(this);
     }
 
     @Override
@@ -125,7 +125,13 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(IfStatement statement) {
-        return "";
+        var string = new StringBuilder().append("if ").append(eval(statement.getTest())).append("{\n").append(eval(statement.getConsequent())).append("\n}\n");
+        if (statement.hasElse()) {
+            string.append(" else {\n")
+                    .append(eval(statement.getAlternate()))
+                    .append("\n}\n");
+        }
+        return string.toString();
     }
 
     @Override

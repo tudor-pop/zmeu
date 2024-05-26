@@ -181,6 +181,31 @@ public class TypeChecker implements Visitor<Types> {
         return actualType;
     }
 
+    private Types expect(Types actualType, Types expectedType, Statement expectedVal, Statement actualVal) {
+        if (actualType == Types.Null) {
+            return expectedType;
+        }
+        if (actualType != expectedType) {
+            // only evaluate printing if we need to
+            String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            log.error(string);
+            throw new TypeError(string);
+        }
+        return actualType;
+    }
+    private Types expect(Types actualType, Types expectedType, Expression expectedVal, Statement actualVal) {
+        if (actualType == Types.Null) {
+            return expectedType;
+        }
+        if (actualType != expectedType) {
+            // only evaluate printing if we need to
+            String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            log.error(string);
+            throw new TypeError(string);
+        }
+        return actualType;
+    }
+
     @Override
     public Types eval(CallExpression<Expression> expression) {
         return null;
@@ -251,12 +276,19 @@ public class TypeChecker implements Visitor<Types> {
 
     @Override
     public Types eval(IfStatement statement) {
-        return null;
+        Types t1 = eval(statement.getTest());
+        expect(t1, Types.Boolean, statement.getTest(), statement.getTest());
+        Types t2 = eval(statement.getConsequent());
+        Types t3 = eval(statement.getAlternate());
+
+        return expect(t3, t2, statement, statement);
     }
 
     @Override
     public Types eval(WhileStatement statement) {
-        return null;
+        var condition = eval(statement.getTest());
+        expect(condition, Types.Boolean, statement.getTest(), statement); // condition should always be boolean
+        return eval(statement.getBody());
     }
 
     @Override
