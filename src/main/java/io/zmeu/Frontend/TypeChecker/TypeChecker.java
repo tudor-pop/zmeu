@@ -270,9 +270,17 @@ public class TypeChecker implements Visitor<Types> {
         return (Types) env.init(var, implicitType);
     }
 
+    /**
+     * Validates value assigned to x is of the same type as init type
+     * var x = 1
+     * x=2 // should allow number but not string
+     *
+     */
     @Override
     public Types eval(AssignmentExpression expression) {
-        return null;
+        var varType = eval(expression.getLeft());
+        var valueType = eval(expression.getRight());
+        return expect(valueType, varType, expression.getLeft(), expression);
     }
 
     @Override
