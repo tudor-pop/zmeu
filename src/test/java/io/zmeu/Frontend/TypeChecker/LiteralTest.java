@@ -112,12 +112,6 @@ class LiteralTest extends BaseChecker {
     }
 
     @Test
-    void testEq() {
-        var t1 = checker.eval(src("1==1"));
-        Assertions.assertEquals(t1, Types.Number);
-    }
-
-    @Test
     void testMultiplication() {
         var t1 = checker.eval(src("1*1"));
         Assertions.assertEquals(t1, Types.Number);
@@ -179,14 +173,6 @@ class LiteralTest extends BaseChecker {
     @Test
     void testStringWithStringMod() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(binary("%", string("hello"), string("world"))));
-    }
-
-    @Test
-    void testStringWithStringEq() {
-        var type = checker.eval(src("""
-                "hello" == "world"
-                """));
-        Assertions.assertEquals(type, Types.String);
     }
 
 }

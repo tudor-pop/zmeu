@@ -43,6 +43,12 @@ class BooleanTest extends BaseChecker {
     }
 
     @Test
+    void testEq() {
+        var t1 = checker.eval(src("1==1"));
+        Assertions.assertEquals(t1, Types.Boolean);
+    }
+
+    @Test
     void testStringWithStringEq() {
         var type = checker.eval(src("""
                 "hello" == "world"
