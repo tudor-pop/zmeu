@@ -1,7 +1,5 @@
 package io.zmeu.api;
 
-import io.zmeu.types.Types;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -12,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface Property {
     String name() default "";
 
-    Types type();
+    Type type();
 
     String description() default "";
 
@@ -22,5 +20,17 @@ public @interface Property {
     boolean readonly() default false;
 
     boolean hidden() default false;
+
+    enum Type {
+        String("String"), Number("Number"), Boolean("Boolean"), Null("null");
+        private final String value;
+
+        Type(String value) {
+            this.value = value;
+        }
+        public String getValue() {
+            return value;
+        }
+    }
 
 }
