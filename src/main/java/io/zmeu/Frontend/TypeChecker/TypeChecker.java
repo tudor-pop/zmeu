@@ -7,7 +7,6 @@ import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
 import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Runtime.exceptions.NotFoundException;
-import io.zmeu.types.Types;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

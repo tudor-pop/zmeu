@@ -2,7 +2,6 @@ package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Literals.NullLiteral;
 import io.zmeu.Runtime.exceptions.NotFoundException;
-import io.zmeu.types.Types;
 import org.junit.jupiter.api.Test;
 
 import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
