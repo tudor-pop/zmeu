@@ -18,33 +18,33 @@ public class VariableTest extends BaseChecker {
     @Test
     void testGlobalVarEmptyString() {
         checker = new TypeChecker(new TypeEnvironment());
-        checker.getEnv().init("VERSION", Types.String);
+        checker.getEnv().init("VERSION", DataTypes.String);
         var type = checker.eval(id("VERSION"));
-        assertEquals(type, Types.String);
+        assertEquals(type, DataTypes.String);
     }
 
     @Test
     void testVarInt() {
         var type = checker.eval(var("x", number(10)));
         var accessType = checker.eval(id("x"));
-        assertEquals(type, Types.Number);
-        assertEquals(accessType, Types.Number);
+        assertEquals(type, DataTypes.Number);
+        assertEquals(accessType, DataTypes.Number);
     }
 
     @Test
     void testVarString() {
         var type = checker.eval(var("x", string("hello")));
         var accessType = checker.eval(id("x"));
-        assertEquals(type, Types.String);
-        assertEquals(accessType, Types.String);
+        assertEquals(type, DataTypes.String);
+        assertEquals(accessType, DataTypes.String);
     }
 
     @Test
     void testVarExplicitType() {
         var type = checker.eval(var("x", type("String"), string("hello")));
         var accessType = checker.eval(id("x"));
-        assertEquals(type, Types.String);
-        assertEquals(accessType, Types.String);
+        assertEquals(type, DataTypes.String);
+        assertEquals(accessType, DataTypes.String);
     }
 
     @Test
@@ -75,14 +75,14 @@ public class VariableTest extends BaseChecker {
     @Test
     void testNull() {
         var t = checker.eval(var("x", type("String"), NullLiteral.of()));
-        assertEquals(t, Types.String);
+        assertEquals(t, DataTypes.String);
     }
 
     @Test
     void testInferTypeFromAnotherVar() {
         var t1 = checker.eval(var("x", type("String"), string("first")));
         var t2 = checker.eval(var("y", type("String"), id("x")));
-        assertEquals(t1, Types.String);
-        assertEquals(t2, Types.String);
+        assertEquals(t1, DataTypes.String);
+        assertEquals(t2, DataTypes.String);
     }
 }

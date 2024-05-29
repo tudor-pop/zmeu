@@ -10,7 +10,7 @@ class StringTest extends BaseChecker {
     @Test
     void testStringLiteral() {
         var t1 = checker.eval("hello");
-        Assertions.assertEquals(t1, Types.String);
+        Assertions.assertEquals(t1, DataTypes.String);
     }
 
     @Test
@@ -39,7 +39,7 @@ class StringTest extends BaseChecker {
         var actual = checker.eval(src("""
                 "hello" + "world"
                 """));
-        Assertions.assertEquals(actual, Types.String);
+        Assertions.assertEquals(actual, DataTypes.String);
     }
 
     @Test

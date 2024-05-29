@@ -18,7 +18,7 @@ public class IfTest extends BaseChecker {
                 }
                 y
                 """));
-        assertEquals(Types.Number, actual);
+        assertEquals(DataTypes.Number, actual);
     }
 
 }

@@ -14,37 +14,37 @@ class BooleanTest extends BaseChecker {
     @Test
     void testTrue() {
         var t1 = checker.eval(true);
-        assertEquals(t1, Types.Boolean);
+        assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testFalse() {
         var t1 = checker.eval(false);
-        assertEquals(t1, Types.Boolean);
+        assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testTrueLiteral() {
         var t1 = checker.eval(bool(true));
-        assertEquals(t1, Types.Boolean);
+        assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testFalseLiteral() {
         var t1 = checker.eval(bool(false));
-        assertEquals(t1, Types.Boolean);
+        assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testNull() {
         var t1 = checker.eval(NullLiteral.of());
-        assertEquals(t1, Types.Null);
+        assertEquals(t1, DataTypes.Null);
     }
 
     @Test
     void testEq() {
         var t1 = checker.eval(src("1==1"));
-        Assertions.assertEquals(t1, Types.Boolean);
+        Assertions.assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
@@ -52,7 +52,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 "hello" == "world"
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -60,7 +60,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 "hello" != "world"
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -96,7 +96,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 true == true
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -104,7 +104,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 true == false
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -112,7 +112,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 false == false
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -120,7 +120,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 false == true
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -128,7 +128,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 false < true
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -136,7 +136,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 false <= true
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -144,7 +144,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 false > true
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -152,7 +152,7 @@ class BooleanTest extends BaseChecker {
         var type = checker.eval(src("""
                 false >= true
                 """));
-        assertEquals(type, Types.Boolean);
+        assertEquals(type, DataTypes.Boolean);
     }
 
     @Test
@@ -195,7 +195,7 @@ class BooleanTest extends BaseChecker {
         var actual = checker.eval(src("""
                 1 < 2
                 """));
-        assertEquals(actual, Types.Boolean);
+        assertEquals(actual, DataTypes.Boolean);
     }
 
     @Test
@@ -203,7 +203,7 @@ class BooleanTest extends BaseChecker {
         var actual = checker.eval(src("""
                 1 <= 2
                 """));
-        assertEquals(actual, Types.Boolean);
+        assertEquals(actual, DataTypes.Boolean);
     }
 
     @Test
@@ -211,7 +211,7 @@ class BooleanTest extends BaseChecker {
         var actual = checker.eval(src("""
                 1 >= 2
                 """));
-        assertEquals(actual, Types.Boolean);
+        assertEquals(actual, DataTypes.Boolean);
     }
 
     @Test
@@ -219,7 +219,7 @@ class BooleanTest extends BaseChecker {
         var actual = checker.eval(src("""
                 1 > 2
                 """));
-        assertEquals(actual, Types.Boolean);
+        assertEquals(actual, DataTypes.Boolean);
     }
 
     @Test
@@ -227,7 +227,7 @@ class BooleanTest extends BaseChecker {
         var actual = checker.eval(src("""
                 1 == 2
                 """));
-        assertEquals(actual, Types.Boolean);
+        assertEquals(actual, DataTypes.Boolean);
     }
 
     @Test
@@ -235,7 +235,7 @@ class BooleanTest extends BaseChecker {
         var actual = checker.eval(src("""
                 1 != 2
                 """));
-        assertEquals(actual, Types.Boolean);
+        assertEquals(actual, DataTypes.Boolean);
     }
 
     @Test

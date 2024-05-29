@@ -15,7 +15,7 @@ public class WhileTest extends BaseChecker {
                 }
                 x
                 """));
-        assertEquals(Types.Number, actual);
+        assertEquals(DataTypes.Number, actual);
     }
 
 }

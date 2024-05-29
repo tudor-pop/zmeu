@@ -16,104 +16,104 @@ class LiteralTest extends BaseChecker {
     @Test
     void testInteger() {
         var t1 = checker.eval(number(1));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testIntegerLiteral() {
         var t1 = checker.eval(1);
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testFloatLiteral() {
         var t1 = checker.eval(1.1);
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testDoubleLiteral() {
         var t1 = checker.eval(1.1);
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testBooleanTrueLiteral() {
         var t1 = checker.eval(true);
-        Assertions.assertEquals(t1, Types.Boolean);
+        Assertions.assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testBooleanFalseLiteral() {
         var t1 = checker.eval(false);
-        Assertions.assertEquals(t1, Types.Boolean);
+        Assertions.assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testBoolTrue() {
         var t1 = checker.eval(bool(true));
-        Assertions.assertEquals(t1, Types.Boolean);
+        Assertions.assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testNull() {
         var t1 = checker.eval(NullLiteral.of());
-        Assertions.assertEquals(t1, Types.Null);
+        Assertions.assertEquals(t1, DataTypes.Null);
     }
 
     @Test
     void testBoolFalseLiteral() {
         var t1 = checker.eval(true);
-        Assertions.assertEquals(t1, Types.Boolean);
+        Assertions.assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testStringLiteral() {
         var t1 = checker.eval("hello");
-        Assertions.assertEquals(t1, Types.String);
+        Assertions.assertEquals(t1, DataTypes.String);
     }
 
     @Test
     void testDecimal() {
         var t1 = checker.eval(number(1.1));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testBoolean() {
         var t1 = checker.eval(bool(true));
-        Assertions.assertEquals(t1, Types.Boolean);
+        Assertions.assertEquals(t1, DataTypes.Boolean);
     }
 
     @Test
     void testAddition() {
         var t1 = checker.eval(src("1+1"));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
 
     @Test
     void testSubstraction() {
         var t1 = checker.eval(src("1-1"));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testDivision() {
         var t1 = checker.eval(src("1/1"));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testMod() {
         var t1 = checker.eval(src("1 % 1"));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
     void testMultiplication() {
         var t1 = checker.eval(src("1*1"));
-        Assertions.assertEquals(t1, Types.Number);
+        Assertions.assertEquals(t1, DataTypes.Number);
     }
 
     @Test
@@ -147,7 +147,7 @@ class LiteralTest extends BaseChecker {
         var actual = checker.eval(src("""
                 "hello" + "world"
                 """));
-        Assertions.assertEquals(actual, Types.String);
+        Assertions.assertEquals(actual, DataTypes.String);
     }
 
     @Test

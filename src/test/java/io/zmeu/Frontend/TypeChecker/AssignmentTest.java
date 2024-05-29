@@ -13,7 +13,7 @@ public class AssignmentTest extends BaseChecker {
                 var x = 10
                 x = 1
                 """));
-        assertEquals(Types.Number, actual);
+        assertEquals(DataTypes.Number, actual);
     }
 
     @Test

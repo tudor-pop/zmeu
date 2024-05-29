@@ -13,7 +13,7 @@ public class BlockTest extends BaseChecker {
                 var y = 10
                 x*2+y
                 """));
-        assertEquals(Types.Number, actual);
+        assertEquals(DataTypes.Number, actual);
     }
 
     @Test
@@ -25,7 +25,7 @@ public class BlockTest extends BaseChecker {
                 }
                 x * 2
                 """));
-        assertEquals(Types.Number, actual);
+        assertEquals(DataTypes.Number, actual);
     }
 
     @Test
@@ -37,6 +37,6 @@ public class BlockTest extends BaseChecker {
                     x+y
                 }
                 """));
-        assertEquals(Types.Number, actual);
+        assertEquals(DataTypes.Number, actual);
     }
 }
