@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Literals.NullLiteral;
+import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

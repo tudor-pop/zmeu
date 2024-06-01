@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
 import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Runtime.exceptions.NotFoundException;

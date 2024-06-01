@@ -1,5 +1,6 @@
 package io.zmeu.Frontend.TypeChecker;
 
+import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +15,7 @@ public class FunctionTest extends BaseChecker {
                 }
                 square(2)
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertEquals(DataTypes.valueOf("fun(Number):Number"), actual);
     }
 
     @Test

@@ -333,8 +333,8 @@ public class Parser {
         if (type != null && init != null) { // if type is declared
             if (init instanceof Literal literal) {
                 var t1=typeChecker.eval(literal);
-                if (!StringUtils.equals(type.getType(), t1.name())) {
-                    throw new InvalidTypeInitException(type.getType(), t1.name(), literal.getVal());
+                if (!StringUtils.equals(type.getType(), t1.getValue())) {
+                    throw new InvalidTypeInitException(type.getType(), t1.getValue(), literal.getVal());
                 }
             }
         }

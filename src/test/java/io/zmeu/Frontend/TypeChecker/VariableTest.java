@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Literals.NullLiteral;
+import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import org.junit.jupiter.api.Test;
 
