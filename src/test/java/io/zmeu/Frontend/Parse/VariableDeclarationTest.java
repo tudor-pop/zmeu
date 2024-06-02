@@ -18,8 +18,7 @@ public class VariableDeclarationTest extends BaseTest {
     @Test
     void testDeclaration() {
         var res = parse("var x");
-        var expected = program(
-                statement(var("x")));
+        var expected = program(statement(var("x")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }

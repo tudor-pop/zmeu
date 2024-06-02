@@ -6,12 +6,11 @@ import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.errors.InvalidTypeInitException;
+import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.TypeChecker.TypeChecker;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
-import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.*;
+import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
+import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.of;
 
 
 /**
@@ -330,14 +330,14 @@ public class Parser {
         var id = Identifier();
         var type = TypeDeclaration();
         var init = IsLookAhead(lineTerminator(), Comma, EOF) ? null : VariableInitializer();
-        if (type != null && init != null) { // if type is declared
-            if (init instanceof Literal literal) {
-                var t1=typeChecker.eval(literal);
-                if (!StringUtils.equals(type.getType(), t1.getValue())) {
-                    throw new InvalidTypeInitException(type.getType(), t1.getValue(), literal.getVal());
-                }
-            }
-        }
+//        if (type != null && init != null) { // if type is declared
+//            if (init instanceof Literal literal) {
+//                var t1=typeChecker.eval(literal);
+//                if (!StringUtils.equals(type.getType(), t1.getValue())) {
+//                    throw new InvalidTypeInitException(type.getType(), t1.getValue(), literal.getVal());
+//                }
+//            }
+//        }
         return VariableDeclaration.of(id, type, init);
     }
 
@@ -346,7 +346,7 @@ public class Parser {
      * : (':' PathIdentifier)?
      * ;
      */
-    private PathIdentifier TypeDeclaration() {
+    private TypeIdentifier TypeDeclaration() {
         if (IsLookAhead(Colon)) {
             eat(Colon);
 
@@ -456,10 +456,14 @@ public class Parser {
     private List<Identifier> ParameterList() {
         var params = new ArrayList<Identifier>();
         do {
-            params.add(Identifier());
+            params.add(FunParameter());
         } while (IsLookAhead(Comma) && eat(Comma) != null);
 
         return params;
+    }
+
+    private Identifier FunParameter() {
+        return null;
     }
 
     private Statement ReturnStatement() {
@@ -735,13 +739,11 @@ public class Parser {
         return ModuleExpression.of(moduleType, name, (BlockExpression) body);
     }
 
-    private PathIdentifier TypeIdentifier() {
+    private TypeIdentifier TypeIdentifier() {
         switch (lookAhead().type()) {
             case String -> {
                 var token = eat(String);
-                PathIdentifier from = PathIdentifier.from(token.value().toString());
-
-                return from;
+                return TypeIdentifier.from(token.value().toString());
             }
             case Identifier -> {
                 return PathIdentifier();
@@ -750,8 +752,8 @@ public class Parser {
         }
     }
 
-    private @NotNull PathIdentifier PathIdentifier() {
-        var identifier = new PathIdentifier();
+    private @NotNull TypeIdentifier PathIdentifier() {
+        var identifier = new TypeIdentifier();
         var type = new StringBuilder();
         for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().type()) {
@@ -760,11 +762,14 @@ public class Parser {
                     type.append(".");
                     eat(Dot);
                 }
+                case Colon -> { // :Type just eat and move on
+                    eat(Colon);
+                }
                 case null -> {
                 }
                 default -> {
                     type.append(next.value().toString());
-                    identifier.setType(next.value().toString());
+                    identifier.setType(Type.of(next.value().toString()));
                     identifier.setSymbol(type.toString());
                     return identifier;
                 }

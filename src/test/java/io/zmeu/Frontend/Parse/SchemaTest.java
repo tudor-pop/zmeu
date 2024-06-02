@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parse;
 
 import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
-import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
+import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.Program;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class SchemaTest extends BaseTest {
                 """);
         var expected = program(
                 schema(id("square"), block(
-                        VariableDeclaration.var(id("x"), PathIdentifier.type("Number"), number(1)))
+                        VariableDeclaration.var(id("x"), TypeIdentifier.type("Number"), number(1)))
                 )
         );
         log.warn(toJson(actual));

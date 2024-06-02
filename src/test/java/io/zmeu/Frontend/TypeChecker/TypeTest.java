@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
 import static io.zmeu.Frontend.Parser.Factory.number;
 import static io.zmeu.Frontend.Parser.Factory.program;
-import static io.zmeu.Frontend.Parser.Literals.PathIdentifier.id;
-import static io.zmeu.Frontend.Parser.Literals.PathIdentifier.type;
+import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.id;
+import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.type;
 import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

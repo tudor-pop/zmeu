@@ -43,11 +43,11 @@ public class Factory {
     }
 
     public static Statement resource(String type, String name, BlockExpression operator) {
-        return ResourceExpression.of(PathIdentifier.of(type), Identifier.of(name), operator);
+        return ResourceExpression.of(TypeIdentifier.of(type), Identifier.of(name), operator);
     }
 
     public static Statement module(String type, String name, BlockExpression operator) {
-        PathIdentifier build = PathIdentifier.type(type);
+        TypeIdentifier build = TypeIdentifier.type(type);
         return ModuleExpression.of(build, Identifier.of(name), operator);
     }
 
@@ -79,7 +79,7 @@ public class Factory {
         return (BlockExpression) BlockExpression.of(operator);
     }
 
-    public static VariableStatement var(Identifier id, PathIdentifier type) {
+    public static VariableStatement var(Identifier id, TypeIdentifier type) {
         return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type));
     }
     public static SchemaDeclaration schema(Identifier type, Statement statement) {

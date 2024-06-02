@@ -1,6 +1,6 @@
 package io.zmeu.Runtime.Values;
 
-import io.zmeu.Frontend.Parser.Literals.PathIdentifier;
+import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Runtime.Environment.Environment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -90,8 +90,8 @@ public class ResourceValue {
     }
 
 
-    public PathIdentifier type() {
-        return (PathIdentifier) this.schema.getType();
+    public TypeIdentifier type() {
+        return (TypeIdentifier) this.schema.getType();
     }
     public String typeString() {
         return this.schema.typeString();

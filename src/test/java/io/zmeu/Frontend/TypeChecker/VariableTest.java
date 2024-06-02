@@ -9,7 +9,7 @@ import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
 import static io.zmeu.Frontend.Parser.Literals.BooleanLiteral.bool;
 import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
 import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
-import static io.zmeu.Frontend.Parser.Literals.PathIdentifier.type;
+import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.type;
 import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

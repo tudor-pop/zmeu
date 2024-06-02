@@ -17,6 +17,7 @@ public enum NodeType {
     VariableStatement,
     VariableDeclaration,
 
+    Type,
     EmptyStatement,
     //    NullLiteral,
     NumberLiteral,
