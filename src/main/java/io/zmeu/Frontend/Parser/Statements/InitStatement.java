@@ -2,6 +2,7 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
@@ -19,17 +20,17 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class InitStatement extends Statement {
-    private Identifier name = Identifier.of("init");
-    private List<Identifier> params;
+    private Identifier name = Identifier.id("init");
+    private List<ParameterIdentifier> params;
     private Statement body;
 
-    private InitStatement(List<Identifier> params, @Nullable Statement body) {
+    private InitStatement(List<ParameterIdentifier> params, @Nullable Statement body) {
         this();
         this.params = params;
         this.body = body;
     }
 
-    private InitStatement(List<Identifier> params, @Nullable Expression body) {
+    private InitStatement(List<ParameterIdentifier> params, @Nullable Expression body) {
         this(params, ExpressionStatement.expressionStatement(body));
     }
 
@@ -37,11 +38,11 @@ public class InitStatement extends Statement {
         this.kind = NodeType.InitDeclaration;
     }
 
-    public static Statement of(List<Identifier> params, Expression body) {
+    public static Statement of(List<ParameterIdentifier> params, Expression body) {
         return new InitStatement(params, body);
     }
 
-    public static Statement of(List<Identifier> params, Statement body) {
+    public static Statement of(List<ParameterIdentifier> params, Statement body) {
         return new InitStatement(params, body);
     }
 

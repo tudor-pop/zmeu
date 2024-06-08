@@ -12,6 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.*;
+
 /**
  * <p>
  * VariableStatement
@@ -42,7 +44,7 @@ public class VariableStatement extends Statement {
     }
 
     public static Statement statement(Identifier expression) {
-        return new VariableStatement(List.of(VariableDeclaration.of(expression)));
+        return new VariableStatement(List.of(var(expression)));
     }
 
     public static Statement of(List<VariableDeclaration> expression) {

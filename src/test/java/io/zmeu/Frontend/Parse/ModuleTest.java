@@ -1,10 +1,10 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Expressions.ModuleExpression;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.zmeu.Frontend.Parser.Expressions.ModuleExpression.module;
 import static io.zmeu.Frontend.Parser.Factory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +15,7 @@ public class ModuleTest extends BaseTest {
     @Test
     void moduleUnquoted() {
         var res = parse("module Backend api {}");
-        var expected = program(ModuleExpression.module("Backend", "api", block()));
+        var expected = program(module("Backend", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -23,7 +23,7 @@ public class ModuleTest extends BaseTest {
     @Test
     void moduleQuoted() {
         var res = parse("module 'Backend' api {}");
-        var expected = program(ModuleExpression.module("'Backend'", "api", block()));
+        var expected = program(module("'Backend'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -33,7 +33,7 @@ public class ModuleTest extends BaseTest {
         var res = parse("""
                 module "Backend" api {}
                 """);
-        var expected = program(ModuleExpression.module("""
+        var expected = program(module("""
                 "Backend"
                 """, "api", block()));
         assertEquals(expected, res);
@@ -43,7 +43,7 @@ public class ModuleTest extends BaseTest {
     @Test
     void moduleProviderNamespacedQuoted() {
         var res = parse("module 'Aws.Storage' api {}");
-        var expected = program(ModuleExpression.module("'Aws.Storage'", "api", block()));
+        var expected = program(module("'Aws.Storage'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -51,7 +51,7 @@ public class ModuleTest extends BaseTest {
     @Test
     void moduleProviderNamespacedUnquoted() {
         var res = parse("module Aws.Storage api {}");
-        var expected = program(ModuleExpression.module("Aws.Storage", "api", block()));
+        var expected = program(module("Aws.Storage", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -67,7 +67,7 @@ public class ModuleTest extends BaseTest {
     @Test
     void moduleProviderWithResourceNamespaced() {
         var res = parse("module 'Aws.Storage/S3.Bucket' api {}");
-        var expected = program(ModuleExpression.module("'Aws.Storage/S3.Bucket'", "api", block()));
+        var expected = program(module("'Aws.Storage/S3.Bucket'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -75,7 +75,7 @@ public class ModuleTest extends BaseTest {
     @Test
     void moduleProviderResourceNamespacedWithDate() {
         var res = parse("module 'Aws.Storage/S3.Bucket@2022-01-20' api {}");
-        var expected = program(ModuleExpression.module("'Aws.Storage/S3.Bucket@2022-01-20'", "api", block()));
+        var expected = program(module("'Aws.Storage/S3.Bucket@2022-01-20'", "api", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -87,7 +87,7 @@ public class ModuleTest extends BaseTest {
                     name = "bucket-prod"
                 }
                 """);
-        var expected = program(ModuleExpression.module("'Aws.Storage/S3.Bucket@2022-01-20'", "api",
+        var expected = program(module("'Aws.Storage/S3.Bucket@2022-01-20'", "api",
                 block(assign("name", "bucket-prod"))));
         assertEquals(expected, res);
         log.info(toJson(res));

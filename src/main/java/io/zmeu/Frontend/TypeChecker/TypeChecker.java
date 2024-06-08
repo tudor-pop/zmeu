@@ -47,8 +47,14 @@ public class TypeChecker implements Visitor<DataTypes> {
     @Override
     public DataTypes eval(Identifier expression) {
         try {
-            var type = (DataTypes) env.lookup(expression.getSymbol());
-            return Objects.requireNonNullElseGet(type, () -> DataTypes.valueOf(expression.getSymbol()));
+            if (expression instanceof TypeIdentifier identifier) {
+                var type = (DataTypes) env.lookup(identifier.getType().value());
+                return Objects.requireNonNullElseGet(type, () -> DataTypes.valueOf(identifier.getType().value()));
+            } else if (expression instanceof SymbolIdentifier identifier) {
+                var type = (DataTypes) env.lookup(identifier.getSymbol());
+                return Objects.requireNonNullElseGet(type, () -> DataTypes.valueOf(identifier.getSymbol()));
+            }
+            throw new TypeError(expression.string());
         } catch (NotFoundException exception) {
             log.error(exception.getMessage());
             throw exception;
@@ -309,7 +315,7 @@ public class TypeChecker implements Visitor<DataTypes> {
     @Override
     public DataTypes eval(VariableDeclaration expression) {
         var implicitType = eval(expression.getInit());
-        String var = expression.getId().getSymbol();
+        String var = expression.getId().string();
         if (expression.hasType()) {
             var explicitType = eval(expression.getType());
             expect(implicitType, explicitType, expression.getInit(), expression);

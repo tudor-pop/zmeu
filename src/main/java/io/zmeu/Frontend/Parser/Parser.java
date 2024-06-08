@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
+import static io.zmeu.Frontend.Parser.Literals.ParameterIdentifier.param;
 import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
 
 
@@ -441,7 +442,7 @@ public class Parser {
         return InitStatement.of(params, body);
     }
 
-    private List<Identifier> OptParameterList() {
+    private List<ParameterIdentifier> OptParameterList() {
         return IsLookAhead(CloseParenthesis) ? Collections.emptyList() : ParameterList();
     }
 
@@ -451,8 +452,8 @@ public class Parser {
      * | ParameterList, Identifier
      * ;
      */
-    private List<Identifier> ParameterList() {
-        var params = new ArrayList<Identifier>();
+    private List<ParameterIdentifier> ParameterList() {
+        var params = new ArrayList<ParameterIdentifier>();
         do {
             params.add(FunParameter());
         } while (IsLookAhead(Comma) && eat(Comma) != null);
@@ -460,8 +461,14 @@ public class Parser {
         return params;
     }
 
-    private Identifier FunParameter() {
-        return TypeIdentifier();
+    private ParameterIdentifier FunParameter() {
+        var symbol = SymbolIdentifier();
+        if (IsLookAhead(Identifier)) {
+            var type = TypeIdentifier();
+            return param(symbol, type);
+        } else {
+            return param(symbol);
+        }
     }
 
     private Statement ReturnStatement() {
@@ -710,14 +717,14 @@ public class Parser {
      */
     private Statement ResourceDeclaration() {
         eat(Resource);
-        Identifier type = TypeIdentifier();
+        var type = TypeIdentifier();
         Identifier name = null;
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         }
         var body = BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body.");
 
-        return ResourceExpression.of(type, name, (BlockExpression) body);
+        return ResourceExpression.resource(type, name, (BlockExpression) body);
     }
 
 
@@ -823,6 +830,10 @@ public class Parser {
         }
     }
 
+    /**
+     * Parse Type with prefix
+     * Base.Nested
+     */
     private @NotNull TypeIdentifier TypeIdentifier() {
         var type = new StringBuilder();
         for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
@@ -839,7 +850,7 @@ public class Parser {
                 }
                 default -> {
                     type.append(next.value().toString());
-                    return TypeIdentifier.from(type.toString());
+                    return TypeIdentifier.type(type.toString());
                 }
             }
         }
@@ -847,15 +858,14 @@ public class Parser {
 
     private Identifier Identifier() {
         return switch (lookAhead().type()) {
-            case Identifier -> Id();
             case String -> TypeIdentifier();
-            default -> Id();
+            default -> SymbolIdentifier();
         };
     }
 
-    private io.zmeu.Frontend.Parser.Literals.@NotNull Identifier Id() {
+    private @NotNull SymbolIdentifier SymbolIdentifier() {
         var id = eat(TokenType.Identifier);
-        return new Identifier(id.value());
+        return new SymbolIdentifier(id.value());
     }
 
     private Expression ParenthesizedExpression() {

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.zmeu.Frontend.Parser.Expressions.BinaryExpression.binary;
-import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.type;
+import static io.zmeu.Frontend.Parser.Literals.ParameterIdentifier.param;
 import static io.zmeu.Frontend.Parser.Program.program;
 import static io.zmeu.Frontend.Parser.Statements.BlockExpression.block;
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
@@ -27,7 +27,7 @@ public class FunTest extends BaseTest {
                 }
                 """);
         var expected = program(
-                fun("square", List.of(type("x")), block(
+                fun("square", List.of(param("x")), block(
                                 funReturn(binary("*", "x", "x"))
                         )
                 )
@@ -44,7 +44,7 @@ public class FunTest extends BaseTest {
                 }
                 """);
         var expected = program(
-                fun("square", List.of(type("x"), type("y")), block(
+                fun("square", List.of(param("x"), param("y")), block(
                                 funReturn(
                                         binary("*", "x", "y")
                                 )
@@ -63,7 +63,7 @@ public class FunTest extends BaseTest {
                 }
                 """);
         var expected = program(
-                fun("square", List.of(type("x")), block(
+                fun("square", List.of(param("x")), block(
                                 funReturn(ExpressionStatement.expressionStatement())
                         )
                 )

@@ -1,6 +1,5 @@
 package io.zmeu.Runtime;
 
-import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Runtime.Values.FunValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import lombok.extern.log4j.Log4j2;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.zmeu.Frontend.Parser.Literals.ParameterIdentifier.param;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
@@ -24,7 +24,7 @@ public class SchemaTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
-        assertEquals("Vm", actual.getType().getSymbol());
+        assertEquals("Vm", actual.getType().string());
     }
 
     @Test
@@ -109,7 +109,7 @@ public class SchemaTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
-        Assertions.assertEquals(FunValue.of("init", List.of(Identifier.of("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
+        Assertions.assertEquals(FunValue.of("init", List.of(param("x")), actual.getEnvironment()), actual.getEnvironment().lookup("init"));
     }
 
     @Test

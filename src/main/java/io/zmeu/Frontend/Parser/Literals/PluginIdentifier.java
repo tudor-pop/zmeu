@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.zmeu.Frontend.visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,13 +21,18 @@ import java.time.LocalDate;
 @Data
 @Builder
 @AllArgsConstructor
-public class PluginIdentifier extends Identifier {
+public final class PluginIdentifier extends Identifier {
     private PathIdentifier path;
     private TypeIdentifier type;
     private LocalDate date;
 
     private PluginIdentifier() {
         super();
+    }
+
+    @Override
+    public String string() {
+        return path.string() + "/" + type.string() + "@" + date.toString();
     }
 
     public static PluginIdentifier fromString(@NotNull String string) {
@@ -71,10 +76,8 @@ public class PluginIdentifier extends Identifier {
         return identifier;
     }
 
-    @JsonIgnore
     @Override
-    public String symbolWithType() {
-        return getSymbol();
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.eval(this);
     }
-
 }

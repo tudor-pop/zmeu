@@ -166,7 +166,7 @@ public class SyntaxPrinter implements Visitor<String> {
 
     @Override
     public String eval(Identifier expression) {
-        return expression.getSymbol();
+        return expression.string();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package io.zmeu.Runtime.Environment;
 
-import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -17,11 +17,11 @@ public class ActivationEnvironment extends Environment {
      * @param params
      * @param args
      */
-    public ActivationEnvironment(@Nullable Environment parent, List<Identifier> params, List<Object> args) {
+    public ActivationEnvironment(@Nullable Environment parent, List<ParameterIdentifier> params, List<Object> args) {
         super(parent);
         for (var i = 0; i < params.size(); i++) {
             // for each named parameter, we save the argument into the activation record(env that the function uses to execute)
-            var paramName = params.get(i).getSymbol();
+            var paramName = params.get(i).string();
             init(paramName, args.get(i));
         }
     }

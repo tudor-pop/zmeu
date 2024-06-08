@@ -79,15 +79,15 @@ public class BinaryExpression extends Expression {
     }
 
     public static Expression binary(String operator, String left, String right) {
-        return binary(operator, Identifier.of(left), Identifier.of(right));
+        return binary(operator, Identifier.id(left), Identifier.id(right));
     }
 
     public static Expression binary(String operator, String left, int right) {
-        return binary(operator, Identifier.of(left), NumberLiteral.of(right));
+        return binary(operator, Identifier.id(left), NumberLiteral.of(right));
     }
 
     public static Expression binary(String identifier, int left, String operator) {
-        return binary(operator, Identifier.of(identifier), NumberLiteral.of(left));
+        return binary(operator, Identifier.id(identifier), NumberLiteral.of(left));
     }
 
     @Override

@@ -41,7 +41,7 @@ public class ModuleExpression extends Statement {
 
     public static Statement module(String type, String name, BlockExpression operator) {
         var build = PluginIdentifier.fromString(type);
-        return of(build, Identifier.of(name), operator);
+        return of(build, Identifier.id(name), operator);
     }
 
     public List<Statement> getArguments() {
@@ -49,7 +49,7 @@ public class ModuleExpression extends Statement {
     }
 
     public String name() {
-        return name.getSymbol();
+        return name.string();
     }
 
     @Override

@@ -9,14 +9,14 @@ class PathIdentifierTest {
     @Test
     void testPathIdentifier() {
         var id = PathIdentifier.of("Test");
-        assertEquals("Test", id.getSymbol());
+        assertEquals("Test", id.string());
         assertArrayEquals(new String[]{"Test"}, id.getPaths());
     }
 
     @Test
     void testPathIdentifierMultiple() {
         var id = PathIdentifier.of("Test.VM");
-        assertEquals("Test.VM", id.getSymbol());
+        assertEquals("Test.VM", id.string());
         assertArrayEquals(new String[]{"Test", "VM"}, id.getPaths());
     }
 

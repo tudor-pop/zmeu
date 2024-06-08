@@ -3,6 +3,7 @@ package io.zmeu.Runtime.Values;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import io.zmeu.Frontend.Parser.Statements.Statement;
@@ -24,11 +25,11 @@ public class FunValue implements Callable {
     @EqualsAndHashCode.Exclude
     private Environment clojure;
     private Identifier name;
-    private List<Identifier> params;
+    private List<ParameterIdentifier> params;
     @EqualsAndHashCode.Exclude
     private Statement body;
 
-    private FunValue(Identifier name, List<Identifier> params, Statement body, Environment clojure) {
+    private FunValue(Identifier name, List<ParameterIdentifier> params, Statement body, Environment clojure) {
         this.name = name;
         this.params = params;
         this.body = body;
@@ -43,18 +44,18 @@ public class FunValue implements Callable {
         return name;
     }
 
-    public static Object of(Identifier name, List<Identifier> params, Statement body, Environment environment) {
+    public static Object of(Identifier name, List<ParameterIdentifier> params, Statement body, Environment environment) {
         return new FunValue(name, params, body, environment);
     }
 
-    public static FunValue of(String name, List<Identifier> params, Statement body, Environment environment) {
-        return (FunValue) of(Identifier.of(name), params, body, environment);
+    public static FunValue of(String name, List<ParameterIdentifier> params, Statement body, Environment environment) {
+        return (FunValue) of(Identifier.id(name), params, body, environment);
     }
-    public static Object of(String name, List<Identifier> params,  Environment environment) {
-        return FunValue.of(Identifier.of(name), params, ExpressionStatement.expressionStatement(BlockExpression.block()), environment);
+    public static Object of(String name, List<ParameterIdentifier> params,  Environment environment) {
+        return FunValue.of(Identifier.id(name), params, ExpressionStatement.expressionStatement(BlockExpression.block()), environment);
     }
 
-    public static Object of(List<Identifier> params, Statement body, Environment environment) {
+    public static Object of(List<ParameterIdentifier> params, Statement body, Environment environment) {
         return new FunValue(null, params, body, environment);
     }
 
@@ -63,11 +64,11 @@ public class FunValue implements Callable {
     }
 
     public static Object of(String string) {
-        return FunValue.of(Identifier.of(string));
+        return FunValue.of(Identifier.id(string));
     }
 
     public static Object of(String string, Environment environment) {
-        return FunValue.of(Identifier.of(string), Collections.emptyList(), ExpressionStatement.expressionStatement(BlockExpression.block()), environment);
+        return FunValue.of(Identifier.id(string), Collections.emptyList(), ExpressionStatement.expressionStatement(BlockExpression.block()), environment);
     }
 
     public static Object of(Expression string) {
@@ -79,7 +80,7 @@ public class FunValue implements Callable {
     @Nullable
     public String name() {
         if (name == null) return null ;
-        else return name.getSymbol();
+        else return name.string();
     }
 
     @Override
@@ -100,15 +101,15 @@ public class FunValue implements Callable {
 
         FunValue funValue = (FunValue) o;
 
-        return new EqualsBuilder().append(name.getSymbol(), funValue.name.getSymbol()).append(paramsAsString(), funValue.paramsAsString()).isEquals();
+        return new EqualsBuilder().append(name.string(), funValue.name.string()).append(paramsAsString(), funValue.paramsAsString()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(name.getSymbol()).append(paramsAsString()).toHashCode();
+        return new HashCodeBuilder(17, 37).append(name.string()).append(paramsAsString()).toHashCode();
     }
 
     public List<String> paramsAsString() {
-        return this.params.stream().map(Identifier::getSymbol).toList();
+        return this.params.stream().map(Identifier::string).toList();
     }
 }

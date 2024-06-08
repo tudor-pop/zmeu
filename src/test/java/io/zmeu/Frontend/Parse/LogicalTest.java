@@ -61,7 +61,7 @@ public class LogicalTest extends BaseTest {
     void testLogicalOrEquals() {
         var res = parse("x = true || false");
         var expected = program(expressionStatement(
-                assignment("=", Identifier.of("x"),
+                assignment("=", Identifier.id("x"),
                         logical("||", bool(true), bool(false))
                 )));
         log.info(toJson(res));
@@ -72,7 +72,7 @@ public class LogicalTest extends BaseTest {
     void testLogicalAndEquals() {
         var res = parse("x = true && false");
         var expected = program(expressionStatement(
-                assignment("=", Identifier.of("x"),
+                assignment("=", Identifier.id("x"),
                         logical("&&", bool(true), bool(false))
                 )));
         log.info(toJson(res));

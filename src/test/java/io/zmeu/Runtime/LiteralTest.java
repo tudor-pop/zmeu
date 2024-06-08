@@ -1,7 +1,7 @@
 package io.zmeu.Runtime;
 
-import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
+import io.zmeu.Frontend.Parser.Literals.SymbolIdentifier;
 import io.zmeu.Runtime.Values.NullValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class LiteralTest extends BaseTest {
 
     @Test
     void NullTest() {
-        var res = (NullValue) interpreter.eval(new Identifier());
+        var res = (NullValue) interpreter.eval(new SymbolIdentifier());
         Assertions.assertEquals(NullValue.of(), res.getRuntimeValue());
     }
 }

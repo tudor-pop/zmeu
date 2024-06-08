@@ -26,11 +26,11 @@ public class WhileTest extends BaseTest {
                 """);
         var expected = Program.of(
                 WhileStatement.builder()
-                        .test(BinaryExpression.binary(Identifier.of("x"), NumberLiteral.of(10), ">"))
+                        .test(BinaryExpression.binary(Identifier.id("x"), NumberLiteral.of(10), ">"))
                         .body(ExpressionStatement.expressionStatement(BlockExpression
                                 .block(ExpressionStatement
                                         .expressionStatement(AssignmentExpression
-                                                .assign("+=", Identifier.of("x"), NumberLiteral.of(1))
+                                                .assign("+=", Identifier.id("x"), NumberLiteral.of(1))
                                         )
                                 )
                         )).build()
@@ -50,13 +50,13 @@ public class WhileTest extends BaseTest {
         var expected = Program.of(
                 ForStatement.builder()
                         .init(VariableStatement.builder()
-                                .declarations(List.of(VariableDeclaration.of(Identifier.of("i"), NumberLiteral.of(0))))
+                                .declarations(List.of(VariableDeclaration.of(Identifier.id("i"), NumberLiteral.of(0))))
                                 .build())
-                        .test(BinaryExpression.binary(Identifier.of("i"), NumberLiteral.of(10), "<"))
-                        .update(AssignmentExpression.assign("+=", Identifier.of("i"), NumberLiteral.of(1)))
+                        .test(BinaryExpression.binary(Identifier.id("i"), NumberLiteral.of(10), "<"))
+                        .update(AssignmentExpression.assign("+=", Identifier.id("i"), NumberLiteral.of(1)))
                         .body(ExpressionStatement.expressionStatement(BlockExpression.block(
                                 ExpressionStatement.expressionStatement(
-                                        AssignmentExpression.assign("+=", Identifier.of("x"), NumberLiteral.of(1))
+                                        AssignmentExpression.assign("+=", Identifier.id("x"), NumberLiteral.of(1))
                                 )
                         )))
                         .build()
@@ -80,7 +80,7 @@ public class WhileTest extends BaseTest {
                 .update(null)
                 .body(ExpressionStatement.expressionStatement(BlockExpression.block(
                         ExpressionStatement.expressionStatement(
-                                AssignmentExpression.assign("+=", Identifier.of("x"), NumberLiteral.of(1))
+                                AssignmentExpression.assign("+=", Identifier.id("x"), NumberLiteral.of(1))
                         )
                 )))
                 .build()

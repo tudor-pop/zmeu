@@ -43,17 +43,17 @@ public class CallExpression<E extends Expression> extends Expression {
     }
 
     public static Expression call(Expression callee, String arguments) {
-        return new CallExpression(callee, List.of(Identifier.of(arguments)));
+        return new CallExpression(callee, List.of(Identifier.id(arguments)));
     }
     public static Expression call(Expression callee, StringLiteral arguments) {
         return new CallExpression(callee, List.of(arguments));
     }
 
     public static Expression call(String callee, int arguments) {
-        return new CallExpression(Identifier.of(callee), List.of(NumberLiteral.of(arguments)));
+        return new CallExpression(Identifier.id(callee), List.of(NumberLiteral.of(arguments)));
     }
     public static Expression call(String callee, double arguments) {
-        return new CallExpression(Identifier.of(callee), List.of(NumberLiteral.of(arguments)));
+        return new CallExpression(Identifier.id(callee), List.of(NumberLiteral.of(arguments)));
     }
 
     public static Expression call(int callee, int arguments) {
@@ -61,7 +61,7 @@ public class CallExpression<E extends Expression> extends Expression {
     }
 
     public static Expression call(String callee, String... arguments) {
-        return new CallExpression(Identifier.of(callee), Identifier.of(arguments));
+        return new CallExpression(Identifier.id(callee), Identifier.id(arguments));
     }
 
     public static <E extends Expression> Expression call(Expression callee, List<E> arguments) {

@@ -123,7 +123,7 @@ public class Interpreter implements Visitor<Object> {
     }
 
     private Object lookupVar(Identifier expression) {
-        return env.lookup(expression.getSymbol(), expression.getHops());
+        return env.lookup(expression.string(), expression.getHops());
     }
 
     @Override
@@ -333,14 +333,14 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object eval(MemberExpression expression) {
-        if (expression.getProperty() instanceof Identifier resourceName) {
+        if (expression.getProperty() instanceof SymbolIdentifier resourceName) {
             var value = executeBlock(expression.getObject(), env);
             // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
             // Since that environment points to the parent(type env) it will also find the properties
             if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
-                return schemaValue.getInstances().lookup(resourceName.getSymbol());
+                return schemaValue.getInstances().lookup(resourceName.string());
             } else if (value instanceof ResourceValue iEnvironment) {
-                return iEnvironment.lookup(resourceName.getSymbol());
+                return iEnvironment.lookup(resourceName.string());
             } // else it could be a resource or any other type like a NumericLiteral or something else
         }
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
@@ -349,7 +349,7 @@ public class Interpreter implements Visitor<Object> {
     @Override
     public Object eval(ResourceExpression resource) {
         if (resource.getName() == null) {
-            throw new InvalidInitException("Resource does not have a name: " + resource.getType().getSymbol());
+            throw new InvalidInitException("Resource does not have a name: " + resource.name());
         }
         // SchemaValue already installed globally when evaluating a SchemaDeclaration. This means the schema must be declared before the resource
         var installedSchema = (SchemaValue) executeBlock(resource.getType(), env);
@@ -423,11 +423,11 @@ public class Interpreter implements Visitor<Object> {
     public Object eval(SchemaDeclaration expression) {
         switch (expression.getBody()) {
             case ExpressionStatement statement when statement.getStatement() instanceof BlockExpression blockExpression -> {
-                Identifier name = expression.getName();
+                SymbolIdentifier name = (SymbolIdentifier) expression.getName();
                 var typeEnv = new Environment(env);
                 executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
 
-                return env.init(name.symbolWithType(), SchemaValue.of(name, typeEnv)); // install the type into the global env
+                return env.init(name.string(), SchemaValue.of(name, typeEnv)); // install the type into the global env
             }
             case null, default -> {
             }
@@ -491,7 +491,7 @@ public class Interpreter implements Visitor<Object> {
 
     @Override
     public Object eval(VariableDeclaration expression) {
-        String symbol = expression.getId().getSymbol();
+        String symbol = expression.getId().string();
         Object value = null;
         if (expression.hasInit()) {
             value = executeBlock(expression.getInit(), env);
@@ -510,9 +510,9 @@ public class Interpreter implements Visitor<Object> {
                     throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
                 }
             }
-            case Identifier identifier -> {
+            case SymbolIdentifier identifier -> {
 //            Integer distance = locals.get(identifier);
-                return env.assign(identifier.getSymbol(), right);
+                return env.assign(identifier.string(), right);
             }
             case null, default -> {
             }
@@ -549,7 +549,7 @@ public class Interpreter implements Visitor<Object> {
         var name = declaration.getName();
         var params = declaration.getParams();
         var body = declaration.getBody();
-        return env.init(name.getSymbol(), FunValue.of(name, params, body, env));
+        return env.init(name.string(), FunValue.of(name, params, body, env));
     }
 
     @Override

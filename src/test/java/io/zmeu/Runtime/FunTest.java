@@ -27,10 +27,10 @@ public class FunTest extends BaseTest {
                 }
                 """);
         var expected = FunValue.of(
-                Identifier.of("myFun"),
+                Identifier.id("myFun"),
                 List.of(),
                 ExpressionStatement.expressionStatement(BlockExpression.block(VariableStatement.of(
-                        VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(1))))),
+                        VariableDeclaration.of(Identifier.id("x"), NumberLiteral.of(1))))),
                 global
         );
         log.warn(toJson(res));
@@ -47,12 +47,12 @@ public class FunTest extends BaseTest {
                 }
                 """);
         var expected = FunValue.of(
-                Identifier.of("myFun"),
+                Identifier.id("myFun"),
                 List.of(),
                 ExpressionStatement.expressionStatement(BlockExpression.block(VariableStatement.of(
-                                VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(1))
+                                VariableDeclaration.of(Identifier.id("x"), NumberLiteral.of(1))
                         ),
-                        ExpressionStatement.expressionStatement(Identifier.of("x")))),
+                        ExpressionStatement.expressionStatement(Identifier.id("x")))),
                 global
         );
 

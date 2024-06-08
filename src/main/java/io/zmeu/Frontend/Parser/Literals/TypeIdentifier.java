@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.Frontend.visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,25 +13,33 @@ import org.apache.commons.lang3.StringUtils;
  * item in the local scope.
  * This usually holds a package name when importing a package or when using a schema/resource
  * PathIdentifier:
- * ; .?Type(.Identifier)*
+ * ; PathIdentifier?.TypeIdentifier
  */
 //@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true )
 @Data
 @Builder
 @AllArgsConstructor
-public class TypeIdentifier extends Identifier {
+public final class TypeIdentifier extends Identifier {
     private Type type;
+    private PathIdentifier path;
 
     private TypeIdentifier() {
         super();
     }
 
-    private TypeIdentifier(String path, Type type) {
-        this();
-        setSymbol(path);
-        setType(type);
+    @Override
+    public String string() {
+        if (path.getPaths().length == 1) {
+            return type.toString();
+        }
+        return path.string() + "." + type.toString();
     }
 
+    private TypeIdentifier(String path, Type type) {
+        this();
+        setPath(PathIdentifier.of(path));
+        setType(type);
+    }
 
     private TypeIdentifier(String path, String type) {
         this(path, Type.of(type));
@@ -45,10 +53,6 @@ public class TypeIdentifier extends Identifier {
         return of(type);
     }
 
-    public static TypeIdentifier type(Type type) {
-        return new TypeIdentifier(type);
-    }
-
     public static TypeIdentifier of(String object) {
         if (object.indexOf('.') == -1) {
             return new TypeIdentifier(object);
@@ -58,20 +62,8 @@ public class TypeIdentifier extends Identifier {
         return new TypeIdentifier(prefix, type);
     }
 
-    public static TypeIdentifier from(String type) {
-        var split = type.split("@");
-        return fromParent(split[0]);
-    }
-
-    private static TypeIdentifier fromParent(String type) {
-        var sub = type.substring(type.lastIndexOf('.') + 1, type.length());
-        return new TypeIdentifier(type, Type.of(sub));
-    }
-
-    @JsonIgnore
     @Override
-    public String symbolWithType() {
-        return getSymbol() + type.value();
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.eval(this);
     }
-
 }

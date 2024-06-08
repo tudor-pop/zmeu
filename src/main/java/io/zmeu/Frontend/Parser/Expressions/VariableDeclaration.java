@@ -51,15 +51,15 @@ public class VariableDeclaration extends Expression {
     }
 
     public static VariableDeclaration var(String id, Expression init) {
-        return new VariableDeclaration(Identifier.of(id), init);
+        return new VariableDeclaration(Identifier.id(id), init);
     }
 
     public static VariableDeclaration var(String id, TypeIdentifier type) {
-        return new VariableDeclaration(Identifier.of(id), type);
+        return new VariableDeclaration(Identifier.id(id), type);
     }
 
     public static VariableDeclaration var(String id) {
-        return new VariableDeclaration(Identifier.of(id));
+        return new VariableDeclaration(Identifier.id(id));
     }
 
     public static VariableDeclaration of(Expression id, TypeIdentifier type, Expression init) {
@@ -79,7 +79,7 @@ public class VariableDeclaration extends Expression {
     }
 
     public static VariableDeclaration of(String id) {
-        return new VariableDeclaration(Identifier.of(id));
+        return new VariableDeclaration(Identifier.id(id));
     }
 
     public static VariableStatement var(Identifier id, TypeIdentifier type, Expression init) {
@@ -87,7 +87,7 @@ public class VariableDeclaration extends Expression {
     }
 
     public static VariableDeclaration var(String id, TypeIdentifier type, Expression init) {
-        return VariableDeclaration.of(Identifier.of(id), type, init);
+        return VariableDeclaration.of(Identifier.id(id), type, init);
     }
 
     public boolean hasInit() {

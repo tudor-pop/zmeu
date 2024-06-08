@@ -50,7 +50,7 @@ public class AssignmentExpression extends Expression {
     }
 
     public static Expression assign(Object operator, Expression left, String right) {
-        return new AssignmentExpression(left, Identifier.of(right), operator);
+        return new AssignmentExpression(left, Identifier.id(right), operator);
     }
 
     public static Expression assign(Object operator, Expression left, int right) {

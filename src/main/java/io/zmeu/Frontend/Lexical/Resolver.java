@@ -20,7 +20,7 @@ public class Resolver implements Visitor<Void> {
      * Tracks how many scopes are we nested within source code. Based on this we know how to properly handle variable declarations/resolution
      * boolean = false => variable declared but not ready to be used
      * boolean = true => variable declared and ready to be used
-     * */
+     */
     private final Stack<Map<Identifier, Boolean>> scopes = new Stack<>();
     /**
      * Tracks weather we're in a function or not. Based on this we show a syntax
@@ -71,8 +71,8 @@ public class Resolver implements Visitor<Void> {
 
     @Override
     public Void eval(/* VariableExpression*/ Identifier identifier) {
-        if (!scopes.isEmpty() && scopes.peek().get(identifier.getSymbol()) == Boolean.FALSE) {
-            throw ErrorSystem.error("Can't read local variable in its own initializer: " + identifier.getSymbol());
+        if (!scopes.isEmpty() && scopes.peek().get(identifier.string()) == Boolean.FALSE) {
+            throw ErrorSystem.error("Can't read local variable in its own initializer: " + identifier.string());
         }
 
         resolveLocal(identifier);
@@ -188,7 +188,7 @@ public class Resolver implements Visitor<Void> {
         return null;
     }
 
-    private void resolveFunction(List<Identifier> params, Statement body, FunctionType functionType) {
+    private void resolveFunction(List<ParameterIdentifier> params, Statement body, FunctionType functionType) {
         FunctionType enclosingFunction = currentFunction;
         currentFunction = functionType;
 
@@ -197,7 +197,7 @@ public class Resolver implements Visitor<Void> {
         currentFunction = enclosingFunction;
     }
 
-    private void resolveFunction(List<Identifier> params, Statement body) {
+    private void resolveFunction(List<ParameterIdentifier> params, Statement body) {
         beginScope(); // one for activation environment
         initParams(params);
 
@@ -205,7 +205,7 @@ public class Resolver implements Visitor<Void> {
         endScope();
     }
 
-    private void initParams(List<Identifier> function) {
+    private void initParams(List<ParameterIdentifier> function) {
         for (var param : function) {
             declare(param);
             define(param);
@@ -346,7 +346,7 @@ public class Resolver implements Visitor<Void> {
         Map<Identifier, Boolean> scope = scopes.peek();
 
         if (scope.containsKey(name)) {
-            throw ErrorSystem.error("Already a variable with this name in this scope: " + name.getSymbol());
+            throw ErrorSystem.error("Already a variable with this name in this scope: " + name.string());
         }
 
         scope.put(name, false);

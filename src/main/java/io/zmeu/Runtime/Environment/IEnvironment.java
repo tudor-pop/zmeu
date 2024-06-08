@@ -57,7 +57,7 @@ public interface IEnvironment {
     }
 
     default Object init(Identifier name, Object value) {
-        return init(name.getSymbol(), value);
+        return init(name.string(), value);
     }
 
     Object init(String name, Object value);

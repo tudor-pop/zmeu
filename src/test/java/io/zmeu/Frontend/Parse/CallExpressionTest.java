@@ -77,7 +77,7 @@ public class CallExpressionTest extends BaseTest {
         var expected = Program.of(ExpressionStatement.expressionStatement(
                 CallExpression.call(
                         MemberExpression.member(false,"console", "log"),
-                        Identifier.of("x", "y"))
+                        Identifier.id("x", "y"))
         ));
 
         assertEquals(expected, res);

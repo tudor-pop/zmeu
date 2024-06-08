@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,17 +17,21 @@ import org.apache.commons.lang3.StringUtils;
 //@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true )
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PathIdentifier extends Identifier {
+public final class PathIdentifier extends Identifier {
     @Getter
     private String[] paths;
 
-    private PathIdentifier() {
+    public PathIdentifier() {
         super();
+    }
+
+    @Override
+    public String string() {
+        return StringUtils.join(paths,".");
     }
 
     private PathIdentifier(String path) {
         this();
-        setSymbol(path);
         paths = StringUtils.split(path, ".");
     }
 
@@ -39,10 +43,8 @@ public class PathIdentifier extends Identifier {
         return new PathIdentifier(object);
     }
 
-    @JsonIgnore
     @Override
-    public String symbolWithType() {
-        return getSymbol();
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.eval(this);
     }
-
 }

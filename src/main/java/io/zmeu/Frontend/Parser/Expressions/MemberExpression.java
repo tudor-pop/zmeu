@@ -34,13 +34,13 @@ public class MemberExpression extends Expression {
         return new MemberExpression(computed, object, NumberLiteral.of(property));
     }
     public static Expression member(boolean computed, Expression object, String property) {
-        return new MemberExpression(computed, object, Identifier.of(property));
+        return new MemberExpression(computed, object, Identifier.id(property));
     }
     public static Expression member(Expression object, String property) {
-        return new MemberExpression(false, object, Identifier.of(property));
+        return new MemberExpression(false, object, Identifier.id(property));
     }
     public static Expression member(boolean computed, String object, int property) {
-        return new MemberExpression(computed, Identifier.of(object), NumberLiteral.of(property));
+        return new MemberExpression(computed, Identifier.id(object), NumberLiteral.of(property));
     }
 
     public static Expression member(boolean computed, int object, int property) {
@@ -48,11 +48,11 @@ public class MemberExpression extends Expression {
     }
 
     public static Expression member(boolean computed, String object, String property) {
-        return new MemberExpression(computed, Identifier.of(object), Identifier.of(property));
+        return new MemberExpression(computed, Identifier.id(object), Identifier.id(property));
     }
 
     public static Expression member(String object, String property) {
-        return new MemberExpression(false, Identifier.of(object), Identifier.of(property));
+        return new MemberExpression(false, Identifier.id(object), Identifier.id(property));
     }
 
     public static Expression member(Expression object, Expression property) {

@@ -1,6 +1,8 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Literals.SymbolIdentifier;
+import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.Statement;
@@ -21,6 +23,7 @@ public class ResourceExpression extends Statement {
 
     private ResourceExpression() {
         this.kind = NodeType.ResourceExpression;
+        this.name = new SymbolIdentifier();
     }
 
     private ResourceExpression(Identifier type, Identifier name, BlockExpression block) {
@@ -30,12 +33,15 @@ public class ResourceExpression extends Statement {
         this.block = block;
     }
 
-    public static Statement of(Identifier type, Identifier name, BlockExpression block) {
+    public static Statement resource(Identifier type, Identifier name, BlockExpression block) {
         return new ResourceExpression(type, name, block);
     }
 
-    public static Statement of() {
+    public static Statement resource() {
         return new ResourceExpression();
+    }
+    public static Statement resource(TypeIdentifier type, Identifier name, BlockExpression block) {
+        return new ResourceExpression(type, name, block);
     }
 
     public List<Statement> getArguments() {
@@ -43,7 +49,7 @@ public class ResourceExpression extends Statement {
     }
 
     public String name() {
-        return name.getSymbol();
+        return name.string();
     }
 
     @Override

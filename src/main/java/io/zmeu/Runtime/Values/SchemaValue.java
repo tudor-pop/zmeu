@@ -39,11 +39,11 @@ public class SchemaValue {
     }
 
     public static SchemaValue of(String name, Environment environment) {
-        return new SchemaValue(Identifier.of(name), environment);
+        return new SchemaValue(Identifier.id(name), environment);
     }
 
     public String typeString() {
-        return type.getSymbol();
+        return type.string();
     }
 
     @NotNull
