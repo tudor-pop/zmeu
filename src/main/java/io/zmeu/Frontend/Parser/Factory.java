@@ -46,11 +46,6 @@ public class Factory {
         return ResourceExpression.of(TypeIdentifier.of(type), Identifier.of(name), operator);
     }
 
-    public static Statement module(String type, String name, BlockExpression operator) {
-        TypeIdentifier build = TypeIdentifier.type(type);
-        return ModuleExpression.of(build, Identifier.of(name), operator);
-    }
-
     public static Expression assign(Expression type, Expression name) {
         return AssignmentExpression.of("=", type, name);
     }

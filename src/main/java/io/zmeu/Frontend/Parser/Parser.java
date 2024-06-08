@@ -6,7 +6,6 @@ import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.TypeChecker.TypeChecker;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
@@ -732,49 +731,11 @@ public class Parser {
      */
     private Statement ModuleDeclaration() {
         eat(Module);
-        var moduleType = TypeIdentifier();
+        var moduleType = PluginIdentifier();
         var name = Identifier();
         var body = BlockExpression("Expect '{' after module name.", "Expect '}' after module body.");
 
-        return ModuleExpression.of(moduleType, name, (BlockExpression) body);
-    }
-
-    private TypeIdentifier TypeIdentifier() {
-        switch (lookAhead().type()) {
-            case String -> {
-                var token = eat(String);
-                return TypeIdentifier.from(token.value().toString());
-            }
-            case Identifier -> {
-                return PathIdentifier();
-            }
-            case null, default -> throw new RuntimeException("Unexpected token type: " + lookAhead().type());
-        }
-    }
-
-    private @NotNull TypeIdentifier PathIdentifier() {
-        var identifier = new TypeIdentifier();
-        var type = new StringBuilder();
-        for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
-            switch (lookAhead().type()) {
-                case Dot -> {
-                    type.append(next.value().toString());
-                    type.append(".");
-                    eat(Dot);
-                }
-                case Colon -> { // :Type just eat and move on
-                    eat(Colon);
-                }
-                case null -> {
-                }
-                default -> {
-                    type.append(next.value().toString());
-                    identifier.setType(Type.of(next.value().toString()));
-                    identifier.setSymbol(type.toString());
-                    return identifier;
-                }
-            }
-        }
+        return ModuleExpression.of((PluginIdentifier) moduleType, name, (BlockExpression) body);
     }
 
     private Expression LeftHandSideExpression() {
@@ -849,7 +810,51 @@ public class Parser {
         return Identifier();
     }
 
+    private PluginIdentifier PluginIdentifier() {
+        switch (lookAhead().type()) {
+            case String -> {
+                var token = eat(String);
+                return PluginIdentifier.fromString(token.value().toString());
+            }
+            case Identifier -> {
+                TypeIdentifier type = TypeIdentifier();
+                return PluginIdentifier.from(type);
+            }
+            case null, default -> throw new RuntimeException("Unexpected token type: " + lookAhead().type());
+        }
+    }
+
+    private @NotNull TypeIdentifier TypeIdentifier() {
+        var type = new StringBuilder();
+        for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
+            switch (lookAhead().type()) {
+                case Dot -> {
+                    type.append(next.value().toString());
+                    type.append(".");
+                    eat(Dot);
+                }
+                case Colon -> { // :Type just eat and move on
+                    eat(Colon);
+                }
+                case null -> {
+                }
+                default -> {
+                    type.append(next.value().toString());
+                    return TypeIdentifier.from(type.toString());
+                }
+            }
+        }
+    }
+
     private Identifier Identifier() {
+        return switch (lookAhead().type()) {
+            case Identifier -> Id();
+            case String -> TypeIdentifier();
+            default -> Id();
+        };
+    }
+
+    private io.zmeu.Frontend.Parser.Literals.@NotNull Identifier Id() {
         var id = eat(TokenType.Identifier);
         return new Identifier(id.value());
     }

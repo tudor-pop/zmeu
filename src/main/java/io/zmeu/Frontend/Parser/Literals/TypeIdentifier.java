@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  * item in the local scope.
  * This usually holds a package name when importing a package or when using a schema/resource
  * PathIdentifier:
- * ; .?Identifier(.Identifier)*
+ * ; .?Type(.Identifier)*
  */
 //@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true )
 @Data
@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 public class TypeIdentifier extends Identifier {
     private Type type;
 
-    public TypeIdentifier() {
+    private TypeIdentifier() {
         super();
     }
 

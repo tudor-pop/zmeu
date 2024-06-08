@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
+import io.zmeu.Frontend.Parser.Literals.PluginIdentifier;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.Statement;
@@ -14,7 +15,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ModuleExpression extends Statement {
-    private Identifier type;
+    private PluginIdentifier type;
     @Nullable
     private Identifier name;
     private BlockExpression block;
@@ -23,19 +24,24 @@ public class ModuleExpression extends Statement {
         this.kind = NodeType.ModuleExpression;
     }
 
-    private ModuleExpression(Identifier type, Identifier name, BlockExpression block) {
+    private ModuleExpression(PluginIdentifier type, Identifier name, BlockExpression block) {
         this();
         this.type = type;
         this.name = name;
         this.block = block;
     }
 
-    public static Statement of(Identifier type, Identifier name, BlockExpression block) {
+    public static Statement of(PluginIdentifier type, Identifier name, BlockExpression block) {
         return new ModuleExpression(type, name, block);
     }
 
     public static Statement of() {
         return new ModuleExpression();
+    }
+
+    public static Statement module(String type, String name, BlockExpression operator) {
+        var build = PluginIdentifier.fromString(type);
+        return of(build, Identifier.of(name), operator);
     }
 
     public List<Statement> getArguments() {
