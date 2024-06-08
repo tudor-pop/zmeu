@@ -23,7 +23,7 @@ public class SchemaDeclaration extends Statement {
     }
 
     public SchemaDeclaration(Identifier name, @Nullable Expression body) {
-        this(name, ExpressionStatement.of(body));
+        this(name, ExpressionStatement.expressionStatement(body));
     }
 
     public SchemaDeclaration() {

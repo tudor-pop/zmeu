@@ -29,7 +29,7 @@ public class WhileStatement extends Statement {
         this.body = body;
     }
     public WhileStatement(Expression test, @Nullable Expression body) {
-        this(test, ExpressionStatement.of(body));
+        this(test, ExpressionStatement.expressionStatement(body));
     }
 
     public WhileStatement() {

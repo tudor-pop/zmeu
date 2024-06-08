@@ -1,5 +1,6 @@
 package io.zmeu.Frontend.Parse;
 
+import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,6 @@ import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
 import static io.zmeu.Frontend.Parser.Program.program;
 import static io.zmeu.Frontend.Parser.Statements.BlockExpression.block;
 import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
-import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.of;
 import static io.zmeu.Frontend.Parser.Statements.VariableStatement.statement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -97,7 +97,7 @@ public class VariableDeclarationTest extends BaseTest {
                 statement(
                         var("x", block(
                                 statement(var("y", number(2))),
-                                of(number(3)))))
+                                ExpressionStatement.expressionStatement(number(3)))))
         );
         log.warn(toJson(res));
         assertEquals(expected, res);

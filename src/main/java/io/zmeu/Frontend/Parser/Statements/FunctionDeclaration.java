@@ -33,7 +33,7 @@ public class FunctionDeclaration extends Statement {
     }
 
     private FunctionDeclaration(Identifier name, List<Identifier> params, @Nullable Expression body) {
-        this(name,params,ExpressionStatement.of(body));
+        this(name,params,ExpressionStatement.expressionStatement(body));
     }
 
     private FunctionDeclaration() {

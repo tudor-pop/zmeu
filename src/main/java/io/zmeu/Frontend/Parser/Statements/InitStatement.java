@@ -30,7 +30,7 @@ public class InitStatement extends Statement {
     }
 
     private InitStatement(List<Identifier> params, @Nullable Expression body) {
-        this(params, ExpressionStatement.of(body));
+        this(params, ExpressionStatement.expressionStatement(body));
     }
 
     public InitStatement() {

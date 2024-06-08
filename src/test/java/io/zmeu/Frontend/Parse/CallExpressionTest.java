@@ -18,8 +18,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void testFunctionCall() {
         var res = parse("foo(x)");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of("foo", "x")));
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call("foo", "x")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -27,8 +27,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void testFunctionCallNumber() {
         var res = parse("foo(2)");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of("foo", 2)));
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call("foo", 2)));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -36,8 +36,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void testFunctionCallDecimal() {
         var res = parse("foo(2.2)");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of("foo", 2.2)));
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call("foo", 2.2)));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -45,8 +45,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void functionMultipleArgs() {
         var res = parse("foo(x,y)");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of("foo", "x","y")));
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call("foo", "x","y")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -54,8 +54,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void functionMultipleCalls() {
         var res = parse("foo(x)()");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of(CallExpression.of("foo", "x"), Collections.emptyList())));
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call(CallExpression.call("foo", "x"), Collections.emptyList())));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -63,8 +63,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void functionMultipleCallsArgs() {
         var res = parse("foo(x)(y)");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of(CallExpression.of("foo", "x"), "y")));
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call(CallExpression.call("foo", "x"), "y")));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -72,8 +72,8 @@ public class CallExpressionTest extends BaseTest {
     @Test
     void testMemberAssignment() {
         var res = parse("console.log(x,y)");
-        var expected = Program.of(ExpressionStatement.of(
-                CallExpression.of(
+        var expected = Program.of(ExpressionStatement.expressionStatement(
+                CallExpression.call(
                         MemberExpression.of(false,"console", "log"),
                         Identifier.of("x", "y"))
         ));

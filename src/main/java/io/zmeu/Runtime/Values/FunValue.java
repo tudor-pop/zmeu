@@ -36,7 +36,7 @@ public class FunValue implements Callable {
     }
 
     private FunValue(Identifier e) {
-        this(e, Collections.emptyList(), ExpressionStatement.of(BlockExpression.block()), new Environment());
+        this(e, Collections.emptyList(), ExpressionStatement.expressionStatement(BlockExpression.block()), new Environment());
     }
 
     public Identifier getRuntimeValue() {
@@ -51,7 +51,7 @@ public class FunValue implements Callable {
         return (FunValue) of(Identifier.of(name), params, body, environment);
     }
     public static Object of(String name, List<Identifier> params,  Environment environment) {
-        return FunValue.of(Identifier.of(name), params, ExpressionStatement.of(BlockExpression.block()), environment);
+        return FunValue.of(Identifier.of(name), params, ExpressionStatement.expressionStatement(BlockExpression.block()), environment);
     }
 
     public static Object of(List<Identifier> params, Statement body, Environment environment) {
@@ -59,7 +59,7 @@ public class FunValue implements Callable {
     }
 
     public static Object of(Identifier string) {
-        return FunValue.of(string, Collections.emptyList(), ExpressionStatement.of(BlockExpression.block()), new Environment());
+        return FunValue.of(string, Collections.emptyList(), ExpressionStatement.expressionStatement(BlockExpression.block()), new Environment());
     }
 
     public static Object of(String string) {
@@ -67,7 +67,7 @@ public class FunValue implements Callable {
     }
 
     public static Object of(String string, Environment environment) {
-        return FunValue.of(Identifier.of(string), Collections.emptyList(), ExpressionStatement.of(BlockExpression.block()), environment);
+        return FunValue.of(Identifier.of(string), Collections.emptyList(), ExpressionStatement.expressionStatement(BlockExpression.block()), environment);
     }
 
     public static Object of(Expression string) {

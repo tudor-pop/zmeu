@@ -20,7 +20,6 @@ import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
 import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
-import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.of;
 
 
 /**
@@ -415,7 +414,7 @@ public class Parser {
         var params = OptParameterList();
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
 
-        Statement body = of(BlockExpression());
+        Statement body = ExpressionStatement.expressionStatement(BlockExpression());
         return FunctionDeclaration.fun(test, params, body);
     }
 
@@ -438,7 +437,7 @@ public class Parser {
         var params = OptParameterList();
         eat(CloseParenthesis);
 
-        Statement body = of(BlockExpression());
+        Statement body = ExpressionStatement.expressionStatement(BlockExpression());
         return InitStatement.of(params, body);
     }
 
@@ -487,14 +486,14 @@ public class Parser {
         if (IsLookAhead(OpenParenthesis)) {
             var expression = LambdaExpression();
             eat(CloseParenthesis); // eat CloseParenthesis after lambda body
-            return CallExpression.of(expression, Arguments());
+            return CallExpression.call(expression, Arguments());
         }
 
         var params = OptParameterList();
         eat(CloseParenthesis);
         eat(Lambda, "Expected -> but got: " + lookAhead().value());
 
-        return LambdaExpression.of(params, LambdaBody());
+        return LambdaExpression.lambda(params, LambdaBody());
     }
 
     private Statement LambdaBody() {
@@ -747,7 +746,7 @@ public class Parser {
         var primaryIdentifier = MemberExpression(); // .fly
         while (true) {
             if (IsLookAhead(OpenParenthesis)) { // fly(
-                primaryIdentifier = CallExpression.of(primaryIdentifier, Arguments());
+                primaryIdentifier = CallExpression.call(primaryIdentifier, Arguments());
             } else {
                 break;
             }

@@ -37,7 +37,7 @@ public class EnvironmentTest {
         var global = new Environment();
         global.init("VERSION", 10);
         var interpreter = new Interpreter(global);
-        Assertions.assertEquals(10, interpreter.eval(ExpressionStatement.of(Identifier.of("VERSION"))));
+        Assertions.assertEquals(10, interpreter.eval(ExpressionStatement.expressionStatement(Identifier.of("VERSION"))));
     }
 
 }

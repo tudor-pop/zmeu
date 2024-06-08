@@ -29,7 +29,7 @@ public class IfStatement extends Statement {
         this.alternate = alternate;
     }
     private IfStatement(Expression test, @Nullable Expression consequent, Expression alternate) {
-        this(test, ExpressionStatement.of(consequent), ExpressionStatement.of(alternate));
+        this(test, ExpressionStatement.expressionStatement(consequent), ExpressionStatement.expressionStatement(alternate));
     }
 
     private IfStatement() {

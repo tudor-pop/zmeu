@@ -12,11 +12,11 @@ public class Factory {
     }
 
     public static Program program(Expression... object) {
-        return Program.builder().body(Arrays.stream(object).map(ExpressionStatement::of).toList()).build();
+        return Program.builder().body(Arrays.stream(object).map(ExpressionStatement::expressionStatement).toList()).build();
     }
 
     public static Statement expressionStatement(Expression object) {
-        return ExpressionStatement.of(object);
+        return ExpressionStatement.expressionStatement(object);
     }
 
     public static Expression unary(Object operator, Expression left) {

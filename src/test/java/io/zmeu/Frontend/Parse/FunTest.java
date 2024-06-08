@@ -62,7 +62,7 @@ public class FunTest extends BaseTest {
                 """);
         var expected = program(
                 fun("square", List.of(type("x")), block(
-                                funReturn(ExpressionStatement.of())
+                                funReturn(ExpressionStatement.expressionStatement())
                         )
                 )
         );
@@ -79,7 +79,7 @@ public class FunTest extends BaseTest {
                 """);
         var expected = program(
                 fun("square", block(
-                                funReturn(ExpressionStatement.of())
+                                funReturn(ExpressionStatement.expressionStatement())
                         )
                 )
         );

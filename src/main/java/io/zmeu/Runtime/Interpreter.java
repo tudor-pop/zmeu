@@ -411,7 +411,7 @@ public class Interpreter implements Visitor<Object> {
     @Override
     public Object eval(ForStatement statement) {
         List<Statement> statements = statement.discardBlock();
-        statements.add(ExpressionStatement.of(statement.getUpdate()));
+        statements.add(ExpressionStatement.expressionStatement(statement.getUpdate()));
         var whileStatement = WhileStatement.of(statement.getTest(), BlockExpression.block(statements));
         if (statement.getInit() == null) {
             return executeBlock(whileStatement, env);

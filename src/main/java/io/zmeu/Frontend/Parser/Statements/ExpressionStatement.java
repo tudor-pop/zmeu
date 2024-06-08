@@ -25,38 +25,32 @@ public class ExpressionStatement extends Statement {
         this.kind = NodeType.ExpressionStatement;
         this.statement = statement;
     }
+
     private ExpressionStatement() {
         this(null);
     }
 
-    public static Statement of(Expression expression) {
-        return new ExpressionStatement(expression);
-    }
     public static Statement expressionStatement(Expression expression) {
         return new ExpressionStatement(expression);
     }
-    public static Statement expressionStatement(String expression) {
-        return of(expression);
-    }
-    public static Statement of() {
+
+    public static Statement expressionStatement() {
         return new ExpressionStatement();
     }
-    public static Statement of(int value) {
-        return new ExpressionStatement(NumberLiteral.of(value));
-    }
+
     public static Statement expressionStatement(int value) {
         return new ExpressionStatement(NumberLiteral.of(value));
     }
 
-    public static Statement of(double value) {
+    public static Statement expressionStatement(double value) {
         return new ExpressionStatement(NumberLiteral.of(value));
     }
 
-    public static Statement of(float value) {
+    public static Statement expressionStatement(float value) {
         return new ExpressionStatement(NumberLiteral.of(value));
     }
 
-    public static Statement of(String value) {
+    public static Statement expressionStatement(String value) {
         return new ExpressionStatement(StringLiteral.of(value));
     }
 

@@ -34,7 +34,7 @@ public class BlockExpression extends Expression {
         this.expression = expression;
     }
     public BlockExpression(@Nullable Expression expression) {
-        this(ExpressionStatement.of(expression));
+        this(ExpressionStatement.expressionStatement(expression));
     }
 
     public BlockExpression() {

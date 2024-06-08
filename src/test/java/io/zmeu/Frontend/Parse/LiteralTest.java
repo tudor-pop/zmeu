@@ -14,7 +14,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void testInteger() {
         var res = parse("1");
-        var expected = Program.of(ExpressionStatement.of(NumberLiteral.of(1)));
+        var expected = Program.of(ExpressionStatement.expressionStatement(NumberLiteral.of(1)));
         assertEquals(expected, res);
         log.info(toJson(res));
     }
@@ -22,7 +22,7 @@ public class LiteralTest extends BaseTest {
     @Test
     void testDecimal() {
         var res = parse("1.11");
-        var expected = Program.of(ExpressionStatement.of(NumberLiteral.of(1.11)));
+        var expected = Program.of(ExpressionStatement.expressionStatement(NumberLiteral.of(1.11)));
         assertEquals(expected, res);
     }
 
@@ -32,7 +32,7 @@ public class LiteralTest extends BaseTest {
                 "Hello"
                 """);
         var expected = Program.of(
-                ExpressionStatement.of("Hello")
+                ExpressionStatement.expressionStatement("Hello")
         );
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -45,8 +45,8 @@ public class LiteralTest extends BaseTest {
                 1
                 """);
         var expected = Program.of(
-                ExpressionStatement.of("Hello"),
-                ExpressionStatement.of(1)
+                ExpressionStatement.expressionStatement("Hello"),
+                ExpressionStatement.expressionStatement(1)
         );
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -59,7 +59,7 @@ public class LiteralTest extends BaseTest {
                 "42" 
                 """);
         var expected = Program.of(
-                ExpressionStatement.of("42")
+                ExpressionStatement.expressionStatement("42")
         );
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -71,7 +71,7 @@ public class LiteralTest extends BaseTest {
                 '42' 
                 """);
         var expected = Program.of(
-                ExpressionStatement.of("42")
+                ExpressionStatement.expressionStatement("42")
         );
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -83,7 +83,7 @@ public class LiteralTest extends BaseTest {
                 '  42  ' 
                 """);
         var expected = Program.of(
-                ExpressionStatement.of("  42  ")
+                ExpressionStatement.expressionStatement("  42  ")
         );
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -93,7 +93,7 @@ public class LiteralTest extends BaseTest {
     void testNumberStringShouldEvalToNumber() {
         var res = parse("42");
         var expected = Program.of(
-                ExpressionStatement.of(42)
+                ExpressionStatement.expressionStatement(42)
         );
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -103,7 +103,7 @@ public class LiteralTest extends BaseTest {
     void testNumberStringShouldEvalToNumberWithTrailingSpace() {
         var res = parse("   \"  42  \"    ");
         var expected = Program.of(
-                ExpressionStatement.of("  42  ")
+                ExpressionStatement.expressionStatement("  42  ")
         );
         assertEquals(expected, res);
         log.info(toJson(res));

@@ -21,7 +21,7 @@ public class ReturnStatement extends Statement {
         this.argument = argument;
     }
     public ReturnStatement(@Nullable Expression argument) {
-        this(ExpressionStatement.of(argument));
+        this(ExpressionStatement.expressionStatement(argument));
     }
 
     public ReturnStatement() {
