@@ -28,7 +28,7 @@ public class AssignmentTest extends BaseTest {
     void testAssignmentBlock() {
         var res = parse("x={2}");
         var expected = Program.of(ExpressionStatement.of(
-                AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.of(ExpressionStatement.of(NumberLiteral.of(2))))));
+                AssignmentExpression.of("=", Identifier.of("x"), BlockExpression.block(ExpressionStatement.of(NumberLiteral.of(2))))));
         assertEquals(expected, res);
         log.warn(toJson(res));
     }
@@ -43,7 +43,7 @@ public class AssignmentTest extends BaseTest {
                 """);
         var expected = Program.of(ExpressionStatement.of(
                 AssignmentExpression.of("=", Identifier.of("x"),
-                        BlockExpression.of(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumberLiteral.of(2))),
+                        BlockExpression.block(ExpressionStatement.of(AssignmentExpression.of("=", Identifier.of("y"), NumberLiteral.of(2))),
                                 ExpressionStatement.of(NumberLiteral.of(2))))));
         log.warn(toJson(res));
         assertEquals(expected, res);
@@ -80,7 +80,7 @@ public class AssignmentTest extends BaseTest {
         var res = parse("x+x");
         var expected = Program.of(
                 ExpressionStatement.of(
-                        BinaryExpression.of(Identifier.of("x"), Identifier.of("x"), "+")
+                        BinaryExpression.binary(Identifier.of("x"), Identifier.of("x"), "+")
                 )
         );
         assertEquals(expected, res);

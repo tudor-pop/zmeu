@@ -26,11 +26,7 @@ public class BinaryExpression extends Expression {
         this.operator = operator;
     }
 
-    public static Expression of(Expression left, Expression right, String operator) {
-        return new BinaryExpression(left, right, operator);
-    }
-
-    public static Expression of(String operator, Expression left, Expression right) {
+    public static Expression binary(Expression left, Expression right, String operator) {
         return new BinaryExpression(left, right, operator);
     }
 
@@ -38,69 +34,60 @@ public class BinaryExpression extends Expression {
         return new BinaryExpression(left, right, operator);
     }
 
-    public static Expression of(Expression left, int right, String operator) {
-        return of(left, NumberLiteral.of(right), operator);
+    public static Expression binary(Expression left, int right, String operator) {
+        return binary(left, NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(int left, Expression right, String operator) {
-        return of(NumberLiteral.of(left), right, operator);
+    public static Expression binary(int left, Expression right, String operator) {
+        return binary(NumberLiteral.of(left), right, operator);
     }
 
-    public static Expression of(Expression left, float right, String operator) {
-        return of(left, NumberLiteral.of(right), operator);
+    public static Expression binary(Expression left, float right, String operator) {
+        return binary(left, NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(float left, Expression right, String operator) {
-        return of(NumberLiteral.of(left), right, operator);
+    public static Expression binary(float left, Expression right, String operator) {
+        return binary(NumberLiteral.of(left), right, operator);
     }
 
-    public static Expression of(Expression left, double right, String operator) {
-        return of(left, NumberLiteral.of(right), operator);
+    public static Expression binary(Expression left, double right, String operator) {
+        return binary(left, NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(Expression left, boolean right, String operator) {
-        return of(left, BooleanLiteral.of(right), operator);
+    public static Expression binary(Expression left, boolean right, String operator) {
+        return binary(left, BooleanLiteral.of(right), operator);
     }
 
-    public static Expression of(double left, Expression right, String operator) {
-        return of(NumberLiteral.of(left), right, operator);
+    public static Expression binary(double left, Expression right, String operator) {
+        return binary(NumberLiteral.of(left), right, operator);
     }
 
-    public static Expression of(int left, int right, String operator) {
-        return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
-    }
     public static Expression binary(int left, int right, String operator) {
-        return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
+        return binary(NumberLiteral.of(left), NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(String operator, int left, int right) {
-        return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
+    public static Expression binary(String operator, int left, int right) {
+        return binary(NumberLiteral.of(left), NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(float left, float right, String operator) {
-        return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
+    public static Expression binary(float left, float right, String operator) {
+        return binary(NumberLiteral.of(left), NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(double left, double right, String operator) {
-        return of(NumberLiteral.of(left), NumberLiteral.of(right), operator);
+    public static Expression binary(double left, double right, String operator) {
+        return binary(NumberLiteral.of(left), NumberLiteral.of(right), operator);
     }
 
-    public static Expression of(String operator, String left, String right) {
-        return of(operator, Identifier.of(left), Identifier.of(right));
+    public static Expression binary(String operator, String left, String right) {
+        return binary(operator, Identifier.of(left), Identifier.of(right));
     }
 
-    public static Expression of(String operator, String left, int right) {
-        return of(operator, Identifier.of(left), NumberLiteral.of(right));
-    }
     public static Expression binary(String operator, String left, int right) {
-        return of(operator, Identifier.of(left), NumberLiteral.of(right));
+        return binary(operator, Identifier.of(left), NumberLiteral.of(right));
     }
 
-    public static Expression of(String identifier, int left, String operator) {
-        return of(operator, Identifier.of(identifier), NumberLiteral.of(left));
-    }
     public static Expression binary(String identifier, int left, String operator) {
-        return of(operator, Identifier.of(identifier), NumberLiteral.of(left));
+        return binary(operator, Identifier.of(identifier), NumberLiteral.of(left));
     }
 
     @Override

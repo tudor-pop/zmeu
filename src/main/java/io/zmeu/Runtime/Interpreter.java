@@ -412,11 +412,11 @@ public class Interpreter implements Visitor<Object> {
     public Object eval(ForStatement statement) {
         List<Statement> statements = statement.discardBlock();
         statements.add(ExpressionStatement.of(statement.getUpdate()));
-        var whileStatement = WhileStatement.of(statement.getTest(), BlockExpression.of(statements));
+        var whileStatement = WhileStatement.of(statement.getTest(), BlockExpression.block(statements));
         if (statement.getInit() == null) {
             return executeBlock(whileStatement, env);
         }
-        return executeBlock(BlockExpression.of(statement.getInit(), whileStatement), env);
+        return executeBlock(BlockExpression.block(statement.getInit(), whileStatement), env);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class FunTest extends BaseTest {
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
-                ExpressionStatement.of(BlockExpression.of(VariableStatement.of(
+                ExpressionStatement.of(BlockExpression.block(VariableStatement.of(
                         VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(1))))),
                 global
         );
@@ -49,7 +49,7 @@ public class FunTest extends BaseTest {
         var expected = FunValue.of(
                 Identifier.of("myFun"),
                 List.of(),
-                ExpressionStatement.of(BlockExpression.of(VariableStatement.of(
+                ExpressionStatement.of(BlockExpression.block(VariableStatement.of(
                                 VariableDeclaration.of(Identifier.of("x"), NumberLiteral.of(1))
                         ),
                         ExpressionStatement.of(Identifier.of("x")))),

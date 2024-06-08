@@ -36,7 +36,7 @@ class AstPrinterTest {
 
     @Test
     void groupComplex() {
-        var expr = BinaryExpression.of("*",
+        var expr = BinaryExpression.binary("*",
                 UnaryExpression.of("-", NumberLiteral.of(2)),
                 new GroupExpression(NumberLiteral.of(3)));
         var res = printer.print(expr);

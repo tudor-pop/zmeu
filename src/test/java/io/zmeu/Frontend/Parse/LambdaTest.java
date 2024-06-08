@@ -26,7 +26,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BinaryExpression.of("*", "x", "x")
+                                BinaryExpression.binary("*", "x", "x")
                         )
                 )
         );
@@ -40,7 +40,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
-                                BinaryExpression.of("*", "x", "y")
+                                BinaryExpression.binary("*", "x", "y")
                         )
                 )
         );
@@ -54,9 +54,9 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x"), Identifier.of("y")),
-                                BlockExpression.of(
+                                BlockExpression.block(
                                         ExpressionStatement.of(
-                                                BinaryExpression.of("*", "x", "y")
+                                                BinaryExpression.binary("*", "x", "y")
                                         )
                                 )
                         )));
@@ -74,9 +74,9 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockExpression.of(
-                                        ReturnStatement.of(
-                                                BinaryExpression.of("*", "x", "x")
+                                BlockExpression.block(
+                                        ReturnStatement.funReturn(
+                                                BinaryExpression.binary("*", "x", "x")
                                         )
                                 )
                         )));
@@ -94,8 +94,8 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(Identifier.of("x")),
-                                BlockExpression.of(
-                                        ReturnStatement.of(ExpressionStatement.of())
+                                BlockExpression.block(
+                                        ReturnStatement.funReturn(ExpressionStatement.of())
                                 )
                         )));
         assertEquals(expected, res);
@@ -111,7 +111,7 @@ public class LambdaTest extends BaseTest {
         var expected = Program.of(
                 ExpressionStatement.of(
                         LambdaExpression.of(List.of(),
-                                BlockExpression.of()
+                                BlockExpression.block()
                         )));
         assertEquals(expected, res);
         log.warn(toJson(res));
@@ -127,7 +127,7 @@ public class LambdaTest extends BaseTest {
                 ExpressionStatement.of(
                         CallExpression.of(
                                 LambdaExpression.of(
-                                        List.of(Identifier.of("x")), BinaryExpression.of("*", "x", "x")
+                                        List.of(Identifier.of("x")), BinaryExpression.binary("*", "x", "x")
                                 ),
                                 2
                         )));
@@ -146,7 +146,7 @@ public class LambdaTest extends BaseTest {
                         CallExpression.of(
                                 CallExpression.of(
                                         LambdaExpression.of(
-                                                List.of(Identifier.of("x")), BinaryExpression.of("*", "x", "x")
+                                                List.of(Identifier.of("x")), BinaryExpression.binary("*", "x", "x")
                                         ),
                                         2
                                 ), Collections.emptyList())
@@ -165,7 +165,7 @@ public class LambdaTest extends BaseTest {
                         CallExpression.of(
                                 CallExpression.of(
                                         LambdaExpression.of(
-                                                List.of(Identifier.of("x")), BinaryExpression.of("*", "x", "x")
+                                                List.of(Identifier.of("x")), BinaryExpression.binary("*", "x", "x")
                                         ),
                                         2
                                 ), StringLiteral.of("hi"))

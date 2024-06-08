@@ -31,15 +31,15 @@ public class Factory {
     }
 
     public static Expression binary(String operator, Expression left, Expression right) {
-        return BinaryExpression.of(operator, left, right);
+        return BinaryExpression.binary(operator, left, right);
     }
 
     public static Expression binary(String operator, Expression left, int right) {
-        return BinaryExpression.of(operator, left, NumberLiteral.of(right));
+        return BinaryExpression.binary(operator, left, NumberLiteral.of(right));
     }
 
     public static Expression binary(String identifier, int left, String operator) {
-        return BinaryExpression.of(operator, Identifier.of(identifier), NumberLiteral.of(left));
+        return BinaryExpression.binary(operator, Identifier.of(identifier), NumberLiteral.of(left));
     }
 
     public static Statement resource(String type, String name, BlockExpression operator) {
@@ -67,11 +67,11 @@ public class Factory {
     }
 
     public static BlockExpression block(Expression operator) {
-        return (BlockExpression) BlockExpression.of(operator);
+        return (BlockExpression) BlockExpression.block(operator);
     }
 
     public static BlockExpression block(String operator) {
-        return (BlockExpression) BlockExpression.of(operator);
+        return (BlockExpression) BlockExpression.block(operator);
     }
 
     public static VariableStatement var(Identifier id, TypeIdentifier type) {
@@ -87,11 +87,11 @@ public class Factory {
 
 
     public static BlockExpression block(Statement operator) {
-        return BlockExpression.of(operator);
+        return BlockExpression.block(operator);
     }
 
     public static BlockExpression block() {
-        return (BlockExpression) BlockExpression.of();
+        return (BlockExpression) BlockExpression.block();
     }
 
     public static Statement empty() {

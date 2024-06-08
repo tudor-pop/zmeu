@@ -29,31 +29,31 @@ public class ReturnStatement extends Statement {
     }
 
 
-    public static Statement of(Expression body) {
+    public static Statement funReturn(Expression body) {
         return new ReturnStatement(body);
     }
 
-    public static Statement of(Statement body) {
+    public static Statement funReturn(Statement body) {
         return new ReturnStatement(body);
     }
 
-    public static Statement of(int value) {
+    public static Statement funReturn(int value) {
         return new ReturnStatement(NumberLiteral.of(value));
     }
 
-    public static Statement of(double value) {
+    public static Statement funReturn(double value) {
         return new ReturnStatement(NumberLiteral.of(value));
     }
 
-    public static Statement of() {
+    public static Statement funReturn() {
         return new ReturnStatement();
     }
 
-    public static Statement of(float value) {
+    public static Statement funReturn(float value) {
         return new ReturnStatement(NumberLiteral.of(value));
     }
 
-    public static Statement of(String value) {
+    public static Statement funReturn(String value) {
         return new ReturnStatement(StringLiteral.of(value));
     }
 

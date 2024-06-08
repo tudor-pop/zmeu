@@ -26,9 +26,9 @@ public class WhileTest extends BaseTest {
                 """);
         var expected = Program.of(
                 WhileStatement.builder()
-                        .test(BinaryExpression.of(Identifier.of("x"), NumberLiteral.of(10), ">"))
+                        .test(BinaryExpression.binary(Identifier.of("x"), NumberLiteral.of(10), ">"))
                         .body(ExpressionStatement.of(BlockExpression
-                                .of(ExpressionStatement
+                                .block(ExpressionStatement
                                         .of(AssignmentExpression
                                                 .of("+=", Identifier.of("x"), NumberLiteral.of(1))
                                         )
@@ -52,9 +52,9 @@ public class WhileTest extends BaseTest {
                         .init(VariableStatement.builder()
                                 .declarations(List.of(VariableDeclaration.of(Identifier.of("i"), NumberLiteral.of(0))))
                                 .build())
-                        .test(BinaryExpression.of(Identifier.of("i"), NumberLiteral.of(10), "<"))
+                        .test(BinaryExpression.binary(Identifier.of("i"), NumberLiteral.of(10), "<"))
                         .update(AssignmentExpression.of("+=", Identifier.of("i"), NumberLiteral.of(1)))
-                        .body(ExpressionStatement.of(BlockExpression.of(
+                        .body(ExpressionStatement.of(BlockExpression.block(
                                 ExpressionStatement.of(
                                         AssignmentExpression.of("+=", Identifier.of("x"), NumberLiteral.of(1))
                                 )
@@ -78,7 +78,7 @@ public class WhileTest extends BaseTest {
         var expected = Program.of(ForStatement.builder()
                 .init(null)
                 .update(null)
-                .body(ExpressionStatement.of(BlockExpression.of(
+                .body(ExpressionStatement.of(BlockExpression.block(
                         ExpressionStatement.of(
                                 AssignmentExpression.of("+=", Identifier.of("x"), NumberLiteral.of(1))
                         )

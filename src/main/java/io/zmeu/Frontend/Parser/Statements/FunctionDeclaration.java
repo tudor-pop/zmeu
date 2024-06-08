@@ -40,39 +40,39 @@ public class FunctionDeclaration extends Statement {
         this.kind = NodeType.FunctionDeclaration;
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, Expression body) {
+    public static Statement fun(Identifier test, List<Identifier> params, Expression body) {
         return new FunctionDeclaration(test, params, body);
     }
 
-    public static Statement of(String test, List<Identifier> params, Expression body) {
-        return FunctionDeclaration.of(Identifier.of(test), params, body);
+    public static Statement fun(String test, List<Identifier> params, Expression body) {
+        return FunctionDeclaration.fun(Identifier.of(test), params, body);
+    }
+    public static Statement fun(String test, Expression body) {
+        return FunctionDeclaration.fun(Identifier.of(test), List.of(), body);
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, Statement body) {
-        return new FunctionDeclaration(test, params, body);
-    }
     public static Statement fun(Identifier test, List<Identifier> params, Statement body) {
         return new FunctionDeclaration(test, params, body);
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, int value) {
-        return FunctionDeclaration.of(test, params, NumberLiteral.of(value));
+    public static Statement fun(Identifier test, List<Identifier> params, int value) {
+        return FunctionDeclaration.fun(test, params, NumberLiteral.of(value));
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, double value) {
-        return FunctionDeclaration.of(test, params, NumberLiteral.of(value));
+    public static Statement fun(Identifier test, List<Identifier> params, double value) {
+        return FunctionDeclaration.fun(test, params, NumberLiteral.of(value));
     }
 
-    public static Statement of() {
+    public static Statement fun() {
         return new FunctionDeclaration();
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, float value) {
-        return FunctionDeclaration.of(test, params, NumberLiteral.of(value));
+    public static Statement fun(Identifier test, List<Identifier> params, float value) {
+        return FunctionDeclaration.fun(test, params, NumberLiteral.of(value));
     }
 
-    public static Statement of(Identifier test, List<Identifier> params, String value) {
-        return FunctionDeclaration.of(test, params, StringLiteral.of(value));
+    public static Statement fun(Identifier test, List<Identifier> params, String value) {
+        return FunctionDeclaration.fun(test, params, StringLiteral.of(value));
     }
 
     @Override

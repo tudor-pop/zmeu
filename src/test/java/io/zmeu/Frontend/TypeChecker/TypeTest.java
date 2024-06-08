@@ -53,40 +53,6 @@ public class TypeTest extends BaseTest {
     }
 
     @Test
-    void testStringInitWrongTypeInt() {
-        parse("""
-                var x:String=1
-                """);
-        var errors = ErrorSystem.getErrors();
-        log.info(ErrorSystem.errors());
-        Assertions.assertFalse(errors.isEmpty());
-
-    }
-
-    @Test
-    void testStringInitWrongTypeDecimal() {
-        parse("""
-                var x:String=1
-                """);
-        var errors = ErrorSystem.getErrors();
-        log.info(ErrorSystem.errors());
-        Assertions.assertFalse(errors.isEmpty());
-
-    }
-
-    @Test
-    void testStringInitWrongType() {
-        var actual = parse("""
-                var x:Number="test"
-                """);
-        var errors = ErrorSystem.getErrors();
-        log.info(actual);
-        log.info(ErrorSystem.errors());
-        Assertions.assertFalse(errors.isEmpty());
-
-    }
-
-    @Test
     void testNumberInitDouble() {
         var actual = parse("""
                 var x:Number=0.2

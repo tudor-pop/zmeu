@@ -298,8 +298,8 @@ public class Parser {
     private Expression BlockExpression(String errorOpen, String errorClose) {
         eat(OpenBraces, errorOpen);
         var res = IsLookAhead(CloseBraces)
-                ? BlockExpression.of(Collections.emptyList())
-                : BlockExpression.of(StatementList(CloseBraces));
+                ? BlockExpression.block(Collections.emptyList())
+                : BlockExpression.block(StatementList(CloseBraces));
         if (IsLookAhead(CloseBraces)) { // ? { } => eat } & return the block
             eat(CloseBraces, errorClose);
         }
@@ -416,7 +416,7 @@ public class Parser {
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
 
         Statement body = of(BlockExpression());
-        return FunctionDeclaration.of(test, params, body);
+        return FunctionDeclaration.fun(test, params, body);
     }
 
     private Statement SchemaDeclaration() {
@@ -469,7 +469,7 @@ public class Parser {
         eat(Return);
         var arg = OptExpression();
         iterator.eatLineTerminator();
-        return ReturnStatement.of(arg);
+        return ReturnStatement.funReturn(arg);
     }
 
     private Expression OptExpression() {
@@ -567,7 +567,7 @@ public class Parser {
         while (!IsLookAhead(EOF) && IsLookAhead(Equality_Operator)) {
             var operator = eat();
             Expression right = EqualityExpression();
-            expression = BinaryExpression.of(expression, right, operator.value().toString());
+            expression = BinaryExpression.binary(expression, right, operator.value().toString());
         }
         return expression;
     }
@@ -583,7 +583,7 @@ public class Parser {
         while (!IsLookAhead(EOF) && IsLookAhead(RelationalOperator)) {
             var operator = eat();
             Expression right = RelationalExpression();
-            expression = BinaryExpression.of(expression, right, operator.value().toString());
+            expression = BinaryExpression.binary(expression, right, operator.value().toString());
         }
         return expression;
     }
@@ -634,7 +634,7 @@ public class Parser {
         while (match("+", "-")) {
             var operator = eat();
             Expression right = this.MultiplicativeExpression();
-            left = BinaryExpression.of(left, right, operator.value().toString());
+            left = BinaryExpression.binary(left, right, operator.value().toString());
         }
 
         return left;

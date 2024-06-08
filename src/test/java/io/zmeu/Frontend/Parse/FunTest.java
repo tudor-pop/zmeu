@@ -1,17 +1,17 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Expressions.BinaryExpression;
-import io.zmeu.Frontend.Parser.Program;
-import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
-import io.zmeu.Frontend.Parser.Statements.FunctionDeclaration;
-import io.zmeu.Frontend.Parser.Statements.ReturnStatement;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.zmeu.Frontend.Parser.Expressions.BinaryExpression.binary;
+import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
+import static io.zmeu.Frontend.Parser.Program.program;
+import static io.zmeu.Frontend.Parser.Statements.BlockExpression.block;
+import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
+import static io.zmeu.Frontend.Parser.Statements.ReturnStatement.funReturn;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
@@ -24,13 +24,8 @@ public class FunTest extends BaseTest {
                     return x*x
                 }
                 """);
-        var expected = Program.of(
-                FunctionDeclaration.of(Identifier.of("square"),
-                        List.of(Identifier.of("x")),
-                        BlockExpression.of(
-                                ReturnStatement.of(
-                                        BinaryExpression.of("*", "x", "x")
-                                )
+        var expected = program(fun("square", List.of(id("x")), block(
+                                funReturn(binary("*", "x", "x"))
                         )
                 )
         );
@@ -45,12 +40,10 @@ public class FunTest extends BaseTest {
                     return x*y
                 }
                 """);
-        var expected = Program.of(
-                FunctionDeclaration.of(Identifier.of("square"),
-                        List.of(Identifier.of("x"), Identifier.of("y")),
-                        BlockExpression.of(
-                                ReturnStatement.of(
-                                        BinaryExpression.of("*", "x", "y")
+        var expected = program(
+                fun("square", List.of(id("x"), id("y")), block(
+                                funReturn(
+                                        binary("*", "x", "y")
                                 )
                         )
                 )
@@ -66,11 +59,9 @@ public class FunTest extends BaseTest {
                     return
                 }
                 """);
-        var expected = Program.of(
-                FunctionDeclaration.of(Identifier.of("square"),
-                        List.of(Identifier.of("x")),
-                        BlockExpression.of(
-                                ReturnStatement.of(ExpressionStatement.of())
+        var expected = program(
+                fun("square", List.of(id("x")), block(
+                                funReturn(ExpressionStatement.of())
                         )
                 )
         );
@@ -85,11 +76,9 @@ public class FunTest extends BaseTest {
                     return
                 }
                 """);
-        var expected = Program.of(
-                FunctionDeclaration.of(Identifier.of("square"),
-                        List.of(),
-                        BlockExpression.of(
-                                ReturnStatement.of(ExpressionStatement.of())
+        var expected = program(
+                fun("square", block(
+                                funReturn(ExpressionStatement.of())
                         )
                 )
         );
@@ -103,12 +92,7 @@ public class FunTest extends BaseTest {
                 fun square() { 
                 }
                 """);
-        var expected = Program.of(
-                FunctionDeclaration.of(Identifier.of("square"),
-                        List.of(),
-                        BlockExpression.of()
-                )
-        );
+        var expected = program(fun("square", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
     }

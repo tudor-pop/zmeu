@@ -47,7 +47,7 @@ public class RelationalTest extends BaseTest {
     @Test
     void testLessLowerPrecedenceThanAdditive() {
         var res = parse("x+2 > 10");
-        var expected = program(BinaryExpression.of(binary("x", 2, "+"), 10, ">"));
+        var expected = program(BinaryExpression.binary(binary("x", 2, "+"), 10, ">"));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -55,7 +55,7 @@ public class RelationalTest extends BaseTest {
     @Test
     void testLessLowerPrecedenceThanAdditiveTrue() {
         var res = parse("x > 2 == true");
-        var expected = program(BinaryExpression.of(binary("x", 2, ">"), true, "=="));
+        var expected = program(BinaryExpression.binary(binary("x", 2, ">"), true, "=="));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -63,7 +63,7 @@ public class RelationalTest extends BaseTest {
     @Test
     void testLessLowerPrecedenceThanAdditiveFalse() {
         var res = parse("x > 2 == false");
-        var expected = program(BinaryExpression.of(binary("x", 2, ">"), false, "=="));
+        var expected = program(BinaryExpression.binary(binary("x", 2, ">"), false, "=="));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -71,7 +71,7 @@ public class RelationalTest extends BaseTest {
     @Test
     void testLessLowerPrecedenceThanAdditiveNotFalse() {
         var res = parse("x > 2 != false");
-        var expected = program(BinaryExpression.of(binary("x", 2, ">"), false, "!="));
+        var expected = program(BinaryExpression.binary(binary("x", 2, ">"), false, "!="));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -79,7 +79,7 @@ public class RelationalTest extends BaseTest {
     @Test
     void testLessLowerPrecedenceThanAdditiveNotTrue() {
         var res = parse("x > 2 != true");
-        var expected = program(BinaryExpression.of(binary("x", 2, ">"), true, "!="));
+        var expected = program(BinaryExpression.binary(binary("x", 2, ">"), true, "!="));
         log.info(toJson(res));
         assertEquals(expected, res);
     }

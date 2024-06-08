@@ -41,52 +41,40 @@ public class BlockExpression extends Expression {
         this.kind = NodeType.BlockStatement;
     }
 
-    public static Expression of(Expression expression) {
-        return new BlockExpression(expression);
-    }
     public static Expression block(Expression expression) {
         return new BlockExpression(expression);
     }
 
-    public static BlockExpression of(Statement expression) {
-        return new BlockExpression(expression);
-    }
 
     public static BlockExpression block(Statement expression) {
         return new BlockExpression(expression);
     }
 
-    public static BlockExpression of(Statement... expression) {
-        return new BlockExpression(expression);
-    }
     public static BlockExpression block(Statement... expression) {
         return new BlockExpression(expression);
     }
 
-    public static Expression of(List<Statement> expression) {
-        return new BlockExpression(expression);
-    }
     public static Expression block(List<Statement> expression) {
         return new BlockExpression(expression);
     }
 
-    public static Expression of(int value) {
+    public static Expression block(int value) {
         return new BlockExpression(NumberLiteral.of(value));
     }
 
-    public static Expression of(double value) {
+    public static Expression block(double value) {
         return new BlockExpression(NumberLiteral.of(value));
     }
 
-    public static Expression of() {
+    public static Expression block() {
         return new BlockExpression(Collections.emptyList());
     }
 
-    public static Expression of(float value) {
+    public static Expression block(float value) {
         return new BlockExpression(NumberLiteral.of(value));
     }
 
-    public static Expression of(String value) {
+    public static Expression block(String value) {
         return new BlockExpression(StringLiteral.of(value));
     }
 

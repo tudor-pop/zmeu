@@ -6,6 +6,6 @@ public class Expressions {
     }
 
     public static Expression binary(String identifier, int left, String operator) {
-        return BinaryExpression.of(identifier, left, operator);
+        return BinaryExpression.binary(identifier, left, operator);
     }
 }
