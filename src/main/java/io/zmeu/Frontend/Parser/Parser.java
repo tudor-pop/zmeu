@@ -135,7 +135,7 @@ public class Parser {
                 default -> Statement();
             };
         } catch (RuntimeException error) {
-            ErrorSystem.error(error.getMessage());
+            ErrorSystem.error(error.toString());
             iterator.synchronize();
             return null;
         }
@@ -462,7 +462,7 @@ public class Parser {
     }
 
     private Identifier FunParameter() {
-        return null;
+        return TypeIdentifier();
     }
 
     private Statement ReturnStatement() {
