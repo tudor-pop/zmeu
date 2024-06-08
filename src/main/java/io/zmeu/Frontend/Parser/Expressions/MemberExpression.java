@@ -27,28 +27,35 @@ public class MemberExpression extends Expression {
         this.property = property;
     }
 
-    public static Expression of(boolean computed, Expression object, Expression property) {
+    public static Expression member(boolean computed, Expression object, Expression property) {
         return new MemberExpression(computed, object, property);
     }
-    public static Expression of(boolean computed, Expression object, int property) {
+    public static Expression member(boolean computed, Expression object, int property) {
         return new MemberExpression(computed, object, NumberLiteral.of(property));
     }
-    public static Expression of(boolean computed, Expression object, String property) {
+    public static Expression member(boolean computed, Expression object, String property) {
         return new MemberExpression(computed, object, Identifier.of(property));
     }
-    public static Expression of(boolean computed, String object, int property) {
+    public static Expression member(Expression object, String property) {
+        return new MemberExpression(false, object, Identifier.of(property));
+    }
+    public static Expression member(boolean computed, String object, int property) {
         return new MemberExpression(computed, Identifier.of(object), NumberLiteral.of(property));
     }
 
-    public static Expression of(boolean computed, int object, int property) {
+    public static Expression member(boolean computed, int object, int property) {
         return new MemberExpression(computed, NumberLiteral.of(object), NumberLiteral.of(property));
     }
 
-    public static Expression of(boolean computed, String object, String property) {
+    public static Expression member(boolean computed, String object, String property) {
         return new MemberExpression(computed, Identifier.of(object), Identifier.of(property));
     }
 
-    public static Expression of(Expression object, Expression property) {
+    public static Expression member(String object, String property) {
+        return new MemberExpression(false, Identifier.of(object), Identifier.of(property));
+    }
+
+    public static Expression member(Expression object, Expression property) {
         return new MemberExpression(false, object, property);
     }
 

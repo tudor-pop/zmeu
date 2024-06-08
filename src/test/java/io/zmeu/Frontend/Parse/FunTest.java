@@ -2,6 +2,7 @@ package io.zmeu.Frontend.Parse;
 
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import static io.zmeu.Frontend.Parser.Statements.ReturnStatement.funReturn;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
+@DisplayName("Parser Function")
 public class FunTest extends BaseTest {
 
     @Test

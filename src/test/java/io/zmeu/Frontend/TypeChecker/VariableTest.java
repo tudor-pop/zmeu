@@ -3,6 +3,7 @@ package io.zmeu.Frontend.TypeChecker;
 import io.zmeu.Frontend.Parser.Literals.NullLiteral;
 import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
 import io.zmeu.Runtime.exceptions.NotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
@@ -14,6 +15,7 @@ import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@DisplayName("TypeChecker Variable")
 public class VariableTest extends BaseChecker {
 
     @Test

@@ -30,7 +30,7 @@ public class WhileTest extends BaseTest {
                         .body(ExpressionStatement.expressionStatement(BlockExpression
                                 .block(ExpressionStatement
                                         .expressionStatement(AssignmentExpression
-                                                .of("+=", Identifier.of("x"), NumberLiteral.of(1))
+                                                .assign("+=", Identifier.of("x"), NumberLiteral.of(1))
                                         )
                                 )
                         )).build()
@@ -53,10 +53,10 @@ public class WhileTest extends BaseTest {
                                 .declarations(List.of(VariableDeclaration.of(Identifier.of("i"), NumberLiteral.of(0))))
                                 .build())
                         .test(BinaryExpression.binary(Identifier.of("i"), NumberLiteral.of(10), "<"))
-                        .update(AssignmentExpression.of("+=", Identifier.of("i"), NumberLiteral.of(1)))
+                        .update(AssignmentExpression.assign("+=", Identifier.of("i"), NumberLiteral.of(1)))
                         .body(ExpressionStatement.expressionStatement(BlockExpression.block(
                                 ExpressionStatement.expressionStatement(
-                                        AssignmentExpression.of("+=", Identifier.of("x"), NumberLiteral.of(1))
+                                        AssignmentExpression.assign("+=", Identifier.of("x"), NumberLiteral.of(1))
                                 )
                         )))
                         .build()
@@ -80,7 +80,7 @@ public class WhileTest extends BaseTest {
                 .update(null)
                 .body(ExpressionStatement.expressionStatement(BlockExpression.block(
                         ExpressionStatement.expressionStatement(
-                                AssignmentExpression.of("+=", Identifier.of("x"), NumberLiteral.of(1))
+                                AssignmentExpression.assign("+=", Identifier.of("x"), NumberLiteral.of(1))
                         )
                 )))
                 .build()

@@ -6,6 +6,7 @@ import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
+@DisplayName("Parser Function Call")
 public class CallExpressionTest extends BaseTest {
 
     @Test
@@ -74,7 +76,7 @@ public class CallExpressionTest extends BaseTest {
         var res = parse("console.log(x,y)");
         var expected = Program.of(ExpressionStatement.expressionStatement(
                 CallExpression.call(
-                        MemberExpression.of(false,"console", "log"),
+                        MemberExpression.member(false,"console", "log"),
                         Identifier.of("x", "y"))
         ));
 

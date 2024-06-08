@@ -389,7 +389,7 @@ public class Parser {
 
         Statement ifBlock = Statement();
         Statement elseBlock = ElseStatement();
-        return IfStatement.of(test, ifBlock, elseBlock);
+        return IfStatement.If(test, ifBlock, elseBlock);
     }
 
     private Statement ElseStatement() {
@@ -530,7 +530,7 @@ public class Parser {
             var operator = AssignmentOperator().value();
             Expression rhs = Expression();
 
-            left = AssignmentExpression.of(isValidAssignmentTarget(left, operator), rhs, operator);
+            left = AssignmentExpression.assign(isValidAssignmentTarget(left, operator), rhs, operator);
         }
         return left;
     }
@@ -785,11 +785,11 @@ public class Parser {
             object = switch (next.type()) {
                 case Dot -> {
                     var property = MemberProperty();
-                    yield MemberExpression.of(false, object, property);
+                    yield MemberExpression.member(false, object, property);
                 }
                 case OpenBrackets -> {
                     var property = MemberPropertyIndex();
-                    yield MemberExpression.of(true, object, property);
+                    yield MemberExpression.member(true, object, property);
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + next.type());
             };

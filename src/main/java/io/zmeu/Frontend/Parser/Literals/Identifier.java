@@ -42,6 +42,7 @@ public class Identifier extends Expression {
     public static Identifier of(String left) {
         return new Identifier(left);
     }
+
     public static Identifier id(String left) {
         return new Identifier(left);
     }

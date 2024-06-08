@@ -1,15 +1,18 @@
 package io.zmeu.Frontend.Parse;
 
 import io.zmeu.Frontend.Parser.Expressions.BinaryExpression;
-import io.zmeu.Frontend.Parser.Expressions.LogicalExpression;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.zmeu.Frontend.Parser.Expressions.LogicalExpression.and;
+import static io.zmeu.Frontend.Parser.Expressions.LogicalExpression.or;
 import static io.zmeu.Frontend.Parser.Factory.binary;
 import static io.zmeu.Frontend.Parser.Factory.program;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
+@DisplayName("Parser Relational")
 public class RelationalTest extends BaseTest {
 
     @Test
@@ -87,7 +90,7 @@ public class RelationalTest extends BaseTest {
     @Test
     void testLogicalAnd() {
         var res = parse("x > 0 && y < 0");
-        var expected = program(LogicalExpression.of("&&", binary("x", 0, ">"), binary("y", 0, "<")));
+        var expected = program(and(binary("x", 0, ">"), binary("y", 0, "<")));
         log.info(toJson(res));
         assertEquals(expected, res);
     }
@@ -96,7 +99,7 @@ public class RelationalTest extends BaseTest {
     void testLogicalOr() {
         var res = parse("x > 0 || y < 0");
         var expected = program(
-                LogicalExpression.of("||",
+                or(
                         binary("x", 0, ">"),
                         binary("y", 0, "<")
                 )

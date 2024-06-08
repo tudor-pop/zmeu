@@ -1,10 +1,12 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisplayName("TypeChecker Function")
 public class FunctionTest extends BaseChecker {
 
     @Test

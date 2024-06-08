@@ -2,12 +2,14 @@ package io.zmeu.Frontend.Parse;
 
 import io.zmeu.Frontend.Parser.Expressions.ModuleExpression;
 import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.zmeu.Frontend.Parser.Factory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
+@DisplayName("Parser Module")
 public class ModuleTest extends BaseTest {
 
     @Test

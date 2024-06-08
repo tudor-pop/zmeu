@@ -7,6 +7,8 @@ import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AssignmentExpression extends Expression {
@@ -28,22 +30,30 @@ public class AssignmentExpression extends Expression {
         this.operator = operator;
     }
 
-    public static Expression of(Expression left, Expression right, Object operator) {
+    public static Expression assign(Expression left, Expression right, Object operator) {
         return new AssignmentExpression(left, right, operator);
     }
-    public static Expression of(Expression left, int right, Object operator) {
+
+    public static Expression assign(Expression left, int right, Object operator) {
         return new AssignmentExpression(left, NumberLiteral.of(right), operator);
     }
-    public static Expression of(Object operator, Expression left, Expression right) {
+
+    public static Expression assign(Object operator, Expression left, Expression right) {
         return new AssignmentExpression(left, right, operator);
     }
+    public static Expression assign(Object operator, String left, Expression right) {
+        return new AssignmentExpression(id(left), right, operator);
+    }
+
     public static Expression assignment(Object operator, Expression left, Expression right) {
         return new AssignmentExpression(left, right, operator);
     }
-    public static Expression of(Object operator, Expression left, String right) {
+
+    public static Expression assign(Object operator, Expression left, String right) {
         return new AssignmentExpression(left, Identifier.of(right), operator);
     }
-    public static Expression of(Object operator, Expression left, int right) {
+
+    public static Expression assign(Object operator, Expression left, int right) {
         return new AssignmentExpression(left, NumberLiteral.of(right), operator);
     }
 
