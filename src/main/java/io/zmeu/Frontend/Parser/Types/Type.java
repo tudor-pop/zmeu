@@ -34,7 +34,7 @@ public sealed abstract class Type extends Expression
         return res;
     }
 
-    public static Type valueOf(String symbol) {
+    public static Type fromString(String symbol) {
         return switch (symbol) {
             case "String" -> ValueType.String;
             case "Number" -> ValueType.Number;

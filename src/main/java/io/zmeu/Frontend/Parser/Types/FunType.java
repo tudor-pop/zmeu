@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public final class FunType extends Type {
         Type returnType = null;
         List<Type> paramsType = new ArrayList<>();
         if (funSplit.length == 2) {
-            returnType = Type.valueOf(funSplit[1]);
+            returnType = Type.fromString(funSplit[1]);
             paramsType = cleanParams(funSplit[0]);
         } else if (funSplit.length == 1) {
             paramsType = cleanParams(funSplit[0]);
@@ -41,16 +42,23 @@ public final class FunType extends Type {
     private static List<Type> cleanParams(java.lang.String funSplit) {
         var split = StringUtils.substringBetween(funSplit,"(",")").split(",");
         return Arrays.stream(split)
-                .map(Type::valueOf)
+                .map(Type::fromString)
                 .collect(Collectors.toList());
     }
 
     public String name() {
         if (this.getValue() == null) {
-            var value = "fun(" + StringUtils.join(params, ",") + ")" + (returnType.hasValue() ? ":" + returnType.getValue() : "");
+            var value = "fun(" + StringUtils.join(params, ",") + ")" + returnType();
             setValue(value);
         }
         return getValue();
+    }
+
+    private @NotNull String returnType() {
+        if (returnType == null) {
+            return "";
+        }
+        return this.returnType.hasValue() ? ":" + this.returnType.getValue() : "";
     }
 
     @Override

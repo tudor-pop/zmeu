@@ -31,6 +31,7 @@ public class TypeChecker implements Visitor<Type> {
         env.init(ValueType.Number.getValue(), ValueType.Number);
         env.init(ValueType.Boolean.getValue(), ValueType.Boolean);
         env.init(ValueType.Null.getValue(), ValueType.Null);
+        env.init("square", Type.fromString("fun(Number,Number):Number"));
     }
 
     public TypeChecker(TypeEnvironment environment) {
@@ -41,7 +42,7 @@ public class TypeChecker implements Visitor<Type> {
     public Type eval(Expression expression) {
         try {
             return expression.accept(this);
-        } catch (NotFoundException exception) {
+        } catch (NotFoundException | TypeError exception) {
             log.error(exception.getMessage());
             throw exception;
         }
@@ -53,10 +54,10 @@ public class TypeChecker implements Visitor<Type> {
         try {
             if (expression instanceof TypeIdentifier identifier) {
                 var type = (Type) env.lookup(identifier.getType().getValue());
-                return Objects.requireNonNullElseGet(type, () -> Type.valueOf(identifier.getType().getValue()));
+                return Objects.requireNonNullElseGet(type, () -> Type.fromString(identifier.getType().getValue()));
             } else if (expression instanceof SymbolIdentifier identifier) {
                 var type = (Type) env.lookup(identifier.getSymbol());
-                return Objects.requireNonNullElseGet(type, () -> Type.valueOf(identifier.getSymbol()));
+                return Objects.requireNonNullElseGet(type, () -> Type.fromString(identifier.getSymbol()));
             }
             throw new TypeError(expression.string());
         } catch (NotFoundException exception) {
@@ -185,7 +186,6 @@ public class TypeChecker implements Visitor<Type> {
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " but got " + actualType + " in expression: " + printer.eval(expectedVal);
-            log.error(string);
             throw new TypeError(string);
         }
         return actualType;
@@ -198,7 +198,6 @@ public class TypeChecker implements Visitor<Type> {
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
-            log.error(string);
             throw new TypeError(string);
         }
         return actualType;
@@ -211,7 +210,6 @@ public class TypeChecker implements Visitor<Type> {
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
-            log.error(string);
             throw new TypeError(string);
         }
         return actualType;
@@ -299,7 +297,8 @@ public class TypeChecker implements Visitor<Type> {
 
     private void checkFunctionCall(FunType fun, List<Type> args, TypeEnvironment env, CallExpression<Expression> expression) {
         if (fun.getParams().size() != args.size()) {
-            throw new TypeError("Function " + fun.name() + " expects " + fun.getParams().size() + " arguments but got " + args.size() + " in " + printer.eval(expression));
+            String string = "Function '" + printer.eval(expression.getCallee()) + "' expects " + fun.getParams().size() + " arguments but got " + args.size() + " in " + printer.eval(expression);
+            throw new TypeError(string);
         }
         for (int i = 0; i < args.size(); i++) {
             try {
@@ -307,7 +306,6 @@ public class TypeChecker implements Visitor<Type> {
                 Type actual = args.get(i);
                 expect(actual, param, actual, expression);
             } catch (IndexOutOfBoundsException exception) {
-
             }
         }
     }
