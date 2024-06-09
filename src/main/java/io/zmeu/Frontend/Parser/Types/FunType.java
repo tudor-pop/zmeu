@@ -9,17 +9,16 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public final class FunType extends Type {
-    private Collection<Type> params;
+    private List<Type> params;
     private Type returnType;
 
-    public FunType(Collection<Type> params, Type returnType) {
+    public FunType(List<Type> params, Type returnType) {
         super();
         this.params = params;
         this.returnType = returnType;

@@ -25,8 +25,13 @@ public class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(CallExpression expression) {
-        return null;
+    public String eval(CallExpression<Expression> expression) {
+        var callName = eval(expression.getCallee());
+        var args = expression.getArguments()
+                .stream()
+                .map(this::eval)
+                .collect(Collectors.joining(","));
+        return callName + "(" + args + ")";
     }
 
     @Override
@@ -122,8 +127,8 @@ public class LanguageAstPrinter implements Visitor<String> {
                 statement.getName().string() +
                 "("
                 + statement.getParams().stream().map(it -> it.getName().string() + " :" + it.getType().string()).collect(Collectors.joining(","))
-                +") "
-                +"{ \n"
+                + ") "
+                + "{ \n"
                 + eval(statement.getBody())
                 + "\n} \n";
     }

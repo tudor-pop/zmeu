@@ -184,7 +184,7 @@ public class TypeChecker implements Visitor<Type> {
         }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
-            String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            String string = "Expected type " + expectedType + " but got " + actualType + " in expression: " + printer.eval(expectedVal);
             log.error(string);
             throw new TypeError(string);
         }
@@ -215,11 +215,6 @@ public class TypeChecker implements Visitor<Type> {
             throw new TypeError(string);
         }
         return actualType;
-    }
-
-    @Override
-    public Type eval(CallExpression<Expression> expression) {
-        return null;
     }
 
     @Override
@@ -281,8 +276,40 @@ public class TypeChecker implements Visitor<Type> {
         var funEnv = new TypeEnvironment(env, collect);
 
         var actualReturnType = executeBlock(fun.getBody(), funEnv);
-        expect(actualReturnType, expectedType,fun.getBody(), expectedType);
-        return new FunType(collect.values().stream().map(Type.class::cast).toList(), actualReturnType);
+        expect(actualReturnType, expectedType, fun.getBody(), expectedType);
+
+        var funType = new FunType(collect.values().stream().map(Type.class::cast).toList(), actualReturnType);
+        env.init(fun.getName(), funType); // save function signature in env so that we're able to call it later to validate types
+
+        return funType;
+    }
+
+    @Override
+    public Type eval(CallExpression<Expression> expression) {
+        FunType fun = (FunType) eval(expression.getCallee()); // extract the function type itself
+
+        var passedArgumentsTypes = expression.getArguments()
+                .stream()
+                .map(this::eval)
+                .toList();
+        checkFunctionCall(fun, passedArgumentsTypes, env, expression);
+
+        return fun.getReturnType();
+    }
+
+    private void checkFunctionCall(FunType fun, List<Type> args, TypeEnvironment env, CallExpression<Expression> expression) {
+        if (fun.getParams().size() != args.size()) {
+            throw new TypeError("Function " + fun.name() + " expects " + fun.getParams().size() + " arguments but got " + args.size() + " in " + printer.eval(expression));
+        }
+        for (int i = 0; i < args.size(); i++) {
+            try {
+                var param = fun.getParams().get(i);
+                Type actual = args.get(i);
+                expect(actual, param, actual, expression);
+            } catch (IndexOutOfBoundsException exception) {
+
+            }
+        }
     }
 
     @Override
