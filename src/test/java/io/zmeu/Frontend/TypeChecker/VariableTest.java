@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Literals.NullLiteral;
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,33 +21,33 @@ public class VariableTest extends BaseChecker {
     @Test
     void testGlobalVarEmptyString() {
         checker = new TypeChecker(new TypeEnvironment());
-        checker.getEnv().init("VERSION", DataTypes.String);
+        checker.getEnv().init("VERSION", ValueType.String);
         var type = checker.eval(id("VERSION"));
-        assertEquals(type, DataTypes.String);
+        assertEquals(type, ValueType.String);
     }
 
     @Test
     void testVarInt() {
         var type = checker.eval(var("x", number(10)));
         var accessType = checker.eval(id("x"));
-        assertEquals(type, DataTypes.Number);
-        assertEquals(accessType, DataTypes.Number);
+        assertEquals(type, ValueType.Number);
+        assertEquals(accessType, ValueType.Number);
     }
 
     @Test
     void testVarString() {
         var type = checker.eval(var("x", string("hello")));
         var accessType = checker.eval(id("x"));
-        assertEquals(type, DataTypes.String);
-        assertEquals(accessType, DataTypes.String);
+        assertEquals(type, ValueType.String);
+        assertEquals(accessType, ValueType.String);
     }
 
     @Test
     void testVarExplicitType() {
         var type = checker.eval(var("x", type("String"), string("hello")));
         var accessType = checker.eval(id("x"));
-        assertEquals(type, DataTypes.String);
-        assertEquals(accessType, DataTypes.String);
+        assertEquals(type, ValueType.String);
+        assertEquals(accessType, ValueType.String);
     }
 
     @Test
@@ -78,14 +78,14 @@ public class VariableTest extends BaseChecker {
     @Test
     void testNull() {
         var t = checker.eval(var("x", type("String"), NullLiteral.of()));
-        assertEquals(t, DataTypes.String);
+        assertEquals(t, ValueType.String);
     }
 
     @Test
     void testInferTypeFromAnotherVar() {
         var t1 = checker.eval(var("x", type("String"), string("first")));
         var t2 = checker.eval(var("y", type("String"), id("x")));
-        assertEquals(t1, DataTypes.String);
-        assertEquals(t2, DataTypes.String);
+        assertEquals(t1, ValueType.String);
+        assertEquals(t2, ValueType.String);
     }
 }

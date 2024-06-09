@@ -1,10 +1,7 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
-import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
-import io.zmeu.Frontend.Parser.Literals.StringLiteral;
+import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
@@ -25,16 +22,25 @@ public class FunctionDeclaration extends Statement {
     private Identifier name;
     private List<ParameterIdentifier> params;
     private Statement body;
+    private TypeIdentifier returnType;
 
-    private FunctionDeclaration(Identifier name, List<ParameterIdentifier> params, @Nullable Statement body) {
+    private FunctionDeclaration(Identifier name,
+                                List<ParameterIdentifier> params,
+                                TypeIdentifier returnType,
+                                @Nullable Statement body) {
         this();
         this.params = params;
         this.name = name;
         this.body = body;
+        this.returnType = returnType;
+    }
+
+    private FunctionDeclaration(Identifier name, List<ParameterIdentifier> params, @Nullable Statement body) {
+        this(name, params, null, body);
     }
 
     private FunctionDeclaration(Identifier name, List<ParameterIdentifier> params, @Nullable Expression body) {
-        this(name,params,ExpressionStatement.expressionStatement(body));
+        this(name, params, ExpressionStatement.expressionStatement(body));
     }
 
     private FunctionDeclaration() {
@@ -48,11 +54,16 @@ public class FunctionDeclaration extends Statement {
     public static Statement fun(String test, List<ParameterIdentifier> params, Expression body) {
         return FunctionDeclaration.fun(Identifier.id(test), params, body);
     }
+
     public static Statement fun(String test, Expression body) {
         return FunctionDeclaration.fun(Identifier.id(test), List.of(), body);
     }
 
     public static Statement fun(Identifier test, List<ParameterIdentifier> params, Statement body) {
+        return new FunctionDeclaration(test, params, body);
+    }
+
+    public static Statement fun(Identifier test, List<ParameterIdentifier> params, TypeIdentifier returnType, Statement body) {
         return new FunctionDeclaration(test, params, body);
     }
 

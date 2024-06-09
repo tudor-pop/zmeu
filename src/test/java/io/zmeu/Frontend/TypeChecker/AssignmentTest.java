@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.TypeChecker;
 
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class AssignmentTest extends BaseChecker {
                 var x = 10
                 x = 1
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertEquals(ValueType.Number, actual);
     }
 
     @Test

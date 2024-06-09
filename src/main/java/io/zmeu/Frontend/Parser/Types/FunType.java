@@ -1,5 +1,6 @@
-package io.zmeu.Frontend.TypeChecker.Types;
+package io.zmeu.Frontend.Parser.Types;
 
+import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -14,11 +15,11 @@ import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FunType extends DataTypes {
-    private List<DataTypes> params;
-    private DataTypes returnType;
+public final class FunType extends Type {
+    private List<Type> params;
+    private Type returnType;
 
-    public FunType(String value, List<DataTypes> params, DataTypes returnType) {
+    public FunType(String value, List<Type> params, Type returnType) {
         super(value);
         this.params = params;
         this.returnType = returnType;
@@ -27,10 +28,10 @@ public class FunType extends DataTypes {
 
     public static FunType valueOf(@NotBlank String symbol) {
         var funSplit = StringUtils.split(StringUtils.removeStart(symbol, "fun"), ":");
-        DataTypes returnType = null;
-        List<DataTypes> paramsType = new ArrayList<>();
+        Type returnType = null;
+        List<Type> paramsType = new ArrayList<>();
         if (funSplit.length == 2) {
-            returnType = DataTypes.valueOf(funSplit[1]);
+            returnType = Type.valueOf(funSplit[1]);
             paramsType = cleanParams(funSplit);
         } else if (funSplit.length == 1) {
             paramsType = cleanParams(funSplit);
@@ -38,10 +39,10 @@ public class FunType extends DataTypes {
         return new FunType(symbol, paramsType, returnType);
     }
 
-    private static List<DataTypes> cleanParams(java.lang.String[] funSplit) {
+    private static List<Type> cleanParams(java.lang.String[] funSplit) {
         var split = StringUtils.split(StringUtils.remove(StringUtils.remove(funSplit[0], "("), ")"), ",");
         return Arrays.stream(split)
-                .map(DataTypes::valueOf)
+                .map(Type::valueOf)
                 .collect(Collectors.toList());
     }
 
@@ -76,5 +77,8 @@ public class FunType extends DataTypes {
     }
 
 
-
+    @Override
+    public <R> R accept(Visitor<R> visitor) {
+        return visitor.eval(this);
+    }
 }

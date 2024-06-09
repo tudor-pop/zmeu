@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.TypeChecker;
 
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ public class IfTest extends BaseChecker {
                 }
                 y
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertEquals(ValueType.Number, actual);
     }
 
 }

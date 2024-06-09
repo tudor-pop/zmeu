@@ -4,7 +4,8 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
 import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Runtime.exceptions.NotFoundException;
@@ -16,17 +17,17 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public class TypeChecker implements Visitor<DataTypes> {
+public class TypeChecker implements Visitor<Type> {
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     @Getter
     private TypeEnvironment env;
 
     public TypeChecker() {
         env = new TypeEnvironment();
-        env.init(DataTypes.String.getValue(), DataTypes.String);
-        env.init(DataTypes.Number.getValue(), DataTypes.Number);
-        env.init(DataTypes.Boolean.getValue(), DataTypes.Boolean);
-        env.init(DataTypes.Null.getValue(), DataTypes.Null);
+        env.init(ValueType.String.getValue(), ValueType.String);
+        env.init(ValueType.Number.getValue(), ValueType.Number);
+        env.init(ValueType.Boolean.getValue(), ValueType.Boolean);
+        env.init(ValueType.Null.getValue(), ValueType.Null);
     }
 
     public TypeChecker(TypeEnvironment environment) {
@@ -34,7 +35,7 @@ public class TypeChecker implements Visitor<DataTypes> {
     }
 
     @Override
-    public DataTypes eval(Expression expression) {
+    public Type eval(Expression expression) {
         try {
             return expression.accept(this);
         } catch (NotFoundException exception) {
@@ -45,14 +46,14 @@ public class TypeChecker implements Visitor<DataTypes> {
 
 
     @Override
-    public DataTypes eval(Identifier expression) {
+    public Type eval(Identifier expression) {
         try {
             if (expression instanceof TypeIdentifier identifier) {
-                var type = (DataTypes) env.lookup(identifier.getType().value());
-                return Objects.requireNonNullElseGet(type, () -> DataTypes.valueOf(identifier.getType().value()));
+                var type = (Type) env.lookup(identifier.getType().getValue());
+                return Objects.requireNonNullElseGet(type, () -> Type.valueOf(identifier.getType().getValue()));
             } else if (expression instanceof SymbolIdentifier identifier) {
-                var type = (DataTypes) env.lookup(identifier.getSymbol());
-                return Objects.requireNonNullElseGet(type, () -> DataTypes.valueOf(identifier.getSymbol()));
+                var type = (Type) env.lookup(identifier.getSymbol());
+                return Objects.requireNonNullElseGet(type, () -> Type.valueOf(identifier.getSymbol()));
             }
             throw new TypeError(expression.string());
         } catch (NotFoundException exception) {
@@ -62,37 +63,37 @@ public class TypeChecker implements Visitor<DataTypes> {
     }
 
     @Override
-    public DataTypes eval(ResourceExpression expression) {
+    public Type eval(ResourceExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(NullLiteral expression) {
-        return DataTypes.Null;
+    public Type eval(NullLiteral expression) {
+        return ValueType.Null;
     }
 
     @Override
-    public DataTypes eval(StringLiteral expression) {
-        return DataTypes.String;
+    public Type eval(StringLiteral expression) {
+        return ValueType.String;
     }
 
     @Override
-    public DataTypes eval(LambdaExpression expression) {
+    public Type eval(LambdaExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(BlockExpression expression) {
+    public Type eval(BlockExpression expression) {
         var env = new TypeEnvironment(this.env);
         return executeBlock(expression.getExpression(), env);
     }
 
     @NotNull
-    private DataTypes executeBlock(List<Statement> statements, TypeEnvironment environment) {
+    private Type executeBlock(List<Statement> statements, TypeEnvironment environment) {
         TypeEnvironment previous = this.env;
         try {
             this.env = environment;
-            DataTypes res = DataTypes.Null;
+            Type res = ValueType.Null;
             for (Statement statement : statements) {
                 res = eval(statement);
             }
@@ -102,7 +103,7 @@ public class TypeChecker implements Visitor<DataTypes> {
         }
     }
 
-    private DataTypes executeBlock(Expression statement, TypeEnvironment environment) {
+    private Type executeBlock(Expression statement, TypeEnvironment environment) {
         TypeEnvironment previous = this.env;
         try {
             this.env = environment;
@@ -112,7 +113,7 @@ public class TypeChecker implements Visitor<DataTypes> {
         }
     }
 
-    private DataTypes executeBlock(Statement statement, TypeEnvironment environment) {
+    private Type executeBlock(Statement statement, TypeEnvironment environment) {
         TypeEnvironment previous = this.env;
         try {
             this.env = environment;
@@ -123,12 +124,12 @@ public class TypeChecker implements Visitor<DataTypes> {
     }
 
     @Override
-    public DataTypes eval(GroupExpression expression) {
+    public Type eval(GroupExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(BinaryExpression expression) {
+    public Type eval(BinaryExpression expression) {
         var op = expression.getOperator();
         Expression right = expression.getRight();
         Expression left = expression.getLeft();
@@ -140,29 +141,29 @@ public class TypeChecker implements Visitor<DataTypes> {
 
         // allow operations only on the same types of values
         // 1+1, "hello "+"world", 1/2, 1<2, "hi" == "hi"
-        List<DataTypes> allowedTypes = allowTypes(op);
+        List<Type> allowedTypes = allowTypes(op);
         this.expectOperatorType(t1, allowedTypes, expression);
         this.expectOperatorType(t2, allowedTypes, expression);
 
         if (isBooleanOp(op)) { // when is a boolean operation in an if statement, we return a boolean type(the result) else we return the type of the result for a + or *
             expect(t1, t2, left, expression);
-            return DataTypes.Boolean;
+            return ValueType.Boolean;
         }
         return expect(t1, t2, left, expression);
     }
 
-    private void expectOperatorType(DataTypes type, List<DataTypes> allowedTypes, BinaryExpression expression) {
+    private void expectOperatorType(Type type, List<Type> allowedTypes, BinaryExpression expression) {
         if (!allowedTypes.contains(type)) {
             throw new TypeError("Unexpected type: " + type + " in expression " + printer.eval(expression) + ". Allowed types: " + allowedTypes);
         }
     }
 
-    private List<DataTypes> allowTypes(String op) {
+    private List<Type> allowTypes(String op) {
         return switch (op) {
-            case "+" -> List.of(DataTypes.Number, DataTypes.String); // allow addition for numbers and string
-            case "-", "/", "*", "%" -> List.of(DataTypes.Number);
-            case "==", "!=" -> List.of(DataTypes.String, DataTypes.Number, DataTypes.Boolean);
-            case "<=", "<", ">", ">=" -> List.of(DataTypes.Number, DataTypes.Boolean);
+            case "+" -> List.of(ValueType.Number, ValueType.String); // allow addition for numbers and string
+            case "-", "/", "*", "%" -> List.of(ValueType.Number);
+            case "==", "!=" -> List.of(ValueType.String, ValueType.Number, ValueType.Boolean);
+            case "<=", "<", ">", ">=" -> List.of(ValueType.Number, ValueType.Boolean);
             default -> throw new TypeError("Unknown operator " + op);
         };
     }
@@ -174,8 +175,8 @@ public class TypeChecker implements Visitor<DataTypes> {
         };
     }
 
-    private DataTypes expect(DataTypes actualType, DataTypes expectedType, Expression expectedVal, Expression actualVal) {
-        if (actualType == DataTypes.Null) {
+    private Type expect(Type actualType, Type expectedType, Expression expectedVal, Expression actualVal) {
+        if (actualType == ValueType.Null) {
             return expectedType;
         }
         if (actualType != expectedType) {
@@ -187,8 +188,8 @@ public class TypeChecker implements Visitor<DataTypes> {
         return actualType;
     }
 
-    private DataTypes expect(DataTypes actualType, DataTypes expectedType, Statement expectedVal, Statement actualVal) {
-        if (actualType == DataTypes.Null) {
+    private Type expect(Type actualType, Type expectedType, Statement expectedVal, Statement actualVal) {
+        if (actualType == ValueType.Null) {
             return expectedType;
         }
         if (actualType != expectedType) {
@@ -199,8 +200,8 @@ public class TypeChecker implements Visitor<DataTypes> {
         }
         return actualType;
     }
-    private DataTypes expect(DataTypes actualType, DataTypes expectedType, Expression expectedVal, Statement actualVal) {
-        if (actualType == DataTypes.Null) {
+    private Type expect(Type actualType, Type expectedType, Expression expectedVal, Statement actualVal) {
+        if (actualType == ValueType.Null) {
             return expectedType;
         }
         if (actualType != expectedType) {
@@ -213,38 +214,38 @@ public class TypeChecker implements Visitor<DataTypes> {
     }
 
     @Override
-    public DataTypes eval(CallExpression<Expression> expression) {
+    public Type eval(CallExpression<Expression> expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(ErrorExpression expression) {
+    public Type eval(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(LogicalExpression expression) {
+    public Type eval(LogicalExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(MemberExpression expression) {
+    public Type eval(MemberExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(ThisExpression expression) {
+    public Type eval(ThisExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(UnaryExpression expression) {
+    public Type eval(UnaryExpression expression) {
         return null;
     }
 
     @Override
-    public DataTypes eval(Program program) {
-        var type = DataTypes.Null;
+    public Type eval(Program program) {
+        Type type = ValueType.Null;
         for (Statement statement : program.getBody()) {
             type = executeBlock(statement, env);
         }
@@ -252,28 +253,30 @@ public class TypeChecker implements Visitor<DataTypes> {
     }
 
     @Override
-    public DataTypes eval(Statement statement) {
+    public Type eval(Statement statement) {
         return statement.accept(this);
     }
 
     @Override
-    public DataTypes eval(InitStatement statement) {
+    public Type eval(InitStatement statement) {
         return null;
     }
 
     @Override
-    public DataTypes eval(FunctionDeclaration statement) {
+    public Type eval(FunctionDeclaration statement) {
+
+
         return null;
     }
 
     @Override
-    public DataTypes eval(ExpressionStatement statement) {
+    public Type eval(ExpressionStatement statement) {
         return executeBlock(statement.getStatement(), env);
     }
 
     @Override
-    public DataTypes eval(VariableStatement statement) {
-        var type = DataTypes.Null;
+    public Type eval(VariableStatement statement) {
+        Type type = ValueType.Null;
         for (VariableDeclaration declaration : statement.getDeclarations()) {
             type = executeBlock(declaration, this.env);
         }
@@ -281,47 +284,47 @@ public class TypeChecker implements Visitor<DataTypes> {
     }
 
     @Override
-    public DataTypes eval(IfStatement statement) {
-        DataTypes t1 = eval(statement.getTest());
-        expect(t1, DataTypes.Boolean, statement.getTest(), statement.getTest());
-        DataTypes t2 = eval(statement.getConsequent());
-        DataTypes t3 = eval(statement.getAlternate());
+    public Type eval(IfStatement statement) {
+        Type t1 = eval(statement.getTest());
+        expect(t1, ValueType.Boolean, statement.getTest(), statement.getTest());
+        Type t2 = eval(statement.getConsequent());
+        Type t3 = eval(statement.getAlternate());
 
         return expect(t3, t2, statement, statement);
     }
 
     @Override
-    public DataTypes eval(WhileStatement statement) {
+    public Type eval(WhileStatement statement) {
         var condition = eval(statement.getTest());
-        expect(condition, DataTypes.Boolean, statement.getTest(), statement); // condition should always be boolean
+        expect(condition, ValueType.Boolean, statement.getTest(), statement); // condition should always be boolean
         return eval(statement.getBody());
     }
 
     @Override
-    public DataTypes eval(ForStatement statement) {
+    public Type eval(ForStatement statement) {
         return null;
     }
 
     @Override
-    public DataTypes eval(SchemaDeclaration statement) {
+    public Type eval(SchemaDeclaration statement) {
         return null;
     }
 
     @Override
-    public DataTypes eval(ReturnStatement statement) {
+    public Type eval(ReturnStatement statement) {
         return null;
     }
 
     @Override
-    public DataTypes eval(VariableDeclaration expression) {
+    public Type eval(VariableDeclaration expression) {
         var implicitType = eval(expression.getInit());
         String var = expression.getId().string();
         if (expression.hasType()) {
             var explicitType = eval(expression.getType());
             expect(implicitType, explicitType, expression.getInit(), expression);
-            return (DataTypes) env.init(var, explicitType);
+            return (Type) env.init(var, explicitType);
         }
-        return (DataTypes) env.init(var, implicitType);
+        return (Type) env.init(var, implicitType);
     }
 
     /**
@@ -330,44 +333,44 @@ public class TypeChecker implements Visitor<DataTypes> {
      * x=2 // should allow number but not string
      */
     @Override
-    public DataTypes eval(AssignmentExpression expression) {
+    public Type eval(AssignmentExpression expression) {
         var varType = eval(expression.getLeft());
         var valueType = eval(expression.getRight());
         return expect(valueType, varType, expression.getLeft(), expression);
     }
 
     @Override
-    public DataTypes eval(NumberLiteral expression) {
-        return DataTypes.Number;
+    public Type eval(NumberLiteral expression) {
+        return ValueType.Number;
     }
 
     @Override
-    public DataTypes eval(BooleanLiteral expression) {
-        return DataTypes.Boolean;
+    public Type eval(BooleanLiteral expression) {
+        return ValueType.Boolean;
     }
 
     @Override
-    public DataTypes eval(float expression) {
-        return DataTypes.Number;
+    public Type eval(float expression) {
+        return ValueType.Number;
     }
 
     @Override
-    public DataTypes eval(double expression) {
-        return DataTypes.Number;
+    public Type eval(double expression) {
+        return ValueType.Number;
     }
 
     @Override
-    public DataTypes eval(int expression) {
-        return DataTypes.Number;
+    public Type eval(int expression) {
+        return ValueType.Number;
     }
 
     @Override
-    public DataTypes eval(boolean expression) {
-        return DataTypes.Boolean;
+    public Type eval(boolean expression) {
+        return ValueType.Boolean;
     }
 
     @Override
-    public DataTypes eval(String expression) {
-        return DataTypes.String;
+    public Type eval(String expression) {
+        return ValueType.String;
     }
 }

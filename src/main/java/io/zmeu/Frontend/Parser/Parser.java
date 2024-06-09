@@ -414,9 +414,10 @@ public class Parser {
         eat(OpenParenthesis, "Expected '(' but got: " + lookAhead());
         var params = OptParameterList();
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
+        var type = TypeDeclaration();
 
         Statement body = ExpressionStatement.expressionStatement(BlockExpression());
-        return FunctionDeclaration.fun(test, params, body);
+        return FunctionDeclaration.fun(test, params, type, body);
     }
 
     private Statement SchemaDeclaration() {
@@ -463,8 +464,8 @@ public class Parser {
 
     private ParameterIdentifier FunParameter() {
         var symbol = SymbolIdentifier();
-        if (IsLookAhead(Identifier)) {
-            var type = TypeIdentifier();
+        if (IsLookAhead(Identifier, Colon)) {
+            var type = TypeDeclaration();
             return param(symbol, type);
         } else {
             return param(symbol);

@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.TypeChecker;
 
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,7 @@ class StringTest extends BaseChecker {
     @Test
     void testStringLiteral() {
         var t1 = checker.eval("hello");
-        Assertions.assertEquals(t1, DataTypes.String);
+        Assertions.assertEquals(t1, ValueType.String);
     }
 
     @Test
@@ -42,7 +42,7 @@ class StringTest extends BaseChecker {
         var actual = checker.eval(src("""
                 "hello" + "world"
                 """));
-        Assertions.assertEquals(actual, DataTypes.String);
+        Assertions.assertEquals(actual, ValueType.String);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.TypeChecker;
 
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ public class BlockTest extends BaseChecker {
                 var y = 10
                 x*2+y
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertEquals(ValueType.Number, actual);
     }
 
     @Test
@@ -28,7 +28,7 @@ public class BlockTest extends BaseChecker {
                 }
                 x * 2
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertEquals(ValueType.Number, actual);
     }
 
     @Test
@@ -40,6 +40,6 @@ public class BlockTest extends BaseChecker {
                     x+y
                 }
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertEquals(ValueType.Number, actual);
     }
 }

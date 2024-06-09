@@ -7,26 +7,29 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public final class ValueType extends Type {
-    private String value;
+    public static ValueType String = new ValueType("String");
+    public static ValueType Number = new ValueType("Number");
+    public static ValueType Boolean = new ValueType("Boolean");
+    public static ValueType Null = new ValueType("Null");
 
     private ValueType() {
         super();
     }
 
+    private ValueType(String value) {
+        super();
+        setValue(value);
+    }
+
     public static ValueType of(String value) {
-        ValueType valueType = new ValueType();
-        return switch (value){
+        var valueType = new ValueType();
+        return switch (value) {
             case "Boolean", "Number", "String" -> {
                 valueType.setValue(value);
                 yield valueType;
             }
             default -> null;
         };
-    }
-
-    @Override
-    public String value() {
-        return value;
     }
 
     @Override

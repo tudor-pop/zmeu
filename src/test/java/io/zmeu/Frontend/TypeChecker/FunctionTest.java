@@ -1,10 +1,11 @@
 package io.zmeu.Frontend.TypeChecker;
 
-import io.zmeu.Frontend.TypeChecker.Types.DataTypes;
+import io.zmeu.Frontend.Parser.Types.Type;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisplayName("TypeChecker Function")
 public class FunctionTest extends BaseChecker {
@@ -17,7 +18,8 @@ public class FunctionTest extends BaseChecker {
                 }
                 square(2)
                 """));
-        assertEquals(DataTypes.valueOf("fun(Number):Number"), actual);
+        assertNotNull(actual);
+        assertEquals(Type.valueOf("fun(Number):Number"), actual);
     }
 
     @Test
@@ -28,7 +30,8 @@ public class FunctionTest extends BaseChecker {
                 }
                 multiply(2,3)
                 """));
-        assertEquals(DataTypes.Number, actual);
+        assertNotNull(actual);
+        assertEquals(Type.valueOf("fun(Number,Number):Number"), actual);
     }
 
 }
