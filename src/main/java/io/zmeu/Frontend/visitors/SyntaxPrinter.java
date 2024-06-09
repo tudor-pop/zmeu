@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.Types.Type;
 
 public class SyntaxPrinter implements Visitor<String> {
 
@@ -99,6 +100,11 @@ public class SyntaxPrinter implements Visitor<String> {
     @Override
     public String eval(Statement statement) {
         return "";
+    }
+
+    @Override
+    public String eval(Type type) {
+        return type.getValue();
     }
 
     @Override

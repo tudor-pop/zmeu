@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Lexical;
 
 import io.zmeu.ErrorSystem;
+import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
@@ -165,6 +166,11 @@ public class Resolver implements Visitor<Void> {
     @Override
     public Void eval(Statement statement) {
         resolve(statement);
+        return null;
+    }
+
+    @Override
+    public Void eval(Type type) {
         return null;
     }
 

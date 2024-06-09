@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.Types.Type;
 
 public class AstPrinter implements Visitor<String> {
 
@@ -93,6 +94,11 @@ public class AstPrinter implements Visitor<String> {
 
     @Override
     public String eval(Statement statement) {
+        return "";
+    }
+
+    @Override
+    public String eval(Type statement) {
         return "";
     }
 

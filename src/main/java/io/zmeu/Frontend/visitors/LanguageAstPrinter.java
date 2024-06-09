@@ -4,6 +4,9 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.Types.Type;
+
+import java.util.stream.Collectors;
 
 public class LanguageAstPrinter implements Visitor<String> {
 
@@ -104,18 +107,30 @@ public class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
+    public String eval(Type type) {
+        return type.getValue();
+    }
+
+    @Override
     public String eval(InitStatement statement) {
         return "";
     }
 
     @Override
     public String eval(FunctionDeclaration statement) {
-        return "";
+        return "fun " +
+                statement.getName().string() +
+                "("
+                + statement.getParams().stream().map(it -> it.getName().string() + " :" + it.getType().string()).collect(Collectors.joining(","))
+                +") "
+                +"{ \n"
+                + eval(statement.getBody())
+                + "\n} \n";
     }
 
     @Override
     public String eval(ExpressionStatement statement) {
-        return "";
+        return eval(statement.getStatement());
     }
 
     @Override
@@ -151,7 +166,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(ReturnStatement statement) {
-        return "";
+        return "return " + eval(statement.getArgument());
     }
 
     @Override
@@ -189,7 +204,11 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(BlockExpression expression) {
-        return null;
+        StringBuilder result = new StringBuilder();
+        for (Statement statement : expression.getExpression()) {
+            result.append(eval(statement));
+        }
+        return result.toString();
     }
 
     @Override

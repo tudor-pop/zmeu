@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.Types.Type;
 
 public interface Visitor<R> {
     R eval(Expression expression);
@@ -55,6 +56,8 @@ public interface Visitor<R> {
     R eval(Program program);
 
     R eval(Statement statement);
+
+    R eval(Type type);
 
     /**
      * InitStatement

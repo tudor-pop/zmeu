@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Types;
 
-import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -10,17 +9,18 @@ import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBl
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public final class FunType extends Type {
-    private List<Type> params;
+    private Collection<Type> params;
     private Type returnType;
 
-    public FunType(String value, List<Type> params, Type returnType) {
-        super(value);
+    public FunType(Collection<Type> params, Type returnType) {
+        super();
         this.params = params;
         this.returnType = returnType;
         setValue(name());
@@ -32,15 +32,15 @@ public final class FunType extends Type {
         List<Type> paramsType = new ArrayList<>();
         if (funSplit.length == 2) {
             returnType = Type.valueOf(funSplit[1]);
-            paramsType = cleanParams(funSplit);
+            paramsType = cleanParams(funSplit[0]);
         } else if (funSplit.length == 1) {
-            paramsType = cleanParams(funSplit);
+            paramsType = cleanParams(funSplit[0]);
         }
-        return new FunType(symbol, paramsType, returnType);
+        return new FunType(paramsType, returnType);
     }
 
-    private static List<Type> cleanParams(java.lang.String[] funSplit) {
-        var split = StringUtils.split(StringUtils.remove(StringUtils.remove(funSplit[0], "("), ")"), ",");
+    private static List<Type> cleanParams(java.lang.String funSplit) {
+        var split = StringUtils.substringBetween(funSplit,"(",")").split(",");
         return Arrays.stream(split)
                 .map(Type::valueOf)
                 .collect(Collectors.toList());
@@ -76,9 +76,8 @@ public final class FunType extends Type {
                 .toHashCode();
     }
 
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
+    public String getName() {
+        return name();
     }
+
 }

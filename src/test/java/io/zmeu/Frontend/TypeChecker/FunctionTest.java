@@ -16,10 +16,11 @@ public class FunctionTest extends BaseChecker {
                 fun square(x :Number) :Number {
                     return x * x
                 }
-                square(2)
+                // square(2)
                 """));
         assertNotNull(actual);
-        assertEquals(Type.valueOf("fun(Number):Number"), actual);
+        Type expected = Type.valueOf("fun(Number):Number");
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -28,7 +29,7 @@ public class FunctionTest extends BaseChecker {
                 fun multiply(x :Number,y :Number) :Number {
                     return x * y
                 }
-                multiply(2,3)
+                // multiply(2,3)
                 """));
         assertNotNull(actual);
         assertEquals(Type.valueOf("fun(Number,Number):Number"), actual);

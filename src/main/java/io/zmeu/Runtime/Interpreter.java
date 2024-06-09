@@ -4,6 +4,7 @@ import io.zmeu.Engine.Engine;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
+import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
@@ -537,6 +538,11 @@ public class Interpreter implements Visitor<Object> {
     @Override
     public Object eval(Statement statement) {
         return execute(statement);
+    }
+
+    @Override
+    public Object eval(Type type) {
+        return type;
     }
 
     @Override

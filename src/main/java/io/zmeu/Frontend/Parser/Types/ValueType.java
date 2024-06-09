@@ -1,10 +1,7 @@
 package io.zmeu.Frontend.Parser.Types;
 
-import io.zmeu.Frontend.visitors.Visitor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Data
 @EqualsAndHashCode(callSuper = true)
 public final class ValueType extends Type {
     public static ValueType String = new ValueType("String");
@@ -22,18 +19,19 @@ public final class ValueType extends Type {
     }
 
     public static ValueType of(String value) {
-        var valueType = new ValueType();
         return switch (value) {
-            case "Boolean", "Number", "String" -> {
-                valueType.setValue(value);
-                yield valueType;
-            }
+            case "Boolean"-> Boolean;
+            case "String"-> String;
+            case "Number"-> Number;
+            case "Null"-> Null;
             default -> null;
         };
     }
 
     @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
+    public java.lang.String toString() {
+        return getValue();
     }
+
+
 }

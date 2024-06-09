@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Types;
 
-import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,8 +15,4 @@ public final class ReferenceType extends Type {
         return new ReferenceType(typeName);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

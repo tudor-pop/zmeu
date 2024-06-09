@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.Types.FunType;
 import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.Parser.Types.ValueType;
 import io.zmeu.Frontend.visitors.LanguageAstPrinter;
@@ -14,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class TypeChecker implements Visitor<Type> {
@@ -146,10 +149,10 @@ public class TypeChecker implements Visitor<Type> {
         this.expectOperatorType(t2, allowedTypes, expression);
 
         if (isBooleanOp(op)) { // when is a boolean operation in an if statement, we return a boolean type(the result) else we return the type of the result for a + or *
-            expect(t1, t2, left, expression);
+            expect(t1, t2, expression, left);
             return ValueType.Boolean;
         }
-        return expect(t1, t2, left, expression);
+        return expect(t1, t2, expression, left);
     }
 
     private void expectOperatorType(Type type, List<Type> allowedTypes, BinaryExpression expression) {
@@ -175,11 +178,11 @@ public class TypeChecker implements Visitor<Type> {
         };
     }
 
-    private Type expect(Type actualType, Type expectedType, Expression expectedVal, Expression actualVal) {
+    private Type expect(Type actualType, Type expectedType, Expression actualVal, Expression expectedVal) {
         if (actualType == ValueType.Null) {
             return expectedType;
         }
-        if (actualType != expectedType) {
+        if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
             log.error(string);
@@ -188,11 +191,11 @@ public class TypeChecker implements Visitor<Type> {
         return actualType;
     }
 
-    private Type expect(Type actualType, Type expectedType, Statement expectedVal, Statement actualVal) {
+    private Type expect(Type actualType, Type expectedType, Statement actualVal, Statement expectedVal) {
         if (actualType == ValueType.Null) {
             return expectedType;
         }
-        if (actualType != expectedType) {
+        if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
             log.error(string);
@@ -200,11 +203,12 @@ public class TypeChecker implements Visitor<Type> {
         }
         return actualType;
     }
-    private Type expect(Type actualType, Type expectedType, Expression expectedVal, Statement actualVal) {
+
+    private Type expect(Type actualType, Type expectedType, Statement actualVal, Expression expectedVal) {
         if (actualType == ValueType.Null) {
             return expectedType;
         }
-        if (actualType != expectedType) {
+        if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
             log.error(string);
@@ -258,15 +262,32 @@ public class TypeChecker implements Visitor<Type> {
     }
 
     @Override
+    public Type eval(Type type) {
+        return type;
+    }
+
+    @Override
     public Type eval(InitStatement statement) {
         return null;
     }
 
     @Override
-    public Type eval(FunctionDeclaration statement) {
+    public Type eval(FunctionDeclaration fun) {
+        var expectedType = fun.getReturnType().getType();
+        var params = fun.getParams();
+        Map<String, Object> collect = params.stream()
+                .collect(Collectors.toMap(identifier -> identifier.getName().getSymbol(), identifier -> identifier.getType().getType()));
 
+        var funEnv = new TypeEnvironment(env, collect);
 
-        return null;
+        var actualReturnType = executeBlock(fun.getBody(), funEnv);
+        expect(actualReturnType, expectedType,fun.getBody(), expectedType);
+        return new FunType(collect.values().stream().map(Type.class::cast).toList(), actualReturnType);
+    }
+
+    @Override
+    public Type eval(ReturnStatement statement) {
+        return eval(statement.getArgument());
     }
 
     @Override
@@ -296,7 +317,7 @@ public class TypeChecker implements Visitor<Type> {
     @Override
     public Type eval(WhileStatement statement) {
         var condition = eval(statement.getTest());
-        expect(condition, ValueType.Boolean, statement.getTest(), statement); // condition should always be boolean
+        expect(condition, ValueType.Boolean, statement, statement.getTest()); // condition should always be boolean
         return eval(statement.getBody());
     }
 
@@ -311,17 +332,12 @@ public class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type eval(ReturnStatement statement) {
-        return null;
-    }
-
-    @Override
     public Type eval(VariableDeclaration expression) {
         var implicitType = eval(expression.getInit());
         String var = expression.getId().string();
         if (expression.hasType()) {
             var explicitType = eval(expression.getType());
-            expect(implicitType, explicitType, expression.getInit(), expression);
+            expect(implicitType, explicitType, expression, expression.getInit());
             return (Type) env.init(var, explicitType);
         }
         return (Type) env.init(var, implicitType);
@@ -336,7 +352,7 @@ public class TypeChecker implements Visitor<Type> {
     public Type eval(AssignmentExpression expression) {
         var varType = eval(expression.getLeft());
         var valueType = eval(expression.getRight());
-        return expect(valueType, varType, expression.getLeft(), expression);
+        return expect(valueType, varType, expression, expression.getLeft());
     }
 
     @Override
