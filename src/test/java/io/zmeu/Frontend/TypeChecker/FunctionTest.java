@@ -25,7 +25,7 @@ public class FunctionTest extends BaseChecker {
                 // square(2)
                 """));
         assertNotNull(actual);
-        Type expected = Type.fromString("fun(Number):Number");
+        Type expected = Type.fromString("(Number)->Number");
         assertEquals(expected, actual);
     }
 
@@ -89,7 +89,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testBuiltIn() {
         var actual = checker.eval(src("""
-                square(2, 3)
+                pow(2, 3)
                 """));
         assertNotNull(actual);
         assertEquals(ValueType.Number, actual);

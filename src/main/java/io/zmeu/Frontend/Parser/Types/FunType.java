@@ -27,7 +27,7 @@ public final class FunType extends Type {
     }
 
     public static FunType valueOf(@NotBlank String symbol) {
-        var funSplit = StringUtils.split(StringUtils.removeStart(symbol, "fun"), ":");
+        var funSplit = StringUtils.split(symbol, "->");
         Type returnType = null;
         List<Type> paramsType = new ArrayList<>();
         if (funSplit.length == 2) {

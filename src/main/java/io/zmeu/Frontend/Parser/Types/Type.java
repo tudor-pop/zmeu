@@ -41,7 +41,7 @@ public sealed abstract class Type extends Expression
             case "Boolean" -> ValueType.Boolean;
             case "Null" -> ValueType.Null;
             default -> {
-                if (symbol.startsWith("fun")) {
+                if (symbol.startsWith("(")) {
                     FunType fun = FunStore.getFun(symbol);
                     if (fun != null) {
                         yield fun;
