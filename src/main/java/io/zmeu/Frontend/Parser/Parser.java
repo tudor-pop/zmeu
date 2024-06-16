@@ -6,10 +6,14 @@ import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Frontend.Parser.Types.FunType;
+import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.TypeChecker.TypeChecker;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
 import static io.zmeu.Frontend.Parser.Literals.ParameterIdentifier.param;
@@ -355,6 +360,43 @@ public class Parser {
         }
     }
 
+    private TypeIdentifier FunctionType() {
+        if (IsLookAhead(Colon)) {
+            eat(Colon);
+            if (IsLookAhead(OpenParenthesis)) {
+                var funType = new StringBuilder();
+                do {
+                    funType.append(eat().value());
+                } while (!IsLookAhead(OpenBraces));
+                var type = valueOf(funType.toString());
+                return TypeIdentifier.builder().type(type).build();
+            } else {
+                return TypeIdentifier();
+            }
+        }
+        return null;
+    }
+
+    public static FunType valueOf(@NotBlank String symbol) {
+        var funSplit = StringUtils.split(symbol, "->");
+        Type returnType = null;
+        List<Type> paramsType = new ArrayList<>();
+        if (funSplit.length == 2) {
+            returnType = Type.fromString(funSplit[1]);
+            paramsType = cleanParams(funSplit[0]);
+        } else if (funSplit.length == 1) {
+            paramsType = cleanParams(funSplit[0]);
+        }
+        return new FunType(paramsType, returnType);
+    }
+
+    private static List<Type> cleanParams(java.lang.String funSplit) {
+        var split = StringUtils.substringBetween(funSplit, "(", ")").split(",");
+        return Arrays.stream(split)
+                .map(Type::fromString)
+                .collect(Collectors.toList());
+    }
+
     /**
      * VariableInitializer
      * : SIMPLE_ASSIGN Expression
@@ -414,7 +456,7 @@ public class Parser {
         eat(OpenParenthesis, "Expected '(' but got: " + lookAhead());
         var params = OptParameterList();
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
-        var type = TypeDeclaration();
+        var type = FunctionType();
 
         Statement body = ExpressionStatement.expressionStatement(BlockExpression());
         return FunctionDeclaration.fun(test, params, type, body);

@@ -41,20 +41,20 @@ public final class PluginIdentifier extends Identifier {
         String[] split = string.split("/");
         if (split.length < 2) {
             var identifier = new PluginIdentifier();
-            identifier.setType(TypeIdentifier.of(split[0]));
+            identifier.setType(TypeIdentifier.type(split[0]));
             return identifier;
         }
         String[] type = split[1].split("@");
         if (type.length != 2) {
             var identifier = new PluginIdentifier();
             identifier.setPath(PathIdentifier.of(split[0]));
-            identifier.setType(TypeIdentifier.of(split[1]));
+            identifier.setType(TypeIdentifier.type(split[1]));
             return identifier;
         } else {
             var date = LocalDate.parse(type[1]);
             var identifier = new PluginIdentifier();
             identifier.setPath(PathIdentifier.of(split[0]));
-            identifier.setType(TypeIdentifier.of(type[0]));
+            identifier.setType(TypeIdentifier.type(type[0]));
             identifier.setDate(date);
             return identifier;
         }

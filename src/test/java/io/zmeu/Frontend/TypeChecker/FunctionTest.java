@@ -106,4 +106,24 @@ public class FunctionTest extends BaseChecker {
         )));
     }
 
+    @Test
+    void testHigherOrderFunction() {
+        var actual = checker.eval(src("""
+                var global=10
+                fun outer(x :Number, y :Number) :(Number)->Number {
+                    var z = x+y
+                    
+                    fun inner(p:Number):Number {
+                        return p+z+global
+                    }
+                    return inner
+                }
+                var fn = outer(1,1)
+                fn(1)
+                """
+        ));
+
+        assertNotNull(actual);
+        assertEquals(ValueType.Number, actual);
+    }
 }

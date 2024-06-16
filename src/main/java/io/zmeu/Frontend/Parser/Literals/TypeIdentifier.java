@@ -50,16 +50,12 @@ public final class TypeIdentifier extends Identifier {
     }
 
     public static TypeIdentifier type(String type) {
-        return of(type);
-    }
-
-    public static TypeIdentifier of(String object) {
-        if (object.indexOf('.') == -1) {
-            return new TypeIdentifier(object);
+        if (type.indexOf('.') == -1) {
+            return new TypeIdentifier(type);
         }
-        var prefix = StringUtils.substringBeforeLast(object, ".");
-        var type = StringUtils.substringAfterLast(object, ".");
-        return new TypeIdentifier(prefix, type);
+        var prefix = StringUtils.substringBeforeLast(type, ".");
+        var type1 = StringUtils.substringAfterLast(type, ".");
+        return new TypeIdentifier(prefix, type1);
     }
 
     @Override

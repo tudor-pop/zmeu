@@ -2,6 +2,7 @@ package io.zmeu.Frontend.Parser.Types;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,7 +47,7 @@ public sealed abstract class Type extends Expression
                     if (fun != null) {
                         yield fun;
                     } else {
-                        FunStore.setFun(symbol, FunType.valueOf(symbol));
+                        FunStore.setFun(symbol, Parser.valueOf(symbol));
                         yield FunStore.getFun(symbol);
                     }
                 }

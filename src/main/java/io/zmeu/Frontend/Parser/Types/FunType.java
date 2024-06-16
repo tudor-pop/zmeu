@@ -5,13 +5,9 @@ import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -24,26 +20,6 @@ public final class FunType extends Type {
         this.params = params;
         this.returnType = returnType;
         setValue(name());
-    }
-
-    public static FunType valueOf(@NotBlank String symbol) {
-        var funSplit = StringUtils.split(symbol, "->");
-        Type returnType = null;
-        List<Type> paramsType = new ArrayList<>();
-        if (funSplit.length == 2) {
-            returnType = Type.fromString(funSplit[1]);
-            paramsType = cleanParams(funSplit[0]);
-        } else if (funSplit.length == 1) {
-            paramsType = cleanParams(funSplit[0]);
-        }
-        return new FunType(paramsType, returnType);
-    }
-
-    private static List<Type> cleanParams(java.lang.String funSplit) {
-        var split = StringUtils.substringBetween(funSplit,"(",")").split(",");
-        return Arrays.stream(split)
-                .map(Type::fromString)
-                .collect(Collectors.toList());
     }
 
     public String name() {
