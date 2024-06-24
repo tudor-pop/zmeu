@@ -22,6 +22,10 @@ public final class FunType extends Type {
         setValue(name());
     }
 
+    public static Object from(List<Type> params, Type type) {
+        return new FunType(params, type);
+    }
+
     public String name() {
         if (this.getValue() == null) {
             var value = "fun(" + StringUtils.join(params, ",") + ")" + returnType();

@@ -8,6 +8,7 @@ import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.FunType;
 import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.Frontend.Parser.Types.TypeParser;
 import io.zmeu.Frontend.TypeChecker.TypeChecker;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
@@ -71,6 +72,7 @@ public class Parser {
     private Program program = new Program();
     private SyntaxPrinter printer = new SyntaxPrinter();
     private TypeChecker typeChecker = new TypeChecker();
+    private TypeParser typeParser = new TypeParser(this);
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -350,31 +352,13 @@ public class Parser {
      * : (':' PathIdentifier)?
      * ;
      */
-    private TypeIdentifier TypeDeclaration() {
+    public TypeIdentifier TypeDeclaration() {
         if (IsLookAhead(Colon)) {
             eat(Colon);
-
             return TypeIdentifier();
         } else {
             return null;
         }
-    }
-
-    private TypeIdentifier FunctionType() {
-        if (IsLookAhead(Colon)) {
-            eat(Colon);
-            if (IsLookAhead(OpenParenthesis)) {
-                var funType = new StringBuilder();
-                do {
-                    funType.append(eat().value());
-                } while (!IsLookAhead(OpenBraces));
-                var type = valueOf(funType.toString());
-                return TypeIdentifier.builder().type(type).build();
-            } else {
-                return TypeIdentifier();
-            }
-        }
-        return null;
     }
 
     public static FunType valueOf(@NotBlank String symbol) {
@@ -456,7 +440,7 @@ public class Parser {
         eat(OpenParenthesis, "Expected '(' but got: " + lookAhead());
         var params = OptParameterList();
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
-        var type = FunctionType();
+        var type = typeParser.FunctionType();
 
         Statement body = ExpressionStatement.expressionStatement(BlockExpression());
         return FunctionDeclaration.fun(test, params, type, body);
@@ -877,7 +861,8 @@ public class Parser {
      * Parse Type with prefix
      * Base.Nested
      */
-    private @NotNull TypeIdentifier TypeIdentifier() {
+    @NotNull
+    public TypeIdentifier TypeIdentifier() {
         var type = new StringBuilder();
         for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
             switch (lookAhead().type()) {
@@ -945,31 +930,31 @@ public class Parser {
         return iterator.IsLookAheadAfter(after, type);
     }
 
-    Token lookAhead() {
+    public Token lookAhead() {
         return iterator.lookAhead();
     }
 
-    Token eat() {
+    public Token eat() {
         return iterator.eat();
     }
 
-    Token eat(TokenType... type) {
+    public Token eat(TokenType... type) {
         return iterator.eat("Expected token: %s but it was %s".formatted(Arrays.toString(type).replaceAll("\\]?\\[?", ""), lookAhead().raw()), type);
     }
 
-    Token eat(TokenType type, String error) {
+    public Token eat(TokenType type, String error) {
         return iterator.eat(error, type);
     }
 
-    private boolean IsLookAhead(TokenType... type) {
+    public boolean IsLookAhead(TokenType... type) {
         return iterator.IsLookAhead(type);
     }
 
-    private boolean match(String... strings) {
+    public boolean match(String... strings) {
         return iterator.hasNext() && lookAhead().is(strings);
     }
 
-    private boolean match(TokenType... strings) {
+    public boolean match(TokenType... strings) {
         return iterator.hasNext() && IsLookAhead(strings);
     }
 
