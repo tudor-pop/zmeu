@@ -40,7 +40,7 @@ class TokenizerSpec {
             new Entry("^[\\+\\-\\*\\/]=", TokenType.Equal_Complex),
 
 // --------------------------------- Operators --------------------------------------------------------
-            new Entry("^\\++", TokenType.Increment),
+            new Entry("^\\+\\+", TokenType.Increment),
             new Entry("^\\+", TokenType.Plus),
             new Entry("^\\*", TokenType.Multiply),
             new Entry("^\\%", TokenType.Modulo),
