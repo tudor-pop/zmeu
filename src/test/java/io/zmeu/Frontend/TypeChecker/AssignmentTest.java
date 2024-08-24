@@ -30,16 +30,14 @@ public class AssignmentTest extends BaseChecker {
                 x = false 
                 """)));
     }
-//
-//    @Test
-//    void testStringInitWrongTypeInt() {
-//        parse("""
-//                var x:String=1
-//                """);
-//        var errors = ErrorSystem.getErrors();
-//        log.info(ErrorSystem.errors());
-//        Assertions.assertFalse(errors.isEmpty());
-//    }
+
+    @Test
+    void testStringInitWrongTypeInt() {
+        assertThrows(TypeError.class, () -> checker.eval(src("""
+                var x:String=1
+                """))
+        );
+    }
 //
 //    @Test
 //    void testStringInitWrongType() {
