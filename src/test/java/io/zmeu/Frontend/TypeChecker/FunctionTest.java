@@ -40,6 +40,17 @@ public class FunctionTest extends BaseChecker {
         assertNotNull(actual);
         assertEquals(ValueType.Number, actual);
     }
+    @Test
+    void testFunCallDecimal() {
+        var actual = checker.eval(src("""
+                fun square(x :Number) :Number {
+                    return x * x
+                }
+                square(2.2)
+                """));
+        assertNotNull(actual);
+        assertEquals(ValueType.Number, actual);
+    }
 
     @Test
     void testFunCallWrongArg() {

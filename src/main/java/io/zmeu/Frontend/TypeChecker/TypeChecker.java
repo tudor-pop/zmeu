@@ -276,7 +276,8 @@ public class TypeChecker implements Visitor<Type> {
         var actualReturnType = executeBlock(fun.getBody(), funEnv);
         expect(actualReturnType, expectedType, fun.getBody(), expectedType);
 
-        var funType = new FunType(collect.values().stream().map(Type.class::cast).toList(), actualReturnType);
+        List<Type> types = collect.values().stream().map(Type.class::cast).toList();
+        var funType = new FunType(types, actualReturnType);
         env.init(fun.getName(), funType); // save function signature in env so that we're able to call it later to validate types
 
         return funType;
