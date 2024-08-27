@@ -47,6 +47,9 @@ public final class ParameterIdentifier extends Identifier {
 
     @Override
     public String string() {
+        if (type == null) {
+            return name.string();
+        }
         return name.string() + " :" + type.string();
     }
 

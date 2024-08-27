@@ -213,8 +213,8 @@ public class Resolver implements Visitor<Void> {
 
     private void initParams(List<ParameterIdentifier> function) {
         for (var param : function) {
-            declare(param);
-            define(param);
+            declare(param.getName());
+            define(param.getName());
         }
     }
 

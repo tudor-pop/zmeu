@@ -59,8 +59,8 @@ public class ResourceTest extends BaseTest {
     void resourceIsDefinedInSchema() {
         var res = eval("""
                 schema vm { 
-                    var name
-                    var maxCount=0
+                    var name: String
+                    var maxCount: Number=0
                 }
                 resource vm main {
                     name = "first"
