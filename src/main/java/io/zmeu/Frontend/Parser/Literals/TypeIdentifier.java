@@ -30,9 +30,9 @@ public final class TypeIdentifier extends Identifier {
     @Override
     public String string() {
         if (path.getPaths().length == 1) {
-            return type.toString();
+            return type.getValue();
         }
-        return path.string() + "." + type.toString();
+        return path.string() + "." + type.getValue();
     }
 
     private TypeIdentifier(String path, Type type) {
