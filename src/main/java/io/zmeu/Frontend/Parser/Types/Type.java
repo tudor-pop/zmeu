@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Types;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.NodeType;
-import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,7 +56,6 @@ public sealed abstract class Type extends Expression
                 .toString();
     }
 
-
     public static Type fromString(String symbol) {
         return switch (symbol) {
             case "String" -> ValueType.String;
@@ -70,7 +68,7 @@ public sealed abstract class Type extends Expression
                     if (fun != null) {
                         yield fun;
                     } else {
-                        FunStore.setFun(symbol, Parser.valueOf(symbol));
+                        FunStore.setFun(symbol, FunType.valueOf(symbol));
                         yield FunStore.getFun(symbol);
                     }
                 }

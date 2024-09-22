@@ -14,10 +14,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class TypeChecker implements Visitor<Type> {
@@ -266,15 +266,22 @@ public class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(FunctionDeclaration fun) {
-        var expectedType = fun.getReturnType().getType();
+        var returnType = fun.getReturnType().getType();
         var params = fun.getParams();
-        Map<String, Object> collect = params.stream()
-                .collect(Collectors.toMap(identifier -> identifier.getName().getSymbol(), identifier -> identifier.getType().getType()));
+        Map<String, Object> collect = new HashMap<>(params.size());
+        for (ParameterIdentifier identifier : params) {
+            if (identifier.getType() == null) {
+                throw new IllegalArgumentException("Missing type for parameter " + identifier.getName().string() + " of function " + fun.getName().string() + "(" + printer.eval(identifier) + ")");
+            }
+            if (collect.put(identifier.getName().getSymbol(), identifier.getType().getType()) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+        }
 
         var funEnv = new TypeEnvironment(env, collect);
 
         var actualReturnType = executeBlock(fun.getBody(), funEnv);
-        expect(actualReturnType, expectedType, fun.getBody(), expectedType);
+        expect(actualReturnType, returnType, fun.getBody(), returnType);
 
         List<Type> types = collect.values().stream().map(Type.class::cast).toList();
         var funType = new FunType(types, actualReturnType);

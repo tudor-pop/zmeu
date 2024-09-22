@@ -5,10 +5,14 @@ import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.Type;
+import org.fusesource.jansi.Ansi;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.stream.Collectors;
 
+
 public class LanguageAstPrinter implements Visitor<String> {
+    private static Ansi ansi = Ansi.ansi();
 
     public String print(Expression expr) {
         return expr.accept(this);
@@ -126,11 +130,18 @@ public class LanguageAstPrinter implements Visitor<String> {
         return "fun " +
                 statement.getName().string() +
                 "("
-                + statement.getParams().stream().map(it -> it.getName().string() + " :" + it.getType().string()).collect(Collectors.joining(","))
+                + statement.getParams().stream().map(LanguageAstPrinter::formatParameter).collect(Collectors.joining(","))
                 + ") "
                 + "{ \n"
                 + eval(statement.getBody())
                 + "\n} \n";
+    }
+
+    private static @NotNull String formatParameter(ParameterIdentifier it) {
+        if (it.getType() == null || it.getType().getType() == null) {
+            return ansi.fg(Ansi.Color.RED).a(it.getName().string()).reset().toString();
+        }
+        return it.getName().string() + " :" + it.getType().string();
     }
 
     @Override
@@ -194,7 +205,10 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(Identifier expression) {
-        return expression.string();
+        return switch (expression) {
+            case ParameterIdentifier parameterIdentifier -> formatParameter(parameterIdentifier);
+            default -> expression.string();
+        };
     }
 
     @Override
