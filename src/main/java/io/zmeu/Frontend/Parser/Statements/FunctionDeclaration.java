@@ -3,6 +3,7 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import io.zmeu.Frontend.visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,11 @@ public class FunctionDeclaration extends Statement {
         this.params = params;
         this.name = name;
         this.body = body;
-        this.returnType = returnType;
+        if (returnType != null) {
+            this.returnType = returnType;
+        } else {
+            this.returnType = TypeIdentifier.type(ValueType.Void);
+        }
     }
 
     private FunctionDeclaration(Identifier name, List<ParameterIdentifier> params, @Nullable Statement body) {

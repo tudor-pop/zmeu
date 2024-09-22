@@ -59,6 +59,14 @@ public class FunctionTest extends BaseChecker {
         Type expected = Type.fromString("()->Void");
         assertEquals(expected, actual);
     }
+    @Test
+    void testVoidNoReturnDefauly() {
+       var actual = checker.eval(src("""
+                fun square() { return; }
+                """));
+        Type expected = Type.fromString("()->Void");
+        assertEquals(expected, actual);
+    }
 
 
     @Test
