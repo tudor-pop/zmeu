@@ -41,13 +41,14 @@ public class FunctionTest extends BaseChecker {
         Type expected = Type.fromString("()->Number");
         assertEquals(expected, actual);
     }
+
     @Test
-    void testNoReturn() {
-        var actual = checker.eval(src("""
-                fun square() :Void { return 2 * 2 }
-                """));
-        Type expected = Type.fromString("()->Number");
-        assertEquals(expected, actual);
+    void testVoidThrows() {
+        assertThrows(TypeError.class, () -> {
+            checker.eval(src("""
+                    fun square() :Void { return 2 * 2 }
+                    """));
+        });
     }
 
     @Test
