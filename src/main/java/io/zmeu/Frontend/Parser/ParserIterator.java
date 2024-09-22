@@ -68,6 +68,15 @@ public class ParserIterator {
         return token != null && token.is(type);
     }
 
+    boolean IsLookAhead(List<TokenType> type) {
+        for (TokenType tokenType : type) {
+            if (IsLookAhead(tokenType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     Token lookAhead() {
         if (!iterator.hasNext()) {
             return null;
@@ -109,12 +118,6 @@ public class ParserIterator {
             return eat();
         }
         return null;
-    }
-
-    public void eatLineTerminator() {
-        while (IsLookAhead(TokenType.SemiColon)) {
-            eat();
-        }
     }
 
     public void synchronize() {

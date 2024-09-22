@@ -2,6 +2,8 @@ package io.zmeu.Frontend.Lexer;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.List;
+
 // var x = 40 + (foo * bar)
 // [VarToken, IdentifierToken, EqualsToken, IntegerToken]
 public enum TokenType {
@@ -12,7 +14,7 @@ public enum TokenType {
 //    Type("type"),
     WhiteSpace("whitespace"),
     Comment("//"),
-    NewLine("\n"),
+    NewLine(System.lineSeparator()),
     /**
      * ;
      */
@@ -217,7 +219,6 @@ public enum TokenType {
         return Character.isWhitespace(character);
     }
 
-    public static TokenType lineTerminator() {
-        return NewLine;
-    }
+    public static List<TokenType> lineTerminator = List.of(NewLine, SemiColon);
+
 }

@@ -264,8 +264,6 @@ public class Parser {
     private Statement VariableDeclarations() {
         eat(Var);
         var statement = VariableStatementInit();
-        iterator.eatLineTerminator();
-//        iterator.prev();
         return statement;
     }
 
@@ -331,15 +329,7 @@ public class Parser {
     private VariableDeclaration VariableDeclaration() {
         var id = Identifier();
         var type = TypeDeclaration();
-        var init = IsLookAhead(lineTerminator(), Comma, EOF) ? null : VariableInitializer();
-//        if (type != null && init != null) { // if type is declared
-//            if (init instanceof Literal literal) {
-//                var t1=typeChecker.eval(literal);
-//                if (!StringUtils.equals(type.getType(), t1.getValue())) {
-//                    throw new InvalidTypeInitException(type.getType(), t1.getValue(), literal.getVal());
-//                }
-//            }
-//        }
+        var init = IsLookAhead(lineTerminator, Comma, EOF) ? null : VariableInitializer();
         return VariableDeclaration.of(id, type, init);
     }
 
@@ -478,12 +468,11 @@ public class Parser {
     private Statement ReturnStatement() {
         eat(Return);
         var arg = OptExpression();
-        iterator.eatLineTerminator();
         return ReturnStatement.funReturn(arg);
     }
 
     private Expression OptExpression() {
-        return IsLookAhead(lineTerminator()) ? TypeIdentifier.type(ValueType.Void) : Expression();
+        return IsLookAhead(lineTerminator) ? TypeIdentifier.type(ValueType.Void) : Expression();
     }
 
     /**
@@ -683,7 +672,6 @@ public class Parser {
         if (lookAhead() == null) {
             return null;
         }
-        iterator.eatLineTerminator();
         return switch (lookAhead().type()) {
             case OpenParenthesis, OpenBrackets -> ParenthesizedExpression();
             case Equal -> {
@@ -923,8 +911,21 @@ public class Parser {
         return iterator.eat(error, type);
     }
 
+    public boolean IsLookAhead(List<TokenType> list, TokenType... types) {
+        return IsLookAhead(list) || IsLookAhead(types);
+    }
+
     public boolean IsLookAhead(TokenType... type) {
         return iterator.IsLookAhead(type);
+    }
+
+    public boolean IsLookAhead(List<TokenType> type) {
+        for (TokenType p : type) {
+            if (iterator.IsLookAhead(p)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean match(String... strings) {
