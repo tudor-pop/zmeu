@@ -28,7 +28,7 @@ class TokenizerSpec {
             new Entry("^([0-9]*[.])?[0-9]+", TokenType.Number),
 
 // --------------------------------- Whitespace --------------------------------------------------------
-            new Entry("^\\n", TokenType.lineTerminator()),
+            new Entry("^\\n", TokenType.NewLine),
             new Entry("^\\s+", TokenType.WhiteSpace),
             new Entry("^;", TokenType.SemiColon),
 

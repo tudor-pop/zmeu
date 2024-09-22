@@ -7,6 +7,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.TypeParser;
+import io.zmeu.Frontend.Parser.Types.ValueType;
 import io.zmeu.Frontend.TypeChecker.TypeChecker;
 import io.zmeu.Frontend.visitors.SyntaxPrinter;
 import lombok.Data;
@@ -357,8 +358,6 @@ public class Parser {
     }
 
 
-
-
     /**
      * VariableInitializer
      * : SIMPLE_ASSIGN Expression
@@ -484,7 +483,7 @@ public class Parser {
     }
 
     private Expression OptExpression() {
-        return IsLookAhead(lineTerminator()) ? null : Expression();
+        return IsLookAhead(lineTerminator()) ? TypeIdentifier.type(ValueType.Void) : Expression();
     }
 
     /**

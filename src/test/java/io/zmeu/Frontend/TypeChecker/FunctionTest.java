@@ -52,6 +52,16 @@ public class FunctionTest extends BaseChecker {
     }
 
     @Test
+    void testVoidDoesntThrow() {
+       var actual = checker.eval(src("""
+                fun square() :Void { return; }
+                """));
+        Type expected = Type.fromString("()->Void");
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
     void testFunCall() {
         var actual = checker.eval(src("""
                 fun square(x :Number) :Number {

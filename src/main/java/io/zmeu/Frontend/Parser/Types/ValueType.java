@@ -7,6 +7,7 @@ public final class ValueType extends Type {
     public static ValueType String = new ValueType("String");
     public static ValueType Number = new ValueType("Number");
     public static ValueType Boolean = new ValueType("Boolean");
+    public static ValueType Void = new ValueType("Void");
     public static ValueType Null = new ValueType("Null");
 
     private ValueType() {
@@ -20,10 +21,11 @@ public final class ValueType extends Type {
 
     public static ValueType of(String value) {
         return switch (value) {
-            case "Boolean"-> Boolean;
-            case "String"-> String;
-            case "Number"-> Number;
-            case "Null"-> Null;
+            case "Boolean" -> Boolean;
+            case "String" -> String;
+            case "Number" -> Number;
+            case "Void" -> Void;
+            case "Null" -> Null;
             default -> null;
         };
     }

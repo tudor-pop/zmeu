@@ -57,24 +57,18 @@ public sealed abstract class Type extends Expression
     }
 
     public static Type fromString(String symbol) {
-        return switch (symbol) {
-            case "String" -> ValueType.String;
-            case "Number" -> ValueType.Number;
-            case "Boolean" -> ValueType.Boolean;
-            case "Null" -> ValueType.Null;
-            default -> {
-                if (symbol.startsWith("(")) {
-                    FunType fun = FunStore.getFun(symbol);
-                    if (fun != null) {
-                        yield fun;
-                    } else {
-                        FunStore.setFun(symbol, FunType.valueOf(symbol));
-                        yield FunStore.getFun(symbol);
-                    }
-                }
-                throw new IllegalArgumentException("Invalid symbol: " + symbol);
+        if (symbol.startsWith("(")) {
+            FunType fun = FunStore.getFun(symbol);
+            if (fun != null) {
+                return fun;
+            } else {
+                FunStore.setFun(symbol, FunType.valueOf(symbol));
+                return FunStore.getFun(symbol);
             }
-        };
+        } else {
+            return ValueType.of(symbol);
+        }
+//        throw new IllegalArgumentException("Invalid symbol: " + symbol);
     }
 
     public boolean hasValue() {

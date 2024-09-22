@@ -30,6 +30,7 @@ public class TypeChecker implements Visitor<Type> {
         env.init(ValueType.String.getValue(), ValueType.String);
         env.init(ValueType.Number.getValue(), ValueType.Number);
         env.init(ValueType.Boolean.getValue(), ValueType.Boolean);
+        env.init(ValueType.Void.getValue(), ValueType.Void);
         env.init(ValueType.Null.getValue(), ValueType.Null);
         env.init("pow", Type.fromString("(Number,Number)->Number"));
     }

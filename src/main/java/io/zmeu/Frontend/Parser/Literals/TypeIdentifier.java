@@ -49,6 +49,11 @@ public final class TypeIdentifier extends Identifier {
         this(path, Type.of(path));
     }
 
+    private TypeIdentifier(Type type) {
+        this();
+        setType(type);
+    }
+
     public static TypeIdentifier type(String type) {
         if (type.indexOf('.') == -1) {
             return new TypeIdentifier(type);
@@ -56,6 +61,10 @@ public final class TypeIdentifier extends Identifier {
         var prefix = StringUtils.substringBeforeLast(type, ".");
         var type1 = StringUtils.substringAfterLast(type, ".");
         return new TypeIdentifier(prefix, type1);
+    }
+
+    public static TypeIdentifier type(Type type) {
+        return new TypeIdentifier(type);
     }
 
     @Override
