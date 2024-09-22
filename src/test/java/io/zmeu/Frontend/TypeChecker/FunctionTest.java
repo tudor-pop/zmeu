@@ -53,19 +53,27 @@ public class FunctionTest extends BaseChecker {
 
     @Test
     void testVoidDoesntThrow() {
-       var actual = checker.eval(src("""
+        var actual = checker.eval(src("""
                 fun square() :Void { return; }
                 """));
         Type expected = Type.fromString("()->Void");
         assertEquals(expected, actual);
     }
+
     @Test
     void testVoidNoReturnDefauly() {
-       var actual = checker.eval(src("""
+        var actual = checker.eval(src("""
                 fun square() { return; }
                 """));
         Type expected = Type.fromString("()->Void");
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void testThrowIfVoidButReturns() {
+        assertThrows(TypeError.class, () -> checker.eval(src("""
+                fun square() { return 2; }
+                """)));
     }
 
 
