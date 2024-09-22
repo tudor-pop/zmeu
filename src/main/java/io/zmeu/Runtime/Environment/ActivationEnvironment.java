@@ -21,7 +21,7 @@ public class ActivationEnvironment extends Environment {
         super(parent);
         for (var i = 0; i < params.size(); i++) {
             // for each named parameter, we save the argument into the activation record(env that the function uses to execute)
-            var paramName = params.get(i).string();
+            var paramName = params.get(i).getName().string();
             init(paramName, args.get(i));
         }
     }

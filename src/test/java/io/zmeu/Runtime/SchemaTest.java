@@ -152,7 +152,7 @@ public class SchemaTest extends BaseTest {
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
-        assertNull(res);
+        assertNotNull(res);
         assertEquals(res, actual);
     }
 
