@@ -5,7 +5,7 @@ import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Types.Type;
-import io.zmeu.Frontend.visitors.Visitor;
+import io.zmeu.Visitors.Visitor;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.NodeType;
@@ -35,7 +35,7 @@ import java.util.List;
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.*;
 
 @Log4j2
-public class Interpreter implements Visitor<Object> {
+public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment env;
     private final Engine engine;

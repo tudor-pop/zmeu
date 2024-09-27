@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Parser;
 
 import io.zmeu.Frontend.Parser.Statements.Statement;
-import io.zmeu.Frontend.visitors.Visitor;
+import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

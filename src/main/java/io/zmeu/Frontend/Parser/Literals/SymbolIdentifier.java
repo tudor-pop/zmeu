@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Frontend.visitors.Visitor;
+import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.visitors;
+package io.zmeu.Visitors;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
@@ -6,7 +6,7 @@ import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.Type;
 
-public class SyntaxPrinter implements Visitor<String> {
+public non-sealed class AstPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
         return expr.accept(this);
@@ -19,7 +19,7 @@ public class SyntaxPrinter implements Visitor<String> {
 
     @Override
     public String eval(BinaryExpression expression) {
-        return "%s %s %s".formatted(expression.getLeft().accept(this), expression.getOperator(), expression.getRight().accept(this));
+        return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
     }
 
     @Override
@@ -34,18 +34,13 @@ public class SyntaxPrinter implements Visitor<String> {
 
     @Override
     public String eval(LogicalExpression expression) {
-        return "%s %s %s".formatted(expression.getLeft(), expression.getOperator(), expression.getRight());
+        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
     }
 
     @Override
     public String eval(MemberExpression expression) {
         return null;
     }
-
-//    @Override
-//    public String eval(ResourceExpression expression) {
-//        return "resource " + expression.getName().accept(this) + expression.getBlock().accept(this);
-//    }
 
     @Override
     public String eval(ThisExpression expression) {
@@ -64,7 +59,7 @@ public class SyntaxPrinter implements Visitor<String> {
 
     @Override
     public String eval(AssignmentExpression expression) {
-        return expression.getLeft().accept(this) + expression.getOperator() + expression.getRight().accept(this);
+        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
     }
 
     @Override
@@ -103,8 +98,8 @@ public class SyntaxPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(Type type) {
-        return type.getValue();
+    public String eval(Type statement) {
+        return "";
     }
 
     @Override
@@ -203,7 +198,7 @@ public class SyntaxPrinter implements Visitor<String> {
     private String parenthesize(String name, Expression... exprs) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("(");
+        builder.append("(").append(name);
         for (Expression expr : exprs) {
             builder.append(" ");
             builder.append(expr.accept(this));

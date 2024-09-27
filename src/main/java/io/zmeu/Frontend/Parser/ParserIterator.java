@@ -3,7 +3,7 @@ package io.zmeu.Frontend.Parser;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
-import io.zmeu.Frontend.visitors.AstPrinter;
+import io.zmeu.Visitors.AstPrinter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;

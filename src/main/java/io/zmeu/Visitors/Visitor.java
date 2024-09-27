@@ -1,12 +1,16 @@
-package io.zmeu.Frontend.visitors;
+package io.zmeu.Visitors;
 
+import io.zmeu.Frontend.Lexical.Resolver;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.Frontend.TypeChecker.TypeChecker;
+import io.zmeu.Runtime.Interpreter;
 
-public interface Visitor<R> {
+public sealed interface Visitor<R>
+        permits Resolver, TypeChecker, Interpreter, AstPrinter, LanguageAstPrinter, SyntaxPrinter {
     R eval(Expression expression);
 
     R eval(NumberLiteral expression);

@@ -1,18 +1,12 @@
-package io.zmeu.Frontend.visitors;
+package io.zmeu.Visitors;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.Type;
-import org.fusesource.jansi.Ansi;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.stream.Collectors;
-
-
-public class LanguageAstPrinter implements Visitor<String> {
-    private static Ansi ansi = Ansi.ansi();
+public non-sealed class SyntaxPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
         return expr.accept(this);
@@ -25,17 +19,12 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(BinaryExpression expression) {
-        return eval(expression.getLeft()) + " " + expression.getOperator() + " " + eval(expression.getRight());
+        return "%s %s %s".formatted(expression.getLeft().accept(this), expression.getOperator(), expression.getRight().accept(this));
     }
 
     @Override
-    public String eval(CallExpression<Expression> expression) {
-        var callName = eval(expression.getCallee());
-        var args = expression.getArguments()
-                .stream()
-                .map(this::eval)
-                .collect(Collectors.joining(","));
-        return callName + "(" + args + ")";
+    public String eval(CallExpression expression) {
+        return null;
     }
 
     @Override
@@ -45,13 +34,18 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(LogicalExpression expression) {
-        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
+        return "%s %s %s".formatted(expression.getLeft(), expression.getOperator(), expression.getRight());
     }
 
     @Override
     public String eval(MemberExpression expression) {
         return null;
     }
+
+//    @Override
+//    public String eval(ResourceExpression expression) {
+//        return "resource " + expression.getName().accept(this) + expression.getBlock().accept(this);
+//    }
 
     @Override
     public String eval(ThisExpression expression) {
@@ -65,19 +59,12 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(VariableDeclaration expression) {
-        StringBuilder var = new StringBuilder("var " + expression.getId().string());
-        if (expression.hasType()) {
-            var.append(" :").append(expression.getType().getType().getValue());
-        }
-        if (expression.hasInit()) {
-            var.append(" = ").append(eval(expression.getInit()));
-        }
-        return var.toString();
+        return null;
     }
 
     @Override
     public String eval(AssignmentExpression expression) {
-        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
+        return expression.getLeft().accept(this) + expression.getOperator() + expression.getRight().accept(this);
     }
 
     @Override
@@ -112,7 +99,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(Statement statement) {
-        return statement.accept(this);
+        return "";
     }
 
     @Override
@@ -127,26 +114,12 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(FunctionDeclaration statement) {
-        return "fun " +
-                statement.getName().string() +
-                "("
-                + statement.getParams().stream().map(LanguageAstPrinter::formatParameter).collect(Collectors.joining(","))
-                + ") "
-                + "{ \n"
-                + eval(statement.getBody())
-                + "\n} \n";
-    }
-
-    private static @NotNull String formatParameter(ParameterIdentifier it) {
-        if (it.getType() == null || it.getType().getType() == null) {
-            return ansi.fg(Ansi.Color.RED).a(it.getName().string()).reset().toString();
-        }
-        return it.getName().string() + " :" + it.getType().string();
+        return "";
     }
 
     @Override
     public String eval(ExpressionStatement statement) {
-        return eval(statement.getStatement());
+        return "";
     }
 
     @Override
@@ -156,13 +129,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(IfStatement statement) {
-        var string = new StringBuilder().append("if ").append(eval(statement.getTest())).append("{\n").append(eval(statement.getConsequent())).append("\n}\n");
-        if (statement.hasElse()) {
-            string.append(" else {\n")
-                    .append(eval(statement.getAlternate()))
-                    .append("\n}\n");
-        }
-        return string.toString();
+        return "";
     }
 
     @Override
@@ -182,7 +149,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(ReturnStatement statement) {
-        return "return " + eval(statement.getArgument());
+        return "";
     }
 
     @Override
@@ -205,10 +172,7 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(Identifier expression) {
-        return switch (expression) {
-            case ParameterIdentifier parameterIdentifier -> formatParameter(parameterIdentifier);
-            default -> expression.string();
-        };
+        return expression.string();
     }
 
     @Override
@@ -218,16 +182,12 @@ public class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(StringLiteral expression) {
-        return "\"" + expression.getValue() + "\"";
+        return expression.getValue();
     }
 
     @Override
     public String eval(BlockExpression expression) {
-        StringBuilder result = new StringBuilder();
-        for (Statement statement : expression.getExpression()) {
-            result.append(eval(statement));
-        }
-        return result.toString();
+        return null;
     }
 
     @Override
@@ -243,7 +203,7 @@ public class LanguageAstPrinter implements Visitor<String> {
     private String parenthesize(String name, Expression... exprs) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("(").append(name);
+        builder.append("(");
         for (Expression expr : exprs) {
             builder.append(" ");
             builder.append(expr.accept(this));

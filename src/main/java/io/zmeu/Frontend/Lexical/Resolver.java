@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Lexical;
 
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Parser.Types.Type;
-import io.zmeu.Frontend.visitors.Visitor;
+import io.zmeu.Visitors.Visitor;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-public class Resolver implements Visitor<Void> {
+public final class Resolver implements Visitor<Void> {
     private final Interpreter interpreter;
     /**
      * Tracks how many scopes are we nested within source code. Based on this we know how to properly handle variable declarations/resolution

@@ -7,8 +7,8 @@ import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.FunType;
 import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.Parser.Types.ValueType;
-import io.zmeu.Frontend.visitors.LanguageAstPrinter;
-import io.zmeu.Frontend.visitors.Visitor;
+import io.zmeu.Visitors.LanguageAstPrinter;
+import io.zmeu.Visitors.Visitor;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-public class TypeChecker implements Visitor<Type> {
+public final class TypeChecker implements Visitor<Type> {
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     @Getter
     private TypeEnvironment env;
