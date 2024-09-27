@@ -189,7 +189,7 @@ public class FunctionTest extends BaseChecker {
     }
 
     @Test
-    void testHigherOrderFunctionMultipleArgs() {
+    void testClojureFunctionMultipleArgs() {
         var actual = checker.eval(src("""
                 var global=10
                 fun outer(x :Number, y :Number) :(Number,Number,Number)->Number {
