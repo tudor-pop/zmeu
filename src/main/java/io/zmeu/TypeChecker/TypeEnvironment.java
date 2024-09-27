@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.TypeChecker;
+package io.zmeu.TypeChecker;
 
 import io.zmeu.Resources.Resource;
 import io.zmeu.Runtime.Environment.Environment;

@@ -2,6 +2,7 @@ package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.Parser.Types.ValueType;
+import io.zmeu.TypeChecker.TypeError;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
