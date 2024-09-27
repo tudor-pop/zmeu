@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.TypeChecker;
+package io.zmeu.TypeChecker;
 
 import org.junit.platform.suite.api.SelectPackages;
 
