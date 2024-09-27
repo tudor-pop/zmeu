@@ -4,13 +4,13 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.TypeChecker.Types.FunType;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.TypeChecker.Types.TypeFactory;
 import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
-import io.zmeu.Runtime.exceptions.NotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -194,7 +194,7 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     private Type expect(Type actualType, Type expectedType, Statement actualVal, Statement expectedVal) {
-        if (actualType == ValueType.Null) {
+        if (actualType == null || actualType == ValueType.Null) {
             return expectedType;
         }
         if (!Objects.equals(actualType, expectedType)) {
@@ -280,14 +280,16 @@ public final class TypeChecker implements Visitor<Type> {
             }
         }
 
-        var funEnv = new TypeEnvironment(env, collect);
+        List<Type> funParams = collect.values()
+                .stream()
+                .map(Type.class::cast)
+                .toList();
+        var funType = new FunType(funParams, returnType);
+        env.init(fun.getName(), funType); // save function signature in env so that we're able to call it later to validate types
 
+        var funEnv = new TypeEnvironment(env, collect);
         var actualReturnType = executeBlock(fun.getBody(), funEnv);
         expect(actualReturnType, returnType, fun.getBody(), returnType);
-
-        List<Type> types = collect.values().stream().map(Type.class::cast).toList();
-        var funType = new FunType(types, actualReturnType);
-        env.init(fun.getName(), funType); // save function signature in env so that we're able to call it later to validate types
 
         return funType;
     }
@@ -344,7 +346,10 @@ public final class TypeChecker implements Visitor<Type> {
         Type t1 = eval(statement.getTest());
         expect(t1, ValueType.Boolean, statement.getTest(), statement.getTest());
         Type t2 = eval(statement.getConsequent());
-        Type t3 = eval(statement.getAlternate());
+        Type t3 = null;
+        if (statement.getAlternate() != null) {
+            t3 = eval(statement.getAlternate());
+        }
 
         return expect(t3, t2, statement, statement);
     }

@@ -209,4 +209,19 @@ public class FunctionTest extends BaseChecker {
         assertEquals(ValueType.Number, actual);
     }
 
+    @Test
+    void testRecursionFun() {
+        var actual = checker.eval(src("""
+                fun recursive(x :Number) :Number {
+                    if (x == 1) return x
+                    return recursive(x-1)
+                }
+                recursive(3)
+                """
+        ));
+
+        assertNotNull(actual);
+        assertEquals(ValueType.Number, actual);
+    }
+
 }
