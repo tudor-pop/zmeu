@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
-public class CallExpression<E extends Expression> extends Expression {
+public final class CallExpression<E extends Expression> extends Expression {
     private Expression callee;
     private List<E> arguments;
 

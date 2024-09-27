@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UnaryExpression extends Expression {
+public final class UnaryExpression extends Expression {
     private Expression value;
     private String operator;
 

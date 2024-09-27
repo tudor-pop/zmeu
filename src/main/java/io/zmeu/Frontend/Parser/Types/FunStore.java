@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FunStore {
-    private static Map<String, FunType> store = new HashMap<>();
+    private static final Map<String, FunType> store = new HashMap<>();
 
     public static FunType getFun(String funName) {
         return store.get(funName);

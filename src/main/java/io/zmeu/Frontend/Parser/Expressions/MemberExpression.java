@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
-public class MemberExpression extends Expression {
+public final class MemberExpression extends Expression {
     private boolean computed;
     private Expression object;
     private Expression property;

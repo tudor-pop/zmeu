@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LogicalExpression extends Expression {
+public final class LogicalExpression extends Expression {
     private Expression left;
     private Expression right;
     private TokenType operator;

@@ -11,7 +11,7 @@ import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AssignmentExpression extends Expression {
+public final class AssignmentExpression extends Expression {
     /**
      * Must either be Identifier or MemberExpression
      */

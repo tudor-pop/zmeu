@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 
 public non-sealed class LanguageAstPrinter implements Visitor<String> {
-    private static Ansi ansi = Ansi.ansi();
+    private static final Ansi ansi = Ansi.ansi();
 
     public String print(Expression expr) {
         return expr.accept(this);

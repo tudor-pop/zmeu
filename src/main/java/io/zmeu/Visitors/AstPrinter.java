@@ -6,7 +6,7 @@ import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.Type;
 
-public non-sealed class AstPrinter implements Visitor<String> {
+public final class AstPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
         return expr.accept(this);

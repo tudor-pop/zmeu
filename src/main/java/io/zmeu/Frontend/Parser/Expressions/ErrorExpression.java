@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Visitors.Visitor;
 
-public class ErrorExpression extends Expression {
+public final class ErrorExpression extends Expression {
     private String msg;
     private int position;
 

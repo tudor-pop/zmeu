@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GroupExpression extends Expression {
+public final class GroupExpression extends Expression {
     private Expression expression;
 
     public GroupExpression(Expression expression) {

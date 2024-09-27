@@ -733,7 +733,7 @@ public class Parser {
         var name = Identifier();
         var body = BlockExpression("Expect '{' after module name.", "Expect '}' after module body.");
 
-        return ModuleExpression.of((PluginIdentifier) moduleType, name, (BlockExpression) body);
+        return ModuleExpression.of(moduleType, name, (BlockExpression) body);
     }
 
     private Expression LeftHandSideExpression() {

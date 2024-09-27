@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class VariableDeclaration extends Expression {
+public final class VariableDeclaration extends Expression {
     private Identifier id;
     private Expression init;
     private TypeIdentifier type;

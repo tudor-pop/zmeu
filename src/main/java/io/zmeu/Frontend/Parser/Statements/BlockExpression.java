@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BlockExpression extends Expression {
+public non-sealed class BlockExpression extends Expression {
     private List<Statement> expression;
 
     public BlockExpression(@Nullable Statement... expression) {

@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LambdaExpression extends Expression {
+public non-sealed class LambdaExpression extends Expression {
     private List<ParameterIdentifier> params;
     private Statement body;
 

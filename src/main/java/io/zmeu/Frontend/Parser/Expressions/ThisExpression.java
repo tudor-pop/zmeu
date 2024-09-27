@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ThisExpression extends Expression {
+public final class ThisExpression extends Expression {
     private Identifier instance;
 
     private ThisExpression() {
