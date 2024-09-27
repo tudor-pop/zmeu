@@ -39,7 +39,7 @@ dependencies {
     annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
     implementation 'org.javers:javers-core:7.6.2'
     implementation 'org.javers:javers-persistence-sql:7.6.2'
-    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.postgresql:postgresql:42.7.4'
 
     compileOnly "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
@@ -47,7 +47,7 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.1'
-    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.0'
+    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.1'
 }
 
@@ -55,8 +55,8 @@ test {
     useJUnitPlatform()
 }
 extraJavaModuleInfo {
-    automaticModule('javers-core-7.6.2.jar', 'javers.core');
-    automaticModule('javers-persistence-sql-7.6.2.jar', 'javers.persistence.sql');
+    automaticModule('org.javers:javers-core', 'javers.core');
+    automaticModule('org.javers:javers-persistence-sql', 'javers.persistence.sql');
     automaticModule('picocli-codegen-4.7.6.jar', 'info.picocli');
     failOnMissingModuleInfo.set(false)
 
