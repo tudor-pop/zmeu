@@ -25,6 +25,10 @@ public enum TokenType {
     Equal("="),
     Equal_Complex("+="),
     RelationalOperator("<>="),
+    LessThanOperator("<"),
+    LessThanOrEqualOperator("<="),
+    GreaterThanOperator(">"),
+    GreaterThanOrEqualOperator(">="),
     Equality_Operator("=="),
     /***********   Keywords   ******************/
     Logical_And("&&"),
@@ -137,6 +141,8 @@ public enum TokenType {
             case ']' -> CloseBrackets;
             case '?' -> OptionalOperator;
             case '@' -> AT;
+            case '<'-> LessThanOperator;
+            case '>'-> GreaterThanOperator;
             case '+' -> Plus;
             case '-' -> Minus;
             case '*' -> Multiply;
