@@ -6,6 +6,7 @@ import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.TypeChecker.Types.FunType;
 import io.zmeu.TypeChecker.Types.Type;
+import io.zmeu.TypeChecker.Types.TypeFactory;
 import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
@@ -32,7 +33,7 @@ public final class TypeChecker implements Visitor<Type> {
         env.init(ValueType.Boolean.getValue(), ValueType.Boolean);
         env.init(ValueType.Void.getValue(), ValueType.Void);
         env.init(ValueType.Null.getValue(), ValueType.Null);
-        env.init("pow", Type.fromString("(Number,Number)->Number"));
+        env.init("pow", TypeFactory.fromString("(Number,Number)->Number"));
     }
 
     public TypeChecker(TypeEnvironment environment) {
@@ -55,10 +56,10 @@ public final class TypeChecker implements Visitor<Type> {
         try {
             if (expression instanceof TypeIdentifier identifier) {
                 var type = (Type) env.lookup(identifier.getType().getValue());
-                return Objects.requireNonNullElseGet(type, () -> Type.fromString(identifier.getType().getValue()));
+                return Objects.requireNonNullElseGet(type, () -> TypeFactory.fromString(identifier.getType().getValue()));
             } else if (expression instanceof SymbolIdentifier identifier) {
                 var type = (Type) env.lookup(identifier.getSymbol());
-                return Objects.requireNonNullElseGet(type, () -> Type.fromString(identifier.getSymbol()));
+                return Objects.requireNonNullElseGet(type, () -> TypeFactory.fromString(identifier.getSymbol()));
             }
             throw new TypeError(expression.string());
         } catch (NotFoundException exception) {

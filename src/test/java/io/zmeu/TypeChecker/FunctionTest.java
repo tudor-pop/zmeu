@@ -1,6 +1,7 @@
 package io.zmeu.TypeChecker;
 
 import io.zmeu.TypeChecker.Types.Type;
+import io.zmeu.TypeChecker.Types.TypeFactory;
 import io.zmeu.TypeChecker.Types.ValueType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,7 @@ public class FunctionTest extends BaseChecker {
                 // square(2)
                 """));
         assertNotNull(actual);
-        Type expected = Type.fromString("(Number)->Number");
+        Type expected = TypeFactory.fromString("(Number)->Number");
         assertEquals(expected, actual);
     }
 
@@ -38,7 +39,7 @@ public class FunctionTest extends BaseChecker {
         var actual = checker.eval(src("""
                 fun square() :Number { return 2 * 2 }
                 """));
-        Type expected = Type.fromString("()->Number");
+        Type expected = TypeFactory.fromString("()->Number");
         assertEquals(expected, actual);
     }
 
@@ -56,7 +57,7 @@ public class FunctionTest extends BaseChecker {
         var actual = checker.eval(src("""
                 fun square() :Void { return; }
                 """));
-        Type expected = Type.fromString("()->Void");
+        Type expected = TypeFactory.fromString("()->Void");
         assertEquals(expected, actual);
     }
 
@@ -65,7 +66,7 @@ public class FunctionTest extends BaseChecker {
         var actual = checker.eval(src("""
                 fun square() { return; }
                 """));
-        Type expected = Type.fromString("()->Void");
+        Type expected = TypeFactory.fromString("()->Void");
         assertEquals(expected, actual);
     }
 

@@ -56,21 +56,6 @@ public sealed abstract class Type extends Expression
                 .toString();
     }
 
-    public static Type fromString(String symbol) {
-        if (symbol.startsWith("(")) {
-            FunType fun = FunStore.getFun(symbol);
-            if (fun != null) {
-                return fun;
-            } else {
-                FunStore.setFun(symbol, FunType.valueOf(symbol));
-                return FunStore.getFun(symbol);
-            }
-        } else {
-            return ValueType.of(symbol);
-        }
-//        throw new IllegalArgumentException("Invalid symbol: " + symbol);
-    }
-
     public boolean hasValue() {
         return StringUtils.isNotBlank(value);
     }

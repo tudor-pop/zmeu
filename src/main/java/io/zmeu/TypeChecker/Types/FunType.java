@@ -77,7 +77,7 @@ public final class FunType extends Type {
         Type returnType = null;
         List<Type> paramsType = new ArrayList<>();
         if (funSplit.length == 2) {
-            returnType = Type.fromString(funSplit[1]);
+            returnType = TypeFactory.fromString(funSplit[1]);
             paramsType = typesBetweenParantheses(funSplit[0]);
         } else if (funSplit.length == 1) {
             paramsType = typesBetweenParantheses(funSplit[0]);
@@ -92,7 +92,7 @@ public final class FunType extends Type {
         }
         var split = substring.split(",");
         return Arrays.stream(split)
-                .map(Type::fromString)
+                .map(TypeFactory::fromString)
                 .collect(Collectors.toList());
     }
 
