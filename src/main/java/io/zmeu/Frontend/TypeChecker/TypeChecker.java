@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.visitors;
+package io.zmeu.Frontend.TypeChecker;
 
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
@@ -7,8 +7,8 @@ import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Frontend.Parser.Types.FunType;
 import io.zmeu.Frontend.Parser.Types.Type;
 import io.zmeu.Frontend.Parser.Types.ValueType;
-import io.zmeu.Frontend.TypeChecker.TypeEnvironment;
-import io.zmeu.Frontend.TypeChecker.TypeError;
+import io.zmeu.Frontend.visitors.LanguageAstPrinter;
+import io.zmeu.Frontend.visitors.Visitor;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
