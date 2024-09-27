@@ -1,7 +1,7 @@
 package io.zmeu.Frontend.Lexical;
 
 import io.zmeu.ErrorSystem;
-import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.Visitor;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;

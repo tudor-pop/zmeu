@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

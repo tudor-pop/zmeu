@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.Parser.Types;
+package io.zmeu.TypeChecker.Types;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

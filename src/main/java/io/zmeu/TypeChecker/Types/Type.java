@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.Parser.Types;
+package io.zmeu.TypeChecker.Types;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.NodeType;

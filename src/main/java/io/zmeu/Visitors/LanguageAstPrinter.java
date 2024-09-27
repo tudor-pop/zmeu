@@ -4,7 +4,7 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.TypeChecker.Types.Type;
 import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.NotNull;
 

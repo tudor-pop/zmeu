@@ -1,4 +1,4 @@
-package io.zmeu.Frontend.Parser.Types;
+package io.zmeu.TypeChecker.Types;
 
 import java.util.HashMap;
 import java.util.Map;

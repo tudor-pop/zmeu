@@ -6,9 +6,8 @@ import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.Types.TypeParser;
-import io.zmeu.Frontend.Parser.Types.ValueType;
-import io.zmeu.TypeChecker.TypeChecker;
+import io.zmeu.TypeChecker.Types.TypeParser;
+import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.SyntaxPrinter;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
@@ -67,7 +66,6 @@ public class Parser {
     private ParserIterator iterator;
     private Program program = new Program();
     private SyntaxPrinter printer = new SyntaxPrinter();
-    private TypeChecker typeChecker = new TypeChecker();
     private TypeParser typeParser = new TypeParser(this);
 
     public Parser(List<Token> tokens) {

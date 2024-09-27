@@ -5,7 +5,7 @@ import io.zmeu.Frontend.Parser.Literals.Literal;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.LambdaExpression;
-import io.zmeu.Frontend.Parser.Types.Type;
+import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.Visitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
