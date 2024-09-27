@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id("org.gradlex.extra-java-module-info") version "1.9"
 }
 
 group 'io.zmeu'
@@ -9,8 +10,8 @@ repositories {
     mavenCentral()
 }
 
-def pf4jVersion = '3.11.0'
-def jackson = '2.17.2'
+def pf4jVersion = '3.12.0'
+def jackson = '2.18.0'
 def lombok = '1.18.34'
 
 dependencies {
@@ -22,7 +23,7 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-jdk14:2.0.16'
 
     implementation 'org.apache.commons:commons-lang3:3.15.0'
-    implementation 'org.jetbrains:annotations:24.1.0'
+    implementation 'org.jetbrains:annotations:25.0.0'
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jackson"
     implementation "com.fasterxml.jackson.module:jackson-module-parameter-names:$jackson"
@@ -45,15 +46,21 @@ dependencies {
 
     testCompileOnly "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.0-M2'
-    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.0-M2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.0-M2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.1'
+    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.1'
 }
 
 test {
     useJUnitPlatform()
 }
+extraJavaModuleInfo {
+    automaticModule('javers-core-7.6.2.jar', 'javers.core');
+    automaticModule('javers-persistence-sql-7.6.2.jar', 'javers.persistence.sql');
+    automaticModule('picocli-codegen-4.7.6.jar', 'info.picocli');
+    failOnMissingModuleInfo.set(false)
 
+}
 compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
