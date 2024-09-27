@@ -11,7 +11,36 @@ import io.zmeu.Runtime.Interpreter;
 
 public sealed interface Visitor<R>
         permits Resolver, TypeChecker, Interpreter, AstPrinter, LanguageAstPrinter, SyntaxPrinter {
-    R eval(Expression expression);
+
+    default R eval(Expression expr) {
+        return switch (expr) {
+            case BinaryExpression expression -> eval(expression);
+            case AssignmentExpression expression -> eval(expression);
+            case CallExpression expression -> eval((CallExpression<Expression>) expression);
+            case ErrorExpression expression -> eval(expression);
+            case GroupExpression expression -> eval(expression);
+            case LogicalExpression expression -> eval(expression);
+            case MemberExpression expression -> eval(expression);
+            case ThisExpression expression -> eval(expression);
+            case UnaryExpression expression -> eval(expression);
+            case VariableDeclaration expression -> eval(expression);
+            case Identifier identifier -> eval(identifier);
+            case Literal literal -> eval(literal);
+            case BlockExpression expression -> eval(expression);
+            case LambdaExpression expression -> eval(expression);
+            case Type type -> eval(type);
+        };
+    }
+
+    default R eval(Literal expression) {
+        return switch (expression) {
+            case NumberLiteral number -> eval(number);
+            case StringLiteral string -> eval(string);
+            case BooleanLiteral bool -> eval(bool);
+            case NullLiteral nullliteral -> eval(nullliteral);
+            default -> throw new IllegalStateException("Unexpected value: " + expression);
+        };
+    }
 
     R eval(NumberLiteral expression);
 

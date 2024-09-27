@@ -9,43 +9,12 @@ import io.zmeu.Frontend.Parser.Types.Type;
 public final class AstPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
-        return switch (expr) {
-            case BinaryExpression expression -> parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
-            case AssignmentExpression expression -> parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
-            case CallExpression callExpression -> null;
-            case ErrorExpression errorExpression -> null;
-            case GroupExpression expression -> parenthesize("group", expression.getExpression());
-            case LogicalExpression expression -> parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
-            case MemberExpression memberExpression -> null;
-            case ThisExpression thisExpression -> null;
-            case UnaryExpression expression -> parenthesize(expression.getOperator(), expression.getValue());
-            case VariableDeclaration variableDeclaration -> null;
-            case Identifier identifier -> identifier.string();
-            case Literal literal -> eval(literal);
-            case BlockExpression blockExpression -> null;
-            case LambdaExpression lambdaExpression -> null;
-            case Type type -> null;
-        };
+        return eval(expr);
     }
 
     @Override
     public String eval(Expression expression) {
         return print(expression);
-    }
-
-    public String eval(Literal literal) {
-        return switch (literal){
-            case NumberLiteral expression ->  {
-                if (expression.getVal() == null) {
-                    yield  "null";
-                }
-                yield  expression.getVal().toString();
-            }
-            case BooleanLiteral expression ->  expression.getVal().toString();
-            case StringLiteral expression ->  expression.getVal().toString();
-            case NullLiteral expression ->  "null";
-            default -> throw new IllegalStateException("Unexpected value: " + literal);
-        };
     }
 
     @Override
