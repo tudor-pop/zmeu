@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.TypeChecker.Types.Type;
+import io.zmeu.TypeChecker.Types.TypeFactory;
 import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,11 +43,11 @@ public final class TypeIdentifier extends Identifier {
     }
 
     private TypeIdentifier(String path, String type) {
-        this(path, Type.of(type));
+        this(path, TypeFactory.of(type));
     }
 
     private TypeIdentifier(String path) {
-        this(path, Type.of(path));
+        this(path, TypeFactory.of(path));
     }
 
     private TypeIdentifier(Type type) {

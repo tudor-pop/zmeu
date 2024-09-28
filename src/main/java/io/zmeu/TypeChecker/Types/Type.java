@@ -26,14 +26,6 @@ public sealed abstract class Type extends Expression
         this.kind = NodeType.Type;
     }
 
-    public static Type of(String string) {
-        var res = ValueType.of(string);
-        if (res == null) {
-            return ReferenceType.of(string);
-        }
-        return res;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
