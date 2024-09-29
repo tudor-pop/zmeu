@@ -3,20 +3,20 @@ package io.zmeu.Runtime.Environment;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-public interface IEnvironment {
-    Object assign(String varName, Object value);
+public interface IEnvironment<T> {
+    T assign(String varName, T value);
 
-    Object lookup(@Nullable String varName);
+    T lookup(@Nullable String varName);
 
-    Object lookup(@Nullable Object varName);
+    T lookup(@Nullable T varName);
 
-    IEnvironment getParent();
+    IEnvironment<T> getParent();
 
     /**
      * Return the environment after going through n parents
      */
-    default IEnvironment ancestor(Integer hops) {
-        IEnvironment environment = this;
+    default IEnvironment<T> ancestor(Integer hops) {
+        IEnvironment<T> environment = this;
         if (hops == null) {
             // if number of hops is not defined we are not in a local scope so we try to find
             // the variable in the global scope. Else we know exactly how many parents we need to go up the chain
@@ -34,39 +34,19 @@ public interface IEnvironment {
         return environment;
     }
 
-    @Nullable Object get(String key);
+    @Nullable T get(String key);
 
-    default Object init(String name, int value) {
-        return init(name, Integer.valueOf(value));
-    }
-
-    default Object init(String name, double value) {
-        return init(name, Double.valueOf(value));
-    }
-
-    default Object init(String name, float value) {
-        return init(name, Float.valueOf(value));
-    }
-
-    default Object init(String name, String value) {
-        return init(name, (Object) value);
-    }
-
-    default Object init(String name, boolean value) {
-        return init(name, Boolean.valueOf(value));
-    }
-
-    default Object init(Identifier name, Object value) {
+    default T init(Identifier name, T value) {
         return init(name.string(), value);
     }
 
-    Object init(String name, Object value);
+    T init(String name, T value);
 
-    default Object assign(String symbol, Object right, Integer hops) {
+    default T assign(String symbol, T right, Integer hops) {
         return ancestor(hops).assign(symbol, right);
     }
 
-    default Object lookup(String symbol, Integer hops) {
+    default T lookup(String symbol, Integer hops) {
         return ancestor(hops).lookup(symbol);
     }
 

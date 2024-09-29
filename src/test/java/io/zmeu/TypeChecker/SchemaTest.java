@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-@DisplayName("TypeChecker Assignment")
+@DisplayName("TypeChecker Schema")
 public class SchemaTest extends BaseChecker {
 
     @Test
-    void classes() {
+    void schema() {
         var actual = checker.eval(src("""
                 schema Vm {
                 

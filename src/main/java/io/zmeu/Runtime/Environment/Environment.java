@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Log4j2
 @Data
-public class Environment<T> implements IEnvironment {
+public class Environment<T> implements IEnvironment<T> {
     @Nullable
     @Getter
     @JsonIgnore
@@ -65,7 +65,7 @@ public class Environment<T> implements IEnvironment {
      * var b = 3
      */
     @Override
-    public Object init(String name, Object value) {
+    public T init(String name, T value) {
         if (variables.containsKey(name)) {
             throw new VarExistsException(name);
         }
@@ -78,14 +78,14 @@ public class Environment<T> implements IEnvironment {
      * x = 10
      */
     @Override
-    public Object assign(String varName, Object value) {
+    public T assign(String varName, T value) {
         var env = this.resolve(varName);
         env.put(varName, value);
         return value;
     }
 
     @Override
-    public Object lookup(@Nullable String varName) {
+    public T lookup(@Nullable String varName) {
         if (varName == null) {
             varName = "null";
         }
@@ -94,7 +94,7 @@ public class Environment<T> implements IEnvironment {
     }
 
     @Override
-    public Object lookup(@Nullable Object varName) {
+    public T lookup(@Nullable T varName) {
         return lookup(varName);
     }
 
@@ -104,7 +104,7 @@ public class Environment<T> implements IEnvironment {
      * @param symbol
      * @return
      */
-    private Environment resolve(String symbol, String error) {
+    private Environment<T> resolve(String symbol, String error) {
         if (variables.containsKey(symbol)) {
             return this;
         }
@@ -114,7 +114,7 @@ public class Environment<T> implements IEnvironment {
         return this.parent.resolve(symbol, error);
     }
 
-    private Environment resolve(String symbol) {
+    private Environment<T> resolve(String symbol) {
         return resolve(symbol, "Variable not found: ");
     }
 
@@ -127,7 +127,7 @@ public class Environment<T> implements IEnvironment {
         return this.variables.get(key);
     }
 
-    public Object lookup(String symbol, String error) {
+    public T lookup(String symbol, String error) {
         return resolve(symbol, error) // search the scope
                 .get(symbol);
     }

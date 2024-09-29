@@ -1,18 +1,30 @@
 package io.zmeu.TypeChecker.Types;
 
+import io.zmeu.TypeChecker.TypeEnvironment;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public final class SchemaType extends ReferenceType {
+    private final TypeEnvironment environment;
+    private final SchemaType extended;
 
-    private SchemaType(String typeName) {
+    public SchemaType(String typeName) {
+        this(typeName, null, null);
+    }
+
+    public SchemaType(String typeName, SchemaType extended, @Nullable TypeEnvironment env) {
         super(typeName);
+        this.extended = extended;
+        this.environment = new TypeEnvironment(env);
     }
 
-    @Override
-    public String toString() {
-        return super.getValue();
+    public Type getField(@NotNull String fieldName) {
+        return environment.lookup(fieldName);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 }
