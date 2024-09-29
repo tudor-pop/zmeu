@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
 @DisplayName("TypeChecker Type")
-public class TypeTest extends BaseTest {
+public class ValueTypesTest extends BaseTest {
 
     @Test
     void testString() {
