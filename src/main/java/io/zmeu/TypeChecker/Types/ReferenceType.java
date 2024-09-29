@@ -2,9 +2,9 @@ package io.zmeu.TypeChecker.Types;
 
 import io.zmeu.Frontend.Parser.NodeType;
 
-public final class ReferenceType extends Type {
+public sealed class ReferenceType extends Type permits SchemaType {
 
-    private ReferenceType(String typeName) {
+    public ReferenceType(String typeName) {
         super(typeName);
         this.kind = NodeType.Type;
     }

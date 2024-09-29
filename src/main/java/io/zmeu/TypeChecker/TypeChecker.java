@@ -385,7 +385,10 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type eval(SchemaDeclaration statement) {
+    public Type eval(SchemaDeclaration schema) {
+        var name = schema.getName();
+        var body = schema.getBody();
+
         return null;
     }
 
