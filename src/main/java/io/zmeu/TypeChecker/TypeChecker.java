@@ -16,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public final class TypeChecker implements Visitor<Type> {
@@ -145,10 +148,10 @@ public final class TypeChecker implements Visitor<Type> {
         this.expectOperatorType(t2, allowedTypes, expression);
 
         if (isBooleanOp(op)) { // when is a boolean operation in an if statement, we return a boolean type(the result) else we return the type of the result for a + or *
-            expect(t1, t2, expression, left);
+            expect(t1, t2, left);
             return ValueType.Boolean;
         }
-        return expect(t1, t2, expression, left);
+        return expect(t1, t2, left);
     }
 
     private void expectOperatorType(Type type, List<Type> allowedTypes, BinaryExpression expression) {
@@ -174,9 +177,12 @@ public final class TypeChecker implements Visitor<Type> {
         };
     }
 
-    private Type expect(Type actualType, Type expectedType, Expression actualVal, Expression expectedVal) {
+    private Type expect(Type actualType, Type expectedType, Expression expectedVal) {
         if (actualType == ValueType.Null) {
             return expectedType;
+        }
+        if (expectedType == ValueType.Null) {
+            return actualType;
         }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
@@ -267,23 +273,30 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(FunctionDeclaration expression) {
-        var funType = funType(expression.getParams(), eval(expression.getReturnType()), expression.getBody());
+        var params = convertParams(expression.getParams());
+        var funType = new FunType(params.values(), expression.getReturnType().getType());
         env.init(expression.getName(), funType); // save function signature in env so that we're able to call it later to validate types
 
+        var actualReturn = validateBody(expression.getReturnType().getType(), expression.getBody(), params);
+        funType.setReturnType(actualReturn);
         return funType;
     }
 
     @Override
     public Type eval(LambdaExpression expression) {
+        var params = convertParams(expression.getParams());
+        var funType = new FunType(params.values(), eval(expression.getReturnType()));
         if (expression.getReturnType().getType() == ValueType.Void) {
-            return funType(expression.getParams(), ValueType.Null, expression.getBody());
+            var actualReturn = validateBody(ValueType.Null, expression.getBody(), params);
+            funType.setReturnType(actualReturn);
+            return funType;
         }
-        return funType(expression.getParams(), eval(expression.getReturnType()), expression.getBody());
+        var actualReturn = validateBody(eval(expression.getReturnType()), expression.getBody(), params);
+        funType.setReturnType(actualReturn);
+        return funType;
     }
 
-    private @NotNull FunType funType(List<ParameterIdentifier> params, @Nullable Type returnType, Statement body) {
-        var paramTypes = new ArrayList<Type>(params.size());
-
+    private @NotNull Map<String, Type> convertParams(List<ParameterIdentifier> params) {
         var collect = new HashMap<String, Type>(params.size());
         for (ParameterIdentifier identifier : params) {
             if (identifier.getType() == null) {
@@ -293,14 +306,15 @@ public final class TypeChecker implements Visitor<Type> {
             if (collect.put(identifier.getName().getSymbol(), type) != null) {
                 throw new IllegalStateException("Duplicate key");
             }
-            paramTypes.add(type);
         }
+        return collect;
+    }
 
+    private @NotNull Type validateBody(@Nullable Type returnType, Statement body, Map<String, Type> collect) {
         var funEnv = new TypeEnvironment(env, collect);
         var actualReturnType = executeBlock(body, funEnv);
-        var funReturnType = expect(actualReturnType, returnType, body, returnType);
 
-        return new FunType(paramTypes, funReturnType);
+        return expect(actualReturnType, returnType, body, returnType);
     }
 
     @Override
@@ -311,11 +325,11 @@ public final class TypeChecker implements Visitor<Type> {
                 .stream()
                 .map(this::eval)
                 .toList();
-        checkFunctionCall(fun, passedArgumentsTypes, env, expression);
+        checkFunctionCall(fun, passedArgumentsTypes, expression);
         return fun.getReturnType();
     }
 
-    private void checkFunctionCall(FunType fun, List<Type> args, TypeEnvironment env, CallExpression<Expression> expression) {
+    private void checkFunctionCall(FunType fun, List<Type> args, CallExpression<Expression> expression) {
         if (fun.getParams().size() != args.size()) {
             String string = "Function '" + printer.eval(expression.getCallee()) + "' expects " + fun.getParams().size() + " arguments but got " + args.size() + " in " + printer.eval(expression);
             throw new TypeError(string);
@@ -324,7 +338,7 @@ public final class TypeChecker implements Visitor<Type> {
             try {
                 var param = fun.getParams().get(i);
                 Type actual = args.get(i);
-                expect(actual, param, actual, expression);
+                expect(actual, param, expression);
             } catch (IndexOutOfBoundsException exception) {
             }
         }
@@ -352,7 +366,7 @@ public final class TypeChecker implements Visitor<Type> {
     @Override
     public Type eval(IfStatement statement) {
         Type t1 = eval(statement.getTest());
-        expect(t1, ValueType.Boolean, statement.getTest(), statement.getTest());
+        expect(t1, ValueType.Boolean, statement.getTest());
         Type t2 = eval(statement.getConsequent());
         Type t3 = null;
         if (statement.getAlternate() != null) {
@@ -385,7 +399,7 @@ public final class TypeChecker implements Visitor<Type> {
         String var = expression.getId().string();
         if (expression.hasType()) {
             var explicitType = eval(expression.getType());
-            expect(implicitType, explicitType, expression, expression.getInit());
+            expect(implicitType, explicitType, expression.getInit());
             return (Type) env.init(var, explicitType);
         }
         return (Type) env.init(var, implicitType);
@@ -400,7 +414,7 @@ public final class TypeChecker implements Visitor<Type> {
     public Type eval(AssignmentExpression expression) {
         var varType = eval(expression.getLeft());
         var valueType = eval(expression.getRight());
-        return expect(valueType, varType, expression, expression.getLeft());
+        return expect(valueType, varType, expression.getLeft());
     }
 
     @Override

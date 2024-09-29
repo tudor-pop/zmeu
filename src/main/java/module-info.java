@@ -15,4 +15,5 @@ module zmeu.io {
     requires com.fasterxml.jackson.databind;
     requires com.google.gson;
     requires java.sql;
+    requires jdk.jdi;
 }

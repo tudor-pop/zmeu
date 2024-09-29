@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,17 +18,28 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 public final class FunType extends Type {
     private List<Type> params;
+
     private Type returnType;
 
-    public FunType(List<Type> params, Type returnType) {
+    public FunType(Collection<Type> params, Type returnType) {
         super();
-        this.params = params;
+        this.params = List.copyOf(params);
         this.returnType = returnType;
         setValue(name());
     }
 
-    public static Object from(List<Type> params, Type type) {
+    public static Object from(Collection<Type> params, Type type) {
         return new FunType(params, type);
+    }
+
+    /**
+     * Changing the return type must change the function signature because lambdas can infer the return type from the body
+     * example: (x:Number)-> x+1 => we don't want to specify the return type since it's an easy lambda
+     */
+    public void setReturnType(Type returnType) {
+        this.returnType = returnType;
+        setValue(null);
+        setValue(name());
     }
 
     public String name() {
@@ -75,7 +87,7 @@ public final class FunType extends Type {
     public static FunType valueOf(@NotBlank String symbol) {
         var funSplit = StringUtils.split(symbol, "->");
         Type returnType = null;
-        List<Type> paramsType = new ArrayList<>();
+        Collection<Type> paramsType = new ArrayList<>();
         if (funSplit.length == 2) {
             returnType = TypeFactory.fromString(funSplit[1]);
             paramsType = typesBetweenParantheses(funSplit[0]);
