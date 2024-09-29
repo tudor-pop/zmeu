@@ -14,6 +14,7 @@ import io.zmeu.Visitors.Visitor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -189,6 +190,9 @@ public final class TypeChecker implements Visitor<Type> {
         if (actualType == null || actualType == ValueType.Null) {
             return expectedType;
         }
+        if (expectedType == ValueType.Null) {
+            return actualType;
+        }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
             String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
@@ -200,6 +204,9 @@ public final class TypeChecker implements Visitor<Type> {
     private Type expect(Type actualType, Type expectedType, Statement actualVal, Expression expectedVal) {
         if (actualType == ValueType.Null) {
             return expectedType;
+        }
+        if (expectedType == ValueType.Null) {
+            return actualType;
         }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
@@ -268,13 +275,16 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(LambdaExpression expression) {
+        if (expression.getReturnType().getType() == ValueType.Void) {
+            return funType(expression.getParams(), ValueType.Null, expression.getBody());
+        }
         return funType(expression.getParams(), eval(expression.getReturnType()), expression.getBody());
     }
 
-    private @NotNull FunType funType(List<ParameterIdentifier> params, Type returnType, Statement body) {
+    private @NotNull FunType funType(List<ParameterIdentifier> params, @Nullable Type returnType, Statement body) {
         var paramTypes = new ArrayList<Type>(params.size());
 
-        Map<String, Type> collect = new HashMap<>(params.size());
+        var collect = new HashMap<String, Type>(params.size());
         for (ParameterIdentifier identifier : params) {
             if (identifier.getType() == null) {
                 throw new IllegalArgumentException("Missing type for parameter " + identifier.getName().string() + "(" + printer.eval(identifier) + ")");
@@ -288,9 +298,9 @@ public final class TypeChecker implements Visitor<Type> {
 
         var funEnv = new TypeEnvironment(env, collect);
         var actualReturnType = executeBlock(body, funEnv);
-        expect(actualReturnType, returnType, body, returnType);
+        var funReturnType = expect(actualReturnType, returnType, body, returnType);
 
-        return new FunType(paramTypes, returnType);
+        return new FunType(paramTypes, funReturnType);
     }
 
     @Override

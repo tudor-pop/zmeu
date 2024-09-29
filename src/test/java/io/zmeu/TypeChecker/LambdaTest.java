@@ -23,6 +23,18 @@ public class LambdaTest extends BaseChecker {
     }
 
     @Test
+    void lambdaWithReturnInferred() {
+        var actual = checker.eval(src("""
+                fun onClick(callback: (Number)->Number):Number {
+                    return callback(2)
+                }
+                onClick((arg:Number) -> arg*2)
+                """));
+        assertNotNull(actual);
+        assertEquals(ValueType.Number, actual);
+    }
+
+    @Test
     void lambdaImmediatelyInvoke() {
         var actual = checker.eval(src("""
                 ((x:Number):Number -> x+2)(3)
