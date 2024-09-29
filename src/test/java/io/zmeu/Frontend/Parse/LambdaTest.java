@@ -59,7 +59,7 @@ public class LambdaTest extends BaseTest {
                                         expressionStatement(
                                                 call("print","x")
                                         )
-                                ), type(ValueType.Void))
+                                ))
                 )
         );
         assertEquals(expected, res);

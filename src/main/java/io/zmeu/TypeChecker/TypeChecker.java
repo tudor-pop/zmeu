@@ -16,10 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 public final class TypeChecker implements Visitor<Type> {
@@ -285,13 +282,14 @@ public final class TypeChecker implements Visitor<Type> {
     @Override
     public Type eval(LambdaExpression expression) {
         var params = convertParams(expression.getParams());
-        var funType = new FunType(params.values(), eval(expression.getReturnType()));
-        if (expression.getReturnType().getType() == ValueType.Void) {
-            var actualReturn = validateBody(ValueType.Null, expression.getBody(), params);
-            funType.setReturnType(actualReturn);
-            return funType;
-        }
-        var actualReturn = validateBody(eval(expression.getReturnType()), expression.getBody(), params);
+        TypeIdentifier returnType = Optional.ofNullable(expression.getReturnType()).orElse(TypeIdentifier.type(ValueType.Null));
+        var funType = new FunType(params.values(), eval(returnType));
+//        if (expression.getReturnType().getType() == ValueType.Void) {
+//            var actualReturn = validateBody(ValueType.Null, expression.getBody(), params);
+//            funType.setReturnType(actualReturn);
+//            return funType;
+//        }
+        var actualReturn = validateBody(returnType.getType(), expression.getBody(), params);
         funType.setReturnType(actualReturn);
         return funType;
     }

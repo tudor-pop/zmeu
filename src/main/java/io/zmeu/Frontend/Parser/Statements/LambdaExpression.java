@@ -1,10 +1,12 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.TypeChecker.Types.ValueType;
-import io.zmeu.Visitors.Visitor;
+import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
+import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
+import io.zmeu.Frontend.Parser.Literals.StringLiteral;
+import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +24,7 @@ import java.util.List;
 public non-sealed class LambdaExpression extends Expression {
     private List<ParameterIdentifier> params;
     private Statement body;
+    @Nullable
     private TypeIdentifier returnType;
 
     private LambdaExpression(List<ParameterIdentifier> params, @Nullable Statement body) {
@@ -40,12 +43,12 @@ public non-sealed class LambdaExpression extends Expression {
 
     public LambdaExpression(List<ParameterIdentifier> params, Statement body, TypeIdentifier returnType) {
         this(params, body);
-        this.returnType = returnType != null ? returnType : TypeIdentifier.type(ValueType.Void);
+        this.returnType = returnType;
     }
 
     public LambdaExpression(List<ParameterIdentifier> params, Expression body, TypeIdentifier returnType) {
         this(params, body);
-        this.returnType = returnType != null ? returnType : TypeIdentifier.type(ValueType.Void);
+        this.returnType = returnType;
     }
 
     public static Expression lambda(List<ParameterIdentifier> params, Expression body) {
