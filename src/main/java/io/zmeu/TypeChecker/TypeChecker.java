@@ -282,13 +282,11 @@ public final class TypeChecker implements Visitor<Type> {
     @Override
     public Type eval(LambdaExpression expression) {
         var params = convertParams(expression.getParams());
-        TypeIdentifier returnType = Optional.ofNullable(expression.getReturnType()).orElse(TypeIdentifier.type(ValueType.Null));
+        // if return type missing from parsing because Void was not specified then convert it to the actual return type from the body
+        TypeIdentifier returnType = Optional.ofNullable(expression.getReturnType())
+                .orElse(TypeIdentifier.type(ValueType.Null));
+
         var funType = new FunType(params.values(), eval(returnType));
-//        if (expression.getReturnType().getType() == ValueType.Void) {
-//            var actualReturn = validateBody(ValueType.Null, expression.getBody(), params);
-//            funType.setReturnType(actualReturn);
-//            return funType;
-//        }
         var actualReturn = validateBody(returnType.getType(), expression.getBody(), params);
         funType.setReturnType(actualReturn);
         return funType;
