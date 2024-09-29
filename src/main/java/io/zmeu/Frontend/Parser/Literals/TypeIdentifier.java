@@ -2,6 +2,7 @@ package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.TypeChecker.Types.TypeFactory;
+import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -65,7 +66,10 @@ public final class TypeIdentifier extends Identifier {
     }
 
     public static TypeIdentifier type(Type type) {
-        return new TypeIdentifier(type);
+        return switch (type) {
+            case ValueType valueType -> new TypeIdentifier(valueType, PathIdentifier.type(type.getValue()));
+            default -> new TypeIdentifier(type);
+        };
     }
 
     @Override

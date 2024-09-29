@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
+import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
 import io.zmeu.TypeChecker.Types.ValueType;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +12,7 @@ import java.util.List;
 import static io.zmeu.Frontend.Parser.Expressions.BinaryExpression.binary;
 import static io.zmeu.Frontend.Parser.Expressions.CallExpression.call;
 import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
+import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.type;
 import static io.zmeu.Frontend.Parser.Program.program;
 import static io.zmeu.Frontend.Parser.Statements.BlockExpression.block;
 import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
@@ -28,6 +29,37 @@ public class LambdaTest extends BaseTest {
         var res = parse("(x) -> x*x");
         var expected = program(expressionStatement(
                         lambda("x", binary("*", "x", "x"))
+                )
+        );
+        assertEquals(expected, res);
+        log.info(toJson(res));
+    }
+
+    @Test
+    void lambdaArgTypeWithReturnType() {
+        var res = parse("(x:Number):Number -> x*x");
+        var expected = program(expressionStatement(
+                        lambda(ParameterIdentifier.param("x", type(ValueType.Number)), binary("*", "x", "x"), type(ValueType.Number))
+                )
+        );
+        assertEquals(expected, res);
+        log.info(toJson(res));
+    }
+
+    @Test
+    void lambdaNoReturn() {
+        var res = parse("""
+                (x:Number) -> {
+                    print(x)
+                }
+                """);
+        var expected = program(expressionStatement(
+                        lambda(ParameterIdentifier.param("x", type(ValueType.Number)),
+                                block(
+                                        expressionStatement(
+                                                call("print","x")
+                                        )
+                                ), type(ValueType.Void))
                 )
         );
         assertEquals(expected, res);
@@ -78,7 +110,7 @@ public class LambdaTest extends BaseTest {
                 }
                 """);
         var expected = program(expressionStatement(lambda("x", block(
-                        funReturn(expressionStatement(TypeIdentifier.type(ValueType.Void)))
+                        funReturn(expressionStatement(type(ValueType.Void)))
                 )
         )));
         assertEquals(expected, res);
@@ -100,7 +132,7 @@ public class LambdaTest extends BaseTest {
     void callExpression() {
         var res = parse("""
                 ((x) -> x*x)(2) 
-                                
+                
                 """);
         var expected = program(
                 expressionStatement(call(lambda("x", binary("*", "x", "x")), 2)));
@@ -112,7 +144,7 @@ public class LambdaTest extends BaseTest {
     void callExpressionEmpty() {
         var res = parse("""
                 ((x) -> x*x)(2)()
-                                
+                
                 """);
         var expected = program(
                 expressionStatement(

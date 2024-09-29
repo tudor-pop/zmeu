@@ -4,6 +4,7 @@ import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.Parser;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,38 +36,38 @@ public class TypeParser {
 
     private Type FunType() {
         if (IsLookAhead(Colon)) {
-            var type = TypeDeclaration();
+            var type = Declaration();
             return type.getType();
         } else if (IsLookAhead(Identifier)) {
-            var type = parser.TypeIdentifier();
+            var type = TypeIdentifier();
             return type.getType();
         }
         return null;
     }
 
-    public TypeIdentifier FunctionType() {
+    public TypeIdentifier Declaration() {
         if (parser.IsLookAhead(Colon)) {
             parser.eat(Colon);
             if (parser.IsLookAhead(OpenParenthesis)) {
-                parser.eat(OpenParenthesis, "Expected '(' but got: " + parser.lookAhead());
-                var params = OptParameterList();  // optimisation idea: why create ParameterIdentifier then extract just the type
-                parser.eat(CloseParenthesis, "Expected ')' but got: " + parser.lookAhead());
-                parser.eat(Lambda, "Expected -> but got: " + parser.lookAhead());
-                var returnType = parser.TypeIdentifier();
-
-                var type = new FunType(params, returnType.getType());
-                return TypeIdentifier.builder()
-                        .type(type)
-                        .build();
+                return FunctionType();
             } else {
-                return parser.TypeIdentifier();
+                return TypeIdentifier();
             }
         }
         return null;
     }
 
-    private TypeIdentifier TypeDeclaration() {
-        return parser.TypeDeclaration();
+    private TypeIdentifier FunctionType() {
+        parser.eat(OpenParenthesis, "Expected '(' but got: " + parser.lookAhead());
+        var params = OptParameterList();  // optimisation idea: why create ParameterIdentifier then extract just the type
+        parser.eat(CloseParenthesis, "Expected ')' but got: " + parser.lookAhead());
+        parser.eat(Lambda, "Expected -> but got: " + parser.lookAhead());
+        var returnType = TypeIdentifier();
+
+        var type = new FunType(params, returnType.getType());
+        return TypeIdentifier.builder()
+                .type(type)
+                .build();
     }
 
     private Object eat(TokenType tokenType) {
@@ -80,4 +81,33 @@ public class TypeParser {
     private Token lookahead() {
         return parser.lookAhead();
     }
+
+    /**
+     * Parse Type with prefix
+     * Base.Nested
+     *
+     */
+    @NotNull
+    public TypeIdentifier TypeIdentifier() {
+        var type = new StringBuilder();
+        for (var next = parser.eat(TokenType.Identifier); ; next = parser.eat(TokenType.Identifier)) {
+            switch (parser.lookAhead().type()) {
+                case Dot -> {
+                    type.append(next.value().toString());
+                    type.append(".");
+                    parser.eat(Dot);
+                }
+                case Colon -> { // :Type just eat and move on
+                    parser.eat(Colon);
+                }
+                case null -> {
+                }
+                default -> {
+                    type.append(next.value().toString());
+                    return TypeIdentifier.type(type.toString());
+                }
+            }
+        }
+    }
+
 }

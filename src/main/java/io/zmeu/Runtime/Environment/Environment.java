@@ -17,40 +17,40 @@ import java.util.Map;
 
 @Log4j2
 @Data
-public class Environment implements IEnvironment {
+public class Environment<T> implements IEnvironment {
     @Nullable
     @Getter
     @JsonIgnore
     @ToString.Exclude
-    private final Environment parent;
+    private final Environment<T> parent;
 
     @Getter
     @JsonIgnoreProperties("variables")
-    private final Map<String, Object> variables;
+    private final Map<String, T> variables;
 
-    public Environment(@Nullable Environment parent) {
+    public Environment(@Nullable Environment<T> parent) {
         this.parent = parent;
         this.variables = new HashMap<>(8);
     }
 
-    public Environment(@Nullable Environment parent, Map<String, Object> variables) {
+    public Environment(@Nullable Environment<T> parent, Map<String, T> variables) {
         this(parent);
         this.variables.putAll(variables);
     }
 
-    public Environment(@Nullable Environment parent, Resource variables) {
+    public Environment(@Nullable Environment<T> parent, Resource variables) {
         this(parent);
         for (Field field : variables.getClass().getDeclaredFields()) {
             try {
                 field.setAccessible(true);
-                this.variables.put(field.getName(), field.get(field.getName()));
+                this.variables.put(field.getName(), (T) field.get(field.getName()));
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
-    public Environment(Map<String, Object> variables) {
+    public Environment(Map<String, T> variables) {
         this.parent = null;
         this.variables = variables;
     }
@@ -69,7 +69,7 @@ public class Environment implements IEnvironment {
         if (variables.containsKey(name)) {
             throw new VarExistsException(name);
         }
-        this.put(name, value);
+        this.put(name, (T) value);
         return value;
     }
 
@@ -118,12 +118,12 @@ public class Environment implements IEnvironment {
         return resolve(symbol, "Variable not found: ");
     }
 
-    private void put(String key, Object value) {
+    private void put(String key, T value) {
         this.variables.put(key, value);
     }
 
     @Override
-    public Object get(String key) {
+    public T get(String key) {
         return this.variables.get(key);
     }
 

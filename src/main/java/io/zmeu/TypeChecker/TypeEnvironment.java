@@ -2,6 +2,7 @@ package io.zmeu.TypeChecker;
 
 import io.zmeu.Resources.Resource;
 import io.zmeu.Runtime.Environment.Environment;
+import io.zmeu.TypeChecker.Types.Type;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,23 +14,24 @@ import java.util.Map;
 *
 * */
 @Log4j2
-public class TypeEnvironment extends Environment {
-    public TypeEnvironment(@Nullable Environment parent) {
+public class TypeEnvironment extends Environment<Type> {
+    public TypeEnvironment(@Nullable Environment<Type> parent) {
         super(parent);
     }
 
-    public TypeEnvironment(@Nullable Environment parent, Map<String, Object> variables) {
+    public TypeEnvironment(@Nullable Environment<Type> parent, Map<String, Type> variables) {
         super(parent, variables);
     }
 
-    public TypeEnvironment(@Nullable Environment parent, Resource variables) {
+    public TypeEnvironment(@Nullable Environment<Type> parent, Resource variables) {
         super(parent, variables);
     }
 
-    public TypeEnvironment(Map<String, Object> variables) {
+    public TypeEnvironment(Map<String, Type> variables) {
         super(variables);
     }
 
     public TypeEnvironment() {
+        super();
     }
 }

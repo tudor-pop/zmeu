@@ -44,6 +44,9 @@ public final class ParameterIdentifier extends Identifier {
     public static ParameterIdentifier param(SymbolIdentifier name, TypeIdentifier type) {
         return new ParameterIdentifier(name, type);
     }
+    public static ParameterIdentifier param(String name, TypeIdentifier type) {
+        return new ParameterIdentifier(SymbolIdentifier.id(name), type);
+    }
 
     @Override
     public String string() {

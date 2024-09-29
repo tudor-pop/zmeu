@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -44,6 +43,7 @@ public class ResourceValue {
     public static ResourceValue of(String string, Environment environment) {
         return new ResourceValue(string, environment);
     }
+
     public static ResourceValue of(String string, Environment environment, SchemaValue schema) {
         return new ResourceValue(string, environment, schema);
     }
@@ -80,19 +80,10 @@ public class ResourceValue {
     public record Data(String name, Map<String, Object> args) {
     }
 
-    public Data asData() {
-        var entries = properties.getVariables().entrySet();
-        var args = new HashMap<String, Object>(entries.size());
-        for (var it : entries) {
-            args.put(it.getKey(), it.getValue());
-        }
-        return new Data(this.name(), args);
-    }
-
-
     public TypeIdentifier type() {
         return (TypeIdentifier) this.schema.getType();
     }
+
     public String typeString() {
         return this.schema.typeString();
     }

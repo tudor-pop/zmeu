@@ -2,6 +2,7 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.*;
+import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.Visitor;
 import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
@@ -21,6 +22,7 @@ import java.util.List;
 public non-sealed class LambdaExpression extends Expression {
     private List<ParameterIdentifier> params;
     private Statement body;
+    private TypeIdentifier returnType;
 
     private LambdaExpression(List<ParameterIdentifier> params, @Nullable Statement body) {
         this();
@@ -34,6 +36,16 @@ public non-sealed class LambdaExpression extends Expression {
 
     private LambdaExpression() {
         this.kind = NodeType.LambdaExpression;
+    }
+
+    public LambdaExpression(List<ParameterIdentifier> params, Statement body, TypeIdentifier returnType) {
+        this(params, body);
+        this.returnType = returnType != null ? returnType : TypeIdentifier.type(ValueType.Void);
+    }
+
+    public LambdaExpression(List<ParameterIdentifier> params, Expression body, TypeIdentifier returnType) {
+        this(params, body);
+        this.returnType = returnType != null ? returnType : TypeIdentifier.type(ValueType.Void);
     }
 
     public static Expression lambda(List<ParameterIdentifier> params, Expression body) {
@@ -58,6 +70,18 @@ public non-sealed class LambdaExpression extends Expression {
 
     public static Expression lambda(List<ParameterIdentifier> params, Statement body) {
         return new LambdaExpression(params, body);
+    }
+
+    public static Expression lambda(List<ParameterIdentifier> params, Statement body, TypeIdentifier returnType) {
+        return new LambdaExpression(params, body, returnType);
+    }
+
+    public static Expression lambda(ParameterIdentifier params, Statement body, TypeIdentifier returnType) {
+        return lambda(List.of(params), body, returnType);
+    }
+
+    public static Expression lambda(ParameterIdentifier params, Expression body, TypeIdentifier returnType) {
+        return new LambdaExpression(List.of(params), body, returnType);
     }
 
     public static Expression lambda(List<ParameterIdentifier> params, int value) {

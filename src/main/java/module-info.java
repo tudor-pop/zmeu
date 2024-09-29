@@ -13,5 +13,6 @@ module zmeu.io {
     requires zmeu.api;
     requires com.fasterxml.jackson.dataformat.yaml;
     requires com.fasterxml.jackson.databind;
+    requires com.google.gson;
     requires java.sql;
 }

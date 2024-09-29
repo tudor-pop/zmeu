@@ -23,7 +23,7 @@ public class FunctionDeclaration extends Statement {
     private Identifier name;
     private List<ParameterIdentifier> params;
     private Statement body;
-    private TypeIdentifier returnType;
+    private TypeIdentifier returnType = TypeIdentifier.type(ValueType.Void);
 
     private FunctionDeclaration(Identifier name,
                                 List<ParameterIdentifier> params,
@@ -33,11 +33,7 @@ public class FunctionDeclaration extends Statement {
         this.params = params;
         this.name = name;
         this.body = body;
-        if (returnType != null) {
-            this.returnType = returnType;
-        } else {
-            this.returnType = TypeIdentifier.type(ValueType.Void);
-        }
+        this.returnType = returnType != null ? returnType : TypeIdentifier.type(ValueType.Void);
     }
 
     private FunctionDeclaration(Identifier name, List<ParameterIdentifier> params, @Nullable Statement body) {

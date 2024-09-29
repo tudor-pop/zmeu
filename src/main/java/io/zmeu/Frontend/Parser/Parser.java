@@ -66,7 +66,7 @@ public class Parser {
     private ParserIterator iterator;
     private Program program = new Program();
     private SyntaxPrinter printer = new SyntaxPrinter();
-    private TypeParser typeParser = new TypeParser(this);
+    public TypeParser typeParser = new TypeParser(this);
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -326,23 +326,9 @@ public class Parser {
      */
     private VariableDeclaration VariableDeclaration() {
         var id = Identifier();
-        var type = TypeDeclaration();
+        var type = typeParser.Declaration();
         var init = IsLookAhead(lineTerminator, Comma, EOF) ? null : VariableInitializer();
         return VariableDeclaration.of(id, type, init);
-    }
-
-    /**
-     * TypeDeclaration
-     * : (':' PathIdentifier)?
-     * ;
-     */
-    public TypeIdentifier TypeDeclaration() {
-        if (IsLookAhead(Colon)) {
-            eat(Colon);
-            return TypeIdentifier();
-        } else {
-            return null;
-        }
     }
 
 
@@ -401,14 +387,14 @@ public class Parser {
      */
     private Statement FunctionDeclaration() {
         eat(Fun, "Fun token expected: " + lookAhead());
-        var test = Identifier();
+        var name = Identifier();
         eat(OpenParenthesis, "Expected '(' but got: " + lookAhead());
         var params = OptParameterList();
         eat(CloseParenthesis, "Expected ')' but got: " + lookAhead());
-        var type = typeParser.FunctionType();
+        var type = typeParser.Declaration();
 
         Statement body = ExpressionStatement.expressionStatement(BlockExpression());
-        return FunctionDeclaration.fun(test, params, type, body);
+        return FunctionDeclaration.fun(name, params, type, body);
     }
 
     private Statement SchemaDeclaration() {
@@ -456,7 +442,7 @@ public class Parser {
     private ParameterIdentifier FunParameter() {
         var symbol = SymbolIdentifier();
         if (IsLookAhead(Identifier, Colon)) {
-            var type = TypeDeclaration();
+            var type = typeParser.Declaration();
             return param(symbol, type);
         } else {
             return param(symbol);
@@ -489,9 +475,10 @@ public class Parser {
 
         var params = OptParameterList();
         eat(CloseParenthesis);
+        var returnType = typeParser.Declaration(); // eat returnType
         eat(Lambda, "Expected -> but got: " + lookAhead().value());
 
-        return LambdaExpression.lambda(params, LambdaBody());
+        return LambdaExpression.lambda(params, LambdaBody(), returnType);
     }
 
     private Statement LambdaBody() {
@@ -707,7 +694,7 @@ public class Parser {
      */
     private Statement ResourceDeclaration() {
         eat(Resource);
-        var type = TypeIdentifier();
+        var type = typeParser.TypeIdentifier();
         Identifier name = null;
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
@@ -813,43 +800,16 @@ public class Parser {
                 return PluginIdentifier.fromString(token.value().toString());
             }
             case Identifier -> {
-                TypeIdentifier type = TypeIdentifier();
+                TypeIdentifier type = typeParser.TypeIdentifier();
                 return PluginIdentifier.from(type);
             }
             case null, default -> throw new RuntimeException("Unexpected token type: " + lookAhead().type());
         }
     }
 
-    /**
-     * Parse Type with prefix
-     * Base.Nested
-     */
-    @NotNull
-    public TypeIdentifier TypeIdentifier() {
-        var type = new StringBuilder();
-        for (var next = eat(TokenType.Identifier); ; next = eat(TokenType.Identifier)) {
-            switch (lookAhead().type()) {
-                case Dot -> {
-                    type.append(next.value().toString());
-                    type.append(".");
-                    eat(Dot);
-                }
-                case Colon -> { // :Type just eat and move on
-                    eat(Colon);
-                }
-                case null -> {
-                }
-                default -> {
-                    type.append(next.value().toString());
-                    return TypeIdentifier.type(type.toString());
-                }
-            }
-        }
-    }
-
     private Identifier Identifier() {
         return switch (lookAhead().type()) {
-            case String -> TypeIdentifier();
+            case String -> typeParser.TypeIdentifier();
             default -> SymbolIdentifier();
         };
     }

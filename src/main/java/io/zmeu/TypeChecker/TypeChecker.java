@@ -15,10 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 public final class TypeChecker implements Visitor<Type> {
@@ -81,11 +78,6 @@ public final class TypeChecker implements Visitor<Type> {
     @Override
     public Type eval(StringLiteral expression) {
         return ValueType.String;
-    }
-
-    @Override
-    public Type eval(LambdaExpression expression) {
-        return null;
     }
 
     @Override
@@ -267,31 +259,38 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type eval(FunctionDeclaration fun) {
-        var returnType = fun.getReturnType().getType();
-        var params = fun.getParams();
-        Map<String, Object> collect = new HashMap<>(params.size());
-        for (ParameterIdentifier identifier : params) {
-            if (identifier.getType() == null) {
-                throw new IllegalArgumentException("Missing type for parameter " + identifier.getName().string() + " of function " + fun.getName().string() + "(" + printer.eval(identifier) + ")");
-            }
-            if (collect.put(identifier.getName().getSymbol(), identifier.getType().getType()) != null) {
-                throw new IllegalStateException("Duplicate key");
-            }
-        }
-
-        List<Type> funParams = collect.values()
-                .stream()
-                .map(Type.class::cast)
-                .toList();
-        var funType = new FunType(funParams, returnType);
-        env.init(fun.getName(), funType); // save function signature in env so that we're able to call it later to validate types
-
-        var funEnv = new TypeEnvironment(env, collect);
-        var actualReturnType = executeBlock(fun.getBody(), funEnv);
-        expect(actualReturnType, returnType, fun.getBody(), returnType);
+    public Type eval(FunctionDeclaration expression) {
+        var funType = funType(expression.getParams(), eval(expression.getReturnType()), expression.getBody());
+        env.init(expression.getName(), funType); // save function signature in env so that we're able to call it later to validate types
 
         return funType;
+    }
+
+    @Override
+    public Type eval(LambdaExpression expression) {
+        return funType(expression.getParams(), eval(expression.getReturnType()), expression.getBody());
+    }
+
+    private @NotNull FunType funType(List<ParameterIdentifier> params, Type returnType, Statement body) {
+        var paramTypes = new ArrayList<Type>(params.size());
+
+        Map<String, Type> collect = new HashMap<>(params.size());
+        for (ParameterIdentifier identifier : params) {
+            if (identifier.getType() == null) {
+                throw new IllegalArgumentException("Missing type for parameter " + identifier.getName().string() + "(" + printer.eval(identifier) + ")");
+            }
+            Type type = identifier.getType().getType();
+            if (collect.put(identifier.getName().getSymbol(), type) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+            paramTypes.add(type);
+        }
+
+        var funEnv = new TypeEnvironment(env, collect);
+        var actualReturnType = executeBlock(body, funEnv);
+        expect(actualReturnType, returnType, body, returnType);
+
+        return new FunType(paramTypes, returnType);
     }
 
     @Override
@@ -303,7 +302,6 @@ public final class TypeChecker implements Visitor<Type> {
                 .map(this::eval)
                 .toList();
         checkFunctionCall(fun, passedArgumentsTypes, env, expression);
-
         return fun.getReturnType();
     }
 
