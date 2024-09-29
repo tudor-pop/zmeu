@@ -10,8 +10,10 @@ import org.jetbrains.annotations.Nullable;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public final class SchemaType extends ReferenceType {
+    public static SchemaType baseSchema = new SchemaType("base");
+
     private final TypeEnvironment environment;
-    private final SchemaType extended;
+    private SchemaType extended = baseSchema;
 
     public SchemaType(String typeName) {
         this(typeName, null, null);
@@ -21,6 +23,14 @@ public final class SchemaType extends ReferenceType {
         super(typeName);
         this.extended = extended;
         this.environment = new TypeEnvironment(env);
+    }
+
+    public SchemaType(String typeName, @Nullable TypeEnvironment env) {
+        this(typeName, baseSchema, env);
+    }
+
+    public SchemaType(String typeName, SchemaType extended) {
+        this(typeName, extended, null);
     }
 
     public Type getField(@NotNull String fieldName) {

@@ -1,9 +1,7 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
-import io.zmeu.Frontend.Parser.Literals.StringLiteral;
+import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
@@ -17,6 +15,12 @@ public class SchemaDeclaration extends Statement {
     private Statement body;
 
     public SchemaDeclaration(Identifier name, @Nullable Statement body) {
+        this();
+        this.name = name;
+        this.body = body;
+    }
+
+    public SchemaDeclaration(TypeIdentifier name, @Nullable Statement body) {
         this();
         this.name = name;
         this.body = body;

@@ -37,18 +37,18 @@ import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.*;
 @Log4j2
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
-    private Environment env;
+    private Environment<Object> env;
     private final Engine engine;
 
     public Interpreter() {
         this(new Environment());
     }
 
-    public Interpreter(Environment environment) {
+    public Interpreter(Environment<Object> environment) {
         this(environment, new Engine());
     }
 
-    public Interpreter(Environment environment, Engine engine) {
+    public Interpreter(Environment<Object> environment, Engine engine) {
         this.engine = engine;
         this.env = environment;
         this.env.init("null", NullValue.of());
@@ -424,10 +424,10 @@ public final class Interpreter implements Visitor<Object> {
     public Object eval(SchemaDeclaration expression) {
         switch (expression.getBody()) {
             case ExpressionStatement statement when statement.getStatement() instanceof BlockExpression blockExpression -> {
-                SymbolIdentifier name = (SymbolIdentifier) expression.getName();
-                var typeEnv = new Environment(env);
+                var typeEnv = new Environment<>(env);
                 executeBlock(blockExpression.getExpression(), typeEnv); // install properties/methods of a type into the environment
 
+                var name = expression.getName();
                 return env.init(name.string(), SchemaValue.of(name, typeEnv)); // install the type into the global env
             }
             case null, default -> {
