@@ -29,6 +29,7 @@ public final class TypeChecker implements Visitor<Type> {
         env.init(ValueType.Void.getValue(), ValueType.Void);
         env.init(ValueType.Null.getValue(), ValueType.Null);
         env.init("pow", TypeFactory.fromString("(Number,Number)->Number"));
+        env.init("string", TypeFactory.fromString("(Number)->String"));
     }
 
     public TypeChecker(TypeEnvironment environment) {

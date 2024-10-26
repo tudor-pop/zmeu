@@ -56,5 +56,17 @@ public class LoopTest extends BaseChecker {
         assertEquals(ValueType.Number, res);
     }
 
+    @Test
+    void stringConcatenation() {
+        var res = checker.eval(src("""
+                var test = ""
+                for (var a = 1; a < 10; a=a+1) {
+                   test+=string(a);
+                 }
+                 test
+                """));
+        assertEquals(ValueType.String, res);
+    }
+
 
 }
