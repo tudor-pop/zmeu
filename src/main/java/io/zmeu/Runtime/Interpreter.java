@@ -24,6 +24,7 @@ import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
+import io.zmeu.Utils.BoolUtils;
 import io.zmeu.Visitors.Visitor;
 import lombok.extern.log4j.Log4j2;
 
@@ -309,25 +310,16 @@ public final class Interpreter implements Visitor<Object> {
         var left = eval(expression.getLeft());
 
         if (expression.getOperator() == TokenType.Logical_Or) {
-            if (isTruthy(left)) {
+            if (BoolUtils.isTruthy(left)) {
                 return left;
             }
         } else {
-            if (!isTruthy(left)) {
+            if (!BoolUtils.isTruthy(left)) {
                 return left;
             }
         }
 
         return eval(expression.getRight());
-    }
-
-    private boolean isTruthy(Object object) {
-        if (object == null) {
-            return false;
-        } else if (object instanceof Boolean b) {
-            return b;
-        }
-        return true;
     }
 
     @Override
@@ -401,7 +393,7 @@ public final class Interpreter implements Visitor<Object> {
     public Object eval(WhileStatement statement) {
         Object result = NullValue.of();
 
-        while (isTruthy(eval(statement.getTest()))) {
+        while (BoolUtils.isTruthy(eval(statement.getTest()))) {
             result = executeBlock(statement.getBody(), env);
         }
         return result;

@@ -168,9 +168,9 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     private Type expect(Type actualType, Type expectedType, Expression expectedVal) {
-        if (actualType == ValueType.Null) {
-            return expectedType;
-        }
+//        if (actualType == ValueType.Null) {
+//            return expectedType;
+//        }
         if (expectedType == ValueType.Null) {
             return actualType;
         }
@@ -219,7 +219,11 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(LogicalExpression expression) {
-        return null;
+        Type left = eval(expression.getLeft());
+        Type right = eval(expression.getRight());
+        expect(left, ValueType.Boolean, expression);
+        expect(right, ValueType.Boolean, expression);
+        return expect(left, right, expression);
     }
 
     @Override
@@ -391,7 +395,7 @@ public final class TypeChecker implements Visitor<Type> {
         var schemaType = new SchemaType(name.string(), env);
         env.init(name, schemaType);
 
-        if (schema.getBody() instanceof ExpressionStatement statement &&  statement.getStatement() instanceof BlockExpression blockExpression) {
+        if (schema.getBody() instanceof ExpressionStatement statement && statement.getStatement() instanceof BlockExpression blockExpression) {
             executeBlock(blockExpression.getExpression(), schemaType.getEnvironment());
             return schemaType;
         }

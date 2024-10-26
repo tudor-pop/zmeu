@@ -1,8 +1,7 @@
 package io.zmeu.TypeChecker;
 
-import io.zmeu.Frontend.Parser.Literals.NullLiteral;
-import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Runtime.exceptions.NotFoundException;
+import io.zmeu.TypeChecker.Types.ValueType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,8 +9,8 @@ import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
 import static io.zmeu.Frontend.Parser.Literals.BooleanLiteral.bool;
 import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
 import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
-import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.type;
 import static io.zmeu.Frontend.Parser.Literals.StringLiteral.string;
+import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -77,7 +76,7 @@ public class VariableTest extends BaseChecker {
 
     @Test
     void testNull() {
-        var t = checker.eval(var("x", type("String"), NullLiteral.of()));
+        var t = checker.eval(var("x", type("String"), string("")));
         assertEquals(t, ValueType.String);
     }
 
