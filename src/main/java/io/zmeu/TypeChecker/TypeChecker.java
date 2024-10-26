@@ -238,7 +238,18 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(UnaryExpression expression) {
-        return null;
+        var operator = expression.getOperator();
+        return switch (operator) {
+            case "++", "--", "-" -> executeBlock(expression.getValue(), env);
+            case "!" -> {
+                var res = executeBlock(expression.getValue(), env);
+                if (res == ValueType.Boolean) {
+                    yield res;
+                }
+                throw new RuntimeException("Invalid not operator: " + res);
+            }
+            default -> throw new RuntimeException("Operator could not be evaluated: " + expression.getOperator());
+        };
     }
 
     @Override
