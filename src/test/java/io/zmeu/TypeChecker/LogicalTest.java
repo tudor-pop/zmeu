@@ -63,6 +63,27 @@ public class LogicalTest extends BaseChecker {
     }
 
     @Test
+    void stringAndString() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                "true" && "3" 
+                """)));
+    }
+
+    @Test
+    void nullAndNull() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                null && null 
+                """)));
+    }
+
+    @Test
+    void nullOrNull() {
+        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+                null || null 
+                """)));
+    }
+
+    @Test
     void numberAndBoolean() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
                 3 && true 
