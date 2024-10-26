@@ -45,7 +45,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(LogicalExpression expression) {
-        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
+        return "(" + eval(expression.getLeft()) + " " + expression.getOperator().toString() + " " + eval(expression.getRight()) + ")";
     }
 
     @Override

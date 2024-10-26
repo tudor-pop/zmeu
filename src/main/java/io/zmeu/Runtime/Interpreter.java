@@ -24,7 +24,7 @@ import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
-import io.zmeu.Utils.BoolUtils;
+import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
 import lombok.extern.log4j.Log4j2;
 
@@ -33,12 +33,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
+import static io.zmeu.Utils.BoolUtils.isTruthy;
 
 @Log4j2
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment<Object> env;
     private final Engine engine;
+    private final LanguageAstPrinter printer = new LanguageAstPrinter();
 
     public Interpreter() {
         this(new Environment());
@@ -308,18 +310,36 @@ public final class Interpreter implements Visitor<Object> {
     @Override
     public Object eval(LogicalExpression expression) {
         var left = eval(expression.getLeft());
+        var right = eval(expression.getRight());
 
-        if (expression.getOperator() == TokenType.Logical_Or) {
-            if (BoolUtils.isTruthy(left)) {
-                return left;
-            }
-        } else {
-            if (!BoolUtils.isTruthy(left)) {
-                return left;
-            }
+        if (left == null || right == null) {
+            throw new IllegalArgumentException("Left expression does not exist: " + printer.eval(expression));
+        }
+        if (!(left instanceof Boolean) || !(right instanceof Boolean)) {
+            throw new IllegalArgumentException("Left expression does not exist: " + printer.eval(expression));
         }
 
-        return eval(expression.getRight());
+        if (expression.getOperator() == TokenType.Logical_Or) {
+            if (isTruthy(left)) {
+                return left;
+            }
+            if (isTruthy(right)) {
+                return right;
+            }
+            return right;
+        } else if (expression.getOperator() == TokenType.Logical_And) {
+            if (isTruthy(right)) {
+                return left;
+            }
+
+            if (isTruthy(left)) {
+                return right;
+            }
+
+            return right;
+        }
+
+        throw new IllegalArgumentException("Left expression does not exist: " + printer.eval(expression));
     }
 
     @Override
@@ -393,7 +413,7 @@ public final class Interpreter implements Visitor<Object> {
     public Object eval(WhileStatement statement) {
         Object result = NullValue.of();
 
-        while (BoolUtils.isTruthy(eval(statement.getTest()))) {
+        while (isTruthy(eval(statement.getTest()))) {
             result = executeBlock(statement.getBody(), env);
         }
         return result;
