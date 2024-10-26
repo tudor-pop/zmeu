@@ -12,7 +12,6 @@ public final class GroupExpression extends Expression {
 
     public GroupExpression(Expression expression) {
         this.expression = expression;
-        this.kind = NodeType.LogicalExpression;
     }
 
     @Override

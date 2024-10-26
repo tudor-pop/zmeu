@@ -4,11 +4,8 @@ import io.zmeu.Engine.Engine;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
-import io.zmeu.TypeChecker.Types.Type;
-import io.zmeu.Visitors.Visitor;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Runtime.Environment.ActivationEnvironment;
@@ -26,13 +23,15 @@ import io.zmeu.Runtime.Values.NullValue;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.Runtime.exceptions.*;
+import io.zmeu.TypeChecker.Types.Type;
+import io.zmeu.Visitors.Visitor;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.*;
+import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
 
 @Log4j2
 public final class Interpreter implements Visitor<Object> {
@@ -107,9 +106,8 @@ public final class Interpreter implements Visitor<Object> {
 
     @Override
     public Object eval(NumberLiteral expression) {
-        return switch (expression.getKind()) {
-            case NodeType.NumberLiteral -> expression.getValue();
-            default -> throw new IllegalStateException("Unexpected value: " + expression.getKind());
+        return switch (expression) {
+            case NumberLiteral literal -> literal.getValue();
         };
     }
 

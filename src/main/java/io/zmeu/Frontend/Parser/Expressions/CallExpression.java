@@ -20,7 +20,6 @@ public final class CallExpression<E extends Expression> extends Expression {
     private List<E> arguments;
 
     public CallExpression() {
-        this.kind = NodeType.CallExpression;
         arguments = Collections.emptyList();
     }
 

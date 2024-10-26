@@ -6,7 +6,6 @@ public sealed class ReferenceType extends Type permits SchemaType {
 
     public ReferenceType(String typeName) {
         super(typeName);
-        this.kind = NodeType.Type;
     }
 
     public static ReferenceType of(String typeName) {

@@ -14,7 +14,6 @@ public final class LogicalExpression extends Expression {
     private TokenType operator;
 
     public LogicalExpression() {
-        this.kind = NodeType.LogicalExpression;
     }
 
     public LogicalExpression(Expression left, Expression right, TokenType operator) {

@@ -1,10 +1,9 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Visitors.Visitor;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Frontend.Parser.NodeType;
+import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -25,12 +24,10 @@ public non-sealed class BlockExpression extends Expression {
     private List<Statement> expression;
 
     public BlockExpression(@Nullable Statement... expression) {
-        this.kind = NodeType.BlockStatement;
         this.expression = List.of(expression);
     }
 
     public BlockExpression(@Nullable List<Statement> expression) {
-        this.kind = NodeType.BlockStatement;
         this.expression = expression;
     }
     public BlockExpression(@Nullable Expression expression) {
@@ -38,7 +35,6 @@ public non-sealed class BlockExpression extends Expression {
     }
 
     public BlockExpression() {
-        this.kind = NodeType.BlockStatement;
     }
 
     public static Expression block(Expression expression) {

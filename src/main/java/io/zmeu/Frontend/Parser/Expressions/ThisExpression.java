@@ -17,7 +17,6 @@ public final class ThisExpression extends Expression {
     private Identifier instance;
 
     private ThisExpression() {
-        this.kind = NodeType.ThisExpression;
     }
 
     private ThisExpression(Identifier instance) {

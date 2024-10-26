@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Statements.VariableStatement;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
@@ -16,7 +15,6 @@ public final class VariableDeclaration extends Expression {
     private TypeIdentifier type;
 
     public VariableDeclaration() {
-        this.kind = NodeType.VariableDeclaration;
     }
 
     private VariableDeclaration(Expression id, Expression init) {

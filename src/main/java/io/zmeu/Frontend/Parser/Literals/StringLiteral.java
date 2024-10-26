@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.Visitors.Visitor;
-import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,6 @@ public class StringLiteral extends Literal {
     private String value;
 
     public StringLiteral() {
-        this.kind = NodeType.StringLiteral;
     }
 
     public StringLiteral(String value) {

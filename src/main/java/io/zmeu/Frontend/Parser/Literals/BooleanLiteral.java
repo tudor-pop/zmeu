@@ -1,8 +1,7 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Visitors.Visitor;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.SyntaxError;
+import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,7 +16,6 @@ public class BooleanLiteral extends Literal {
     private boolean value;
 
     private BooleanLiteral(boolean value) {
-        this.kind = NodeType.BooleanLiteral;
         this.value = value;
     }
 

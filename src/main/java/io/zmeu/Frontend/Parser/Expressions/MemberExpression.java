@@ -17,7 +17,6 @@ public final class MemberExpression extends Expression {
     private Expression property;
 
     public MemberExpression() {
-        this.kind = NodeType.MemberExpression;
     }
 
     private MemberExpression(boolean computed, Expression object, Expression property) {

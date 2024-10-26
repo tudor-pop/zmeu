@@ -16,7 +16,6 @@ public final class BinaryExpression extends Expression {
     private String operator;
 
     public BinaryExpression() {
-        this.kind = NodeType.BinaryExpression;
     }
 
     public BinaryExpression(Expression left, Expression right, String operator) {

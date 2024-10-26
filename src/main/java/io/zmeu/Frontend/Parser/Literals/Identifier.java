@@ -15,7 +15,6 @@ public abstract sealed class Identifier extends Expression
     private Integer hops; // used to figure out the scope without creating extra classes
 
     public Identifier() {
-        this.kind = NodeType.Identifier;
     }
 
     public abstract String string();

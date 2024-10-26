@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Visitors.Visitor;
-import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,12 +38,10 @@ public class NumberLiteral extends Literal {
     }
 
     private void setNumber(double value) {
-        this.kind = NodeType.NumberLiteral;
         this.value = Double.valueOf(df.format(value));
     }
 
     private void setNumber(int value) {
-        this.kind = NodeType.NumberLiteral;
         this.value = value;
     }
 
@@ -93,7 +90,6 @@ public class NumberLiteral extends Literal {
     }
 
     private void setValue(String value) {
-        this.kind = NodeType.NumberLiteral;
         if (value.indexOf('.') != -1) { // string contains . => is a float/double
             this.value = Double.parseDouble(value);
         } else {

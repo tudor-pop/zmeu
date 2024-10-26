@@ -581,7 +581,7 @@ public class Parser {
     }
 
     private Expression isValidAssignmentTarget(Expression target, Object operator) {
-        if (target.is(NodeType.Identifier, NodeType.MemberExpression)) {
+        if (target instanceof Identifier || target instanceof MemberExpression) {
             return target;
         }
         Object value = iterator.getCurrent().value();

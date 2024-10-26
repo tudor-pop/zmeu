@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.Visitors.Visitor;
-import io.zmeu.Frontend.Parser.NodeType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,7 +15,6 @@ public class NullLiteral extends Literal {
     private static final String value = "null";
 
     private NullLiteral() {
-        this.kind = NodeType.NullLiteral;
     }
 
     public static Literal of() {

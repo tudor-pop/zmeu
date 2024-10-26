@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +11,6 @@ public final class UnaryExpression extends Expression {
     private String operator;
 
     public UnaryExpression() {
-        this.kind = NodeType.UnaryExpression;
     }
 
     public UnaryExpression(Expression left, Object operator) {

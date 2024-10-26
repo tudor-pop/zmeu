@@ -1,7 +1,6 @@
 package io.zmeu.TypeChecker.Types;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,6 @@ public sealed abstract class Type extends Expression
     }
 
     public Type() {
-        this.kind = NodeType.Type;
     }
 
     @Override
@@ -44,7 +42,7 @@ public sealed abstract class Type extends Expression
     public String toString() {
         return new StringJoiner(", ", Type.class.getSimpleName() + "[", "]")
                 .add("value='" + value + "'")
-                .add("kind=" + kind)
+                .add("kind=" + this.getClass().getSimpleName())
                 .toString();
     }
 

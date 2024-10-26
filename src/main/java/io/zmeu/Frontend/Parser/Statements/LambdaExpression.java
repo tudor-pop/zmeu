@@ -5,7 +5,6 @@ import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,7 +37,6 @@ public non-sealed class LambdaExpression extends Expression {
     }
 
     private LambdaExpression() {
-        this.kind = NodeType.LambdaExpression;
     }
 
     public LambdaExpression(List<ParameterIdentifier> params, Statement body, TypeIdentifier returnType) {

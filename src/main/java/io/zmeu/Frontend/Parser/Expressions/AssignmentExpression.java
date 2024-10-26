@@ -20,7 +20,6 @@ public final class AssignmentExpression extends Expression {
     private Object operator;
 
     private AssignmentExpression() {
-        this.kind = NodeType.AssignmentExpression;
     }
 
     private AssignmentExpression(Expression left, Expression right, Object operator) {
