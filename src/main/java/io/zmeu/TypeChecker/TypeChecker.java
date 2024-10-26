@@ -65,11 +65,6 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type eval(ResourceExpression expression) {
-        return null;
-    }
-
-    @Override
     public Type eval(NullLiteral expression) {
         return ValueType.Null;
     }
@@ -401,6 +396,11 @@ public final class TypeChecker implements Visitor<Type> {
             return schemaType;
         }
         throw new RuntimeException("Invalid schema declaration: " + schema.getName());
+    }
+
+    @Override
+    public Type eval(ResourceExpression expression) {
+        return null;
     }
 
     @Override
