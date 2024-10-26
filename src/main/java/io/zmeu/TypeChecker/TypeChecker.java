@@ -37,6 +37,15 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
+    public Type eval(Program program) {
+        Type type = ValueType.Null;
+        for (Statement statement : program.getBody()) {
+            type = executeBlock(statement, env);
+        }
+        return type;
+    }
+
+    @Override
     public Type eval(Expression expression) {
         try {
             return expression.accept(this);
@@ -252,14 +261,6 @@ public final class TypeChecker implements Visitor<Type> {
         };
     }
 
-    @Override
-    public Type eval(Program program) {
-        Type type = ValueType.Null;
-        for (Statement statement : program.getBody()) {
-            type = executeBlock(statement, env);
-        }
-        return type;
-    }
 
     @Override
     public Type eval(Statement statement) {
