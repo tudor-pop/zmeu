@@ -378,7 +378,13 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(ForStatement statement) {
-        return null;
+        List<Statement> statements = statement.discardBlock();
+        statements.add(ExpressionStatement.expressionStatement(statement.getUpdate()));
+        var whileStatement = WhileStatement.of(statement.getTest(), BlockExpression.block(statements));
+        if (statement.getInit() == null) {
+            return executeBlock(whileStatement, env);
+        }
+        return executeBlock(BlockExpression.block(statement.getInit(), whileStatement), env);
     }
 
     @Override
