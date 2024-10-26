@@ -5,10 +5,7 @@ import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
 import io.zmeu.Runtime.exceptions.NotFoundException;
-import io.zmeu.TypeChecker.Types.FunType;
-import io.zmeu.TypeChecker.Types.Type;
-import io.zmeu.TypeChecker.Types.TypeFactory;
-import io.zmeu.TypeChecker.Types.ValueType;
+import io.zmeu.TypeChecker.Types.*;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
 import lombok.Getter;
@@ -53,10 +50,10 @@ public final class TypeChecker implements Visitor<Type> {
     public Type eval(Identifier expression) {
         try {
             if (expression instanceof TypeIdentifier identifier) {
-                var type = (Type) env.lookup(identifier.getType().getValue());
+                Type type = env.lookup(identifier.getType().getValue());
                 return Objects.requireNonNullElseGet(type, () -> TypeFactory.fromString(identifier.getType().getValue()));
             } else if (expression instanceof SymbolIdentifier identifier) {
-                var type = (Type) env.lookup(identifier.getSymbol());
+                Type type = env.lookup(identifier.getSymbol());
                 return Objects.requireNonNullElseGet(type, () -> TypeFactory.fromString(identifier.getSymbol()));
             }
             throw new TypeError(expression.string());
@@ -389,19 +386,33 @@ public final class TypeChecker implements Visitor<Type> {
         var name = schema.getName();
         var body = schema.getBody();
 
-        return null;
+        var schemaType = new SchemaType(name.string(), env);
+        env.init(name, schemaType);
+
+        if (schema.getBody() instanceof ExpressionStatement statement &&  statement.getStatement() instanceof BlockExpression blockExpression) {
+            executeBlock(blockExpression.getExpression(), schemaType.getEnvironment());
+            return schemaType;
+        }
+        throw new RuntimeException("Invalid schema declaration: " + schema.getName());
     }
 
     @Override
     public Type eval(VariableDeclaration expression) {
-        var implicitType = eval(expression.getInit());
         String var = expression.getId().string();
-        if (expression.hasType()) {
+        if (expression.getInit() != null) {
+            var implicitType = eval(expression.getInit());
+            if (expression.hasType()) {
+                var explicitType = eval(expression.getType());
+                expect(implicitType, explicitType, expression);
+                return env.init(var, explicitType);
+            }
+            return env.init(var, implicitType);
+        } else if (expression.hasType()) {
             var explicitType = eval(expression.getType());
-            expect(implicitType, explicitType, expression.getInit());
-            return (Type) env.init(var, explicitType);
+            return env.init(var, explicitType);
+        } else {
+            throw new IllegalArgumentException("Missing explicit and implicit type for variable " + var);
         }
-        return (Type) env.init(var, implicitType);
     }
 
     /**
