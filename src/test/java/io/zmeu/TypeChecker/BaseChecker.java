@@ -1,7 +1,6 @@
 package io.zmeu.TypeChecker;
 
 import io.zmeu.Frontend.Parse.BaseTest;
-import io.zmeu.TypeChecker.TypeChecker;
 import org.junit.jupiter.api.BeforeEach;
 
 public class BaseChecker extends BaseTest {

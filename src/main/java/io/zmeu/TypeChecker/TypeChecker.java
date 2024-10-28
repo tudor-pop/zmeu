@@ -4,7 +4,9 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Runtime.exceptions.InvalidInitException;
 import io.zmeu.Runtime.exceptions.NotFoundException;
+import io.zmeu.Runtime.exceptions.OperationNotImplementedException;
 import io.zmeu.TypeChecker.Types.*;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
@@ -237,7 +239,17 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type eval(MemberExpression expression) {
-        return null;
+        if (expression.getProperty() instanceof SymbolIdentifier resourceName) {
+            var value = executeBlock(expression.getObject(), env);
+            // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
+            // Since that environment points to the parent(type env) it will also find the properties
+            if (value instanceof SchemaType schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
+                return schemaValue.getInstances().lookup(resourceName.string());
+            } else if (value instanceof ResourceType iEnvironment) {
+                return iEnvironment.lookup(resourceName.string());
+            } // else it could be a resource or any other type like a NumericLiteral or something else
+        }
+        throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
     }
 
     @Override
@@ -330,18 +342,18 @@ public final class TypeChecker implements Visitor<Type> {
                 .stream()
                 .map(this::eval)
                 .toList();
-        checkFunctionCall(fun, passedArgumentsTypes, expression);
+        if (fun.getParams().size() != passedArgumentsTypes.size()) {
+            String string = "Function '" + printer.eval(expression.getCallee()) + "' expects " + fun.getParams().size() + " arguments but got " + passedArgumentsTypes.size() + " in " + printer.eval(expression);
+            throw new TypeError(string);
+        }
+        checkArgs(fun.getParams(), passedArgumentsTypes, expression);
         return fun.getReturnType();
     }
 
-    private void checkFunctionCall(FunType fun, List<Type> args, CallExpression<Expression> expression) {
-        if (fun.getParams().size() != args.size()) {
-            String string = "Function '" + printer.eval(expression.getCallee()) + "' expects " + fun.getParams().size() + " arguments but got " + args.size() + " in " + printer.eval(expression);
-            throw new TypeError(string);
-        }
+    private void checkArgs(List<Type> params, List<Type> args, CallExpression<Expression> expression) {
         for (int i = 0; i < args.size(); i++) {
             try {
-                var param = fun.getParams().get(i);
+                var param = params.get(i);
                 Type actual = args.get(i);
                 expect(actual, param, expression);
             } catch (IndexOutOfBoundsException exception) {
@@ -415,8 +427,51 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type eval(ResourceExpression expression) {
-        return null;
+    public Type eval(ResourceExpression resource) {
+        if (resource.getName() == null) {
+            throw new InvalidInitException("Resource does not have a name: " + resource.name());
+        }
+        // SchemaValue already installed globally when evaluating a SchemaDeclaration.
+        // This means the schema must be declared before the resource
+        var installedSchema = (SchemaType) env.lookup(resource.getType().string());
+        if (installedSchema == null) {
+            throw new InvalidInitException("Schema not found during " + resource.name() + " initialization");
+        }
+
+        var schemaEnv = installedSchema.getEnvironment();
+        // clone/inherit all default properties from schema properties to the new resource
+        var resourceEnv = new TypeEnvironment(schemaEnv, schemaEnv.getVariables());
+        // init resource environment with values defined by the user
+        executeBlock(resource.getArguments(), resourceEnv);
+        // validate each property in the resource that matches the type defined in the schema
+        for (var argument : resourceEnv.getVariables().entrySet()) {
+            if (installedSchema.getProperty(argument.getKey()) != argument.getValue()) {
+                throw new InvalidInitException("Property type mismatch for: " + argument.getKey() + " in " + printer.eval(resource));
+            }
+        }
+
+
+        var resourceType = new ResourceType(resource.name(), installedSchema, resourceEnv);
+        installedSchema.setProperty(resource.name(), resourceType);
+
+        return resourceType;
+//        try {
+//            Type init = installedSchema.getProperty("init");
+//            if (init != null) {
+//                var args = new ArrayList<>();
+//                for (Statement it : resource.getArguments()) {
+//                    var objectRuntimeValue = executeBlock(it, resourceEnv);
+//                    args.add(objectRuntimeValue);
+//                }
+//                FunType initType = (FunType) init;
+//            } else {
+//            }
+//            var res = installedSchema.initInstance(resource.name(), ResourceValue.of(resource.name(), resourceEnv, installedSchema));
+//            engine.process(installedSchema.typeString(), resourceEnv.getVariables());
+//        } catch (NotFoundException e) {
+//            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
+//            throw e;
+//        }
     }
 
     @Override
@@ -447,7 +502,11 @@ public final class TypeChecker implements Visitor<Type> {
     public Type eval(AssignmentExpression expression) {
         var varType = eval(expression.getLeft());
         var valueType = eval(expression.getRight());
-        return expect(valueType, varType, expression.getLeft());
+        var expected = expect(valueType, varType, expression.getLeft());
+        if (expression.getLeft() instanceof SymbolIdentifier symbolIdentifier) {
+            env.assign(symbolIdentifier.string(), expected);
+        }
+        return expected;
     }
 
     @Override

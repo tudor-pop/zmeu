@@ -187,7 +187,9 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(ResourceExpression expression) {
-        return "";
+        return "resource " + eval(expression.getType()) + " " + eval(expression.getName()) + " {\n"
+                + eval(expression.getBlock())
+                + "\n}\n";
     }
 
     @Override

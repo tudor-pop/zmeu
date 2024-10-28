@@ -65,12 +65,12 @@ public class Environment<T> implements IEnvironment<T> {
      * var b = 3
      */
     @Override
-    public T init(String name, T value) {
+    public T init(String name, Object value) {
         if (variables.containsKey(name)) {
             throw new VarExistsException(name);
         }
         this.put(name, (T) value);
-        return value;
+        return (T) value;
     }
 
     /**
@@ -85,6 +85,7 @@ public class Environment<T> implements IEnvironment<T> {
     }
 
     @Override
+    @Nullable
     public T lookup(@Nullable String varName) {
         if (varName == null) {
             varName = "null";
@@ -123,10 +124,12 @@ public class Environment<T> implements IEnvironment<T> {
     }
 
     @Override
+    @Nullable
     public T get(String key) {
         return this.variables.get(key);
     }
 
+    @Nullable
     public T lookup(String symbol, String error) {
         return resolve(symbol, error) // search the scope
                 .get(symbol);

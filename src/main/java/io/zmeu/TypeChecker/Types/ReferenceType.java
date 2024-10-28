@@ -1,8 +1,6 @@
 package io.zmeu.TypeChecker.Types;
 
-import io.zmeu.Frontend.Parser.NodeType;
-
-public sealed class ReferenceType extends Type permits SchemaType {
+public sealed class ReferenceType extends Type permits ResourceType, SchemaType {
 
     public ReferenceType(String typeName) {
         super(typeName);

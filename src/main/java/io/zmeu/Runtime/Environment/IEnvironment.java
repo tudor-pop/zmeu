@@ -40,7 +40,7 @@ public interface IEnvironment<T> {
         return init(name.string(), value);
     }
 
-    T init(String name, T value);
+    T init(String name, Object value);
 
     default T assign(String symbol, T right, Integer hops) {
         return ancestor(hops).assign(symbol, right);
