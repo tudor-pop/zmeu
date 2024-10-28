@@ -1,7 +1,7 @@
 package io.zmeu.Engine;
 
-import io.zmeu.Runtime.BaseRuntimeTest;
 import io.zmeu.Runtime.Values.SchemaValue;
+import io.zmeu.TypeChecker.BaseChecker;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-class EngineTest extends BaseRuntimeTest {
+class EngineTest extends BaseChecker {
     private Engine engine;
 
     @BeforeEach
@@ -22,7 +22,7 @@ class EngineTest extends BaseRuntimeTest {
     void resourceDependencyIsAdded() {
         var res = eval("""
                 schema vm { 
-                    var name
+                    var name:String
                     var maxCount=0
                 }
                 resource vm main {
@@ -39,6 +39,7 @@ class EngineTest extends BaseRuntimeTest {
         assertEquals(2, engine.getResources().size());
         assertEquals(main, engine.getResources().get(0));
     }
+
     @Test
     void resourceDependencyReverseOrder() {
         var res = eval("""
