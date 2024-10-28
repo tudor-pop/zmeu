@@ -55,7 +55,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(ThisExpression expression) {
-        return null;
+        return "this." + eval(expression.getInstance());
     }
 
     @Override
@@ -107,7 +107,10 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(Program program) {
-        return "";
+        return program.getBody()
+                .stream()
+                .map(this::eval)
+                .collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -151,7 +154,10 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(VariableStatement statement) {
-        return "";
+        return "var " + statement.getDeclarations()
+                .stream()
+                .map(this::eval)
+                .collect(Collectors.joining(","));
     }
 
     @Override
@@ -167,7 +173,9 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(WhileStatement statement) {
-        return "";
+        return "while (" + eval(statement.getTest()) + ") {\n"
+                + eval(statement.getBody())
+                + "\n}\n";
     }
 
     @Override
@@ -177,7 +185,9 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(SchemaDeclaration statement) {
-        return "";
+        return "schema " + eval(statement.getName()) + " {\n" +
+                eval(statement.getBody())
+                + "\n}\n";
     }
 
     @Override
