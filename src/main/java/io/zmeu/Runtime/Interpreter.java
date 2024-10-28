@@ -351,6 +351,9 @@ public final class Interpreter implements Visitor<Object> {
             // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
             // Since that environment points to the parent(type env) it will also find the properties
             if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
+                if (schemaValue.getInstance(resourceName.string()) == null) {
+
+                }
                 return schemaValue.getInstances().lookup(resourceName.string());
             } else if (value instanceof ResourceValue iEnvironment) {
                 return iEnvironment.lookup(resourceName.string());
