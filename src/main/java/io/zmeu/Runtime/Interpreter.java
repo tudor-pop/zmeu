@@ -26,6 +26,7 @@ import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
@@ -39,7 +40,8 @@ import static io.zmeu.Utils.BoolUtils.isTruthy;
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment<Object> env;
-    private final Engine engine;
+    @Setter
+    private Engine engine;
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
 
     public Interpreter() {
@@ -381,8 +383,9 @@ public final class Interpreter implements Visitor<Object> {
             } else {
                 resource.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            var res = installedSchema.initInstance(resource.name(), ResourceValue.of(resource.name(), resourceEnv, installedSchema));
-            engine.process(installedSchema.typeString(), resourceEnv.getVariables());
+            ResourceValue instance = ResourceValue.of(resource.name(), resourceEnv, installedSchema);
+            var res = installedSchema.initInstance(resource.name(), instance);
+            engine.process(instance);
             return res;
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
