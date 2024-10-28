@@ -50,7 +50,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(MemberExpression expression) {
-        return null;
+        return eval(expression.getObject()) + "." + eval(expression.getProperty());
     }
 
     @Override
