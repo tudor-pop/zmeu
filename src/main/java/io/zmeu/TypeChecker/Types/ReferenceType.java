@@ -1,6 +1,8 @@
 package io.zmeu.TypeChecker.Types;
 
 public sealed class ReferenceType extends Type permits ResourceType, SchemaType {
+    public static ReferenceType Resource = new ReferenceType("Resource");
+    public static ReferenceType Schema = new ReferenceType("Schema");
 
     public ReferenceType(String typeName) {
         super(typeName);

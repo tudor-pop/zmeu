@@ -452,7 +452,7 @@ public final class TypeChecker implements Visitor<Type> {
 
 
         var resourceType = new ResourceType(resource.name(), installedSchema, resourceEnv);
-        installedSchema.setProperty(resource.name(), resourceType);
+        installedSchema.addInstance(resource.name(), resourceType);
 
         return resourceType;
 //        try {

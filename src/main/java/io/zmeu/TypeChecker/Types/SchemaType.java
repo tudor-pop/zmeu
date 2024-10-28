@@ -43,8 +43,12 @@ public final class SchemaType extends ReferenceType {
         return environment.init(fieldName, type);
     }
 
-    public Type setProperty(@NotNull String fieldName, ResourceType type) {
+    public Type addInstance(@NotNull String fieldName, ResourceType type) {
         return instances.init(fieldName, type);
+    }
+
+    public Type getInstance(@NotNull String fieldName) {
+        return instances.lookup(fieldName);
     }
 
 

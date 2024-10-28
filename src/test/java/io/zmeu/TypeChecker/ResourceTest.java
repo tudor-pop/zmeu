@@ -4,6 +4,7 @@ import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.TypeChecker.Types.ResourceType;
 import io.zmeu.TypeChecker.Types.SchemaType;
 import io.zmeu.TypeChecker.Types.ValueType;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -212,7 +213,7 @@ public class ResourceTest extends BaseChecker {
                 schema vm {
                    var x = "2"
                 }
-
+                
                 resource vm main {
                     x = "3"
                 }
@@ -225,26 +226,24 @@ public class ResourceTest extends BaseChecker {
         // x of main resource was updated with a new value
         assertEquals(ValueType.String, resource.getProperty("x"));
     }
-//
-//    @SneakyThrows
-//    @Test
-//    void resourceInitJson() {
-//        var res = checker.eval(src("""
-//                schema vm {
-//                   var x = 2
-//                }
-//
-//                resource vm main {
-//                    x = 3
-//                }
-//                """));
-//        log.warn(toJson(res));
-//        var schema = (SchemaType) checker.getEnv().get("vm");
-//
-//        var resource = schema.getInstances().get("main");
-//
-//        Assertions.assertInstanceOf(ResourceValue.class, resource);
-//    }
 
+    @SneakyThrows
+    @Test
+    void resourceInitBoolean() {
+        var res = checker.eval(src("""
+                schema vm {
+                   var x :Boolean
+                }
+                
+                resource vm main {
+                    x = true
+                }
+                """));
+        var schema = (SchemaType) checker.getEnv().get("vm");
+
+        var resource = schema.getInstance("main");
+
+        Assertions.assertInstanceOf(ResourceType.class, resource);
+    }
 
 }
