@@ -49,7 +49,7 @@ public class ResourceTest extends BaseChecker {
         assertEquals("Server", schema.getValue());
 
         assertNotNull(res);
-        assertEquals("main", res.getValue());
+        assertEquals("main", res.getName());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ResourceTest extends BaseChecker {
 
         var resource = (ResourceType) schema.getInstances().lookup("main");
         assertNotNull(resource);
-        assertEquals("main", resource.getValue());
+        assertEquals("main", resource.getName());
         assertEquals(ValueType.String, resource.getProperty("name"));
         assertEquals(ValueType.Number, resource.getProperty("maxCount"));
         assertEquals(ValueType.Boolean, resource.getProperty("enabled"));
@@ -104,7 +104,7 @@ public class ResourceTest extends BaseChecker {
 
         var resource = (ResourceType) schema.getInstances().lookup("main");
         assertNotNull(resource);
-        assertEquals("main", resource.getValue());
+        assertEquals("main", resource.getName());
         assertEquals(ValueType.String, resource.getProperty("name"));
         assertEquals(ValueType.Number, resource.getProperty("maxCount"));
         assertEquals(ValueType.Boolean, resource.getProperty("enabled"));

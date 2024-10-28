@@ -44,6 +44,6 @@ public final class ResourceType extends ReferenceType {
 
 
     public String getName() {
-        return getValue();
+        return this.name;
     }
 }
