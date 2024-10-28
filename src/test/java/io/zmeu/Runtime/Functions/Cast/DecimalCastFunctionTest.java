@@ -1,11 +1,11 @@
 package io.zmeu.Runtime.Functions.Cast;
 
-import io.zmeu.Runtime.BaseTest;
+import io.zmeu.Runtime.BaseRuntimeTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class DecimalCastFunctionTest extends BaseTest {
+class DecimalCastFunctionTest extends BaseRuntimeTest {
     private final DecimalCastFunction function = new DecimalCastFunction();
 
     @Test

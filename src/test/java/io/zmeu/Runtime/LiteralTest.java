@@ -6,7 +6,7 @@ import io.zmeu.Runtime.Values.NullValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LiteralTest extends BaseTest {
+public class LiteralTest extends BaseRuntimeTest {
     @Test
     void literal() {
         var res = interpreter.eval(10.0);

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class FunCoreTest extends BaseTest {
+public class FunCoreTest extends BaseRuntimeTest {
 
     @Test
     void funDeclaration() {

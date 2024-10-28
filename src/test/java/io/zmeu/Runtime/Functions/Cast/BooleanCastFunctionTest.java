@@ -1,11 +1,11 @@
 package io.zmeu.Runtime.Functions.Cast;
 
-import io.zmeu.Runtime.BaseTest;
+import io.zmeu.Runtime.BaseRuntimeTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BooleanCastFunctionTest extends BaseTest {
+class BooleanCastFunctionTest extends BaseRuntimeTest {
     private final BooleanCastFunction function = new BooleanCastFunction();
 
     @Test

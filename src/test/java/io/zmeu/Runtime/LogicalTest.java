@@ -3,7 +3,7 @@ package io.zmeu.Runtime;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class LogicalTest extends BaseTest {
+public class LogicalTest extends BaseRuntimeTest {
 
     @Test
     void trueOrTrue() {

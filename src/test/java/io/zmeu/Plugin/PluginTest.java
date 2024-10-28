@@ -4,7 +4,7 @@ import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
-import io.zmeu.Runtime.BaseTest;
+import io.zmeu.Runtime.BaseRuntimeTest;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.api.Provider;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Log4j2
-public class PluginTest extends BaseTest {
+public class PluginTest extends BaseRuntimeTest {
     private CustomPluginManager pluginManager;
     private Zmeufile zmeufile;
 

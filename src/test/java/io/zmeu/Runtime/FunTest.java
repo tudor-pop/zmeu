@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class FunTest extends BaseTest {
+public class FunTest extends BaseRuntimeTest {
 
     @Test
     void funDeclaration() {

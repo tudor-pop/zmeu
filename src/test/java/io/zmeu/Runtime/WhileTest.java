@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-public class WhileTest extends BaseTest {
+public class WhileTest extends BaseRuntimeTest {
 
     @Test
     void increment() {

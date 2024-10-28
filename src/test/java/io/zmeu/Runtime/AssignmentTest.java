@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
-public class AssignmentTest extends BaseTest {
+public class AssignmentTest extends BaseRuntimeTest {
 
     private void setGlobalVar(Object of) {
         global.init("VERSION", of);
