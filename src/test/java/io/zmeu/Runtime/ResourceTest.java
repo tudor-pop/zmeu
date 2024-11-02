@@ -109,8 +109,8 @@ public class ResourceTest extends BaseRuntimeTest {
                 }
                 resource vm main {
                     name = "main"
-                    maxCount = 1
-                    minCount = 2
+                    maxCount = 2
+                    minCount = 1
                 }
                 """);
         log.warn(toJson(res));
@@ -124,15 +124,15 @@ public class ResourceTest extends BaseRuntimeTest {
         assertNotNull(resource);
         assertEquals("main", resource.getName());
         assertEquals("main", resource.argVal("name"));
-        assertEquals(1, resource.argVal("maxCount"));
-        assertEquals(2, resource.argVal("minCount"));
+        assertEquals(2, resource.argVal("maxCount"));
+        assertEquals(1, resource.argVal("minCount"));
 
         var second = (ResourceValue) schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals("second", second.getName());
         assertEquals("second", second.argVal("name"));
-        assertEquals(1, second.argVal("maxCount"));
-        assertEquals(2, second.argVal("minCount"));
+        assertEquals(2, second.argVal("maxCount"));
+        assertEquals(1, second.argVal("minCount"));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm { 
                     var name:String
                     var maxCount=0
-                    var minCount=2
+                    var minCount=1
                 }
                 resource vm second {
                     name = "second"
@@ -151,7 +151,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 }
                 resource vm main {
                     name = "main"
-                    maxCount = 1
+                    maxCount = 2
                 }
                 """);
         log.warn(toJson(res));
@@ -165,15 +165,15 @@ public class ResourceTest extends BaseRuntimeTest {
         assertNotNull(resource);
         assertEquals("main", resource.getName());
         assertEquals("main", resource.argVal("name"));
-        assertEquals(1, resource.argVal("maxCount"));
-        assertEquals(2, resource.argVal("minCount"));
+        assertEquals(2, resource.argVal("maxCount"));
+        assertEquals(1, resource.argVal("minCount"));
 
         var second = (ResourceValue) schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals("second", second.getName());
         assertEquals("second", second.argVal("name"));
-        assertEquals(1, second.argVal("maxCount"));
-        assertEquals(2, second.argVal("minCount"));
+        assertEquals(2, second.argVal("maxCount"));
+        assertEquals(1, second.argVal("minCount"));
     }
 
     @Test
