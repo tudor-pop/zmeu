@@ -94,6 +94,7 @@ public class ResourceTest extends BaseRuntimeTest {
     }
 
     @Test
+    @DisplayName("Evaluate dependency")
     void resourceIsDefinedInSchemaDependencyFirst() {
         var res = eval("""
                 schema vm { 
@@ -110,6 +111,47 @@ public class ResourceTest extends BaseRuntimeTest {
                     name = "main"
                     maxCount = 1
                     minCount = 2
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        assertNotNull(schema);
+        assertEquals("vm", schema.getType().string());
+
+
+        var resource = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(resource);
+        assertEquals("main", resource.getName());
+        assertEquals("main", resource.argVal("name"));
+        assertEquals(1, resource.argVal("maxCount"));
+        assertEquals(2, resource.argVal("minCount"));
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+        assertNotNull(second);
+        assertEquals("second", second.getName());
+        assertEquals("second", second.argVal("name"));
+        assertEquals(1, second.argVal("maxCount"));
+        assertEquals(2, second.argVal("minCount"));
+    }
+
+    @Test
+    @DisplayName("Evaluate dependency and pull value from global schema")
+    void evalDependencyFirstMissingProperty() {
+        var res = eval("""
+                schema vm { 
+                    var name:String
+                    var maxCount=0
+                    var minCount=2
+                }
+                resource vm second {
+                    name = "second"
+                    maxCount = vm.main.maxCount
+                    minCount = vm.main.minCount
+                }
+                resource vm main {
+                    name = "main"
+                    maxCount = 1
                 }
                 """);
         log.warn(toJson(res));
