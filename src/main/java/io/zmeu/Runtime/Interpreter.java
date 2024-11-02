@@ -369,9 +369,14 @@ public final class Interpreter implements Visitor<Object> {
         var installedSchema = (SchemaValue) executeBlock(resource.getType(), env);
 
         Environment typeEnvironment = installedSchema.getEnvironment();
-        // clone all properties from schema properties to the new resource
-        Environment resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
-        resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
+
+        var instance = installedSchema.getInstance(resource.name());
+        if (instance == null) {
+            // clone all properties from schema properties to the new resource
+            var resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
+            resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
+            instance = new ResourceValue(resource.name(), resourceEnv, installedSchema);
+        }
         try {
 //            var init = installedSchema.getMethodOrNull("init");
 //            if (init != null) {
@@ -383,8 +388,6 @@ public final class Interpreter implements Visitor<Object> {
 //                functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
 //            } else {
 
-            var instance = Optional.ofNullable(installedSchema.getInstance(resource.name()))
-                    .orElseGet(() -> new ResourceValue(resource.name(), resourceEnv, installedSchema));
             resource.setEvaluated(true);
             for (Statement it : resource.getArguments()) {
                 var result = executeBlock(it, instance.getProperties());
