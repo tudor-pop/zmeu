@@ -77,7 +77,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
 
     @Override
     public String eval(AssignmentExpression expression) {
-        return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
+        return eval(expression.getLeft()) + " " + expression.getOperator().toString() + " " + eval(expression.getRight());
     }
 
     @Override
@@ -199,7 +199,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     public String eval(ResourceExpression expression) {
         return "resource " + eval(expression.getType()) + " " + eval(expression.getName()) + " {\n"
                 + eval(expression.getBlock())
-                + "\n}\n";
+                + "}\n";
     }
 
     @Override
@@ -237,7 +237,9 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     public String eval(BlockExpression expression) {
         StringBuilder result = new StringBuilder();
         for (Statement statement : expression.getExpression()) {
+            result.append("\t");
             result.append(eval(statement));
+            result.append("\n");
         }
         return result.toString();
     }

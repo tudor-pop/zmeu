@@ -333,7 +333,7 @@ public class ResourceTest extends BaseRuntimeTest {
     @Test
     @DisplayName("eval circular dependencies")
     void circularDependencies() {
-        var res = eval("""
+        assertThrows(RuntimeException.class, () -> eval("""
                 schema vm { 
                     var name:String
                     var maxCount=0
@@ -347,26 +347,8 @@ public class ResourceTest extends BaseRuntimeTest {
                     name = "dep1"
                     maxCount = vm.main.maxCount
                 }
-                """);
-        log.warn(toJson(res));
-        var schema = (SchemaValue) global.get("vm");
+                """));
 
-        assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
-
-        var dep1 = (ResourceValue) schema.getInstances().get("dep1");
-        assertNotNull(dep1);
-        assertEquals("dep1", dep1.getName());
-        assertEquals("dep1", dep1.argVal("name"));
-        assertEquals(0, dep1.argVal("maxCount"));
-        assertEquals(1, dep1.argVal("minCount"));
-
-        var main = (ResourceValue) schema.getInstances().get("main");
-        assertNotNull(main);
-        assertEquals("main", main.getName());
-        assertEquals("main", main.argVal("name"));
-        assertEquals(0, main.argVal("maxCount"));
-        assertEquals(2, main.argVal("minCount"));
     }
 
     @Test

@@ -393,6 +393,7 @@ public final class Interpreter implements Visitor<Object> {
             for (Statement it : resource.getArguments()) {
                 var result = executeBlock(it, instance.getProperties());
                 if (result instanceof Deferred deferred) {
+                    cycleDetection(it, deferred, resource);
                     instance.addDependency(deferred.resource());
                     resource.setEvaluated(false);
 
@@ -413,6 +414,25 @@ public final class Interpreter implements Visitor<Object> {
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
             throw e;
+        }
+    }
+
+    /**
+     * given 2 resources:
+     * resource Type x {
+     *     name = Type.y.name
+     * }
+     * resource Type y {
+     *     name = Type.x.name
+     * }
+     * when y.Type.x.name returns a deferred(y) it means it points to itself
+     * because the deferred comes from x which waits for y to be evaluated.
+     */
+    private void cycleDetection(Statement expression, Deferred deferred, ResourceExpression instance) {
+        if (Objects.equals(instance.name(), deferred.resource())) {
+            String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
+            log.error(message);
+            throw new RuntimeException(message);
         }
     }
 
