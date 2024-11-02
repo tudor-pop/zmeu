@@ -45,7 +45,7 @@ public class Main {
     }
 
     public static void run() {
-        var zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency(".zmeu"))));
+        var zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("files"))));
         PluginFactory.create(zmeufile);
     }
 }

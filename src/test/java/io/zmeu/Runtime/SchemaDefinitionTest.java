@@ -12,7 +12,7 @@ import static io.zmeu.Frontend.Parser.Literals.ParameterIdentifier.param;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Log4j2
-public class SchemaTest extends BaseRuntimeTest {
+public class SchemaDefinitionTest extends BaseRuntimeTest {
 
     @Test
     void declare() {

@@ -32,7 +32,7 @@ public class PluginFactory {
             }
         }
 
-        log.info("Plugin directory: " + pluginManager.getPluginsRoot());
+        log.info("Plugin directory: {}", pluginManager.getPluginsRoot());
         List<Provider> providers = pluginManager.getExtensions(Provider.class);
         log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
 

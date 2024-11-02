@@ -21,9 +21,7 @@ public record Zmeufile(
         }
         this.pluginsPath = pluginsPath;
     }
-    public Zmeufile(Dependencies dependencies, String providers) {
-        this(dependencies, Path.of(URI.create(providers)));
-    }
+
     public Zmeufile(Dependencies dependencies) {
         this(dependencies, Path.of(URI.create("file:///" + Paths.get(".zmeu/plugins").toAbsolutePath())));
     }

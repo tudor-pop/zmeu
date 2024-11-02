@@ -3,7 +3,6 @@ package io.zmeu.api.schema;
 import io.zmeu.api.Attribute;
 import io.zmeu.api.Property;
 import io.zmeu.api.Resource;
-import io.zmeu.api.Schema;
 import lombok.Builder;
 import lombok.Data;
 
@@ -25,7 +24,7 @@ public class SchemaDefinition {
     private Map<String, Attribute> properties;
 
     public static String toSchema(Resource resource) {
-        var annotation = resource.getClass().getAnnotation(Schema.class);
+        var annotation = resource.getClass().getAnnotation(io.zmeu.api.SchemaDefinition.class);
         var fields = resource.getClass().getDeclaredFields();
         var properties = new StringBuilder();
         properties.append(" { \n");
@@ -48,8 +47,8 @@ public class SchemaDefinition {
     }
 
     public static SchemaDefinition toSchemaDefinition(Resource resource) {
-        var schemaDefinition = SchemaDefinition.builder();
-        schemaDefinition.name(resource.getClass().getAnnotation(Schema.class).typeName());
+        var schemaDefinition = io.zmeu.api.schema.SchemaDefinition.builder();
+        schemaDefinition.name(resource.getClass().getAnnotation(io.zmeu.api.SchemaDefinition.class).typeName());
         schemaDefinition.properties(new HashMap<>());
 
         var fields = resource.getClass().getDeclaredFields();

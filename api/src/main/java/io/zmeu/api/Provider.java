@@ -31,6 +31,7 @@ public interface Provider<T extends Resource> extends ExtensionPoint {
                         .toList()
         );
     }
+
     default String schemasString() {
         return resources().list().stream()
                 .map(SchemaDefinition::toSchema)
