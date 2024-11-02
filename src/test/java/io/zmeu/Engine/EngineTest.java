@@ -44,7 +44,7 @@ class EngineTest extends BaseChecker {
     void resourceDependencyReverseOrder() {
         var res = eval("""
                 schema vm { 
-                    var name
+                    var name:String
                     var maxCount=0
                 }
                 
