@@ -177,6 +177,57 @@ public class ResourceTest extends BaseRuntimeTest {
     }
 
     @Test
+    @DisplayName("Evaluate multiple dependencies before evaluating main")
+    void evalMultipleDependencies() {
+        var res = eval("""
+                schema vm { 
+                    var name:String
+                    var maxCount=0
+                    var minCount=1
+                }
+                resource vm main {
+                    name = "main"
+                    maxCount = vm.dep1.maxCount
+                    minCount = vm.dep2.minCount
+                }
+                resource vm dep1 {
+                    name = "dep1"
+                    maxCount = 2
+                }
+                resource vm dep2 {
+                    name = "dep2"
+                    minCount = 3
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        assertNotNull(schema);
+        assertEquals("vm", schema.getType().string());
+
+        var resource = (ResourceValue) schema.getInstances().get("dep2");
+        assertNotNull(resource);
+        assertEquals("dep2", resource.getName());
+        assertEquals("dep2", resource.argVal("name"));
+        assertEquals(0, resource.argVal("maxCount"));
+        assertEquals(3, resource.argVal("minCount"));
+
+        var dep1 = (ResourceValue) schema.getInstances().get("dep1");
+        assertNotNull(dep1);
+        assertEquals("dep1", dep1.getName());
+        assertEquals("dep1", dep1.argVal("name"));
+        assertEquals(2, dep1.argVal("maxCount"));
+        assertEquals(1, dep1.argVal("minCount"));
+
+        var main = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(main);
+        assertEquals("main", main.getName());
+        assertEquals("main", main.argVal("name"));
+        assertEquals(2, main.argVal("maxCount"));
+        assertEquals(3, main.argVal("minCount"));
+    }
+
+    @Test
     @DisplayName("throw if a resource uses a field not defined in the schema")
     void resourceThrowsIfFieldNotDefinedInSchema() {
         assertThrows(NotFoundException.class, () -> eval("""

@@ -395,7 +395,7 @@ public final class Interpreter implements Visitor<Object> {
                     instance.addDependency(deferred.resource());
                     resource.setEvaluated(false);
 
-                    installDeferred(resource, deferred);
+                    addObserver(resource, deferred);
                 }
             }
 //            }
@@ -405,7 +405,10 @@ public final class Interpreter implements Visitor<Object> {
                 // already installed in schema. We must assign the newly evaluated value
                 installedSchema.initInstance(resource.name(), instance);
                 for (DeferredObserverValue it : installedResource) {
-                    it.update(this);
+                    var resourceValue = it.notify(this);
+                    if (resourceValue instanceof ResourceValue value) {
+                        removeObserver(it, value);
+                    }
                 }
                 return instance;
             } else if (installedSchema.getInstance(resource.name()) == null) {
@@ -420,14 +423,24 @@ public final class Interpreter implements Visitor<Object> {
         }
     }
 
-    private void installDeferred(ResourceExpression resource, Deferred deferred) {
+    private void removeObserver(DeferredObserverValue it, ResourceValue resourceValue) {
+        if (it instanceof ResourceExpression resourceExpression) {
+            if (resourceExpression.isEvaluated()) {
+                for (String dependency : resourceValue.getDependencies()) {
+                    var dependencies = deferredResources.get(dependency);
+                    dependencies.remove(resourceExpression);
+                }
+            }
+        }
+    }
+
+    private void addObserver(DeferredObserverValue resource, Deferred deferred) {
         var observers = deferredResources.get(deferred.resource());
         if (observers == null) {
             observers = new HashSet<>();
             deferredResources.put(deferred.resource(), observers);
-        } else {
-            observers.add(resource);
         }
+        observers.add(resource);
     }
 
     @Override

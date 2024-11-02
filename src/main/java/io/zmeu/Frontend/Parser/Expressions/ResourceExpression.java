@@ -10,13 +10,12 @@ import io.zmeu.Runtime.Interpreter;
 import io.zmeu.Runtime.Values.DeferredObserverValue;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 public class ResourceExpression extends Statement implements DeferredObserverValue {
     private Identifier type;
     @Nullable
@@ -27,6 +26,19 @@ public class ResourceExpression extends Statement implements DeferredObserverVal
     private ResourceExpression() {
         this.kind = NodeType.ResourceExpression;
         this.name = new SymbolIdentifier();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ResourceExpression that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(getType(), that.getType()) && Objects.equals(getName(), that.getName()) && Objects.equals(getBlock(), that.getBlock());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getType(), getName(), getBlock());
     }
 
     private ResourceExpression(Identifier type, Identifier name, BlockExpression block) {
@@ -62,8 +74,8 @@ public class ResourceExpression extends Statement implements DeferredObserverVal
 
 
     @Override
-    public void update(Interpreter interpreter) {
-        interpreter.eval(this);
+    public Object notify(Interpreter interpreter) {
+        return interpreter.eval(this);
     }
 
 }
