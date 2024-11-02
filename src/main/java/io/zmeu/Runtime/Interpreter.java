@@ -39,7 +39,7 @@ public final class Interpreter implements Visitor<Object> {
     @Setter
     private Engine engine;
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
-    private final DeferedObservable deferedObservable = new DeferedObservable();
+    private final DeferredObservable deferredObservable = new DeferredObservable();
     public Interpreter() {
         this(new Environment());
     }
@@ -396,7 +396,7 @@ public final class Interpreter implements Visitor<Object> {
                     instance.addDependency(deferred.resource());
                     resource.setEvaluated(false);
 
-                    deferedObservable.addObserver(resource, deferred);
+                    deferredObservable.addObserver(resource, deferred);
                 }
             }
             if (!resource.isEvaluated()) {
@@ -407,7 +407,7 @@ public final class Interpreter implements Visitor<Object> {
 
 //            }
 
-            deferedObservable.notifyObservers(this, resource.name());
+            deferredObservable.notifyObservers(this, resource.name());
             return instance;
 
         } catch (NotFoundException e) {
