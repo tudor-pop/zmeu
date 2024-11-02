@@ -331,8 +331,8 @@ public class ResourceTest extends BaseRuntimeTest {
     }
 
     @Test
-    @DisplayName("eval circular dependencies")
-    void circularDependencies() {
+    @DisplayName("eval simple circular dependencies")
+    void circularSimpleDependencies() {
         assertThrows(RuntimeException.class, () -> eval("""
                 schema vm { 
                     var name:String
@@ -346,6 +346,31 @@ public class ResourceTest extends BaseRuntimeTest {
                 resource vm dep1 {
                     name = "dep1"
                     maxCount = vm.main.maxCount
+                }
+                """));
+
+    }
+
+    @Test
+    @DisplayName("eval indirect circular dependencies")
+    void circularIndirectDependency() {
+        assertThrows(RuntimeException.class, () -> eval("""
+                schema vm { 
+                    var name:String
+                    var maxCount=0
+                    var minCount=1
+                }
+                resource vm a {
+                    name = "a"
+                    maxCount = vm.b.maxCount
+                }
+                resource vm b {
+                    name = "b"
+                    maxCount = vm.c.maxCount
+                }
+                resource vm c {
+                    name = "c"
+                    maxCount = vm.a.maxCount
                 }
                 """));
 

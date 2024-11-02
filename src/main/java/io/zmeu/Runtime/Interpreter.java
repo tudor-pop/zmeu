@@ -40,6 +40,7 @@ public final class Interpreter implements Visitor<Object> {
     private Engine engine;
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     private final DeferredObservable deferredObservable = new DeferredObservable();
+
     public Interpreter() {
         this(new Environment());
     }
@@ -393,8 +394,10 @@ public final class Interpreter implements Visitor<Object> {
             for (Statement it : resource.getArguments()) {
                 var result = executeBlock(it, instance.getProperties());
                 if (result instanceof Deferred deferred) {
-                    cycleDetection(it, deferred, resource);
                     instance.addDependency(deferred.resource());
+
+                    cycleDetection(it, deferred, installedSchema, resource, instance);
+
                     resource.setEvaluated(false);
 
                     deferredObservable.addObserver(resource, deferred);
@@ -420,19 +423,35 @@ public final class Interpreter implements Visitor<Object> {
     /**
      * given 2 resources:
      * resource Type x {
-     *     name = Type.y.name
+     * name = Type.y.name
      * }
      * resource Type y {
-     *     name = Type.x.name
+     * name = Type.x.name
      * }
      * when y.Type.x.name returns a deferred(y) it means it points to itself
      * because the deferred comes from x which waits for y to be evaluated.
+     * This works for:
+     * 1. direct cycles: a -> b and b -> a
+     * 2. indirect cycles: a->b->c->a
      */
-    private void cycleDetection(Statement expression, Deferred deferred, ResourceExpression instance) {
+    private void cycleDetection(Statement expression, Deferred deferred, SchemaValue installedSchema, ResourceExpression instance, ResourceValue resource) {
+        var deferredResource = installedSchema.getInstance(deferred.resource());
+        if (deferredResource == null) {
+            return;
+        }
+        // direct cycle
         if (Objects.equals(instance.name(), deferred.resource())) {
             String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
             log.error(message);
             throw new RuntimeException(message);
+        }
+        // indirect cycle
+        if (deferredResource.getDependencies().contains(resource.name())) {
+            if (resource.getDependencies().contains(deferred.resource())) {
+                String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
+                log.error(message);
+                throw new RuntimeException(message);
+            }
         }
     }
 
