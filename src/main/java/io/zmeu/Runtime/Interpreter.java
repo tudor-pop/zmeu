@@ -375,6 +375,7 @@ public final class Interpreter implements Visitor<Object> {
             var resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
             resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
             instance = new ResourceValue(resource.name(), resourceEnv, installedSchema);
+            // init any kind of new resource
             installedSchema.initInstance(resource.name(), instance);
         }
         try {
@@ -400,6 +401,7 @@ public final class Interpreter implements Visitor<Object> {
             }
             if (!resource.isEvaluated()) {
                 // if not fully evaluated, doesn't make sense to notify observers(resources that depend on this resource)
+                // because they will not be able to be reevaluated
                 return instance;
             }
 
