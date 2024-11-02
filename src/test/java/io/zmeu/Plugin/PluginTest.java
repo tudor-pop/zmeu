@@ -31,7 +31,7 @@ public class PluginTest extends BaseRuntimeTest {
 
     @Test
     void resourceIsDefinedInSchema() {
-        for (Dependency dependency : zmeufile.dependencies().list()) {
+        for (Dependency dependency : zmeufile.dependencies().dependencies()) {
             var extensions = pluginManager.getExtensions(Provider.class, dependency.uri());
             var providerSchema = extensions.getFirst().schemasString();
             var res = eval(providerSchema + """
@@ -73,7 +73,7 @@ public class PluginTest extends BaseRuntimeTest {
 
 //    @Test
 //    void resourceDiffApply() {
-//        for (Dependency dependency : zmeufile.dependencies().list()) {
+//        for (Dependency dependency : zmeufile.dependencies().dependencies()) {
 //            var extensions = pluginManager.getExtensions(Provider.class, dependency.uri());
 //            Provider first = extensions.getFirst();
 //            var providerSchema = first.schemasString();
@@ -84,7 +84,7 @@ public class PluginTest extends BaseRuntimeTest {
 //                    }
 //                    """);
 //            var schema = (SchemaValue) global.get("File");
-//            var pname = extensions.getFirst().resources().list().getFirst().getClass().getName();
+//            var pname = extensions.getFirst().resources().dependencies().getFirst().getClass().getName();
 //            var file = ReflectionUtil.classForName(pname);
 //
 //            log.warn(toJson(res));

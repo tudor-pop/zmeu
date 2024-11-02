@@ -3,17 +3,22 @@ package io.zmeu.Plugin;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
-import lombok.AllArgsConstructor;
+import io.zmeu.api.Schemas;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.pf4j.PluginWrapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
-@AllArgsConstructor
 public class PluginFactory {
+    @Getter
+    private final List<Schemas> schemas = new ArrayList<>();
+    @Getter
+    private StringBuilder schemasString = new StringBuilder();
 
-    public static CustomPluginManager create(Zmeufile zmeufile) {
+    public CustomPluginManager create(Zmeufile zmeufile) {
         var pluginManager = new CustomPluginManager(zmeufile.pluginsPath());
         pluginManager.loadPlugins();
 
@@ -28,7 +33,7 @@ public class PluginFactory {
             log.info("Extensions added by plugin {}", pluginId);
             var extensionClassNames = pluginManager.getExtensionClassNames(pluginId);
             for (String extension : extensionClassNames) {
-                log.info("\t\t" + extension);
+                log.info("\t\t{}", extension);
             }
         }
 
@@ -40,11 +45,11 @@ public class PluginFactory {
             log.info("Resources: ");
             provider.resources()
                     .list()
-                    .forEach(message -> log.info("\t" + message));
-//            var read = provider.read(FileResource.builder()
-//                    .name("fisier.txt")
-//                    .path("./")
-//                    .build());
+                    .forEach(message -> log.info("\t{}", message));
+
+            schemas.add(provider.schemas());
+
+            schemasString.append(provider.schemasString());
         }
 
 

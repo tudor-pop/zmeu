@@ -14,7 +14,7 @@ public class ZmeufileProcessor {
     }
 
     public boolean load() {
-        for (Dependency it : zmeufile.dependencies().list()) {
+        for (Dependency it : zmeufile.dependencies().dependencies()) {
             var req = HttpRequest.newBuilder(it.toUri())
                     .GET()
                     .build();

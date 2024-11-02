@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Storage for local variables and parameters during a function call
- * It iterates over the list of parameters and assign an argument value on each iteration
+ * It iterates over the dependencies of parameters and assign an argument value on each iteration
  */
 public class ActivationEnvironment extends Environment {
 
