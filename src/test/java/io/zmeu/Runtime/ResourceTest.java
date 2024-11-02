@@ -226,6 +226,57 @@ public class ResourceTest extends BaseRuntimeTest {
         assertEquals(2, main.argVal("maxCount"));
         assertEquals(3, main.argVal("minCount"));
     }
+    @Test
+    @DisplayName("Evaluate chain of dependencies before evaluating main")
+    void evalChainOfDependencies() {
+        var res = eval("""
+                schema vm { 
+                    var name:String
+                    var maxCount=0
+                    var minCount=1
+                }
+                resource vm main {
+                    name = "main"
+                    maxCount = vm.dep1.maxCount
+                    minCount = vm.dep2.minCount
+                }
+                resource vm dep1 {
+                    name = "dep1"
+                    maxCount = vm.dep2.maxCount
+                }
+                resource vm dep2 {
+                    name = "dep2"
+                    minCount = 2
+                    maxCount = 3
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        assertNotNull(schema);
+        assertEquals("vm", schema.getType().string());
+
+        var resource = (ResourceValue) schema.getInstances().get("dep2");
+        assertNotNull(resource);
+        assertEquals("dep2", resource.getName());
+        assertEquals("dep2", resource.argVal("name"));
+        assertEquals(3, resource.argVal("maxCount"));
+        assertEquals(2, resource.argVal("minCount"));
+
+        var dep1 = (ResourceValue) schema.getInstances().get("dep1");
+        assertNotNull(dep1);
+        assertEquals("dep1", dep1.getName());
+        assertEquals("dep1", dep1.argVal("name"));
+        assertEquals(3, dep1.argVal("maxCount"));
+        assertEquals(1, dep1.argVal("minCount"));
+
+        var main = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(main);
+        assertEquals("main", main.getName());
+        assertEquals("main", main.argVal("name"));
+        assertEquals(3, main.argVal("maxCount"));
+        assertEquals(2, main.argVal("minCount"));
+    }
 
     @Test
     @DisplayName("throw if a resource uses a field not defined in the schema")

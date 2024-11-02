@@ -39,8 +39,7 @@ public final class Interpreter implements Visitor<Object> {
     @Setter
     private Engine engine;
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
-    private final Map<String, Set<DeferredObserverValue>> deferredResources = new HashMap<>();
-
+    private final DeferedObservable deferedObservable = new DeferedObservable();
     public Interpreter() {
         this(new Environment());
     }
@@ -376,6 +375,7 @@ public final class Interpreter implements Visitor<Object> {
             var resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
             resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
             instance = new ResourceValue(resource.name(), resourceEnv, installedSchema);
+            installedSchema.initInstance(resource.name(), instance);
         }
         try {
 //            var init = installedSchema.getMethodOrNull("init");
@@ -395,27 +395,18 @@ public final class Interpreter implements Visitor<Object> {
                     instance.addDependency(deferred.resource());
                     resource.setEvaluated(false);
 
-                    addObserver(resource, deferred);
+                    deferedObservable.addObserver(resource, deferred);
                 }
             }
+            if (!resource.isEvaluated()) {
+                // if not fully evaluated, doesn't make sense to notify observers(resources that depend on this resource)
+                return instance;
+            }
+
 //            }
 
-            var installedResource = deferredResources.get(resource.name());
-            if (installedResource != null) {
-                // already installed in schema. We must assign the newly evaluated value
-                installedSchema.initInstance(resource.name(), instance);
-                for (DeferredObserverValue it : installedResource) {
-                    var resourceValue = it.notify(this);
-                    if (resourceValue instanceof ResourceValue value) {
-                        removeObserver(it, value);
-                    }
-                }
-                return instance;
-            } else if (installedSchema.getInstance(resource.name()) == null) {
-                return installedSchema.initInstance(resource.name(), instance);
-            } else {
-                return instance;
-            }
+            deferedObservable.notifyObservers(this, resource.name());
+            return instance;
 
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
@@ -423,25 +414,6 @@ public final class Interpreter implements Visitor<Object> {
         }
     }
 
-    private void removeObserver(DeferredObserverValue it, ResourceValue resourceValue) {
-        if (it instanceof ResourceExpression resourceExpression) {
-            if (resourceExpression.isEvaluated()) {
-                for (String dependency : resourceValue.getDependencies()) {
-                    var dependencies = deferredResources.get(dependency);
-                    dependencies.remove(resourceExpression);
-                }
-            }
-        }
-    }
-
-    private void addObserver(DeferredObserverValue resource, Deferred deferred) {
-        var observers = deferredResources.get(deferred.resource());
-        if (observers == null) {
-            observers = new HashSet<>();
-            deferredResources.put(deferred.resource(), observers);
-        }
-        observers.add(resource);
-    }
 
     @Override
     public Object eval(ThisExpression expression) {
