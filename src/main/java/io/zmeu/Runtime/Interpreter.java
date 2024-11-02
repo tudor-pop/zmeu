@@ -18,10 +18,7 @@ import io.zmeu.Runtime.Functions.DateFunction;
 import io.zmeu.Runtime.Functions.Numeric.*;
 import io.zmeu.Runtime.Functions.PrintFunction;
 import io.zmeu.Runtime.Functions.PrintlnFunction;
-import io.zmeu.Runtime.Values.FunValue;
-import io.zmeu.Runtime.Values.NullValue;
-import io.zmeu.Runtime.Values.ResourceValue;
-import io.zmeu.Runtime.Values.SchemaValue;
+import io.zmeu.Runtime.Values.*;
 import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.LanguageAstPrinter;
@@ -30,8 +27,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
 import static io.zmeu.Utils.BoolUtils.isTruthy;
@@ -43,6 +39,7 @@ public final class Interpreter implements Visitor<Object> {
     @Setter
     private Engine engine;
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
+    private final Map<String, Set<DeferredObserverValue>> deferredResources = new HashMap<>();
 
     public Interpreter() {
         this(new Environment());
@@ -351,13 +348,14 @@ public final class Interpreter implements Visitor<Object> {
             // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
             // Since that environment points to the parent(type env) it will also find the properties
             if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
-                if (schemaValue.getInstance(resourceName.string()) == null) {
-
+                if (schemaValue.getInstances().get(resourceName.string()) == null) {
+                    return new Deferred(resourceName.string());
                 }
                 return schemaValue.getInstances().lookup(resourceName.string());
-            } else if (value instanceof ResourceValue iEnvironment) {
-                return iEnvironment.lookup(resourceName.string());
+            } else if (value instanceof ResourceValue resourceValue) {
+                return resourceValue.lookup(resourceName.string());
             } // else it could be a resource or any other type like a NumericLiteral or something else
+            return value;
         }
         throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
     }
@@ -375,24 +373,57 @@ public final class Interpreter implements Visitor<Object> {
         Environment resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
         resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
         try {
-            var init = installedSchema.getMethodOrNull("init");
-            if (init != null) {
-                var args = new ArrayList<>();
-                for (Statement it : resource.getArguments()) {
-                    Object objectRuntimeValue = executeBlock(it, resourceEnv);
-                    args.add(objectRuntimeValue);
+//            var init = installedSchema.getMethodOrNull("init");
+//            if (init != null) {
+//                var args = new ArrayList<>();
+//                for (Statement it : resource.getArguments()) {
+//                    Object objectRuntimeValue = executeBlock(it, resourceEnv);
+//                    args.add(objectRuntimeValue);
+//                }
+//                functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
+//            } else {
+
+            var instance = Optional.ofNullable(installedSchema.getInstance(resource.name()))
+                    .orElseGet(() -> new ResourceValue(resource.name(), resourceEnv, installedSchema));
+            resource.setEvaluated(true);
+            for (Statement it : resource.getArguments()) {
+                var result = executeBlock(it, instance.getProperties());
+                if (result instanceof Deferred deferred) {
+                    instance.addDependency(deferred.resource());
+                    resource.setEvaluated(false);
+
+                    installDeferred(resource, deferred);
                 }
-                functionCall(FunValue.of(init.name(), init.getParams(), init.getBody(), resourceEnv/* this env */), args);
-            } else {
-                resource.getArguments().forEach(it -> executeBlock(it, resourceEnv));
             }
-            ResourceValue instance = ResourceValue.of(resource.name(), resourceEnv, installedSchema);
-            var res = installedSchema.initInstance(resource.name(), instance);
-            engine.process(instance);
-            return res;
+//            }
+
+            var installedResource = deferredResources.get(resource.name());
+            if (installedResource != null) {
+                // already installed in schema. We must assign the newly evaluated value
+                installedSchema.initInstance(resource.name(), instance);
+                for (DeferredObserverValue it : installedResource) {
+                    it.update(this);
+                }
+                return instance;
+            } else if (installedSchema.getInstance(resource.name()) == null) {
+                return installedSchema.initInstance(resource.name(), instance);
+            } else {
+                return instance;
+            }
+
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
             throw e;
+        }
+    }
+
+    private void installDeferred(ResourceExpression resource, Deferred deferred) {
+        var observers = deferredResources.get(deferred.resource());
+        if (observers == null) {
+            observers = new HashSet<>();
+            deferredResources.put(deferred.resource(), observers);
+        } else {
+            observers.add(resource);
         }
     }
 
@@ -518,8 +549,6 @@ public final class Interpreter implements Visitor<Object> {
 
     @Override
     public Object eval(AssignmentExpression expression) {
-        Object right = executeBlock(expression.getRight(), env);
-
         switch (expression.getLeft()) {
             case MemberExpression memberExpression -> {
                 var instanceEnv = executeBlock(memberExpression.getObject(), env);
@@ -528,6 +557,7 @@ public final class Interpreter implements Visitor<Object> {
                 }
             }
             case SymbolIdentifier identifier -> {
+                Object right = executeBlock(expression.getRight(), env);
 //            Integer distance = locals.get(identifier);
                 return env.assign(identifier.string(), right);
             }

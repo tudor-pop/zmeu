@@ -20,7 +20,7 @@ public class ResourceTest extends BaseRuntimeTest {
             eval("""
                     schema vm { }
                     resource vm {
-                        
+                    
                     }
                     """);
         });
@@ -39,7 +39,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var res = eval("""
                 schema vm { }
                 resource vm main {
-                    
+                
                 }
                 """);
         log.warn(toJson(res));
@@ -94,12 +94,53 @@ public class ResourceTest extends BaseRuntimeTest {
     }
 
     @Test
+    void resourceIsDefinedInSchemaDependencyFirst() {
+        var res = eval("""
+                schema vm { 
+                    var name:String
+                    var maxCount=0
+                    var minCount=0
+                }
+                resource vm second {
+                    name = "second"
+                    maxCount = vm.main.maxCount
+                    minCount = vm.main.minCount
+                }
+                resource vm main {
+                    name = "main"
+                    maxCount = 1
+                    minCount = 2
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        assertNotNull(schema);
+        assertEquals("vm", schema.getType().string());
+
+
+        var resource = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(resource);
+        assertEquals("main", resource.getName());
+        assertEquals("main", resource.argVal("name"));
+        assertEquals(1, resource.argVal("maxCount"));
+        assertEquals(2, resource.argVal("minCount"));
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+        assertNotNull(second);
+        assertEquals("second", second.getName());
+        assertEquals("second", second.argVal("name"));
+        assertEquals(1, second.argVal("maxCount"));
+        assertEquals(2, second.argVal("minCount"));
+    }
+
+    @Test
     @DisplayName("throw if a resource uses a field not defined in the schema")
     void resourceThrowsIfFieldNotDefinedInSchema() {
         assertThrows(NotFoundException.class, () -> eval("""
                 schema vm {
                 }
-                                
+                
                 resource vm main {
                     x = 3
                 }
@@ -113,9 +154,9 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                    var x = 2
                 }
-                                
+                
                 resource vm main {
-                    
+                
                 }
                 """);
         log.warn(toJson(res));
@@ -132,9 +173,9 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                    var x = 2
                 }
-                                
+                
                 resource vm main {
-                    
+                
                 }
                 var y = vm.main
                 var z = vm.main.x
@@ -169,9 +210,9 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                    var x = 2
                 }
-                                
+                
                 resource vm main {
-                    
+                
                 }
                 vm.main.x = 3
                 """));
@@ -183,7 +224,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                    var x = 2
                 }
-                                
+                
                 resource vm main {
                     x = 3
                 }
@@ -208,7 +249,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                    var x = 2
                 }
-                                
+                
                 resource vm main {
                     x = 3
                 }
