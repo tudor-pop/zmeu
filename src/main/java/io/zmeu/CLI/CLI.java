@@ -52,7 +52,17 @@ class CLI implements Runnable {
         var parser = new Parser();
         var typeChecker = new TypeChecker();
 
-        List<Token> tokens = tokenizer.tokenize(pluginFactory.getSchemasString().toString());
+        StringBuilder schemasString = pluginFactory.getSchemasString();
+        var resources = """
+                resource File users {
+                    name = "users"
+                    content = "tudor"
+                    path = "./"
+                }
+                """;
+        schemasString.append(resources);
+        List<Token> tokens = tokenizer.tokenize(schemasString.toString());
+
         Program program = parser.produceAST(tokens);
         typeChecker.eval(program);
         var evalRes = interpreter.eval(program);
