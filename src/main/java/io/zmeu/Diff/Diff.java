@@ -42,11 +42,11 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan plan(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+    public Plan plan(@Nullable Object localState, Object sourceState, @Nullable Object cloudState) {
         // overwrite local state with remote state - in memory -
-        if (cloudState != null) {
-            cloudState.setCanonicalType(cloudState.getClass().getName());
-        }
+//        if (cloudState != null) {
+//            cloudState.setCanonicalType(cloudState.getClass().getName());
+//        }
         if (cloudState == null) {
             localState = null; // local state is invalid because the cloud resource doesn't exist anymore
         }
@@ -60,7 +60,7 @@ public class Diff {
         return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(localState));
     }
 
-    private static Resource handleNullState(@Nullable Resource localState) {
+    private static Object handleNullState(@Nullable Object localState) {
         return localState == null ? Resource.builder().build() : localState;
     }
 

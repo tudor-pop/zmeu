@@ -23,6 +23,7 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     private Ansi ansi;
     private boolean enableStdout;
     private InstanceId globalId;
+    private static final String EQUALS = "\t= ";
 
     public ShapeChangeLog(boolean enableStdout) {
         this.enableStdout = enableStdout;
@@ -65,7 +66,7 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
             case ObjectRemoved objectRemoved -> io.zmeu.Diff.Change.REMOVE.coloredOperation();
             case NewObject newObject -> io.zmeu.Diff.Change.ADD.coloredOperation();
             default -> {
-                var res=CHANGE.coloredOperation();
+                var res = CHANGE.coloredOperation();
                 appendln(res + " resource %s %s { ".formatted(globalId.getTypeName(), globalId.getCdoId()));
                 yield res;
             }
@@ -80,15 +81,22 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
     public void onValueChange(ValueChange change) {
         switch (change) {
             case InitialValueChange valueChange ->
-                    append(type + "\t" + change.getPropertyName() + " = " + change.getRight());
+                    append(type + "\t" + change.getPropertyName() + EQUALS + getRight(change));
             default ->
-                    append(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+                    append(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + getRight(change));
         }
+    }
+
+    private static Object getRight(ValueChange change) {
+        if (change.getRight() instanceof String string) {
+            return "\"" + string + "\"";
+        }
+        return change.getRight();
     }
 
     @Override
     public void onReferenceChange(ReferenceChange change) {
-        appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
     }
 
     @Override
@@ -110,24 +118,24 @@ public class ShapeChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onSetChange(SetChange change) {
-        appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
     }
 
     @Override
     public void onArrayChange(ArrayChange change) {
-        appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
 
     }
 
     @Override
     public void onListChange(ListChange change) {
-        appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
 
     }
 
     @Override
     public void onMapChange(MapChange change) {
-        appendln(type + "\t" + change.getPropertyName() + " = " + change.getLeft() + " -> " + change.getRight());
+        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
 
     }
 

@@ -1,10 +1,16 @@
 package io.zmeu.Engine;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.zmeu.Import.Dependencies;
+import io.zmeu.Import.Zmeufile;
+import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.TypeChecker.BaseChecker;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,7 +20,7 @@ class EngineTest extends BaseChecker {
 
     @BeforeEach
     void setUp() {
-        engine = new Engine();
+        engine = new Engine(new PluginFactory(new Zmeufile(new Dependencies(List.of()))), YAMLMapper.builder().build());
         interpreter.setEngine(engine);
     }
 

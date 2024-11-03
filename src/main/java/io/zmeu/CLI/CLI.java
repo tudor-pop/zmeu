@@ -1,6 +1,9 @@
 package io.zmeu.CLI;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import io.zmeu.Diff.Diff;
+import io.zmeu.Diff.JaversFactory;
+import io.zmeu.Engine.Engine;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
@@ -8,10 +11,12 @@ import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
 import io.zmeu.TypeChecker.TypeChecker;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.javers.core.Javers;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -35,19 +40,28 @@ class CLI implements Runnable {
     @Parameters(paramLabel = "SourceFiles", description = "The source file")
     private File[] sourceFiles;
     private Zmeufile zmeufile;
-    private PluginFactory pluginFactory = new PluginFactory();
+    private PluginFactory pluginFactory;
+    private final Javers javers;
+    private final Diff diff;
+    private final YAMLMapper mapper;
+
+    public CLI() {
+        javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        diff = new Diff(javers);
+        mapper = new YAMLMapper();
+    }
 
     @SneakyThrows
     @Override
     public void run() { // your business logic goes here...
-        var mapper = new YAMLMapper();
         var zmeufilePath = Paths.get(URI.create("file://" + Paths.get("Zmeufile.yml").toAbsolutePath()));
         var zmeufileContent = Files.readString(zmeufilePath);
         var dependencies = mapper.readValue(zmeufileContent, Dependencies.class);
         this.zmeufile = new Zmeufile(dependencies);
-        pluginFactory.create(zmeufile);
+        this.pluginFactory = new PluginFactory(zmeufile);
+        this.pluginFactory.loadPlugins();
 
-        var interpreter = new Interpreter();
+        var interpreter = new Interpreter(new Environment<>(), new Engine(pluginFactory, mapper, diff, javers));
         var tokenizer = new Tokenizer();
         var parser = new Parser();
         var typeChecker = new TypeChecker();
@@ -55,7 +69,7 @@ class CLI implements Runnable {
         StringBuilder schemasString = pluginFactory.getSchemasString();
         var resources = """
                 resource File users {
-                    name = "users"
+                    name = "students"
                     content = "tudor"
                     path = "./"
                 }

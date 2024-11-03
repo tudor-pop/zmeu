@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public interface Provider<T extends Resource> extends ExtensionPoint {
 
-    Resources resources();
+    Resources<T> resources();
 
     default Schemas schemas() {
         return new Schemas(
@@ -41,4 +41,7 @@ public interface Provider<T extends Resource> extends ExtensionPoint {
 
     T read(T declaration);
 
+    String namespace();
+
+    String resourceType();
 }

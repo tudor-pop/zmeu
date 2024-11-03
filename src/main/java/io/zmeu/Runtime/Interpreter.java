@@ -27,7 +27,9 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
 import static io.zmeu.Utils.BoolUtils.isTruthy;
@@ -46,7 +48,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     public Interpreter(Environment<Object> environment) {
-        this(environment, new Engine());
+        this(environment, null);
     }
 
     public Interpreter(Environment<Object> environment, Engine engine) {
@@ -412,6 +414,7 @@ public final class Interpreter implements Visitor<Object> {
 //            }
 
             deferredObservable.notifyObservers(this, resource.name());
+            var local = engine.plan(instance);
             return instance;
 
         } catch (NotFoundException e) {

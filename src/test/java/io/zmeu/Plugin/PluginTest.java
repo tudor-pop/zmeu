@@ -26,7 +26,7 @@ public class PluginTest extends BaseRuntimeTest {
     @BeforeEach
     void init() {
         zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("files@0.0.1"))));
-        pluginManager = PluginFactory.create(zmeufile);
+        pluginManager = new PluginFactory(zmeufile).loadPlugins();
     }
 
     @Test
