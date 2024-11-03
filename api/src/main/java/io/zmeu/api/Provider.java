@@ -20,7 +20,7 @@ import org.pf4j.ExtensionPoint;
 
 import java.util.stream.Collectors;
 
-public interface Provider<T extends Resource> extends ExtensionPoint {
+public interface Provider<T> extends ExtensionPoint {
 
     Resources<T> resources();
 

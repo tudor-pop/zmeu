@@ -12,7 +12,7 @@ public class Resource<T> {
     @Id
     private String resourceName;
 
-    private T resourceType;
+    private T instance;
 
     public Resource() {
     }
