@@ -39,6 +39,7 @@ public class PluginFactory {
             pluginManager.loadPlugin(pluginPath.resolve(dependency.versionedName()));
         }
 
+        log.info("Plugin directory: {}", pluginManager.getPluginsRoot());
 //        pluginManager.enablePlugin("welcome-plugin");
 
         pluginManager.startPlugins();
@@ -50,16 +51,11 @@ public class PluginFactory {
             ClassLoader pluginClassLoader = pluginManager.getPluginClassLoader(pluginId);
 
             log.info("Extensions added by plugin {}", pluginId);
-            var extensionClassNames = pluginManager.getExtensionClassNames(pluginId);
-            for (String extension : extensionClassNames) {
-                log.info("\t\t{}", extension);
-            }
-            log.info("Plugin directory: {}", pluginManager.getPluginsRoot());
 
             List<Provider> providers = pluginManager.getExtensions(Provider.class);
             log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
             for (var provider : providers) {
-                log.info("Resources: ");
+                log.info("Loading provider {}", provider.getClass().getName());
                 var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
                 provider.resources().list().forEach(message -> log.info("\t{}", message));
 
