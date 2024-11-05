@@ -1,5 +1,6 @@
 package io.zmeu.Plugin;
 
+import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
@@ -9,6 +10,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.pf4j.PluginWrapper;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,14 +25,19 @@ public class PluginFactory {
     private final HashMap<String, Provider> plugins = new HashMap<>();
     @Getter
     private final CustomPluginManager pluginManager;
+    private final Zmeufile zmeufile;
 
     public PluginFactory(Zmeufile zmeufile) {
+        this.zmeufile = zmeufile;
         this.pluginManager = new CustomPluginManager(zmeufile.pluginsPath());
     }
 
     @SneakyThrows
     public CustomPluginManager loadPlugins() {
-        pluginManager.loadPlugins();
+        Path pluginPath = zmeufile.pluginsPath();
+        for (Dependency dependency : zmeufile.dependencies().dependencies()) {
+            pluginManager.loadPlugin(pluginPath.resolve(dependency.versionedName()));
+        }
 
 //        pluginManager.enablePlugin("welcome-plugin");
 

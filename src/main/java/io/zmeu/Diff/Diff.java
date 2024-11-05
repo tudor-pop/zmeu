@@ -55,9 +55,8 @@ public class Diff {
         }
         var diff = this.javers.compare(localState, sourceState);
         var changes = javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
-
         localState = handleNullState(localState);
-        return new Plan(mapper.valueToTree(sourceState), mapper.valueToTree(localState));
+        return new Plan(sourceState, diff.getChanges());
     }
 
     private static Object handleNullState(@Nullable Object localState) {
@@ -65,14 +64,12 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan apply(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
-        var plan = plan(localState, sourceState, cloudState);
+    public Plan apply(Plan plan) {
+//        Object jsonNode = plan.diffResults();
+//        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
+//        var res = mapper.treeToValue(jsonNode, type);
 
-        JsonNode jsonNode = plan.diffResults();
-        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode.path("canonicalType").asText());
-        var res = mapper.treeToValue(jsonNode, type);
-
-        javers.commit("Tudor", res);
+        javers.commit("Tudor", plan.sourceCode());
         return plan;
     }
 

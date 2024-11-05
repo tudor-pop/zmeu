@@ -34,7 +34,8 @@ public class Engine {
 
         var cloudStateJavers = javers.getLatestSnapshot(resource.getName(), className).orElse(null);
         var cloudState = mapper.convertValue(cloudStateJavers, className);
-        var res = diff.plan(localState, sourceState, cloudState);
+        var plan = diff.plan(localState, sourceState, cloudState);
+        var res = diff.apply(plan);
 
         return localState;
     }

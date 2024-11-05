@@ -25,4 +25,8 @@ public record Dependency(@Nullable String uri, String name, String version) {
         }
         return URI.create("file:///" + uri);
     }
+
+    public String versionedName() {
+        return name + "-" + version + ".jar";
+    }
 }

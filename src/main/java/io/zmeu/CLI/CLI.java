@@ -45,20 +45,22 @@ class CLI implements Runnable {
     private final Diff diff;
     private final YAMLMapper mapper;
 
-    public CLI() {
-        javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
-        diff = new Diff(javers);
-        mapper = new YAMLMapper();
-    }
-
     @SneakyThrows
-    @Override
-    public void run() { // your business logic goes here...
+    public CLI() {
+        mapper = new YAMLMapper();
         var zmeufilePath = Paths.get(URI.create("file://" + Paths.get("Zmeufile.yml").toAbsolutePath()));
         var zmeufileContent = Files.readString(zmeufilePath);
         var dependencies = mapper.readValue(zmeufileContent, Dependencies.class);
         this.zmeufile = new Zmeufile(dependencies);
         this.pluginFactory = new PluginFactory(zmeufile);
+
+        javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        diff = new Diff(javers);
+    }
+
+    @SneakyThrows
+    @Override
+    public void run() { // your business logic goes here...
         this.pluginFactory.loadPlugins();
 
         var interpreter = new Interpreter(new Environment<>(), new Engine(pluginFactory, mapper, diff, javers));
