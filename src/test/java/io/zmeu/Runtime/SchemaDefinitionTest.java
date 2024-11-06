@@ -24,7 +24,7 @@ public class SchemaDefinitionTest extends BaseRuntimeTest {
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
-        assertEquals("Vm", actual.getType().string());
+        assertEquals("Vm", actual.getType());
     }
 
     @Test

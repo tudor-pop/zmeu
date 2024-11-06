@@ -18,11 +18,7 @@ import java.util.List;
 @Log4j2
 public class PluginFactory {
     @Getter
-    private final List<Schemas> schemas = new ArrayList<>();
-    @Getter
-    private final StringBuilder schemasString = new StringBuilder();
-    @Getter
-    private final HashMap<String, Provider> plugins = new HashMap<>();
+    private final HashMap<String, PluginRecord> pluginHashMap = new HashMap<>();
     @Getter
     private final CustomPluginManager pluginManager;
     private final Zmeufile zmeufile;
@@ -44,7 +40,6 @@ public class PluginFactory {
 
         pluginManager.startPlugins();
 
-        // print extensions for each started plugin
         List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
         for (PluginWrapper plugin : startedPlugins) {
             String pluginId = plugin.getDescriptor().getPluginId();
@@ -56,12 +51,12 @@ public class PluginFactory {
             log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
             for (var provider : providers) {
                 log.info("Loading provider {}", provider.getClass().getName());
-                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
-                provider.resources().list().forEach(message -> log.info("\t{}", message));
+//                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
 
-                schemas.add(provider.schemas());
-                plugins.put(provider.namespace(), provider);
-                schemasString.append(provider.schemasString());
+                var record = this.pluginHashMap.get(provider.namespace());
+                if (record == null) {
+                    this.pluginHashMap.put(provider.namespace(), new PluginRecord(provider, plugin, pluginClassLoader));
+                }
             }
         }
 

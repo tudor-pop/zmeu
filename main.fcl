@@ -1,7 +1,0 @@
-schema vm {
-    var name = "vm"
-}
-
-resource vm main {
-    name = "src"
-}

@@ -1,5 +1,6 @@
 open module zmeu.api {
     exports io.zmeu.api;
+    exports io.zmeu.api.schema;
 
     requires java.logging;
     requires javers.core;

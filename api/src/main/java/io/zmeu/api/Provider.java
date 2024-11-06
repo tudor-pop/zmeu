@@ -16,15 +16,23 @@
 package io.zmeu.api;
 
 import io.zmeu.api.schema.SchemaDefinition;
+import lombok.Getter;
 import org.pf4j.ExtensionPoint;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public interface Provider<T> extends ExtensionPoint {
+public abstract class Provider<T> implements IProvider<T> {
+    private final Map<String, Class<?>> schemaMap = new HashMap<>();
 
-    Resources<T> resources();
+    public Provider() {
+        schemasMap();
+    }
 
-    default Schemas schemas() {
+    abstract public Resources<T> resources();
+
+    public Schemas schemas() {
         return new Schemas(
                 resources().list()
                         .stream()
@@ -33,15 +41,22 @@ public interface Provider<T> extends ExtensionPoint {
         );
     }
 
-    default String schemasString() {
+    private Map<String, Class<?>> schemasMap() {
+        for (var res : resources().list()) {
+            var definition = SchemaDefinition.toSchemaDefinition(res);
+            schemaMap.put(definition.getName(), definition.getResourceClass());
+        }
+        return schemaMap;
+    }
+
+    public Class<?> getSchema(String name) {
+        return schemaMap.get(name);
+    }
+
+    public String schemasString() {
         return resources().list().stream()
                 .map(SchemaDefinition::toSchema)
                 .collect(Collectors.joining());
     }
 
-    T read(T declaration);
-
-    String namespace();
-
-    String resourceType();
 }

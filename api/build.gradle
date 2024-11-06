@@ -16,7 +16,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     implementation 'com.github.zafarkhaja:java-semver:0.10.2'
-    implementation 'org.javers:javers-core:7.6.2'
+    implementation 'org.javers:javers-core:7.7.0'
 
     testCompileOnly "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
@@ -25,5 +25,5 @@ dependencies {
 }
 
 extraJavaModuleInfo {
-    automaticModule('org.javers:javers-core', 'javers.core');
+    automaticModule('org.javers:javers-core', 'javers.core')
 }

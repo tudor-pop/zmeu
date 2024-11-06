@@ -46,7 +46,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -75,7 +75,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -91,6 +91,98 @@ public class ResourceTest extends BaseRuntimeTest {
         assertEquals("second", second.getName());
         assertEquals("second", second.argVal("name"));
         assertEquals(1, second.argVal("maxCount"));
+    }
+
+    @Test
+    void checkNumberOfDependencies() {
+        var res = eval("""
+                schema vm { 
+                    var name
+                    var maxCount=0
+                }
+                resource vm main {
+                    name = "first"
+                    maxCount=1
+                }
+                resource vm second {
+                    name = "second"
+                    maxCount = vm.main.maxCount
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        var resource = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(resource);
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+        assertNotNull(second);
+        assertEquals(1, second.getDependencies().size());
+    }
+
+    @Test
+    void checkMultipleOfDependenciesAreAddedToDependencyList() {
+        var res = eval("""
+                schema vm { 
+                    var name
+                    var maxCount=0
+                }
+                resource vm main {
+                    name = vm.third.name
+                    maxCount=vm.second.maxCount
+                }
+                resource vm second {
+                    name = "second"
+                    maxCount = 2
+                }
+                resource vm third {
+                    name = "third"
+                    maxCount = 3
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        var resource = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(resource);
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+        assertNotNull(second);
+        assertEquals(2, resource.getDependencies().size());
+    }
+
+    @Test
+    void checkMultipleOfDependenciesAreAddedToDependencyListEarly() {
+        var res = eval("""
+                schema vm { 
+                    var name
+                    var maxCount=0
+                }
+                resource vm second {
+                    name = "second"
+                    maxCount = 2
+                }
+                resource vm third {
+                    name = "third"
+                    maxCount = 3
+                }
+                resource vm main {
+                    name = vm.third.name
+                    maxCount=vm.second.maxCount
+                }
+                
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        var main = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(main);
+        assertEquals(2, main.argVal("maxCount"));
+        assertEquals("third", main.argVal("name"));
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+        assertNotNull(second);
+        assertEquals(2, main.getDependencies().size());
     }
 
     @Test
@@ -117,7 +209,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -158,7 +250,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -203,7 +295,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
         var resource = (ResourceValue) schema.getInstances().get("dep2");
         assertNotNull(resource);
@@ -255,7 +347,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
         var resource = (ResourceValue) schema.getInstances().get("dep2");
         assertNotNull(resource);
@@ -306,7 +398,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
         var resource = (ResourceValue) schema.getInstances().get("dep2");
         assertNotNull(resource);
@@ -345,6 +437,23 @@ public class ResourceTest extends BaseRuntimeTest {
                 }
                 resource vm dep1 {
                     name = "dep1"
+                    maxCount = vm.main.maxCount
+                }
+                """));
+
+    }
+
+    @Test
+    @DisplayName("eval simple circular dependencies")
+    void cycleDetectionSelf() {
+        assertThrows(RuntimeException.class, () -> eval("""
+                schema vm { 
+                    var name:String
+                    var maxCount=0
+                    var minCount=1
+                }
+                resource vm main {
+                    name = "main"
                     maxCount = vm.main.maxCount
                 }
                 """));

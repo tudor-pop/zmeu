@@ -1,5 +1,5 @@
 package io.zmeu.Runtime.Values;
 
-public record Deferred(String resource) {
+public record Deferred(SchemaValue schemaValue, String resource) {
 
 }

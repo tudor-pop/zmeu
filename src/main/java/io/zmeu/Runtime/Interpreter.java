@@ -1,6 +1,5 @@
 package io.zmeu.Runtime;
 
-import io.zmeu.Engine.Engine;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
@@ -23,13 +22,11 @@ import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
-import lombok.Setter;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
 import static io.zmeu.Utils.BoolUtils.isTruthy;
@@ -37,9 +34,9 @@ import static io.zmeu.Utils.BoolUtils.isTruthy;
 @Log4j2
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
+    @Getter
     private Environment<Object> env;
-    @Setter
-    private Engine engine;
+    @Getter
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     private final DeferredObservable deferredObservable = new DeferredObservable();
 
@@ -47,12 +44,8 @@ public final class Interpreter implements Visitor<Object> {
         this(new Environment());
     }
 
-    public Interpreter(Environment<Object> environment) {
-        this(environment, null);
-    }
 
-    public Interpreter(Environment<Object> environment, Engine engine) {
-        this.engine = engine;
+    public Interpreter(Environment<Object> environment) {
         this.env = environment;
         this.env.init("null", NullValue.of());
         this.env.init("true", true);
@@ -344,22 +337,52 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(MemberExpression expression) {
-        if (expression.getProperty() instanceof SymbolIdentifier resourceName) {
-            var value = executeBlock(expression.getObject(), env);
-            // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
-            // Since that environment points to the parent(type env) it will also find the properties
-            if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
-                if (schemaValue.getInstances().get(resourceName.string()) == null) {
-                    return new Deferred(resourceName.string());
+    public Object eval(AssignmentExpression expression) {
+        switch (expression.getLeft()) {
+            case MemberExpression memberExpression -> {
+                var instanceEnv = executeBlock(memberExpression.getObject(), env);
+                if (instanceEnv instanceof ResourceValue resourceValue) {
+                    throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
                 }
-                return schemaValue.getInstances().lookup(resourceName.string());
-            } else if (value instanceof ResourceValue resourceValue) {
-                return resourceValue.lookup(resourceName.string());
-            } // else it could be a resource or any other type like a NumericLiteral or something else
-            return value;
+            }
+            case SymbolIdentifier identifier -> {
+                Object right = executeBlock(expression.getRight(), env);
+                //            Integer distance = locals.get(identifier);
+                if (right instanceof Dependency dependency) {
+                    env.assign(identifier.string(), dependency.value());
+                    return dependency;
+                }
+                return env.assign(identifier.string(), right);
+            }
+            case null, default -> {
+            }
         }
-        throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
+        throw new RuntimeException("Invalid assignment");
+    }
+
+    @Override
+    public Object eval(MemberExpression expression) {
+        if (!(expression.getProperty() instanceof SymbolIdentifier resourceName)) {
+            throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
+        }
+        var value = executeBlock(expression.getObject(), env);
+        // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
+        // Since that environment points to the parent(type env) it will also find the properties
+        if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
+            String name = resourceName.string();
+            if (schemaValue.getInstances().get(name) == null) {
+                // if instance was not installed yet -> it will be installed later so we return a deferred object
+                return new Deferred(schemaValue, name);
+            } else {
+                return schemaValue.getInstances().lookup(name);
+            }
+        } else if (value instanceof ResourceValue resourceValue) {
+            if (expression.getObject() instanceof MemberExpression) {
+                return new Dependency(resourceValue, resourceValue.lookup(resourceName.string()));
+            }
+            return resourceValue.lookup(resourceName.string());
+        } // else it could be a resource or any other type like a NumericLiteral or something else
+        return value;
     }
 
     @Override
@@ -398,66 +421,30 @@ public final class Interpreter implements Visitor<Object> {
                 if (result instanceof Deferred deferred) {
                     instance.addDependency(deferred.resource());
 
-                    cycleDetection(it, deferred, installedSchema, resource, instance);
+                    CycleDetection.detect(instance);
 
                     resource.setEvaluated(false);
 
                     deferredObservable.addObserver(resource, deferred);
+                } else if (result instanceof Dependency dependency) {
+                    instance.addDependency(dependency.resource().getName());
+
+                    CycleDetection.detect(instance);
                 }
             }
-            if (!resource.isEvaluated()) {
+            if (resource.isEvaluated()) {
+                deferredObservable.notifyObservers(this, resource.name());
+                return instance;
+            } else {
                 // if not fully evaluated, doesn't make sense to notify observers(resources that depend on this resource)
                 // because they will not be able to be reevaluated
                 return instance;
             }
-
-//            }
-
-            deferredObservable.notifyObservers(this, resource.name());
-            var local = engine.plan(instance);
-            return instance;
-
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
             throw e;
         }
     }
-
-    /**
-     * given 2 resources:
-     * resource Type x {
-     * name = Type.y.name
-     * }
-     * resource Type y {
-     * name = Type.x.name
-     * }
-     * when y.Type.x.name returns a deferred(y) it means it points to itself
-     * because the deferred comes from x which waits for y to be evaluated.
-     * This works for:
-     * 1. direct cycles: a -> b and b -> a
-     * 2. indirect cycles: a->b->c->a
-     */
-    private void cycleDetection(Statement expression, Deferred deferred, SchemaValue installedSchema, ResourceExpression instance, ResourceValue resource) {
-        var deferredResource = installedSchema.getInstance(deferred.resource());
-        if (deferredResource == null) {
-            return;
-        }
-        // direct cycle
-        if (Objects.equals(instance.name(), deferred.resource())) {
-            String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
-            log.error(message);
-            throw new RuntimeException(message);
-        }
-        // indirect cycle
-        if (deferredResource.getDependencies().contains(resource.name())) {
-            if (resource.getDependencies().contains(deferred.resource())) {
-                String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
-                log.error(message);
-                throw new RuntimeException(message);
-            }
-        }
-    }
-
 
     @Override
     public Object eval(ThisExpression expression) {
@@ -576,28 +563,12 @@ public final class Interpreter implements Visitor<Object> {
         if (expression.hasInit()) {
             value = executeBlock(expression.getInit(), env);
         }
+        if (value instanceof Dependency dependency) { // a dependency access on another resource
+            return env.init(symbol, dependency.value());
+        }
         return env.init(symbol, value);
     }
 
-    @Override
-    public Object eval(AssignmentExpression expression) {
-        switch (expression.getLeft()) {
-            case MemberExpression memberExpression -> {
-                var instanceEnv = executeBlock(memberExpression.getObject(), env);
-                if (instanceEnv instanceof ResourceValue resourceValue) {
-                    throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
-                }
-            }
-            case SymbolIdentifier identifier -> {
-                Object right = executeBlock(expression.getRight(), env);
-//            Integer distance = locals.get(identifier);
-                return env.assign(identifier.string(), right);
-            }
-            case null, default -> {
-            }
-        }
-        throw new RuntimeException("Invalid assignment");
-    }
 
     @Override
     public Object eval(Program program) {
