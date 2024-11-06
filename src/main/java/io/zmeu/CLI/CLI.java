@@ -69,14 +69,12 @@ class CLI implements Runnable {
         var typeChecker = new TypeChecker();
 
         StringBuilder schemasString = pluginFactory.getSchemasString();
-        var resources = """
-                resource File users {
-                    name = "students"
-                    content = "tudor"
-                    path = "./"
-                }
-                """;
-        schemasString.append(resources);
+        var byFileName = findByFileName(Path.of("."));
+        for (var file : byFileName) {
+            var resources = Files.readString(file.toPath());
+            schemasString.append(resources);
+        }
+
         List<Token> tokens = tokenizer.tokenize(schemasString.toString());
 
         Program program = parser.produceAST(tokens);
@@ -85,8 +83,8 @@ class CLI implements Runnable {
         System.out.println(evalRes);
     }
 
-    public File[] findByFileName(Path path, String fileName) throws IOException {
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.zmeu");
+    public File[] findByFileName(Path path) throws IOException {
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**.zu");
         PathMatcher ignore = FileSystems.getDefault().getPathMatcher("glob:./{build,gradle,.gradle,git,.git}**");
         try (Stream<Path> pathStream = Files.find(path, Integer.MAX_VALUE, (p, basicFileAttributes) -> {
             if (Files.isDirectory(p) || !Files.isReadable(p)) {

@@ -1,0 +1,5 @@
+resource File users {
+    name = "students"
+    content = "tudor"
+    path = "./"
+}
