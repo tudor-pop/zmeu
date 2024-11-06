@@ -30,19 +30,16 @@ public class Zmeu {
     private final Tokenizer tokenizer;
     private final Parser parser;
     private final TypeChecker typeChecker;
-    private final Zmeufile zmeufile;
     private final PluginFactory pluginFactory;
     private final Javers javers;
     private final Diff diff;
-    private final YAMLMapper mapper;
 
     public Zmeu() throws IOException {
-        mapper = new YAMLMapper();
+        var mapper = new YAMLMapper();
         var zmeufilePath = Paths.get(URI.create("file://" + Paths.get("Zmeufile.yml").toAbsolutePath()));
         var zmeufileContent = Files.readString(zmeufilePath);
         var dependencies = mapper.readValue(zmeufileContent, Dependencies.class);
-        this.zmeufile = new Zmeufile(dependencies);
-        this.pluginFactory = new PluginFactory(zmeufile);
+        this.pluginFactory = new PluginFactory(new Zmeufile(dependencies));
 
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
         this.diff = new Diff(javers);
