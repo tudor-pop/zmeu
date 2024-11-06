@@ -22,6 +22,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.zmeu.CLI.FileHelpers.loadZuFiles;
 
@@ -44,7 +45,6 @@ public class Zmeu {
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
         this.diff = new Diff(javers);
 
-        this.pluginFactory.loadPlugins();
         this.interpreter = new Interpreter(new Environment<>(), new Engine(pluginFactory, mapper, diff, javers));
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
@@ -53,7 +53,8 @@ public class Zmeu {
 
     @SneakyThrows
     public void run() {
-        var schemasString = pluginFactory.getSchemasString();
+        this.pluginFactory.loadPlugins();
+        var schemasString = new StringBuilder(pluginFactory.getPluginHashMap().values().stream().map(it -> it.provider().schemasString()).collect(Collectors.joining()));
         var byFileName = loadZuFiles();
         for (var file : byFileName) {
             var resources = Files.readString(file.toPath());
