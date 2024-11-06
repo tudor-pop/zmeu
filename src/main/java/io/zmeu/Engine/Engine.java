@@ -23,14 +23,14 @@ public class Engine {
 
     @SneakyThrows
     public Resource plan(ResourceValue resource) {
-        var plugin = factory.getPlugins().get(resource.typeString());
-        var className = factory.getPluginManager().getPluginClassLoader("files@0.0.1").loadClass(plugin.resourceType());
+        var provider = factory.getProviders().get(resource.typeString());
+        var className = factory.getPluginManager().getPluginClassLoader("files@0.0.1").loadClass(provider.resourceType());
 
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), className);
         if (sourceState != null) {
             sourceState.setResourceName(resource.name());
         }
-        var localState = (Resource) plugin.read(sourceState);
+        var localState = (Resource) provider.read(sourceState);
 
         var cloudStateJavers = javers.getLatestSnapshot(resource.getName(), className).orElse(null);
         var cloudState = mapper.convertValue(cloudStateJavers, className);

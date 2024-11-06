@@ -22,7 +22,7 @@ public class PluginFactory {
     @Getter
     private final StringBuilder schemasString = new StringBuilder();
     @Getter
-    private final HashMap<String, Provider> plugins = new HashMap<>();
+    private final HashMap<String, Provider> providers = new HashMap<>();
     @Getter
     private final CustomPluginManager pluginManager;
     private final Zmeufile zmeufile;
@@ -60,7 +60,7 @@ public class PluginFactory {
                 provider.resources().list().forEach(message -> log.info("\t{}", message));
 
                 schemas.add(provider.schemas());
-                plugins.put(provider.namespace(), provider);
+                this.providers.put(provider.namespace(), provider);
                 schemasString.append(provider.schemasString());
             }
         }
