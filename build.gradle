@@ -54,9 +54,9 @@ test {
     useJUnitPlatform()
 }
 extraJavaModuleInfo {
-    automaticModule('org.javers:javers-core', 'javers.core');
-    automaticModule('org.javers:javers-persistence-sql', 'javers.persistence.sql');
-    automaticModule('picocli-codegen-4.7.6.jar', 'info.picocli');
+    automaticModule('org.javers:javers-core', 'javers.core')
+    automaticModule('org.javers:javers-persistence-sql', 'javers.persistence.sql')
+    automaticModule('picocli-codegen-4.7.6.jar', 'info.picocli')
     failOnMissingModuleInfo.set(false)
 
 }

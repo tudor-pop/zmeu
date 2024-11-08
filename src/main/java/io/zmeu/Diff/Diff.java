@@ -2,10 +2,14 @@ package io.zmeu.Diff;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.zmeu.api.Resource;
-import io.zmeu.javers.ShapeChangeLog;
+import io.zmeu.javers.ResourceApplyPlan;
+import io.zmeu.javers.ResourceChangeLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -54,7 +58,7 @@ public class Diff {
             mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
         var diff = this.javers.compare(localState, sourceState);
-        var changes = javers.processChangeList(diff.getChanges(), new ShapeChangeLog(true));
+        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
         localState = handleNullState(localState);
         return new Plan(sourceState, diff.getChanges());
     }
@@ -68,7 +72,7 @@ public class Diff {
 //        Object jsonNode = plan.diffResults();
 //        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
 //        var res = mapper.treeToValue(jsonNode, type);
-
+        javers.processChangeList(plan.diffResults(), new ResourceApplyPlan(new ResourceChangeLog()));
         javers.commit("Tudor", plan.sourceCode());
         return plan;
     }

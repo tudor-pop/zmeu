@@ -25,5 +25,5 @@ dependencies {
 }
 
 extraJavaModuleInfo {
-    automaticModule('org.javers:javers-core', 'javers.core');
+    automaticModule('org.javers:javers-core', 'javers.core')
 }

@@ -18,18 +18,18 @@ import static io.zmeu.Diff.Change.NO_OP;
 import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
-public class ShapeChangeLog extends AbstractTextChangeLog {
+public class ResourceChangeLog extends AbstractTextChangeLog {
     private String type = NO_OP.coloredOperation();
     private Ansi ansi;
     private boolean enableStdout;
     private InstanceId globalId;
     private static final String EQUALS = "\t= ";
 
-    public ShapeChangeLog(boolean enableStdout) {
+    public ResourceChangeLog(boolean enableStdout) {
         this.enableStdout = enableStdout;
     }
 
-    public ShapeChangeLog() {
+    public ResourceChangeLog() {
     }
 
     @Override

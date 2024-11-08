@@ -36,7 +36,7 @@ class CLI implements Runnable {
     @Parameters(paramLabel = "SourceFiles", description = "The source file")
     private File[] sourceFiles;
 
-    private Zmeu zmeu;
+    private final Zmeu zmeu;
 
 
     @SneakyThrows
