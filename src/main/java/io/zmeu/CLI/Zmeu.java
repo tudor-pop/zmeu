@@ -45,7 +45,7 @@ public class Zmeu {
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
         this.diff = new Diff(javers);
 
-        this.interpreter = new Interpreter(new Environment<>(), new ResourceManager(pluginFactory, mapper, diff, javers));
+        this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();

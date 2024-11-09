@@ -8,11 +8,14 @@ import io.zmeu.api.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
 
+import java.util.HashMap;
+
 public class ResourceManager {
     private final PluginFactory factory;
     private final YAMLMapper mapper;
     private final Diff diff;
     private final Javers javers;
+    private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
     public ResourceManager(PluginFactory factory, YAMLMapper mapper, Diff diff, Javers javers) {
         this.factory = factory;
@@ -47,6 +50,10 @@ public class ResourceManager {
         }
 
         return cloudState;
+    }
+
+    public ResourceValue add(ResourceValue resource) {
+        return resources.put(resource.name(), resource);
     }
 
 }

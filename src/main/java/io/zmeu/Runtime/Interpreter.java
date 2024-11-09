@@ -23,11 +23,11 @@ import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,8 +38,7 @@ import static io.zmeu.Utils.BoolUtils.isTruthy;
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment<Object> env;
-    @Setter
-    private ResourceManager engine;
+    private final HashMap<String, ResourceValue> resources= new HashMap<>();
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     private final DeferredObservable deferredObservable = new DeferredObservable();
 
@@ -47,12 +46,8 @@ public final class Interpreter implements Visitor<Object> {
         this(new Environment());
     }
 
-    public Interpreter(Environment<Object> environment) {
-        this(environment, null);
-    }
 
-    public Interpreter(Environment<Object> environment, ResourceManager engine) {
-        this.engine = engine;
+    public Interpreter(Environment<Object> environment) {
         this.env = environment;
         this.env.init("null", NullValue.of());
         this.env.init("true", true);
@@ -414,8 +409,7 @@ public final class Interpreter implements Visitor<Object> {
 //            }
 
             deferredObservable.notifyObservers(this, resource.name());
-            var local = engine.plan(instance);
-            return instance;
+            return resources.put(instance.name(), instance);
 
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
