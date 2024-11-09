@@ -3,7 +3,7 @@ package io.zmeu.CLI;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
-import io.zmeu.Engine.Engine;
+import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
@@ -45,7 +45,7 @@ public class Zmeu {
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
         this.diff = new Diff(javers);
 
-        this.interpreter = new Interpreter(new Environment<>(), new Engine(pluginFactory, mapper, diff, javers));
+        this.interpreter = new Interpreter(new Environment<>(), new ResourceManager(pluginFactory, mapper, diff, javers));
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();

@@ -1,26 +1,20 @@
 package io.zmeu.Engine;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Resource;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
-import org.javers.core.metamodel.object.CdoSnapshot;
 
-public class Engine {
+public class ResourceManager {
     private final PluginFactory factory;
     private final YAMLMapper mapper;
     private final Diff diff;
     private final Javers javers;
 
-    public Engine(PluginFactory factory, YAMLMapper mapper, Diff diff, Javers javers) {
+    public ResourceManager(PluginFactory factory, YAMLMapper mapper, Diff diff, Javers javers) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
@@ -37,21 +31,22 @@ public class Engine {
             sourceState.setResourceName(resource.name());
         }
         var provider = pluginRecord.provider();
-        var localState = (Resource) provider.read(sourceState);
+        var cloudState = (Resource) provider.read(sourceState);
 
         var snapshot = javers.getLatestSnapshot(resource.getName(), className);
         if (snapshot.isPresent()) {
-            var cloudState = JaversUtils.mapSnapshotToObject(snapshot.get(), className);
-            var plan = diff.plan(localState, sourceState, cloudState);
-            var res = diff.apply(plan);
+            var zmeuState = JaversUtils.mapSnapshotToObject(snapshot.get(), className);
+            if (zmeuState instanceof Resource r) {
+                r.setResourceName(resource.name());
+            }
+            var plan = diff.plan(zmeuState, sourceState, cloudState);
+            var res = diff.apply(plan, factory);
         } else {
-            var plan = diff.plan(localState, sourceState, null);
-            var res = diff.apply(plan);
+            var plan = diff.plan(null, sourceState, cloudState);
+            var res = diff.apply(plan, factory);
         }
 
-        return localState;
+        return cloudState;
     }
-
-
 
 }

@@ -1,5 +1,9 @@
 package io.zmeu.javers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.api.Provider;
+import lombok.SneakyThrows;
 import org.javers.core.changelog.AbstractTextChangeLog;
 import org.javers.core.changelog.ChangeProcessor;
 import org.javers.core.commit.CommitMetadata;
@@ -16,11 +20,13 @@ import org.javers.core.metamodel.object.InstanceId;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class ResourceApplyPlan implements ChangeProcessor<String> {
-
     private final AbstractTextChangeLog log;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final PluginFactory factory;
 
-    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog) {
+    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog,  PluginFactory factory) {
         this.log = textChangeLog;
+        this.factory = factory;
     }
 
 
@@ -70,17 +76,39 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         log.onReferenceChange(change);
     }
 
+    @SneakyThrows
     @Override
-    public void onNewObject(NewObject newObject) {
-        log.onNewObject(newObject);
-        InstanceId id = (InstanceId) newObject.getAffectedGlobalId();
+    public void onNewObject(NewObject object) {
+        log.onNewObject(object);
+        InstanceId id = (InstanceId) object.getAffectedGlobalId();
+        if (object.getAffectedObject().isPresent()) {
+            String typeName = object.getAffectedGlobalId().getTypeName();
+            var pluginRecord = factory.getPluginHashMap().get(typeName);
+
+            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
+            var resource = objectMapper.convertValue(object.getAffectedObject().get(), className);
+            var provider = pluginRecord.provider();
+            provider.create(resource);
+
+        }
 //        append(io.zmeu.Diff.Change.ADD.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId()));
     }
 
+    @SneakyThrows
     @Override
-    public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        log.onObjectRemoved(objectRemoved);
-        var resource = (InstanceId) objectRemoved.getAffectedGlobalId();
+    public void onObjectRemoved(ObjectRemoved object) {
+        log.onObjectRemoved(object);
+        InstanceId id = (InstanceId) object.getAffectedGlobalId();
+        if (object.getAffectedObject().isPresent()) {
+            String typeName = object.getAffectedGlobalId().getTypeName();
+            var pluginRecord = factory.getPluginHashMap().get(typeName);
+
+            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
+            var resource = objectMapper.convertValue(object.getAffectedObject().get(), className);
+            var provider = pluginRecord.provider();
+            provider.remove(resource);
+
+        }
 //        appendln(io.zmeu.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource.getTypeName(), resource.getCdoId()));
     }
 

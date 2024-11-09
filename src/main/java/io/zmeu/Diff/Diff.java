@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.api.Provider;
 import io.zmeu.api.Resource;
 import io.zmeu.javers.ResourceApplyPlan;
 import io.zmeu.javers.ResourceChangeLog;
@@ -51,10 +53,10 @@ public class Diff {
 //        if (cloudState != null) {
 //            cloudState.setCanonicalType(cloudState.getClass().getName());
 //        }
-        if (cloudState == null) {
-            localState = null; // local state is invalid because the cloud resource doesn't exist anymore
-        }
-        if (localState != null) {
+//        if (cloudState == null) {
+//            localState = null; // local state is invalid because the cloud resource doesn't exist anymore
+//        }
+        if (localState != null && cloudState != null) {
             mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
         var diff = this.javers.compare(localState, sourceState);
@@ -68,11 +70,11 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan apply(Plan plan) {
+    public Plan apply(Plan plan, PluginFactory provider) {
 //        Object jsonNode = plan.diffResults();
 //        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
 //        var res = mapper.treeToValue(jsonNode, type);
-        javers.processChangeList(plan.diffResults(), new ResourceApplyPlan(new ResourceChangeLog()));
+        javers.processChangeList(plan.diffResults(), new ResourceApplyPlan(new ResourceChangeLog(),provider));
         javers.commit("Tudor", plan.sourceCode());
         return plan;
     }

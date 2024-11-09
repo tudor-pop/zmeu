@@ -15,12 +15,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
-class EngineTest extends BaseChecker {
-    private Engine engine;
+class ResourceManagerTest extends BaseChecker {
+    private ResourceManager engine;
 
     @BeforeEach
     void setUp() {
-        engine = new Engine(new PluginFactory(new Zmeufile(new Dependencies(List.of()))), YAMLMapper.builder().build());
+        engine = new ResourceManager(new PluginFactory(new Zmeufile(new Dependencies(List.of()))), YAMLMapper.builder().build());
         interpreter.setEngine(engine);
     }
 

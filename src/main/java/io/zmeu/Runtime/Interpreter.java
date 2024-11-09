@@ -1,6 +1,6 @@
 package io.zmeu.Runtime;
 
-import io.zmeu.Engine.Engine;
+import io.zmeu.Engine.ResourceManager;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
@@ -39,7 +39,7 @@ public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment<Object> env;
     @Setter
-    private Engine engine;
+    private ResourceManager engine;
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     private final DeferredObservable deferredObservable = new DeferredObservable();
 
@@ -51,7 +51,7 @@ public final class Interpreter implements Visitor<Object> {
         this(environment, null);
     }
 
-    public Interpreter(Environment<Object> environment, Engine engine) {
+    public Interpreter(Environment<Object> environment, ResourceManager engine) {
         this.engine = engine;
         this.env = environment;
         this.env.init("null", NullValue.of());

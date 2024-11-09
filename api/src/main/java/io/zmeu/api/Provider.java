@@ -41,7 +41,13 @@ public interface Provider<T> extends ExtensionPoint {
 
     T read(T declaration);
 
+    T create(T resource);
+
+    boolean remove(T resource);
+
+
     String namespace();
 
     String resourceType();
+
 }

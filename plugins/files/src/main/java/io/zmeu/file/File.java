@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.javers.core.metamodel.annotation.TypeName;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -21,9 +22,10 @@ import static io.zmeu.api.Property.Type;
 @Data
 @SchemaDefinition(description = "Used to create local files", typeName = "File")
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @AllArgsConstructor
-public class File extends Resource {
+@TypeName("File")
+public class File {
     @Property(type = Property.Type.String, name = "name", optional = false)
     private String name;
     @Property(type = Type.String)
