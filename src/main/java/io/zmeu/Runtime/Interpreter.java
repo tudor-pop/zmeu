@@ -595,6 +595,9 @@ public final class Interpreter implements Visitor<Object> {
         if (expression.hasInit()) {
             value = executeBlock(expression.getInit(), env);
         }
+        if (value instanceof Dependency dependency) { // a dependency access on another resource
+            return env.init(symbol, dependency.value());
+        }
         return env.init(symbol, value);
     }
 
