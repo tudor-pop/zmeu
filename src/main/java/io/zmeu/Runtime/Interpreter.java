@@ -23,6 +23,7 @@ import io.zmeu.Runtime.exceptions.*;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.Visitors.LanguageAstPrinter;
 import io.zmeu.Visitors.Visitor;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
@@ -38,7 +39,8 @@ import static io.zmeu.Utils.BoolUtils.isTruthy;
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
     private Environment<Object> env;
-    private final HashMap<String, ResourceValue> resources= new HashMap<>();
+    @Getter
+    private final HashMap<String, ResourceValue> resources = new HashMap<>();
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     private final DeferredObservable deferredObservable = new DeferredObservable();
 
@@ -339,6 +341,30 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
+    public Object eval(AssignmentExpression expression) {
+        switch (expression.getLeft()) {
+            case MemberExpression memberExpression -> {
+                var instanceEnv = executeBlock(memberExpression.getObject(), env);
+                if (instanceEnv instanceof ResourceValue resourceValue) {
+                    throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
+                }
+            }
+            case SymbolIdentifier identifier -> {
+                Object right = executeBlock(expression.getRight(), env);
+                //            Integer distance = locals.get(identifier);
+                if (right instanceof Dependency dependency) {
+                    env.assign(identifier.string(), dependency.value());
+                    return dependency;
+                }
+                return env.assign(identifier.string(), right);
+            }
+            case null, default -> {
+            }
+        }
+        throw new RuntimeException("Invalid assignment");
+    }
+
+    @Override
     public Object eval(MemberExpression expression) {
         if (expression.getProperty() instanceof SymbolIdentifier resourceName) {
             var value = executeBlock(expression.getObject(), env);
@@ -350,7 +376,7 @@ public final class Interpreter implements Visitor<Object> {
                 }
                 return schemaValue.getInstances().lookup(resourceName.string());
             } else if (value instanceof ResourceValue resourceValue) {
-                return resourceValue.lookup(resourceName.string());
+                return new Dependency(resourceValue, resourceValue.lookup(resourceName.string()));
             } // else it could be a resource or any other type like a NumericLiteral or something else
             return value;
         }
@@ -398,19 +424,18 @@ public final class Interpreter implements Visitor<Object> {
                     resource.setEvaluated(false);
 
                     deferredObservable.addObserver(resource, deferred);
+                } else if (result instanceof Dependency dependency) {
+                    instance.addDependency(dependency.resource().getSchema().typeString() + "." + dependency.resource().getName());
                 }
             }
-            if (!resource.isEvaluated()) {
+            if (resource.isEvaluated()) {
+                deferredObservable.notifyObservers(this, resource.name());
+                return resources.put(instance.name(), instance);
+            } else {
                 // if not fully evaluated, doesn't make sense to notify observers(resources that depend on this resource)
                 // because they will not be able to be reevaluated
                 return instance;
             }
-
-//            }
-
-            deferredObservable.notifyObservers(this, resource.name());
-            return resources.put(instance.name(), instance);
-
         } catch (NotFoundException e) {
 //            throw new NotFoundException("Field '%s' not found on resource '%s'".formatted(e.getObjectNotFound(), expression.name()),e);
             throw e;
@@ -573,25 +598,6 @@ public final class Interpreter implements Visitor<Object> {
         return env.init(symbol, value);
     }
 
-    @Override
-    public Object eval(AssignmentExpression expression) {
-        switch (expression.getLeft()) {
-            case MemberExpression memberExpression -> {
-                var instanceEnv = executeBlock(memberExpression.getObject(), env);
-                if (instanceEnv instanceof ResourceValue resourceValue) {
-                    throw new RuntimeError("Resources can only be updated inside their block: " + resourceValue.getName());
-                }
-            }
-            case SymbolIdentifier identifier -> {
-                Object right = executeBlock(expression.getRight(), env);
-//            Integer distance = locals.get(identifier);
-                return env.assign(identifier.string(), right);
-            }
-            case null, default -> {
-            }
-        }
-        throw new RuntimeException("Invalid assignment");
-    }
 
     @Override
     public Object eval(Program program) {

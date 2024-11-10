@@ -34,6 +34,7 @@ public class Zmeu {
     private final PluginFactory pluginFactory;
     private final Javers javers;
     private final Diff diff;
+    private final ResourceManager resourceManager;
 
     public Zmeu() throws IOException {
         var mapper = new YAMLMapper();
@@ -49,6 +50,7 @@ public class Zmeu {
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
+        this.resourceManager = new ResourceManager(pluginFactory, mapper, diff, javers);
     }
 
     @SneakyThrows
@@ -66,7 +68,8 @@ public class Zmeu {
         Program program = parser.produceAST(tokens);
         typeChecker.eval(program);
         var evalRes = interpreter.eval(program);
-        System.out.println(evalRes);
+        var resources = interpreter.getResources();
+        System.out.println(resources);
 
     }
 }

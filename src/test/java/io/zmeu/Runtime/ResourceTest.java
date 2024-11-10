@@ -94,6 +94,33 @@ public class ResourceTest extends BaseRuntimeTest {
     }
 
     @Test
+    void checkNumberOfDependencies() {
+        var res = eval("""
+                schema vm { 
+                    var name
+                    var maxCount=0
+                }
+                resource vm main {
+                    name = "first"
+                    maxCount=1
+                }
+                resource vm second {
+                    name = "second"
+                    maxCount = vm.main.maxCount
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        var resource = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(resource);
+
+        var second = (ResourceValue) schema.getInstances().get("second");
+        assertNotNull(second);
+        assertEquals(1, second.getDependencies().size());
+    }
+
+    @Test
     @DisplayName("Evaluate dependency")
     void resourceIsDefinedInSchemaDependencyFirst() {
         var res = eval("""

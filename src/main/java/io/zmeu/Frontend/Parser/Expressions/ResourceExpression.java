@@ -55,6 +55,7 @@ public class ResourceExpression extends Statement implements DeferredObserverVal
     public static Statement resource() {
         return new ResourceExpression();
     }
+
     public static Statement resource(TypeIdentifier type, Identifier name, BlockExpression block) {
         return new ResourceExpression(type, name, block);
     }
