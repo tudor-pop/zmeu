@@ -175,12 +175,14 @@ public class ResourceTest extends BaseRuntimeTest {
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
-        assertNotNull(resource);
+        var main = (ResourceValue) schema.getInstances().get("main");
+        assertNotNull(main);
+        assertEquals(2, main.argVal("maxCount"));
+        assertEquals("third", main.argVal("name"));
 
         var second = (ResourceValue) schema.getInstances().get("second");
         assertNotNull(second);
-        assertEquals(2, resource.getDependencies().size());
+        assertEquals(2, main.getDependencies().size());
     }
 
     @Test

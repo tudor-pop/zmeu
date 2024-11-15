@@ -366,21 +366,27 @@ public final class Interpreter implements Visitor<Object> {
 
     @Override
     public Object eval(MemberExpression expression) {
-        if (expression.getProperty() instanceof SymbolIdentifier resourceName) {
-            var value = executeBlock(expression.getObject(), env);
-            // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
-            // Since that environment points to the parent(type env) it will also find the properties
-            if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
-                if (schemaValue.getInstances().get(resourceName.string()) == null) {
-                    return new Deferred(schemaValue.getType().string() + "." + resourceName.string());
-                }
-                return schemaValue.getInstances().lookup(resourceName.string());
-            } else if (value instanceof ResourceValue resourceValue) {
-                return new Dependency(resourceValue, resourceValue.lookup(resourceName.string()));
-            } // else it could be a resource or any other type like a NumericLiteral or something else
-            return value;
+        if (!(expression.getProperty() instanceof SymbolIdentifier resourceName)) {
+            throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
         }
-        throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
+        var value = executeBlock(expression.getObject(), env);
+        // when retrieving the type of a resource, we first check the "instances" field for existing resources initialised there
+        // Since that environment points to the parent(type env) it will also find the properties
+        if (value instanceof SchemaValue schemaValue) { // vm.main -> if user references the schema we search for the instances of those schemas
+            String name = resourceName.string();
+            if (schemaValue.getInstances().get(name) == null) {
+                // if instance was not installed yet -> it will be installed later so we return a deferred object
+                return new Deferred(schemaValue, name);
+            } else {
+                return schemaValue.getInstances().lookup(name);
+            }
+        } else if (value instanceof ResourceValue resourceValue) {
+            if (expression.getObject() instanceof MemberExpression) {
+                return new Dependency(resourceValue, resourceValue.lookup(resourceName.string()) );
+            }
+            return resourceValue.lookup(resourceName.string());
+        } // else it could be a resource or any other type like a NumericLiteral or something else
+        return value;
     }
 
     @Override
@@ -425,7 +431,7 @@ public final class Interpreter implements Visitor<Object> {
 
                     deferredObservable.addObserver(resource, deferred);
                 } else if (result instanceof Dependency dependency) {
-                    instance.addDependency(dependency.resource().getSchema().typeString() + "." + dependency.resource().getName());
+                    instance.addDependency(dependency.resource().getName());
                 }
             }
             if (resource.isEvaluated()) {
