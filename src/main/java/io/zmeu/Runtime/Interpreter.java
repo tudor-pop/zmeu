@@ -1,6 +1,5 @@
 package io.zmeu.Runtime;
 
-import io.zmeu.Engine.ResourceManager;
 import io.zmeu.ErrorSystem;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
@@ -382,7 +381,7 @@ public final class Interpreter implements Visitor<Object> {
             }
         } else if (value instanceof ResourceValue resourceValue) {
             if (expression.getObject() instanceof MemberExpression) {
-                return new Dependency(resourceValue, resourceValue.lookup(resourceName.string()) );
+                return new Dependency(resourceValue, resourceValue.lookup(resourceName.string()));
             }
             return resourceValue.lookup(resourceName.string());
         } // else it could be a resource or any other type like a NumericLiteral or something else
@@ -425,13 +424,16 @@ public final class Interpreter implements Visitor<Object> {
                 if (result instanceof Deferred deferred) {
                     instance.addDependency(deferred.resource());
 
-                    cycleDetection(it, deferred, installedSchema, resource, instance);
+                    var dependency = installedSchema.getInstance(deferred.resource());
+                    cycleDetection(it, resource, instance, dependency);
 
                     resource.setEvaluated(false);
 
                     deferredObservable.addObserver(resource, deferred);
                 } else if (result instanceof Dependency dependency) {
                     instance.addDependency(dependency.resource().getName());
+
+                    cycleDetection(it, resource, instance, dependency.resource());
                 }
             }
             if (resource.isEvaluated()) {
@@ -462,20 +464,19 @@ public final class Interpreter implements Visitor<Object> {
      * 1. direct cycles: a -> b and b -> a
      * 2. indirect cycles: a->b->c->a
      */
-    private void cycleDetection(Statement expression, Deferred deferred, SchemaValue installedSchema, ResourceExpression instance, ResourceValue resource) {
-        var deferredResource = installedSchema.getInstance(deferred.resource());
-        if (deferredResource == null) {
+    private void cycleDetection(Statement expression, ResourceExpression instance, ResourceValue resource, ResourceValue dependency) {
+        if (dependency == null) {
             return;
         }
         // direct cycle
-        if (Objects.equals(instance.name(), deferred.resource())) {
+        if (Objects.equals(instance.name(), dependency.getName())) {
             String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
             log.error(message);
             throw new RuntimeException(message);
         }
         // indirect cycle
-        if (deferredResource.getDependencies().contains(resource.name())) {
-            if (resource.getDependencies().contains(deferred.resource())) {
+        if (dependency.getDependencies().contains(resource.name())) {
+            if (resource.getDependencies().contains(dependency.name())) {
                 String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
                 log.error(message);
                 throw new RuntimeException(message);

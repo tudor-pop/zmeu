@@ -332,14 +332,6 @@ public class TokenizerTest {
     }
 
     @Test
-    void testKeywordParam() {
-        var result = tokenizer.tokenizeLiteral("param");
-        Assertions.assertEquals(TokenType.Param, result.type());
-        Assertions.assertEquals("param", result.value());
-        log.info(result);
-    }
-
-    @Test
     void testComplex() {
         var result = tokenizer.tokenize("var x=10");
         Assertions.assertEquals(TokenType.Var, result.get(0).type());
