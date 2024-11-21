@@ -26,10 +26,7 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
 import static io.zmeu.Utils.BoolUtils.isTruthy;
@@ -424,8 +421,7 @@ public final class Interpreter implements Visitor<Object> {
                 if (result instanceof Deferred deferred) {
                     instance.addDependency(deferred.resource());
 
-                    var dependency = installedSchema.getInstance(deferred.resource());
-                    cycleDetection(it, resource, instance, dependency);
+                    CycleDetection.detect(instance);
 
                     resource.setEvaluated(false);
 
@@ -433,7 +429,7 @@ public final class Interpreter implements Visitor<Object> {
                 } else if (result instanceof Dependency dependency) {
                     instance.addDependency(dependency.resource().getName());
 
-                    cycleDetection(it, resource, instance, dependency.resource());
+                    CycleDetection.detect(instance);
                 }
             }
             if (resource.isEvaluated()) {
@@ -449,41 +445,6 @@ public final class Interpreter implements Visitor<Object> {
             throw e;
         }
     }
-
-    /**
-     * given 2 resources:
-     * resource Type x {
-     * name = Type.y.name
-     * }
-     * resource Type y {
-     * name = Type.x.name
-     * }
-     * when y.Type.x.name returns a deferred(y) it means it points to itself
-     * because the deferred comes from x which waits for y to be evaluated.
-     * This works for:
-     * 1. direct cycles: a -> b and b -> a
-     * 2. indirect cycles: a->b->c->a
-     */
-    private void cycleDetection(Statement expression, ResourceExpression instance, ResourceValue resource, ResourceValue dependency) {
-        if (dependency == null) {
-            return;
-        }
-        // direct cycle
-        if (Objects.equals(instance.name(), dependency.getName())) {
-            String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
-            log.error(message);
-            throw new RuntimeException(message);
-        }
-        // indirect cycle
-        if (dependency.getDependencies().contains(resource.name())) {
-            if (resource.getDependencies().contains(dependency.name())) {
-                String message = "Cycle detected between : \n" + printer.eval(expression) + " \n" + printer.eval(instance);
-                log.error(message);
-                throw new RuntimeException(message);
-            }
-        }
-    }
-
 
     @Override
     public Object eval(ThisExpression expression) {
