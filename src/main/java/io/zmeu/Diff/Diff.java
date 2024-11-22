@@ -15,6 +15,7 @@ import io.zmeu.javers.ResourceChangeLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,14 +49,9 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan plan(@Nullable Object localState, Object sourceState, @Nullable Object cloudState) {
-        // overwrite local state with remote state - in memory -
-//        if (cloudState != null) {
-//            cloudState.setCanonicalType(cloudState.getClass().getName());
-//        }
-//        if (cloudState == null) {
-//            localState = null; // local state is invalid because the cloud resource doesn't exist anymore
-//        }
+    public Plan plan(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+        validate(localState, sourceState, cloudState);
+
         if (localState != null && cloudState != null) {
             mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
@@ -65,7 +61,19 @@ public class Diff {
         return new Plan(sourceState, diff.getChanges());
     }
 
-    private static Object handleNullState(@Nullable Object localState) {
+    private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
+        if (localState != null && StringUtils.isBlank(localState.getResourceName())) {
+            throw new IllegalArgumentException(localState + " is missing resource name");
+        }
+        if (sourceState != null && StringUtils.isBlank(sourceState.getResourceName())) {
+            throw new IllegalArgumentException(sourceState + " is missing resource name");
+        }
+        if (cloudState != null && StringUtils.isBlank(cloudState.getResourceName())) {
+            throw new IllegalArgumentException(cloudState + " is missing resource name");
+        }
+    }
+
+    private static Resource handleNullState(@Nullable Resource localState) {
         return localState == null ? Resource.builder().build() : localState;
     }
 
@@ -74,7 +82,7 @@ public class Diff {
 //        Object jsonNode = plan.diffResults();
 //        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
 //        var res = mapper.treeToValue(jsonNode, type);
-        javers.processChangeList(plan.diffResults(), new ResourceApplyPlan(new ResourceChangeLog(),provider));
+        javers.processChangeList(plan.diffResults(), new ResourceApplyPlan(new ResourceChangeLog(), provider));
         javers.commit("Tudor", plan.sourceCode());
         return plan;
     }
