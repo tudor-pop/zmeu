@@ -81,17 +81,17 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     public void onValueChange(ValueChange change) {
         switch (change) {
             case InitialValueChange valueChange ->
-                    append(type + "\t" + change.getPropertyName() + EQUALS + getRight(change));
+                    append(type + "\t" + change.getPropertyName() + EQUALS + quotes(change.getRight()));
             default ->
-                    append(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + getRight(change));
+                    append(type + "\t" + change.getPropertyName() + EQUALS + quotes(change.getLeft()) + " -> " + quotes(change.getRight()));
         }
     }
 
-    private static Object getRight(ValueChange change) {
-        if (change.getRight() instanceof String string) {
+    private static Object quotes(Object change) {
+        if (change instanceof String string) {
             return "\"" + string + "\"";
         }
-        return change.getRight();
+        return change;
     }
 
     @Override

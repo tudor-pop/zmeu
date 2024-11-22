@@ -1,6 +1,6 @@
 resource File users {
     name = "students"
-    content = "tudor"
+    content = "pop"
     path = "./"
 }
 
