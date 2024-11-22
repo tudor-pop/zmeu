@@ -46,12 +46,14 @@ public class ResourceManager {
         var provider = pluginRecord.provider();
 
         var className = provider.getSchema(resource.getSchema().typeString());
-        var convertedResource = mapper.convertValue(resource.getProperties().getVariables(), className);
-        var sourceState = new Resource(resource.name(), convertedResource);
+        var sourceState = mapper.convertValue(resource.getProperties().getVariables(), className);
+        if (sourceState instanceof Resource resourceValue) {
+            resourceValue.setResourceName(resource.getName());
+        }
 
-        var cloudState = (Resource) provider.read(convertedResource);
+        var cloudState = (Resource) provider.read(sourceState);
 
-        var snapshot = javers.getLatestSnapshot(resource.getName(), Resource.class);
+        var snapshot = javers.getLatestSnapshot(resource.getName(), className);
         if (snapshot.isPresent()) {
             var zmeuState = JaversUtils.mapSnapshotToObject(snapshot.get(), Resource.class);
             if (zmeuState instanceof Resource r) {

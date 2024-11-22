@@ -3,7 +3,6 @@ package io.zmeu.javers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
-import io.zmeu.api.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.changelog.AbstractTextChangeLog;
 import org.javers.core.changelog.ChangeProcessor;
@@ -81,16 +80,15 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
     @Override
     public void onNewObject(NewObject object) {
         log.onNewObject(object);
-        InstanceId id = (InstanceId) object.getAffectedGlobalId();
         if (object.getAffectedObject().isPresent()) {
-            String typeName = ((Resource)object.getAffectedObject().get()).getResource().getClass().getName();
+            String typeName = object.getAffectedGlobalId().getTypeName();
             var pluginRecord = factory.getPluginHashMap().get(typeName);
 
-//            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
-            var className = pluginRecord.provider().getSchema(typeName);
+            Provider provider = pluginRecord.provider();
+
+            var className = provider.getSchema(typeName);
 
             var resource = objectMapper.convertValue(object.getAffectedObject().get(), className);
-            var provider = pluginRecord.provider();
             provider.create(resource);
 
         }

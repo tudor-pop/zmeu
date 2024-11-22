@@ -20,18 +20,11 @@ public class Resource {
     @DiffIgnore
     private String resourceName;
 
-    private Object resource;
-
     public Resource() {
     }
 
-    public Resource(Object resource) {
-        this.resource = resource;
-    }
-
-    public Resource(String resourceName,  Object resource) {
+    public Resource(String resourceName) {
         this.resourceName = resourceName;
-        this.resource = resource;
     }
 
 }
