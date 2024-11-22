@@ -13,6 +13,7 @@ import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
+import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.TypeChecker.TypeChecker;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
@@ -68,8 +69,12 @@ public class Zmeu {
         Program program = parser.produceAST(tokens);
         typeChecker.eval(program);
         var evalRes = interpreter.eval(program);
-        var resources = interpreter.getResources();
-        System.out.println(resources);
+        var resources = interpreter.getEnv()
+                .getVariables().values().stream()
+                .filter(it-> it instanceof SchemaValue)
+                .map(SchemaValue.class::cast)
+                .collect(Collectors.toList());
+        resourceManager.plan(resources);
 
     }
 }

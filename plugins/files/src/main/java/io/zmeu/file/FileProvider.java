@@ -1,6 +1,7 @@
 package io.zmeu.file;
 
 import io.zmeu.api.Provider;
+import io.zmeu.api.Resource;
 import io.zmeu.api.Resources;
 import org.pf4j.Extension;
 
@@ -13,7 +14,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 @Extension
-public class FileProvider implements Provider<File> {
+public class FileProvider extends Provider<File> {
 
     @Override
     public Resources<File> resources() {

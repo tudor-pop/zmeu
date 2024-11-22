@@ -7,6 +7,8 @@ import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
+import java.util.Map;
+
 @Data
 @SuperBuilder
 @Entity
@@ -18,7 +20,18 @@ public class Resource {
     @DiffIgnore
     private String resourceName;
 
+    private Object resource;
+
     public Resource() {
+    }
+
+    public Resource(Object resource) {
+        this.resource = resource;
+    }
+
+    public Resource(String resourceName,  Object resource) {
+        this.resourceName = resourceName;
+        this.resource = resource;
     }
 
 }

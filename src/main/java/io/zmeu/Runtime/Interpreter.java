@@ -34,9 +34,9 @@ import static io.zmeu.Utils.BoolUtils.isTruthy;
 @Log4j2
 public final class Interpreter implements Visitor<Object> {
     private static boolean hadRuntimeError;
+    @Getter
     private Environment<Object> env;
     @Getter
-    private final HashMap<String, ResourceValue> resources = new HashMap<>();
     private final LanguageAstPrinter printer = new LanguageAstPrinter();
     private final DeferredObservable deferredObservable = new DeferredObservable();
 
@@ -434,7 +434,7 @@ public final class Interpreter implements Visitor<Object> {
             }
             if (resource.isEvaluated()) {
                 deferredObservable.notifyObservers(this, resource.name());
-                return resources.put(instance.name(), instance);
+                return instance;
             } else {
                 // if not fully evaluated, doesn't make sense to notify observers(resources that depend on this resource)
                 // because they will not be able to be reevaluated
