@@ -16,7 +16,12 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
+import org.javers.core.diff.changetype.NewObject;
+import org.javers.core.diff.changetype.ObjectRemoved;
+import org.javers.core.diff.changetype.PropertyChange;
+import org.javers.core.metamodel.object.GlobalId;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -58,7 +63,7 @@ public class Diff {
         var diff = this.javers.compare(localState, sourceState);
         var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
         localState = handleNullState(localState);
-        return new Plan(sourceState, diff.getChanges());
+        return new Plan(sourceState, diff.groupByObject());
     }
 
     private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
@@ -82,8 +87,20 @@ public class Diff {
 //        Object jsonNode = plan.diffResults();
 //        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
 //        var res = mapper.treeToValue(jsonNode, type);
-        javers.processChangeList(plan.diffResults(), new ResourceApplyPlan(new ResourceChangeLog(), provider));
-        javers.commit("Tudor", plan.sourceCode());
+        for (ChangesByObject diffResult : plan.diffResults()) {
+            var textChangeLog = new ResourceChangeLog();
+//            for (NewObject newObject : diffResult.getNewObjects()) {
+//                textChangeLog.onNewObject(newObject);
+//            }
+//            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
+//                textChangeLog.onObjectRemoved(objectRemoved);
+//            }
+            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
+                textChangeLog.onPropertyChange(propertyChange);
+            }
+            javers.processChangeList(diffResult.get(), new ResourceApplyPlan(textChangeLog, provider));
+        }
+//        javers.commit("Tudor", plan.sourceCode());
         return plan;
     }
 

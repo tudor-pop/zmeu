@@ -21,7 +21,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 public class ResourceApplyPlan implements ChangeProcessor<String> {
     private final AbstractTextChangeLog log;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     private final PluginFactory factory;
 
     public ResourceApplyPlan(AbstractTextChangeLog textChangeLog,  PluginFactory factory) {
@@ -68,6 +68,17 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
     public void onValueChange(ValueChange change) {
         log.onValueChange(change);
+        if (change.getAffectedObject().isPresent()) {
+            String typeName = change.getAffectedGlobalId().getTypeName();
+            var pluginRecord = factory.getPluginHashMap().get(typeName);
+
+            Provider provider = pluginRecord.provider();
+
+            var className = provider.getSchema(typeName);
+
+            var resource = mapper.convertValue(change.getAffectedObject().get(), className);
+//            provider.update(resource);
+        }
     }
 
 
@@ -88,7 +99,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
             var className = provider.getSchema(typeName);
 
-            var resource = objectMapper.convertValue(object.getAffectedObject().get(), className);
+            var resource = mapper.convertValue(object.getAffectedObject().get(), className);
             provider.create(resource);
 
         }
@@ -105,9 +116,9 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
             var pluginRecord = factory.getPluginHashMap().get(typeName);
 
             var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
-            var resource = objectMapper.convertValue(object.getAffectedObject().get(), className);
+            var resource = mapper.convertValue(object.getAffectedObject().get(), className);
             var provider = pluginRecord.provider();
-            provider.remove(resource);
+            provider.delete(resource);
 
         }
 //        appendln(io.zmeu.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource.getTypeName(), resource.getCdoId()));

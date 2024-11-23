@@ -3,14 +3,14 @@ package io.zmeu.file;
 import io.zmeu.api.Provider;
 import io.zmeu.api.Resource;
 import io.zmeu.api.Resources;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.pf4j.Extension;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.List;
 
 @Extension
@@ -54,31 +54,36 @@ public class FileProvider extends Provider<File> {
 
     private static void requirePathOrName(File resource) {
         if (resource.getPath() == null && resource.getName() == null) {
-            throw new IllegalArgumentException("Path and name can't be null at the same time");
+            throw new IllegalArgumentException("Path and name can't be null at the same time: " + resource);
         }
     }
 
     @Override
     public File create(File resource) {
         requirePathOrName(resource);
+        return writeFile(resource);
+    }
+
+    @Override
+    public File update(File oldResource, File newResource) {
+        requirePathOrName(oldResource);
+        requirePathOrName(newResource);
+
         try {
-            if (resource.getPath() == null) {
-                try (var fileWritter = Files.newBufferedWriter(Paths.get(resource.getName()),
-                        StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
-                    fileWritter.write(resource.getContent());
-                }
-            } else if (resource.getName() == null) {
-                try (var fileWritter = Files.newBufferedWriter(Paths.get(resource.getPath()),
-                        StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
-                    fileWritter.write(resource.getContent());
-                }
-            } else {
-                String filename = resource.getPath() + resource.getName();
-                try (var fileWritter = Files.newBufferedWriter(Paths.get(filename),
-                        StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
-                    fileWritter.write(resource.getContent());
-                }
+            if (!oldResource.path().equals(newResource.path())) {
+                Files.move(Paths.get(oldResource.getPath()), Paths.get(newResource.getPath()), StandardCopyOption.REPLACE_EXISTING);
+            } else if (oldResource.getContent().length() != newResource.getContent().length()) {
+                writeFile(newResource);
             }
+        } catch (RuntimeException | IOException e) {
+            return newResource;
+        }
+        return newResource;
+    }
+
+    private static File writeFile(File resource) {
+        try (var writer = Files.newBufferedWriter(resource.path(), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+            writer.write(resource.getContent());
             return resource;
         } catch (RuntimeException | IOException e) {
             return resource;
@@ -86,15 +91,14 @@ public class FileProvider extends Provider<File> {
     }
 
     @Override
-    public boolean remove(File resource) {
+    public boolean delete(File resource) {
         requirePathOrName(resource);
         if (resource.getPath() == null) {
             return Paths.get(resource.getName()).toFile().delete();
         } else if (resource.getName() == null) {
             return Paths.get(resource.getPath()).toFile().delete();
         } else {
-            String filename = resource.getPath() + resource.getName();
-            return Paths.get(filename).toFile().delete();
+            return resource.path().toFile().delete();
         }
     }
 

@@ -37,7 +37,13 @@ public class File extends Resource {
     }
 
     public Path path() {
-        return Path.of(Optional.ofNullable(path).orElse(name));
+        if (path == null) {
+            return Path.of(name);
+        } else if (name == null) {
+            return Path.of(path);
+        } else {
+            return Path.of(path + name);
+        }
     }
 
 }
