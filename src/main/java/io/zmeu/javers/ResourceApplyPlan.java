@@ -72,6 +72,10 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
     }
 
     public void onValueChange(ValueChange change) {
+        if (change instanceof InitialValueChange) {
+            // already created in onNewObject
+            return;
+        }
         log.onValueChange(change);
         if (change.getAffectedObject().isPresent()) {
             String typeName = change.getAffectedGlobalId().getTypeName();
@@ -86,11 +90,6 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         }
     }
 
-
-    @Override
-    public void onReferenceChange(ReferenceChange change) {
-        log.onReferenceChange(change);
-    }
 
     @SneakyThrows
     @Override
@@ -109,6 +108,11 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
         }
 //        append(io.zmeu.Diff.Change.ADD.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId()));
+    }
+
+    @Override
+    public void onReferenceChange(ReferenceChange change) {
+        log.onReferenceChange(change);
     }
 
     @SneakyThrows
