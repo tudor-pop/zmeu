@@ -13,6 +13,7 @@ import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
 import org.javers.core.metamodel.object.InstanceId;
+import org.jetbrains.annotations.NotNull;
 
 import static io.zmeu.Diff.ResourceChange.*;
 import static io.zmeu.Diff.ResourceChange.CHANGE;
@@ -24,7 +25,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private ResourceChange type = NO_OP;
     private Ansi ansi;
     private boolean enableStdout;
-    private InstanceId globalId;
+    private InstanceId id;
     private static final String EQUALS = "\t= ";
 
     public ResourceChangeLog(boolean enableStdout) {
@@ -53,14 +54,14 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onAffectedObject(GlobalId globalId) {
-        this.globalId = (InstanceId) globalId;
-        appendln(type.coloredOperation() + " resource %s %s { ".formatted(this.globalId.getTypeName(), this.globalId.getCdoId()));
+        this.id = (InstanceId) globalId;
+        appendln(getText(type));
     }
 
     @Override
     public void beforeChange(Change change) {
         this.type = switch (change) {
-            case ObjectRemoved removed-> REMOVE;
+            case ObjectRemoved removed -> REMOVE;
             case NewObject ignored1 -> ADD;
             case InitialValueChange ignored -> ADD;
             default -> CHANGE;
@@ -99,14 +100,16 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onNewObject(NewObject newObject) {
-        InstanceId id = (InstanceId) newObject.getAffectedGlobalId();
-        append(ADD.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId()));
+        append(getText(ADD));
+    }
+
+    private @NotNull String getText(ResourceChange coloredChange) {
+        return coloredChange.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId());
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        var resource = (InstanceId) objectRemoved.getAffectedGlobalId();
-        appendln(REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource.getTypeName(), resource.getCdoId()));
+        appendln(getText(REMOVE));
     }
 
     @Override
