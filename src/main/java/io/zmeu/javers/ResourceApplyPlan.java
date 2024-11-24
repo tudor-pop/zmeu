@@ -30,7 +30,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
     }
 
     public ResourceApplyPlan(PluginFactory factory) {
-        this.log = new ResourceChangeLog();
+        this.log = new ResourceChangeLog(true);
         this.factory = factory;
     }
 
@@ -68,18 +68,15 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
     @Override
     public void onPropertyChange(PropertyChange change) {
-        if (change instanceof InitialValueChange) {
-            return;
-        }
         log.onPropertyChange(change);
     }
 
     public void onValueChange(ValueChange change) {
+        log.onValueChange(change);
         if (change instanceof InitialValueChange) {
             // already created in onNewObject
             return;
         }
-        log.onValueChange(change);
         if (change.getAffectedObject().isPresent()) {
             String typeName = change.getAffectedGlobalId().getTypeName();
             var pluginRecord = factory.getPluginHashMap().get(typeName);
