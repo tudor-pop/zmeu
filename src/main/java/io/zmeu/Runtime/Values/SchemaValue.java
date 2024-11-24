@@ -21,10 +21,10 @@ public class SchemaValue {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Environment instances;
-    private final Identifier type;
+    private final String type;
 
     private SchemaValue(Identifier type, Environment environment) {
-        this.type = type;
+        this.type = type.string();
         this.instances = new Environment(environment);
         this.environment = environment;
         this.environment.init(INSTANCES, instances);
@@ -42,8 +42,8 @@ public class SchemaValue {
         return new SchemaValue(Identifier.id(name), environment);
     }
 
-    public String typeString() {
-        return type.string();
+    public String type() {
+        return type;
     }
 
     @NotNull

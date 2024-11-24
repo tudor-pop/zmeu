@@ -46,7 +46,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -75,7 +75,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -209,7 +209,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -250,7 +250,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
 
         var resource = (ResourceValue) schema.getInstances().get("main");
@@ -295,7 +295,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
         var resource = (ResourceValue) schema.getInstances().get("dep2");
         assertNotNull(resource);
@@ -347,7 +347,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
         var resource = (ResourceValue) schema.getInstances().get("dep2");
         assertNotNull(resource);
@@ -398,7 +398,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var schema = (SchemaValue) global.get("vm");
 
         assertNotNull(schema);
-        assertEquals("vm", schema.getType().string());
+        assertEquals("vm", schema.getType());
 
         var resource = (ResourceValue) schema.getInstances().get("dep2");
         assertNotNull(resource);

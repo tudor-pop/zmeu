@@ -2,7 +2,6 @@ package io.zmeu.Runtime.Values;
 
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Runtime.Environment.Environment;
-import io.zmeu.Runtime.Interpreter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -93,12 +92,8 @@ public class ResourceValue  {
     public record Data(String name, Map<String, Object> args) {
     }
 
-    public TypeIdentifier type() {
-        return (TypeIdentifier) this.schema.getType();
-    }
-
     public String typeString() {
-        return this.schema.typeString();
+        return this.schema.type();
     }
 
 }

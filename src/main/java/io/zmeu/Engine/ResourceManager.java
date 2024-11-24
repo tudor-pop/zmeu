@@ -4,6 +4,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Plugin.PluginRecord;
+import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.api.Resource;
@@ -11,7 +12,7 @@ import lombok.SneakyThrows;
 import org.javers.core.Javers;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 public class ResourceManager {
     private final PluginFactory factory;
@@ -28,10 +29,10 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public Resource plan(List<SchemaValue> resource) {
-        for (SchemaValue schemaValue : resource) {
-            PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaValue.typeString());
-            for (var resourceObject : schemaValue.getInstances().getVariables().values()) {
+    public Resource plan(Map<String, Environment> resource) {
+        for (var schemaValue : resource.entrySet()) {
+            PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaValue.getKey());
+            for (var resourceObject : schemaValue.getValue().getVariables().values()) {
                 if (resourceObject instanceof ResourceValue resourceValue) {
                     plan(pluginRecord, resourceValue);
                 }
@@ -45,7 +46,7 @@ public class ResourceManager {
 //        var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
         var provider = pluginRecord.provider();
 
-        var className = provider.getSchema(resource.getSchema().typeString());
+        var className = provider.getSchema(resource.getSchema().type());
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), className);
         if (sourceState != null) {
             sourceState.setResourceName(resource.getName());
