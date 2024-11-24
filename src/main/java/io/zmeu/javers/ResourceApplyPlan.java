@@ -99,11 +99,6 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         provider.create(resource);
     }
 
-    @Override
-    public void onReferenceChange(ReferenceChange change) {
-        log.onReferenceChange(change);
-    }
-
     @SneakyThrows
     @Override
     public void onObjectRemoved(ObjectRemoved object) {
@@ -120,6 +115,11 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
         }
 //        appendln(io.zmeu.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource.getTypeName(), resource.getCdoId()));
+    }
+
+    @Override
+    public void onReferenceChange(ReferenceChange change) {
+        log.onReferenceChange(change);
     }
 
     @Override

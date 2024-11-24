@@ -57,7 +57,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Override
     public void onAffectedObject(GlobalId globalId) {
         this.id = (InstanceId) globalId;
-        appendln(getText(type));
+        appendln(getText(type, globalId));
     }
 
     @Override
@@ -102,16 +102,19 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onNewObject(NewObject newObject) {
-        append(getText(ADD));
+        append(getText(ADD, newObject.getAffectedGlobalId()));
     }
 
-    private @NotNull String getText(ResourceChange coloredChange) {
+    private @NotNull String getText(ResourceChange coloredChange, GlobalId affectedGlobalId) {
+        if (affectedGlobalId instanceof InstanceId instanceId) {
+            id = instanceId;
+        }
         return coloredChange.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId());
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        appendln(getText(REMOVE));
+        appendln(getText(REMOVE, objectRemoved.getAffectedGlobalId()));
     }
 
     @Override

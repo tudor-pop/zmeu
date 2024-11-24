@@ -61,7 +61,13 @@ public class Diff {
     public Plan plan(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
         validate(localState, sourceState, cloudState);
 
-        if (localState != null && cloudState != null) {
+        if (cloudState == null) {
+            // when cloud state has been removed, localstate/javers data must be invalidated since it's out of date and
+            // the source code becomes the source of truth
+            localState = null;
+        }
+
+        if (localState != null) {
             mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
         var diff = this.javers.compare(localState, sourceState);
