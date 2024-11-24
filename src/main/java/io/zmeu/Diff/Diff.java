@@ -65,7 +65,7 @@ public class Diff {
             mapper.readerForUpdating(localState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
         var diff = this.javers.compare(localState, sourceState);
-        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
+//        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
         localState = handleNullState(localState);
         return new Plan(sourceState, diff.groupByObject());
     }
@@ -88,7 +88,8 @@ public class Diff {
 
     @SneakyThrows
     public Plan apply(Resource localState, Plan plan, PluginFactory pluginFactory) {
-        ResourceApplyPlan changeProcessor = new ResourceApplyPlan(pluginFactory);
+        var changeProcessor = new ResourceApplyPlan(pluginFactory);
+
         for (ChangesByObject diffResult : plan.diffResults()) {
             for (NewObject newObject : diffResult.getNewObjects()) {
                 changeProcessor.onNewObject(newObject);
@@ -97,6 +98,7 @@ public class Diff {
                 changeProcessor.onObjectRemoved(objectRemoved);
             }
             if (diffResult.getPropertyChanges().size() > 0) {
+                changeProcessor.setType(ResourceChange.CHANGE);
                 String typeName = diffResult.getGlobalId().getTypeName();
                 var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
@@ -106,7 +108,7 @@ public class Diff {
 //            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
 //                textChangeLog.onPropertyChange(propertyChange);
 //            }
-//            javers.processChangeList(diffResult.get(), changeProcessor);
+            javers.processChangeList(diffResult.get(), changeProcessor);
             javers.commit("Tudor", plan.sourceCode());
         }
         return plan;

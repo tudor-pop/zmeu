@@ -1,6 +1,7 @@
 package io.zmeu.javers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.Diff.ResourceChange;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
 import lombok.SneakyThrows;
@@ -20,11 +21,11 @@ import org.javers.core.metamodel.object.InstanceId;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class ResourceApplyPlan implements ChangeProcessor<String> {
-    private final AbstractTextChangeLog log;
+    private final ResourceChangeLog log;
     private final ObjectMapper mapper = new ObjectMapper();
     private final PluginFactory pluginFactory;
 
-    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog, PluginFactory pluginFactory) {
+    public ResourceApplyPlan(ResourceChangeLog textChangeLog, PluginFactory pluginFactory) {
         this.log = textChangeLog;
         this.pluginFactory = pluginFactory;
     }
@@ -34,6 +35,9 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         this.pluginFactory = pluginFactory;
     }
 
+    public void setType(ResourceChange change) {
+        log.setType(change);
+    }
 
     @Override
     public void beforeChangeList() {

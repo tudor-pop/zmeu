@@ -1,6 +1,7 @@
 package io.zmeu.javers;
 
 import io.zmeu.Diff.ResourceChange;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.Ansi;
 import org.javers.core.changelog.AbstractTextChangeLog;
@@ -22,6 +23,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
 public class ResourceChangeLog extends AbstractTextChangeLog {
+    @Setter
     private ResourceChange type = NO_OP;
     private Ansi ansi;
     private boolean enableStdout;
