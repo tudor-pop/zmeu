@@ -67,8 +67,11 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
     }
 
     @Override
-    public void onPropertyChange(PropertyChange propertyChange) {
-        log.onPropertyChange(propertyChange);
+    public void onPropertyChange(PropertyChange change) {
+        if (change instanceof InitialValueChange) {
+            return;
+        }
+        log.onPropertyChange(change);
     }
 
     public void onValueChange(ValueChange change) {
