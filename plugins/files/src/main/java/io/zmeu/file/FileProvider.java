@@ -61,7 +61,7 @@ public class FileProvider extends Provider<File> {
     @Override
     public File create(File resource) {
         requirePathOrName(resource);
-        return writeFile(resource);
+        return writeFile(resource, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class FileProvider extends Provider<File> {
             if (!oldResource.path().equals(newResource.path())) {
                 Files.move(Paths.get(oldResource.getPath()), Paths.get(newResource.getPath()), StandardCopyOption.REPLACE_EXISTING);
             } else if (oldResource.getContent().length() != newResource.getContent().length()) {
-                writeFile(newResource);
+                writeFile(newResource, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
             }
         } catch (RuntimeException | IOException e) {
             return newResource;
@@ -81,8 +81,8 @@ public class FileProvider extends Provider<File> {
         return newResource;
     }
 
-    private static File writeFile(File resource) {
-        try (var writer = Files.newBufferedWriter(resource.path(), StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+    private static File writeFile(File resource, StandardOpenOption... options) {
+        try (var writer = Files.newBufferedWriter(resource.path(), StandardCharsets.UTF_8, options)) {
             writer.write(resource.getContent());
             return resource;
         } catch (RuntimeException | IOException e) {

@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Runtime.Environment.Environment;
+import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.Resource;
 import io.zmeu.javers.ResourceApplyPlan;
@@ -23,6 +25,8 @@ import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.PropertyChange;
 import org.javers.core.metamodel.object.GlobalId;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  *
@@ -83,23 +87,28 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan apply(Plan plan, PluginFactory provider) {
-//        Object jsonNode = plan.diffResults();
-//        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
-//        var res = mapper.treeToValue(jsonNode, type);
+    public Plan apply(Resource localState, Plan plan, PluginFactory pluginFactory) {
+        ResourceApplyPlan changeProcessor = new ResourceApplyPlan(pluginFactory);
         for (ChangesByObject diffResult : plan.diffResults()) {
-//            for (NewObject newObject : diffResult.getNewObjects()) {
-//                textChangeLog.onNewObject(newObject);
-//            }
-//            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
-//                textChangeLog.onObjectRemoved(objectRemoved);
-//            }
+            for (NewObject newObject : diffResult.getNewObjects()) {
+                changeProcessor.onNewObject(newObject);
+            }
+            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
+                changeProcessor.onObjectRemoved(objectRemoved);
+            }
+            if (diffResult.getPropertyChanges().size() > 0) {
+                String typeName = diffResult.getGlobalId().getTypeName();
+                var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
+
+                Provider provider = pluginRecord.provider();
+                provider.update(localState, plan.sourceCode());
+            }
 //            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
 //                textChangeLog.onPropertyChange(propertyChange);
 //            }
-            javers.processChangeList(diffResult.get(), new ResourceApplyPlan(provider));
+//            javers.processChangeList(diffResult.get(), changeProcessor);
+            javers.commit("Tudor", plan.sourceCode());
         }
-//        javers.commit("Tudor", plan.sourceCode());
         return plan;
     }
 

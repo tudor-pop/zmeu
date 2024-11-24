@@ -22,16 +22,16 @@ import static org.fusesource.jansi.Ansi.ansi;
 public class ResourceApplyPlan implements ChangeProcessor<String> {
     private final AbstractTextChangeLog log;
     private final ObjectMapper mapper = new ObjectMapper();
-    private final PluginFactory factory;
+    private final PluginFactory pluginFactory;
 
-    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog, PluginFactory factory) {
+    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog, PluginFactory pluginFactory) {
         this.log = textChangeLog;
-        this.factory = factory;
+        this.pluginFactory = pluginFactory;
     }
 
-    public ResourceApplyPlan(PluginFactory factory) {
+    public ResourceApplyPlan(PluginFactory pluginFactory) {
         this.log = new ResourceChangeLog(true);
-        this.factory = factory;
+        this.pluginFactory = pluginFactory;
     }
 
 
@@ -73,21 +73,6 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
     public void onValueChange(ValueChange change) {
         log.onValueChange(change);
-        if (change instanceof InitialValueChange) {
-            // already created in onNewObject
-            return;
-        }
-        if (change.getAffectedObject().isPresent()) {
-            String typeName = change.getAffectedGlobalId().getTypeName();
-            var pluginRecord = factory.getPluginHashMap().get(typeName);
-
-            Provider provider = pluginRecord.provider();
-
-            var className = provider.getSchema(typeName);
-
-            var resource = mapper.convertValue(change.getAffectedObject().get(), className);
-//            provider.update(resource);
-        }
     }
 
 
@@ -95,19 +80,19 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
     @Override
     public void onNewObject(NewObject object) {
         log.onNewObject(object);
-        if (object.getAffectedObject().isPresent()) {
-            String typeName = object.getAffectedGlobalId().getTypeName();
-            var pluginRecord = factory.getPluginHashMap().get(typeName);
-
-            Provider provider = pluginRecord.provider();
-
-            var className = provider.getSchema(typeName);
-
-            var resource = mapper.convertValue(object.getAffectedObject().get(), className);
-            provider.create(resource);
-
+        if (object.getAffectedObject().isEmpty()) {
+            return;
         }
-//        append(io.zmeu.Diff.Change.ADD.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId()));
+
+        String typeName = object.getAffectedGlobalId().getTypeName();
+        var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
+
+        Provider provider = pluginRecord.provider();
+
+        var className = provider.getSchema(typeName);
+
+        var resource = mapper.convertValue(object.getAffectedObject().get(), className);
+        provider.create(resource);
     }
 
     @Override
@@ -122,7 +107,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         InstanceId id = (InstanceId) object.getAffectedGlobalId();
         if (object.getAffectedObject().isPresent()) {
             String typeName = object.getAffectedGlobalId().getTypeName();
-            var pluginRecord = factory.getPluginHashMap().get(typeName);
+            var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
             var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
             var resource = mapper.convertValue(object.getAffectedObject().get(), className);

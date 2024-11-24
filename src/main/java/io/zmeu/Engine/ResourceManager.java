@@ -38,7 +38,7 @@ public class ResourceManager {
             PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
             for (ResourceValue resourceObject : instances.getVariables().values()) {
 //                if (resourceObject instanceof ResourceValue resourceValue) {
-                    plan(schemas, pluginRecord, resourceObject);
+                plan(schemas, pluginRecord, resourceObject);
 //                }
             }
         }
@@ -68,10 +68,10 @@ public class ResourceManager {
                 zmeuState.setResourceName(resource.name());
             }
             var plan = diff.plan(zmeuState, sourceState, cloudState);
-            var res = diff.apply(plan, factory);
+            var res = diff.apply(zmeuState, plan, factory);
         } else {
             var plan = diff.plan(null, sourceState, cloudState);
-            var res = diff.apply(plan, factory);
+            var res = diff.apply(null, plan, factory);
         }
 
         return cloudState;
