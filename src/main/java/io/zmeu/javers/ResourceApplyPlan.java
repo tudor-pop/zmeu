@@ -24,8 +24,13 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
     private final ObjectMapper mapper = new ObjectMapper();
     private final PluginFactory factory;
 
-    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog,  PluginFactory factory) {
+    public ResourceApplyPlan(AbstractTextChangeLog textChangeLog, PluginFactory factory) {
         this.log = textChangeLog;
+        this.factory = factory;
+    }
+
+    public ResourceApplyPlan(PluginFactory factory) {
+        this.log = new ResourceChangeLog();
         this.factory = factory;
     }
 

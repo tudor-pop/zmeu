@@ -82,7 +82,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     public void onValueChange(ValueChange change) {
         switch (change) {
             case InitialValueChange valueChange ->
-                    append(CHANGE.coloredOperation() + "\t" + change.getPropertyName() + EQUALS + quotes(change.getRight()));
+                    append(ADD.coloredOperation() + "\t" + change.getPropertyName() + EQUALS + quotes(change.getRight()));
             default ->
                     append(CHANGE.coloredOperation() + "\t" + change.getPropertyName() + EQUALS + quotes(change.getLeft()) + " -> " + quotes(change.getRight()));
         }

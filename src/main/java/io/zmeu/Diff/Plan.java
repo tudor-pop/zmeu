@@ -1,6 +1,9 @@
 package io.zmeu.Diff;
 
+import org.javers.core.ChangesByObject;
 import org.jetbrains.annotations.Nullable;
 
-public record Plan(@Nullable Object sourceCode, java.util.List<org.javers.core.ChangesByObject> diffResults) {
+import java.util.List;
+
+public record Plan(@Nullable Object sourceCode, List<ChangesByObject> diffResults) {
 }

@@ -88,17 +88,16 @@ public class Diff {
 //        JavaType type = mapper.getTypeFactory().constructFromCanonical(jsonNode);
 //        var res = mapper.treeToValue(jsonNode, type);
         for (ChangesByObject diffResult : plan.diffResults()) {
-            var textChangeLog = new ResourceChangeLog();
 //            for (NewObject newObject : diffResult.getNewObjects()) {
 //                textChangeLog.onNewObject(newObject);
 //            }
 //            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
 //                textChangeLog.onObjectRemoved(objectRemoved);
 //            }
-            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
-                textChangeLog.onPropertyChange(propertyChange);
-            }
-            javers.processChangeList(diffResult.get(), new ResourceApplyPlan(textChangeLog, provider));
+//            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
+//                textChangeLog.onPropertyChange(propertyChange);
+//            }
+            javers.processChangeList(diffResult.get(), new ResourceApplyPlan(provider));
         }
 //        javers.commit("Tudor", plan.sourceCode());
         return plan;

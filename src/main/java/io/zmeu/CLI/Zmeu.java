@@ -44,7 +44,7 @@ public class Zmeu {
         var dependencies = mapper.readValue(zmeufileContent, Dependencies.class);
         this.pluginFactory = new PluginFactory(new Zmeufile(dependencies));
 
-        this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
         this.diff = new Diff(javers);
 
         this.interpreter = new Interpreter(new Environment<>());
