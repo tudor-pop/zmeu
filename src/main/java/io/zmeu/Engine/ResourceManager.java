@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import org.javers.core.Javers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResourceManager {
@@ -29,24 +30,27 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public Resource plan(Map<String, Environment> resource) {
-        for (var schemaValue : resource.entrySet()) {
-            PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaValue.getKey());
-            for (var resourceObject : schemaValue.getValue().getVariables().values()) {
-                if (resourceObject instanceof ResourceValue resourceValue) {
-                    plan(pluginRecord, resourceValue);
-                }
+    public Resource plan(Map<String, Environment<ResourceValue>> schemas) {
+        for (var schemaValue : schemas.entrySet()) {
+            String schemaName = schemaValue.getKey();
+            Environment<ResourceValue> instances = schemaValue.getValue();
+
+            PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
+            for (ResourceValue resourceObject : instances.getVariables().values()) {
+//                if (resourceObject instanceof ResourceValue resourceValue) {
+                    plan(schemas, pluginRecord, resourceObject);
+//                }
             }
         }
         return null;
     }
 
     @SneakyThrows
-    private Resource plan(PluginRecord pluginRecord, ResourceValue resource) {
+    private Resource plan(Map<String, Environment<ResourceValue>> schemas, PluginRecord pluginRecord, ResourceValue resource) {
 //        var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
         var provider = pluginRecord.provider();
 
-        var className = provider.getSchema(resource.getSchema().type());
+        var className = provider.getSchema(resource.getSchema().getType());
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), className);
         if (sourceState != null) {
             sourceState.setResourceName(resource.getName());

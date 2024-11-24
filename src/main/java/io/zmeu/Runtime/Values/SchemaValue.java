@@ -20,30 +20,18 @@ public class SchemaValue {
     @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final Environment instances;
+    private final Environment<ResourceValue> instances;
     private final String type;
 
-    private SchemaValue(Identifier type, Environment environment) {
+    public SchemaValue(Identifier type, Environment<ResourceValue> environment) {
         this.type = type.string();
-        this.instances = new Environment(environment);
+        this.instances = new Environment<>(environment);
         this.environment = environment;
         this.environment.init(INSTANCES, instances);
     }
 
     public static SchemaValue of(Identifier name, Environment environment) {
         return new SchemaValue(name, environment);
-    }
-
-    public static SchemaValue schema(Identifier name, Environment environment) {
-        return new SchemaValue(name, environment);
-    }
-
-    public static SchemaValue of(String name, Environment environment) {
-        return new SchemaValue(Identifier.id(name), environment);
-    }
-
-    public String type() {
-        return type;
     }
 
     @NotNull

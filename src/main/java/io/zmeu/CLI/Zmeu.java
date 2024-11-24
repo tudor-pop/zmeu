@@ -73,7 +73,7 @@ public class Zmeu {
                 .getVariables().values().stream()
                 .filter(it-> it instanceof SchemaValue)
                 .map(SchemaValue.class::cast)
-                .collect(Collectors.toMap(SchemaValue::type, SchemaValue::getInstances));
+                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
         resourceManager.plan(resources);
     }
 }

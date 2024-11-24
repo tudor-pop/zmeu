@@ -92,8 +92,4 @@ public class ResourceValue  {
     public record Data(String name, Map<String, Object> args) {
     }
 
-    public String typeString() {
-        return this.schema.type();
-    }
-
 }
