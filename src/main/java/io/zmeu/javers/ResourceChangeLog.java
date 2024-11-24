@@ -21,7 +21,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
 public class ResourceChangeLog extends AbstractTextChangeLog {
-    private ResourceChange type = CHANGE;
+    private ResourceChange type = NO_OP;
     private Ansi ansi;
     private boolean enableStdout;
     private InstanceId globalId;
@@ -57,21 +57,18 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         appendln(type.coloredOperation() + " resource %s %s { ".formatted(this.globalId.getTypeName(), this.globalId.getCdoId()));
     }
 
-    void newLine() {
-        ansi.newline();
-    }
-
     @Override
     public void beforeChange(Change change) {
         this.type = switch (change) {
-            case InitialValueChange newObject -> ADD;
-            case ObjectRemoved objectRemoved -> REMOVE;
-            case NewObject newObject -> ADD;
-//                var res = CHANGE;
-//                appendln(res + " resource %s %s { ".formatted(globalId.getTypeName(), globalId.getCdoId()));
-//                yield res;
+            case ObjectRemoved removed-> REMOVE;
+            case NewObject ignored1 -> ADD;
+            case InitialValueChange ignored -> ADD;
             default -> CHANGE;
         };
+    }
+
+    void newLine() {
+        ansi.newline();
     }
 
     @Override

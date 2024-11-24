@@ -4,7 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum ResourceChange {
-    NO_OP("", ""),CHANGE("~", "@|yellow %s|@"), REMOVE("-", "@|red %s|@"), ADD("+", "@|green %s|@");
+    NO_OP("", ""),
+    CHANGE("~", "@|yellow %s|@"),
+    REMOVE("-", "@|red %s|@"),
+    ADD("+", "@|green %s|@");
     private final String symbol;
     private final String color;
 
