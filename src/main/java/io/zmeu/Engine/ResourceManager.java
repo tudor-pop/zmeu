@@ -1,5 +1,6 @@
 package io.zmeu.Engine;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Plugin.PluginFactory;
@@ -17,12 +18,12 @@ import java.util.Map;
 
 public class ResourceManager {
     private final PluginFactory factory;
-    private final YAMLMapper mapper;
+    private final ObjectMapper mapper;
     private final Diff diff;
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
-    public ResourceManager(PluginFactory factory, YAMLMapper mapper, Diff diff, Javers javers) {
+    public ResourceManager(PluginFactory factory, ObjectMapper mapper, Diff diff, Javers javers) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;

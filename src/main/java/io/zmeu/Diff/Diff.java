@@ -34,27 +34,17 @@ import java.util.Map;
 @Log4j2
 public class Diff {
     private Javers javers;
-    @Getter
-    private final ObjectMapper mapper = JsonMapper.builder()
-            .findAndAddModules()
-            .build();
+    private ObjectMapper mapper;
 
     @SneakyThrows
-    public Diff(Javers javers) {
+    public Diff(Javers javers, ObjectMapper mapper) {
         this();
         this.javers = javers;
+        this.mapper = mapper;
     }
 
     public Diff() {
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-        mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-//            mapper.setAccessorNaming( new DefaultAccessorNamingStrategy.Provider().withGetterPrefix( "" ).withSetterPrefix( "" ) );
     }
 
     @SneakyThrows

@@ -1,6 +1,6 @@
 package io.zmeu.CLI;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
 import io.zmeu.Engine.ResourceManager;
@@ -8,7 +8,6 @@ import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.Parser.Program;
-import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Runtime.Environment.Environment;
@@ -19,9 +18,7 @@ import lombok.SneakyThrows;
 import org.javers.core.Javers;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,22 +33,20 @@ public class Zmeu {
     private final Javers javers;
     private final Diff diff;
     private final ResourceManager resourceManager;
+    private final ObjectMapper objectMapper;
 
     public Zmeu() throws IOException {
-        var mapper = new YAMLMapper();
-        var zmeufilePath = Paths.get(URI.create("file://" + Paths.get("Zmeufile.yml").toAbsolutePath()));
-        var zmeufileContent = Files.readString(zmeufilePath);
-        var dependencies = mapper.readValue(zmeufileContent, Dependencies.class);
-        this.pluginFactory = new PluginFactory(new Zmeufile(dependencies));
+        this.pluginFactory = new PluginFactory(ZmeuInjector.createZmeufile());
 
+        this.objectMapper = ZmeuInjector.createMapper();
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
-        this.diff = new Diff(javers);
+        this.diff = new Diff(javers, objectMapper);
 
         this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
-        this.resourceManager = new ResourceManager(pluginFactory, mapper, diff, javers);
+        this.resourceManager = new ResourceManager(pluginFactory, objectMapper, diff, javers);
     }
 
     @SneakyThrows
