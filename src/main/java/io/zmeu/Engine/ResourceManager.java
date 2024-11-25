@@ -1,19 +1,16 @@
 package io.zmeu.Engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Plugin.PluginRecord;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
-import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.api.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ResourceManager {
@@ -39,7 +36,7 @@ public class ResourceManager {
             PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
             for (ResourceValue resourceObject : instances.getVariables().values()) {
 //                if (resourceObject instanceof ResourceValue resourceValue) {
-                plan(schemas, pluginRecord, resourceObject);
+                plan(pluginRecord, resourceObject);
 //                }
             }
         }
@@ -47,7 +44,7 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    private Resource plan(Map<String, Environment<ResourceValue>> schemas, PluginRecord pluginRecord, ResourceValue resource) {
+    private Resource plan(PluginRecord pluginRecord, ResourceValue resource) {
 //        var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
         var provider = pluginRecord.provider();
 
