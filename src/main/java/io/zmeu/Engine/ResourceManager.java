@@ -2,6 +2,7 @@ package io.zmeu.Engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.Diff;
+import io.zmeu.Diff.Plan;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Plugin.PluginRecord;
 import io.zmeu.Runtime.Environment.Environment;
@@ -44,7 +45,7 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    private Resource plan(PluginRecord pluginRecord, ResourceValue resource) {
+    private Plan plan(PluginRecord pluginRecord, ResourceValue resource) {
 //        var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
         var provider = pluginRecord.provider();
 
@@ -59,20 +60,16 @@ public class ResourceManager {
             cloudState.setResourceName(resource.getName());
         }
 
-        var snapshot = javers.getLatestSnapshot(resource.getName(), className);
-        if (snapshot.isPresent()) {
-            var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot.get(), className);
-            if (javersState != null) {
-                javersState.setResourceName(resource.name());
-            }
-            var plan = diff.plan(javersState, sourceState, cloudState);
-            var res = diff.apply(javersState, plan, factory);
-        } else {
-            var plan = diff.plan(null, sourceState, cloudState);
-            var res = diff.apply(null, plan, factory);
+        var snapshot = javers.getLatestSnapshot(resource.getName(), className).orElse(null);
+        if (snapshot == null) {
+            return diff.plan(null, sourceState, cloudState);
         }
 
-        return cloudState;
+        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, className);
+        if (javersState != null) {
+            javersState.setResourceName(resource.name());
+        }
+        return diff.plan(javersState, sourceState, cloudState);
     }
 
     public ResourceValue add(ResourceValue resource) {

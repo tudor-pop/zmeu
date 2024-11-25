@@ -1,8 +1,12 @@
 package io.zmeu.Diff;
 
 //import io.zmeu.file.File;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.CLI.ZmeuInjector;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.javers.core.Javers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +19,9 @@ class DiffTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff(JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres"));
+        Javers javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        ObjectMapper mapper = ZmeuInjector.createMapper();
+        diff = new Diff(javers, mapper);
     }
 //
 //    @Test
