@@ -1,5 +1,7 @@
 package io.zmeu.Runtime.Values;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Runtime.Environment.Environment;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.*;
 public class ResourceValue  {
     private Environment properties;
     private SchemaValue schema;
+    @JsonProperty("resourceName")
     private String name;
     private Set<String> dependencies;
 

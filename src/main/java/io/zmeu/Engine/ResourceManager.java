@@ -51,14 +51,10 @@ public class ResourceManager {
 
         var className = provider.getSchema(resource.getSchema().getType());
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), className);
-        if (sourceState != null) {
-            sourceState.setResourceName(resource.getName());
-        }
+        updateStateMetadata(resource, sourceState);
 
         var cloudState = (Resource) provider.read(sourceState);
-        if (cloudState != null) {
-            cloudState.setResourceName(resource.getName());
-        }
+        updateStateMetadata(resource, cloudState);
 
         var snapshot = javers.getLatestSnapshot(resource.getName(), className).orElse(null);
         if (snapshot == null) {
@@ -66,10 +62,15 @@ public class ResourceManager {
         }
 
         var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, className);
-        if (javersState != null) {
-            javersState.setResourceName(resource.name());
-        }
+        updateStateMetadata(resource, javersState);
         return diff.plan(javersState, sourceState, cloudState);
+    }
+
+    private static void updateStateMetadata(ResourceValue resource, Resource sourceState) {
+        if (sourceState != null) {
+            sourceState.setResourceName(resource.getName());
+            sourceState.setDependencies(resource.getDependencies());
+        }
     }
 
     public ResourceValue add(ResourceValue resource) {

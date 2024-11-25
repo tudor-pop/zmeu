@@ -8,6 +8,7 @@ import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @SuperBuilder
@@ -19,6 +20,8 @@ public class Resource {
     @Id
     @DiffIgnore
     private String resourceName;
+
+    private Set<String> dependencies;
 
     public Resource() {
     }
