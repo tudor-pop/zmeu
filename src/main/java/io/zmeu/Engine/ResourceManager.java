@@ -63,12 +63,12 @@ public class ResourceManager {
 
         var snapshot = javers.getLatestSnapshot(resource.getName(), className);
         if (snapshot.isPresent()) {
-            var zmeuState = (Resource) JaversUtils.mapSnapshotToObject(snapshot.get(), className);
-            if (zmeuState != null) {
-                zmeuState.setResourceName(resource.name());
+            var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot.get(), className);
+            if (javersState != null) {
+                javersState.setResourceName(resource.name());
             }
-            var plan = diff.plan(zmeuState, sourceState, cloudState);
-            var res = diff.apply(zmeuState, plan, factory);
+            var plan = diff.plan(javersState, sourceState, cloudState);
+            var res = diff.apply(javersState, plan, factory);
         } else {
             var plan = diff.plan(null, sourceState, cloudState);
             var res = diff.apply(null, plan, factory);
