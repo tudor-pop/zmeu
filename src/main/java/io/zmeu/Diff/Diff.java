@@ -83,7 +83,7 @@ public class Diff {
                 } else if (changes.getNewObjects().isEmpty() && changes.getObjectsRemoved().isEmpty()) {
                     changeProcessor.setType(ResourceChange.CHANGE);
 
-//                    provider.update(resource);
+                    provider.update(diffResult.getResource());
                 }
 
             }

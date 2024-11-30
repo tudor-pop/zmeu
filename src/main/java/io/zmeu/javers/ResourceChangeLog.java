@@ -24,7 +24,7 @@ import static org.fusesource.jansi.Ansi.ansi;
 @Log4j2
 public class ResourceChangeLog extends AbstractTextChangeLog {
     @Setter
-    private ResourceChange type = NO_OP;
+    private ResourceChange type = CHANGE;
     private Ansi ansi;
     private boolean enableStdout;
     private InstanceId id;

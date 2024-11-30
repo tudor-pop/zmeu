@@ -7,7 +7,7 @@ public interface IProvider<T> extends ExtensionPoint {
 
     T create(T resource);
 
-    T update(T oldResource, T newResource);
+    T update(T resource);
 
     boolean delete(T resource);
 
