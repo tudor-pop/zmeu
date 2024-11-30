@@ -17,18 +17,17 @@ import org.javers.core.metamodel.object.InstanceId;
 import org.jetbrains.annotations.NotNull;
 
 import static io.zmeu.Diff.ResourceChange.*;
-import static io.zmeu.Diff.ResourceChange.CHANGE;
-import static io.zmeu.Diff.ResourceChange.NO_OP;
 import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
 public class ResourceChangeLog extends AbstractTextChangeLog {
     @Setter
-    private ResourceChange type = CHANGE;
+    private ResourceChange type = NO_OP;
     private Ansi ansi;
     private boolean enableStdout;
     private InstanceId id;
     private static final String EQUALS = "\t= ";
+    private boolean resourcePrinted = false;
 
     public ResourceChangeLog(boolean enableStdout) {
         this.enableStdout = enableStdout;
@@ -57,7 +56,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Override
     public void onAffectedObject(GlobalId globalId) {
         this.id = (InstanceId) globalId;
-        appendln(getText(type, globalId));
     }
 
     @Override
@@ -68,6 +66,13 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             case InitialValueChange ignored -> ADD;
             default -> CHANGE;
         };
+        if (this.id == null) {
+            this.id = (InstanceId) change.getAffectedGlobalId();
+        }
+        if (!resourcePrinted) {
+            resourcePrinted = true;
+            append(getText(type, this.id));
+        }
     }
 
     void newLine() {
@@ -77,6 +82,13 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Override
     public void afterChange(Change change) {
         append("\n");
+        this.type = switch (change) {
+            case ObjectRemoved removed -> REMOVE;
+            case NewObject ignored1 -> ADD;
+            case InitialValueChange ignored -> ADD;
+            case PropertyChange ignored -> CHANGE;
+            default -> NO_OP;
+        };
     }
 
     public void onValueChange(ValueChange change) {
@@ -102,7 +114,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onNewObject(NewObject newObject) {
-        append(getText(ADD, newObject.getAffectedGlobalId()));
     }
 
     private @NotNull String getText(ResourceChange coloredChange, GlobalId affectedGlobalId) {
@@ -114,7 +125,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        appendln(getText(REMOVE, objectRemoved.getAffectedGlobalId()));
     }
 
     @Override

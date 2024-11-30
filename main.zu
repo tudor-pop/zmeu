@@ -1,6 +1,6 @@
 resource File users {
-    name = "student"
-    content = "popp"
+    name = "studentss"
+    content = "poop"
     path = "./"
 }
 
