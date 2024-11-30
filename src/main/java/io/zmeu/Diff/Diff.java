@@ -77,31 +77,16 @@ public class Diff {
 
                 if (!changes.getNewObjects().isEmpty()) {
                     provider.create(diffResult.getResource());
+
                 } else if (!changes.getObjectsRemoved().isEmpty()) {
-                    changeProcessor.onObjectRemoved(changes.getObjectsRemoved().get(0));
                     provider.delete(diffResult.getResource());
+
                 } else if (changes.getNewObjects().isEmpty() && changes.getObjectsRemoved().isEmpty()) {
                     changeProcessor.setType(ResourceChange.CHANGE);
-
                     provider.update(diffResult.getResource());
                 }
 
             }
-            //            for (NewObject newObject : diffResult.getNewObjects()) {
-            //                changeProcessor.onNewObject(newObject);
-            //            }
-            //            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
-            //                changeProcessor.onObjectRemoved(objectRemoved);
-            //            }
-//                    changeProcessor.setType(ResourceChange.CHANGE);
-//                    String typeName = changes.getGlobalId().getTypeName();
-//                    var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
-
-
-//            javers.processChangeList(diffResult.getChanges(), new ResourceChangeLog(true));
-            //            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
-            //                textChangeLog.onPropertyChange(propertyChange);
-            //            }
             javers.commit("Tudor", diffResult.getResource());
         }
         return plan;
