@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
 import io.zmeu.api.Resource;
-import io.zmeu.javers.ResourceApplyPlan;
+import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.javers.core.Changes;
 import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
-import org.javers.core.diff.Change;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -66,9 +64,29 @@ public class Diff {
 
     @SneakyThrows
     public Plan apply(Plan plan, PluginFactory pluginFactory) {
-        var changeProcessor = new ResourceApplyPlan(pluginFactory);
+        var changeProcessor = new ResourceChangeLog(true);
 
         for (DiffResult diffResult : plan.getDiffResults()) {
+            javers.processChangeList(diffResult.getChanges(), changeProcessor);
+
+            for (ChangesByObject changes : diffResult.getChanges().groupByObject()) {
+                String typeName = changes.getGlobalId().getTypeName();
+                var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
+
+                Provider provider = pluginRecord.provider();
+
+                if (!changes.getNewObjects().isEmpty()) {
+                    provider.create(diffResult.getResource());
+                } else if (!changes.getObjectsRemoved().isEmpty()) {
+                    changeProcessor.onObjectRemoved(changes.getObjectsRemoved().get(0));
+                    provider.delete(diffResult.getResource());
+                } else if (changes.getNewObjects().isEmpty() && changes.getObjectsRemoved().isEmpty()) {
+                    changeProcessor.setType(ResourceChange.CHANGE);
+
+//                    provider.update(resource);
+                }
+
+            }
             //            for (NewObject newObject : diffResult.getNewObjects()) {
             //                changeProcessor.onNewObject(newObject);
             //            }
@@ -80,7 +98,7 @@ public class Diff {
 //                    var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
 
-            javers.processChangeList(diffResult.getChanges(), changeProcessor);
+//            javers.processChangeList(diffResult.getChanges(), new ResourceChangeLog(true));
             //            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
             //                textChangeLog.onPropertyChange(propertyChange);
             //            }
