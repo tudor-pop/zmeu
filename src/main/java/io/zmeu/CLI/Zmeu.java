@@ -69,6 +69,8 @@ public class Zmeu {
                 .filter(it-> it instanceof SchemaValue)
                 .map(SchemaValue.class::cast)
                 .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
-        resourceManager.plan(resources);
+        var plan = resourceManager.plan(resources);
+
+        resourceManager.apply(plan);
     }
 }

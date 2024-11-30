@@ -1,6 +1,7 @@
 package io.zmeu.Engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.Diff.DiffResult;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.Plan;
 import io.zmeu.Plugin.PluginFactory;
@@ -29,23 +30,23 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public Resource plan(Map<String, Environment<ResourceValue>> schemas) {
+    public Plan plan(Map<String, Environment<ResourceValue>> schemas) {
+        var plan = new Plan();
         for (var schemaValue : schemas.entrySet()) {
             String schemaName = schemaValue.getKey();
             Environment<ResourceValue> instances = schemaValue.getValue();
 
             PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
             for (ResourceValue resourceObject : instances.getVariables().values()) {
-//                if (resourceObject instanceof ResourceValue resourceValue) {
-                plan(pluginRecord, resourceObject);
-//                }
+                var changes = plan(pluginRecord, resourceObject);
+                plan.add(changes);
             }
         }
-        return null;
+        return plan;
     }
 
     @SneakyThrows
-    private Plan plan(PluginRecord pluginRecord, ResourceValue resource) {
+    private DiffResult plan(PluginRecord pluginRecord, ResourceValue resource) {
 //        var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
         var provider = pluginRecord.provider();
 
@@ -58,12 +59,12 @@ public class ResourceManager {
 
         var snapshot = javers.getLatestSnapshot(resource.getName(), className).orElse(null);
         if (snapshot == null) {
-            return diff.plan(null, sourceState, cloudState);
+            return diff.changes(null, sourceState, cloudState);
         }
 
         var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, className);
         updateStateMetadata(resource, javersState);
-        return diff.plan(javersState, sourceState, cloudState);
+        return diff.changes(javersState, sourceState, cloudState);
     }
 
     private static void updateStateMetadata(ResourceValue resource, Resource sourceState) {
@@ -71,6 +72,10 @@ public class ResourceManager {
             sourceState.setResourceName(resource.getName());
             sourceState.setDependencies(resource.getDependencies());
         }
+    }
+
+    public void apply(Plan plan) {
+        diff.apply(plan, this.factory);
     }
 
     public ResourceValue add(ResourceValue resource) {

@@ -1,32 +1,19 @@
 package io.zmeu.Diff;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.zmeu.Plugin.PluginFactory;
-import io.zmeu.Runtime.Environment.Environment;
-import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.Resource;
 import io.zmeu.javers.ResourceApplyPlan;
-import io.zmeu.javers.ResourceChangeLog;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.javers.core.Changes;
 import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
-import org.javers.core.diff.changetype.NewObject;
-import org.javers.core.diff.changetype.ObjectRemoved;
-import org.javers.core.diff.changetype.PropertyChange;
-import org.javers.core.metamodel.object.GlobalId;
+import org.javers.core.diff.Change;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 /**
  *
@@ -48,22 +35,21 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan plan(@Nullable Resource javersState, Resource sourceState, @Nullable Resource cloudState) {
-        validate(javersState, sourceState, cloudState);
+    public DiffResult changes(@Nullable Resource baseState/* javers state*/, Resource sourceState, @Nullable Resource cloudState) {
+        validate(baseState, sourceState, cloudState);
 
         if (cloudState == null) {
             // when cloud state has been removed, localstate/javers data must be invalidated since it's out of date and
             // the source code becomes the source of truth
-            javersState = null;
+            baseState = null;
         }
-
-        if (javersState != null) {
-            mapper.readerForUpdating(javersState).readValue((JsonNode) mapper.valueToTree(cloudState));
+        if (baseState != null) {
+            mapper.readerForUpdating(baseState).readValue((JsonNode) mapper.valueToTree(cloudState));
         }
-        var diff = this.javers.compare(javersState, sourceState);
+        var diff = this.javers.compare(baseState, sourceState);
 //        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
-        javersState = handleNullState(javersState);
-        return new Plan(sourceState, diff.groupByObject());
+        baseState = baseState == null ? sourceState : baseState;
+        return new DiffResult(diff.getChanges(), baseState);
     }
 
     private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
@@ -78,35 +64,27 @@ public class Diff {
         }
     }
 
-    private static Resource handleNullState(@Nullable Resource localState) {
-        return localState == null ? Resource.builder().build() : localState;
-    }
-
     @SneakyThrows
-    public Plan apply(Resource javersState, Plan plan, PluginFactory pluginFactory) {
+    public Plan apply(Plan plan, PluginFactory pluginFactory) {
         var changeProcessor = new ResourceApplyPlan(pluginFactory);
 
-        for (ChangesByObject diffResult : plan.diffResults()) {
-//            for (NewObject newObject : diffResult.getNewObjects()) {
-//                changeProcessor.onNewObject(newObject);
-//            }
-//            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
-//                changeProcessor.onObjectRemoved(objectRemoved);
-//            }
-            if (diffResult.getPropertyChanges().size() > 0) {
-                changeProcessor.setType(ResourceChange.CHANGE);
-                String typeName = diffResult.getGlobalId().getTypeName();
-                var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
+        for (DiffResult diffResult : plan.getDiffResults()) {
+            //            for (NewObject newObject : diffResult.getNewObjects()) {
+            //                changeProcessor.onNewObject(newObject);
+            //            }
+            //            for (ObjectRemoved objectRemoved : diffResult.getObjectsRemoved()) {
+            //                changeProcessor.onObjectRemoved(objectRemoved);
+            //            }
+//                    changeProcessor.setType(ResourceChange.CHANGE);
+//                    String typeName = changes.getGlobalId().getTypeName();
+//                    var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
-                Provider provider = pluginRecord.provider();
-                provider.update(javersState, plan.sourceCode());
-            } else{
-                javers.processChangeList(diffResult.get(), changeProcessor);
-            }
-//            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
-//                textChangeLog.onPropertyChange(propertyChange);
-//            }
-            javers.commit("Tudor", plan.sourceCode());
+
+            javers.processChangeList(diffResult.getChanges(), changeProcessor);
+            //            for (PropertyChange propertyChange : diffResult.getPropertyChanges()) {
+            //                textChangeLog.onPropertyChange(propertyChange);
+            //            }
+            javers.commit("Tudor", diffResult.getResource());
         }
         return plan;
     }

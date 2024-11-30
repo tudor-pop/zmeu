@@ -1,9 +1,19 @@
 package io.zmeu.Diff;
 
-import org.javers.core.ChangesByObject;
-import org.jetbrains.annotations.Nullable;
+import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public record Plan(@Nullable Object sourceCode, List<ChangesByObject> diffResults) {
+@Data
+public class Plan {
+
+    private List<DiffResult> diffResults = new ArrayList<>();
+
+    public Plan() {
+    }
+
+    public void add(DiffResult diffResultByObject) {
+        diffResults.add(diffResultByObject);
+    }
 }
