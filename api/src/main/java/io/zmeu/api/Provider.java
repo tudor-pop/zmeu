@@ -16,9 +16,8 @@
 package io.zmeu.api;
 
 import io.zmeu.api.schema.SchemaDefinition;
-import lombok.Getter;
-import org.pf4j.ExtensionPoint;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,12 +32,13 @@ public abstract class Provider<T> implements IProvider<T> {
     abstract public Resources<T> resources();
 
     public Schemas schemas() {
-        return new Schemas(
-                resources().list()
-                        .stream()
-                        .map(SchemaDefinition::toSchemaDefinition)
-                        .toList()
-        );
+        var resources = resources().list();
+        var list = new ArrayList<SchemaDefinition>(resources.size());
+        for (var res : resources) {
+            var schemaDefinition = SchemaDefinition.toSchemaDefinition(res);
+            list.add(schemaDefinition);
+        }
+        return new Schemas(list);
     }
 
     private Map<String, Class<?>> schemasMap() {

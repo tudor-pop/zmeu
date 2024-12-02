@@ -11,7 +11,4 @@ public interface IProvider<T> extends ExtensionPoint {
 
     boolean delete(T resource);
 
-    String namespace();
-
-    String resourceType();
 }

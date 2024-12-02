@@ -5,7 +5,6 @@ import io.zmeu.Diff.ResourceChange;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
 import lombok.SneakyThrows;
-import org.javers.core.changelog.AbstractTextChangeLog;
 import org.javers.core.changelog.ChangeProcessor;
 import org.javers.core.commit.CommitMetadata;
 import org.javers.core.diff.Change;
@@ -17,8 +16,6 @@ import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
 import org.javers.core.metamodel.object.InstanceId;
-
-import static org.fusesource.jansi.Ansi.ansi;
 
 public class ResourceApplyPlan implements ChangeProcessor<String> {
     private final ResourceChangeLog log;
@@ -108,10 +105,10 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
             String typeName = object.getAffectedGlobalId().getTypeName();
             var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
-            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
-            var resource = mapper.convertValue(object.getAffectedObject().get(), className);
-            var provider = pluginRecord.provider();
-            provider.delete(resource);
+//            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
+//            var resource = mapper.convertValue(object.getAffectedObject().get(), className);
+//            var provider = pluginRecord.provider();
+//            provider.delete(resource);
 
         }
 //        appendln(io.zmeu.Diff.Change.REMOVE.coloredOperation() + " resource %s %s { ".formatted(resource.getTypeName(), resource.getCdoId()));

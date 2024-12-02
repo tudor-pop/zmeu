@@ -4,14 +4,13 @@ import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
-import io.zmeu.api.Schemas;
+import io.zmeu.api.schema.SchemaDefinition;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.pf4j.PluginWrapper;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class PluginFactory {
         List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
         for (PluginWrapper plugin : startedPlugins) {
             String pluginId = plugin.getDescriptor().getPluginId();
-            ClassLoader pluginClassLoader = pluginManager.getPluginClassLoader(pluginId);
+//            ClassLoader pluginClassLoader = pluginManager.getPluginClassLoader(pluginId);
 
             log.info("Extensions added by plugin {}", pluginId);
 
@@ -53,9 +52,11 @@ public class PluginFactory {
                 log.info("Loading provider {}", provider.getClass().getName());
 //                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
 
-                var record = this.pluginHashMap.get(provider.namespace());
-                if (record == null) {
-                    this.pluginHashMap.put(provider.namespace(), new PluginRecord(provider, plugin, pluginClassLoader));
+                for (SchemaDefinition schema : provider.schemas().getItems()) {
+                    var record = this.pluginHashMap.get(schema.getName());
+                    if (record == null) {
+                        this.pluginHashMap.put(schema.getName(), new PluginRecord(provider, plugin));
+                    }
                 }
             }
         }
