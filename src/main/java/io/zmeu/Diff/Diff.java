@@ -39,7 +39,7 @@ public class Diff {
         if (cloudState == null) {
             // when cloud state has been removed, localstate/javers data must be invalidated since it's out of date and
             // the source code becomes the source of truth
-            baseState = null;
+//            baseState = null;
         }
         if (baseState != null) {
             mapper.readerForUpdating(baseState).readValue((JsonNode) mapper.valueToTree(cloudState));
@@ -47,6 +47,7 @@ public class Diff {
         var diff = this.javers.compare(baseState, sourceState);
 //        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
         baseState = baseState == null ? sourceState : baseState;
+        mapper.readerForUpdating(baseState).readValue((JsonNode) mapper.valueToTree(sourceState));
         return new DiffResult(diff.getChanges(), baseState);
     }
 
@@ -81,9 +82,9 @@ public class Diff {
                 } else if (!changes.getObjectsRemoved().isEmpty()) {
                     provider.delete(diffResult.getResource());
 
-                } else if (changes.getNewObjects().isEmpty() && changes.getObjectsRemoved().isEmpty()) {
+                } else {
                     changeProcessor.setType(ResourceChange.CHANGE);
-                    provider.update(diffResult.getResource());
+//                    provider.update(diffResult.getResource());
                 }
 
             }

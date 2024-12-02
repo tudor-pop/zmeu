@@ -120,7 +120,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         if (affectedGlobalId instanceof InstanceId instanceId) {
             id = instanceId;
         }
-        return coloredChange.coloredOperation() + " resource %s %s { ".formatted(id.getTypeName(), id.getCdoId());
+        return coloredChange.coloredOperation() + " resource %s %s { \n".formatted(id.getTypeName(), id.getCdoId());
     }
 
     @Override
