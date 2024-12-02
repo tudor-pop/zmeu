@@ -3,10 +3,13 @@ package io.zmeu.Resources;
 import io.zmeu.api.Provider;
 import io.zmeu.api.Resources;
 
-public class ResourceProvider extends Provider<SimpleResource> {
+import java.util.List;
+
+public class SimpleResourceProvider extends Provider<SimpleResource> {
+
     @Override
     public Resources<SimpleResource> resources() {
-        return null;
+        return new Resources<>(List.of(new SimpleResource()));
     }
 
     @Override

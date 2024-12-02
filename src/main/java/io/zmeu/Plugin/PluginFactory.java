@@ -31,7 +31,11 @@ public class PluginFactory {
     public CustomPluginManager loadPlugins() {
         Path pluginPath = zmeufile.pluginsPath();
         for (Dependency dependency : zmeufile.dependencies().dependencies()) {
-            pluginManager.loadPlugin(pluginPath.resolve(dependency.versionedName()));
+            Path resolve = pluginPath.resolve(dependency.versionedName());
+            if (!resolve.toFile().exists()) {
+                throw new IllegalArgumentException(dependency.versionedName() + " does not exist!");
+            }
+            pluginManager.loadPlugin(resolve);
         }
 
         log.info("Plugin directory: {}", pluginManager.getPluginsRoot());

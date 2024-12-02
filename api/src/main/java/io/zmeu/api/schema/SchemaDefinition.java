@@ -2,7 +2,6 @@ package io.zmeu.api.schema;
 
 import io.zmeu.api.Attribute;
 import io.zmeu.api.Property;
-import io.zmeu.api.Resource;
 import lombok.Builder;
 import lombok.Data;
 
@@ -50,7 +49,12 @@ public class SchemaDefinition {
 
     public static SchemaDefinition toSchemaDefinition(Object resource) {
         var builder = io.zmeu.api.schema.SchemaDefinition.builder();
-        builder.name(resource.getClass().getAnnotation(io.zmeu.api.SchemaDefinition.class).typeName());
+        var schemaDefinition = resource.getClass().getAnnotation(io.zmeu.api.SchemaDefinition.class);
+        if (schemaDefinition == null) {
+            throw new RuntimeException("@SchemaDefinition annotation not found on class: "+resource.getClass().getName());
+        }
+
+        builder.name(schemaDefinition.typeName());
         builder.properties(new HashMap<>());
         builder.resourceClass(resource.getClass());
 

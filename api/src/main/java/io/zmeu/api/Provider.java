@@ -16,12 +16,14 @@
 package io.zmeu.api;
 
 import io.zmeu.api.schema.SchemaDefinition;
+import org.pf4j.Extension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Extension
 public abstract class Provider<T> implements IProvider<T> {
     private final Map<String, Class<?>> schemaMap = new HashMap<>();
 
