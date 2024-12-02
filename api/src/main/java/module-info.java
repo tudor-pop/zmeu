@@ -6,4 +6,5 @@ open module zmeu.api {
     requires javers.core;
     requires static lombok;
     requires org.pf4j;
+    requires java.compiler;
 }
