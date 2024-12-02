@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class Attribute {
+public class ResourceProperty {
     private String name;
     private String type;
     private Object value;
@@ -13,6 +13,7 @@ public class Attribute {
     private String description;
     private String deprecationMessage;
     private boolean required;
+    private boolean recreateOnChange;
     private boolean hidden;
 
     public Object getValue() {

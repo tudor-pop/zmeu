@@ -1,6 +1,6 @@
 package io.zmeu.api.schema;
 
-import io.zmeu.api.Attribute;
+import io.zmeu.api.ResourceProperty;
 import io.zmeu.api.Property;
 import io.zmeu.api.Schema;
 import lombok.Builder;
@@ -23,7 +23,7 @@ public class SchemaDefinition {
 
     private Class resourceClass;
 
-    private Map<String, Attribute> properties;
+    private Map<String, ResourceProperty> properties;
 
     public static String toSchema(Object resource) {
         var annotation = resource.getClass().getAnnotation(Schema.class);
@@ -62,12 +62,15 @@ public class SchemaDefinition {
         var fields = resource.getClass().getDeclaredFields();
         for (Field field : fields) {
             var property = field.getAnnotation(Property.class);
-            var attribute = Attribute.builder();
+            var attribute = ResourceProperty.builder();
+
             attribute.required(property.optional());
             attribute.type(property.type().name());
 
             String name = property.name().isBlank() ? field.getName() : property.name();
             attribute.name(name);
+            attribute.recreateOnChange(property.recreateOnChange());
+
             builder.properties.put(name, attribute.build());
         }
 
