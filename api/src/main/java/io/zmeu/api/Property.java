@@ -17,7 +17,10 @@ public @interface Property {
     String deprecationMessage() default "";
 
     boolean optional() default true;
+
     boolean readonly() default false;
+
+    boolean recreateOnChange() default false;
 
     boolean hidden() default false;
 
@@ -28,6 +31,7 @@ public @interface Property {
         Type(String value) {
             this.value = value;
         }
+
         public String getValue() {
             return value;
         }

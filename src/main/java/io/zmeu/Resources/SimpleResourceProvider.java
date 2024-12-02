@@ -13,12 +13,12 @@ public class SimpleResourceProvider extends Provider<SimpleResource> {
     }
 
     @Override
-    public SimpleResource read(SimpleResource declaration) {
+    public SimpleResource create(SimpleResource resource) {
         return null;
     }
 
     @Override
-    public SimpleResource create(SimpleResource resource) {
+    public SimpleResource read(SimpleResource declaration) {
         return null;
     }
 
