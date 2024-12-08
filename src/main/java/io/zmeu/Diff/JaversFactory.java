@@ -40,7 +40,7 @@ public class JaversFactory {
 
     @SneakyThrows
     public static Javers createH2() {
-        var dbConnection = DriverManager.getConnection("jdbc:h2:mem:test");
+        var dbConnection = DriverManager.getConnection("jdbc:h2:mem:test", "sa", null);
         var connectionProvider = new ConnectionProvider() {
             @Override
             public Connection getConnection() {
@@ -66,6 +66,13 @@ public class JaversFactory {
         return JaversBuilder.javers()
                 .withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
                 .registerJaversRepository(sqlRepository)
+                .withPrettyPrint(true)
+                .build();
+    }
+
+    public static Javers createNoDb() {
+        return JaversBuilder.javers()
+                .withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
                 .withPrettyPrint(true)
                 .build();
     }

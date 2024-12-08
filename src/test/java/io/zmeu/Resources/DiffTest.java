@@ -1,7 +1,5 @@
 package io.zmeu.Resources;
 
-//import io.zmeu.file.File;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.CLI.ZmeuInjector;
 import io.zmeu.Diff.Diff;
@@ -9,7 +7,9 @@ import io.zmeu.Diff.JaversFactory;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Javers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @Log4j2
 class DiffTest {
@@ -18,34 +18,39 @@ class DiffTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        Javers javers = JaversFactory.createH2();
+        Javers javers = JaversFactory.createNoDb();
         ObjectMapper mapper = ZmeuInjector.createMapper();
         diff = new Diff(javers, mapper);
     }
-//
-//    @Test
-//    void noChanges() {
-//        var localState = FileResource.builder().id("main")
-//                .name("main")
-//                .content("local")
-//                .build();
-//
-//        var sourceState = FileResource.builder().name("main").id("main")
-//                .content("local")
-//                .build();
-//
-//        var cloudState = FileResource.builder().id("main")
-//                .name("main")
-//                .content("local")
-//                .build();
-//
-//        var res = diff.plan(localState, sourceState, cloudState);
-//        var plan = FileResource.builder().id("main")
-//                .name("main")
-//                .content("local")
-//                .build();
-//        Assertions.assertEquals(diff.toJsonNode(plan), res.sourceCode());
-//    }
+
+    @Test
+    void noChanges() {
+        var localState = TestResource.builder()
+                .resourceName("main")
+                .name("main")
+                .content("local")
+                .build();
+
+        var sourceState = TestResource.builder()
+                .resourceName("main")
+                .name("main")
+                .content("local")
+                .build();
+
+        var cloudState = TestResource.builder()
+                .resourceName("main")
+                .name("main")
+                .content("local")
+                .build();
+
+        var res = diff.changes(localState, sourceState, cloudState);
+        var plan = TestResource.builder()
+                .resourceName("main")
+                .name("main")
+                .content("local")
+                .build();
+        Assertions.assertEquals(plan, res.getResource());
+    }
 //
 //    @Test
 //    void sourceChangeOverridesRemote() {

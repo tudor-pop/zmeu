@@ -93,7 +93,4 @@ public class Diff {
         return plan;
     }
 
-    public JsonNode toJsonNode(Object object) {
-        return mapper.valueToTree(object);
-    }
 }

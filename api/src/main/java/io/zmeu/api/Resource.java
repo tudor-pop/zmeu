@@ -7,7 +7,6 @@ import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
-import java.util.Map;
 import java.util.Set;
 
 @Data

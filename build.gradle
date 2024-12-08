@@ -48,6 +48,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.3'
     testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.3'
+    testImplementation 'com.h2database:h2:2.3.232'
 }
 
 test {
