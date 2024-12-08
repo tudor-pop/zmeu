@@ -2,7 +2,7 @@ package io.zmeu.Diff;
 
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
-import io.zmeu.api.Resource;
+import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;

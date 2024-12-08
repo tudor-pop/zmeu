@@ -8,7 +8,7 @@ import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Plugin.PluginRecord;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
-import io.zmeu.api.Resource;
+import io.zmeu.api.resource.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
 

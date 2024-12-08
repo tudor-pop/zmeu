@@ -1,6 +1,6 @@
 package io.zmeu.Diff;
 
-import io.zmeu.api.Resource;
+import io.zmeu.api.resource.Resource;
 import org.javers.core.Changes;
 import org.jetbrains.annotations.Nullable;
 

@@ -1,8 +1,6 @@
 package io.zmeu.api.schema;
 
-import io.zmeu.api.ResourceProperty;
-import io.zmeu.api.Property;
-import io.zmeu.api.Schema;
+import io.zmeu.api.resource.ResourceProperty;
 import lombok.Builder;
 import lombok.Data;
 

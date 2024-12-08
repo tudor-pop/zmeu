@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.Runtime.exceptions.VarExistsException;
-import io.zmeu.api.Resource;
+import io.zmeu.api.resource.Resource;
 import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;

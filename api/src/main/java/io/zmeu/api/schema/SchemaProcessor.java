@@ -1,4 +1,4 @@
-package io.zmeu.api;
+package io.zmeu.api.schema;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;

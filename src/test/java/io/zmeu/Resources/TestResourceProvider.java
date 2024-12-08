@@ -1,7 +1,7 @@
 package io.zmeu.Resources;
 
 import io.zmeu.api.Provider;
-import io.zmeu.api.Resources;
+import io.zmeu.api.resource.Resources;
 
 import java.util.List;
 

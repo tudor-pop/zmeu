@@ -1,4 +1,4 @@
-package io.zmeu.api;
+package io.zmeu.api.resource;
 
 import java.util.HashMap;
 import java.util.Map;

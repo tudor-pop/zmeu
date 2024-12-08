@@ -15,7 +15,9 @@
  */
 package io.zmeu.api;
 
+import io.zmeu.api.resource.Resources;
 import io.zmeu.api.schema.SchemaDefinition;
+import io.zmeu.api.schema.Schemas;
 import org.pf4j.Extension;
 
 import java.util.ArrayList;

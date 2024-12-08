@@ -1,6 +1,6 @@
 package io.zmeu.Resources;
 
-import io.zmeu.api.Resource;
+import io.zmeu.api.resource.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

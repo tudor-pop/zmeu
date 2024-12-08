@@ -1,6 +1,5 @@
-package io.zmeu.api;
+package io.zmeu.api.schema;
 
-import io.zmeu.api.schema.SchemaDefinition;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
