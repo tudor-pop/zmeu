@@ -8,12 +8,12 @@ import java.util.List;
 @Data
 public class Plan {
 
-    private List<DiffResult> diffResults = new ArrayList<>();
+    private List<MergeResult> mergeResults = new ArrayList<>();
 
     public Plan() {
     }
 
-    public void add(DiffResult diffResultByObject) {
-        diffResults.add(diffResultByObject);
+    public void add(MergeResult mergeResultByObject) {
+        mergeResults.add(mergeResultByObject);
     }
 }

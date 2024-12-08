@@ -9,6 +9,7 @@ import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.javers.core.Changes;
 import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
@@ -32,8 +33,16 @@ public class Diff {
 
     }
 
+    /**
+     * make a 3-way merge between the resources
+     *
+     * @param baseState javers state stored in the database
+     * @param sourceState source code state
+     * @param cloudState state read from the cloud like a VM
+     * @return
+     */
     @SneakyThrows
-    public DiffResult changes(@Nullable Resource baseState/* javers state*/, Resource sourceState, @Nullable Resource cloudState) {
+    public MergeResult merge(@Nullable Resource baseState/* javers state*/, Resource sourceState, @Nullable Resource cloudState) {
         validate(baseState, sourceState, cloudState);
 
         if (cloudState == null) {
@@ -48,7 +57,7 @@ public class Diff {
 //        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
         baseState = baseState == null ? sourceState : baseState;
         mapper.readerForUpdating(baseState).readValue((JsonNode) mapper.valueToTree(sourceState));
-        return new DiffResult(diff.getChanges(), baseState);
+        return new MergeResult(diff.getChanges(), baseState);
     }
 
     private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
@@ -67,28 +76,29 @@ public class Diff {
     public Plan apply(Plan plan, PluginFactory pluginFactory) {
         var changeProcessor = new ResourceChangeLog(true);
 
-        for (DiffResult diffResult : plan.getDiffResults()) {
-            javers.processChangeList(diffResult.getChanges(), changeProcessor);
+        for (MergeResult mergeResult : plan.getMergeResults()) {
+            Changes changes1 = mergeResult.changes();
+            javers.processChangeList(changes1, changeProcessor);
 
-            for (ChangesByObject changes : diffResult.getChanges().groupByObject()) {
+            for (ChangesByObject changes : changes1.groupByObject()) {
                 String typeName = changes.getGlobalId().getTypeName();
                 var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
                 Provider provider = pluginRecord.provider();
 
                 if (!changes.getNewObjects().isEmpty()) {
-                    provider.create(diffResult.getResource());
+                    provider.create(mergeResult.resource());
 
                 } else if (!changes.getObjectsRemoved().isEmpty()) {
-                    provider.delete(diffResult.getResource());
+                    provider.delete(mergeResult.resource());
 
                 } else {
                     changeProcessor.setType(ResourceChange.CHANGE);
-                    provider.update(diffResult.getResource());
+                    provider.update(mergeResult.resource());
                 }
 
             }
-            javers.commit("Tudor", diffResult.getResource());
+            javers.commit("Tudor", mergeResult.resource());
         }
         return plan;
     }
