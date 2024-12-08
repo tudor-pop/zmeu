@@ -1,7 +1,5 @@
 package io.zmeu.Diff;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
 import io.zmeu.api.Resource;
@@ -13,6 +11,7 @@ import org.javers.core.Changes;
 import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
+import org.modelmapper.ModelMapper;
 
 /**
  *
@@ -20,10 +19,10 @@ import org.jetbrains.annotations.Nullable;
 @Log4j2
 public class Diff {
     private Javers javers;
-    private ObjectMapper mapper;
+    private ModelMapper mapper;
 
     @SneakyThrows
-    public Diff(Javers javers, ObjectMapper mapper) {
+    public Diff(Javers javers, ModelMapper mapper) {
         this();
         this.javers = javers;
         this.mapper = mapper;
@@ -36,9 +35,9 @@ public class Diff {
     /**
      * make a 3-way merge between the resources
      *
-     * @param baseState javers state stored in the database
+     * @param baseState   javers state stored in the database
      * @param sourceState source code state
-     * @param cloudState state read from the cloud like a VM
+     * @param cloudState  state read from the cloud like a VM
      * @return
      */
     @SneakyThrows
@@ -50,13 +49,13 @@ public class Diff {
             // the source code becomes the source of truth
 //            baseState = null;
         }
-        if (baseState != null) {
-            mapper.readerForUpdating(baseState).readValue((JsonNode) mapper.valueToTree(cloudState));
+        if (baseState != null && cloudState != null) {
+            mapper.map(cloudState, baseState);
         }
         var diff = this.javers.compare(baseState, sourceState);
 //        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
         baseState = baseState == null ? sourceState : baseState;
-        mapper.readerForUpdating(baseState).readValue((JsonNode) mapper.valueToTree(sourceState));
+        mapper.map(sourceState, baseState);
         return new MergeResult(diff.getChanges(), baseState);
     }
 

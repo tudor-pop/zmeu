@@ -8,7 +8,6 @@ import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.Parser.Program;
-import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
@@ -16,6 +15,7 @@ import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.TypeChecker.TypeChecker;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
+import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +40,7 @@ public class Zmeu {
 
         this.objectMapper = ZmeuInjector.createMapper();
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
-        this.diff = new Diff(javers, objectMapper);
+        this.diff = new Diff(javers, new ModelMapper());
 
         this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();

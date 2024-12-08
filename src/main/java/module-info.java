@@ -16,4 +16,5 @@ module zmeu.io {
     requires com.google.gson;
     requires java.sql;
     requires jdk.jdi;
+    requires modelmapper;
 }

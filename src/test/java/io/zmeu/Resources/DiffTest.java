@@ -1,7 +1,5 @@
 package io.zmeu.Resources;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.zmeu.CLI.ZmeuInjector;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
 import lombok.SneakyThrows;
@@ -11,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 
 @Log4j2
 class DiffTest {
@@ -20,8 +19,7 @@ class DiffTest {
     @BeforeEach
     void init() {
         Javers javers = JaversFactory.createNoDb();
-        ObjectMapper mapper = ZmeuInjector.createMapper();
-        diff = new Diff(javers, mapper);
+        diff = new Diff(javers, new ModelMapper());
     }
 
     @Test
