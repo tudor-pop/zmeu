@@ -28,26 +28,22 @@ class DiffTest {
     void noChanges() {
         var localState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("local")
                 .build();
 
         var sourceState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("local")
                 .build();
 
         var cloudState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("local")
                 .build();
 
         var res = diff.merge(localState, sourceState, cloudState);
         var plan = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("local")
                 .build();
         Assertions.assertEquals(plan, res.resource());
@@ -55,24 +51,24 @@ class DiffTest {
 
     @Test
     void sourceChangeOverridesRemote() {
-        var localState = TestResource.builder().resourceName("main")
-                .name("main")
+        var localState = TestResource.builder()
+                .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState = TestResource.builder().resourceName("main")
-                .name("main")
+        var sourceState = TestResource.builder()
+                .resourceName("main")
                 .content("src")
                 .build();
 
-        var cloudState = TestResource.builder().resourceName("main")
-                .name("main")
+        var cloudState = TestResource.builder()
+                .resourceName("main")
                 .content("local")
                 .build();
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = TestResource.builder().resourceName("main")
-                .name("main")
+        var plan = TestResource.builder()
+                .resourceName("main")
                 .content("src")
                 .build();
 
@@ -83,20 +79,17 @@ class DiffTest {
     void addClusterToRemote() {
         var localState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
         var sourceState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
         var res = diff.merge(localState, sourceState, null);
         var plan = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
@@ -107,18 +100,15 @@ class DiffTest {
     void addClusterToLocal() {
         var sourceState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
         var remoteState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
         var res = diff.merge(null, sourceState, remoteState);
         var plan = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
@@ -130,14 +120,12 @@ class DiffTest {
     void addClusterToLocalAndRemote() {
         var sourceState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
         var res = diff.merge(null, sourceState, null);
         var plan = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
@@ -149,19 +137,16 @@ class DiffTest {
     public void acceptSrc() {
         var localState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
         var sourceState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .build();
 
 
         var remoteState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("remote")
                 .build();
 
@@ -176,25 +161,21 @@ class DiffTest {
     void removeClusterPropertiesFromSrc() {
         var localState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
         var srcState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .build();
 
         var remoteState = TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .content("src")
                 .build();
 
         var res = diff.merge(localState, srcState, remoteState);
         var plan =  TestResource.builder()
                 .resourceName("main")
-                .name("main")
                 .build();
 
         Assertions.assertEquals(plan, res.resource());
@@ -202,24 +183,25 @@ class DiffTest {
 
     @Test
     void localHiddenIsNotRemovedBySrc() {
-        var localState =  TestResource.builder().resourceName("main")
-                .name("main")
+        var localState =  TestResource.builder()
+                .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState =  TestResource.builder().name("main").resourceName("main")
+        var sourceState =  TestResource.builder()
+                .resourceName("main")
                 .content("src")
                 .build();
 
-        var cloudState =  TestResource.builder().resourceName("main")
-                .name("main")
+        var cloudState =  TestResource.builder()
+                .resourceName("main")
                 .content("local")
                 .build();
 
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = TestResource.builder().resourceName("main")
-                .name("main")
+        var plan = TestResource.builder()
+                .resourceName("main")
                 .content("src")
                 .build();
 
