@@ -35,28 +35,28 @@ public class Diff {
     /**
      * make a 3-way merge between the resources
      *
-     * @param baseState   javers state stored in the database
-     * @param sourceState source code state
-     * @param cloudState  state read from the cloud like a VM
+     * @param base  javers state stored in the database
+     * @param left  source code state
+     * @param right state read from the cloud like a VM
      * @return
      */
     @SneakyThrows
-    public MergeResult merge(@Nullable Resource baseState/* javers state*/, Resource sourceState, @Nullable Resource cloudState) {
-        validate(baseState, sourceState, cloudState);
+    public MergeResult merge(@Nullable Resource base, Resource left, @Nullable Resource right) {
+        validate(base, left, right);
 
-        if (cloudState == null) {
-            // when cloud state has been removed, localstate/javers data must be invalidated since it's out of date and
-            // the source code becomes the source of truth
-//            baseState = null;
+        base = base == null ? left : base;
+        if (right != null) {
+            /**
+             * accept right/theirs/cloud changes. Any undeclared properties in the state (like unique cloud ids)
+             * will be set on the base since they are probably already out of date in the base state
+             * */
+            mapper.map(right, base);
         }
-        if (baseState != null && cloudState != null) {
-            mapper.map(cloudState, baseState);
-        }
-        var diff = this.javers.compare(baseState, sourceState);
-//        var changes = javers.processChangeList(diff.getChanges(), new ResourceChangeLog(true));
-        baseState = baseState == null ? sourceState : baseState;
-        mapper.map(sourceState, baseState);
-        return new MergeResult(diff.getChanges(), baseState);
+
+        var diff = this.javers.compare(base, left);
+
+        mapper.map(left, base);
+        return new MergeResult(diff.getChanges(), base);
     }
 
     private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
