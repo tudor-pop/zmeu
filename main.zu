@@ -1,7 +1,6 @@
-resource File users {
-    name = "studentss"
-    content = "poop"
-    path = "./"
-}
+// resource File users {
+//    name = "student"
+//    content = "poop"
+// }
 
 

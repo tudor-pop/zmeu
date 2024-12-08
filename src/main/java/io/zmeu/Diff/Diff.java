@@ -84,7 +84,7 @@ public class Diff {
 
                 } else {
                     changeProcessor.setType(ResourceChange.CHANGE);
-//                    provider.update(diffResult.getResource());
+                    provider.update(diffResult.getResource());
                 }
 
             }
