@@ -21,6 +21,7 @@ public class Resource {
     private String resourceName;
 
     private Set<String> dependencies;
+    private Set<String> readOnly;
 
     public Resource() {
     }

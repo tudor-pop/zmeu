@@ -1,8 +1,6 @@
 package io.zmeu.Runtime.Values;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Runtime.Environment.Environment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +8,9 @@ import lombok.Data;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
@@ -21,6 +21,7 @@ public class ResourceValue  {
     @JsonProperty("resourceName")
     private String name;
     private Set<String> dependencies;
+    private Set<String> readOnly;
 
     public ResourceValue() {
     }

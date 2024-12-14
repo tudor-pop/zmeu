@@ -47,7 +47,7 @@ public class SchemaDefinition {
     }
 
     public static SchemaDefinition toSchemaDefinition(Object resource) {
-        var builder = io.zmeu.api.schema.SchemaDefinition.builder();
+        var builder = SchemaDefinition.builder();
         var schemaDefinition = resource.getClass().getAnnotation(Schema.class);
         if (schemaDefinition == null) {
             throw new RuntimeException("@SchemaDefinition annotation not found on class: "+resource.getClass().getName());
@@ -64,6 +64,7 @@ public class SchemaDefinition {
 
             attribute.required(property.optional());
             attribute.type(property.type().name());
+            attribute.readOnly(property.readonly());
 
             String name = property.name().isBlank() ? field.getName() : property.name();
             attribute.name(name);

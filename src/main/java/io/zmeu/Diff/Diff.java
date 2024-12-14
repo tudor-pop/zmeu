@@ -1,6 +1,7 @@
 package io.zmeu.Diff;
 
 import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Utils.Reflections;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
@@ -12,6 +13,8 @@ import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 import org.modelmapper.ModelMapper;
+
+import java.lang.reflect.Field;
 
 /**
  *
@@ -44,19 +47,40 @@ public class Diff {
     public MergeResult merge(@Nullable Resource base, Resource left, @Nullable Resource right) {
         validate(base, left, right);
 
-        base = base == null ? left : base;
+        var merged = base == null ? left : base;
         if (right != null) {
             /**
              * accept right/theirs/cloud changes. Any undeclared properties in the state (like unique cloud ids)
              * will be set on the base since they are probably already out of date in the base state
              * */
-            mapper.map(right, base);
+            mapper.map(right, merged);
+        }
+        // Preserve cloud-managed properties explicitly.
+        // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
+        if (base != null && left != null) {
+            updateReadOnlyProperties(merged, left);
         }
 
-        var diff = this.javers.compare(base, left);
+        var diff = this.javers.compare(merged, left);
 
-        mapper.map(left, base);
-        return new MergeResult(diff.getChanges(), base);
+        mapper.map(left, merged);
+
+        return new MergeResult(diff.getChanges(), merged);
+    }
+
+    private static void updateReadOnlyProperties(Resource source, Resource target) {
+        for (Field property : target.getClass().getDeclaredFields()) {
+            if (Reflections.isReadOnly(property)) {
+                try {
+                    Field field = source.getClass().getDeclaredField(property.getName());
+                    field.setAccessible(true);
+                    property.setAccessible(true);
+                    property.set(target, field.get(source));
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {

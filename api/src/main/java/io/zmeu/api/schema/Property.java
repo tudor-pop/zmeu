@@ -1,5 +1,7 @@
 package io.zmeu.api.schema;
 
+import lombok.Getter;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,17 +26,15 @@ public @interface Property {
 
     boolean hidden() default false;
 
+    @Getter
     enum Type {
-        String("String"), Number("Number"), Boolean("Boolean"), Null("null");
+        String("String"), Number("Number"), Boolean("Boolean");
         private final String value;
 
         Type(String value) {
             this.value = value;
         }
 
-        public String getValue() {
-            return value;
-        }
     }
 
 }

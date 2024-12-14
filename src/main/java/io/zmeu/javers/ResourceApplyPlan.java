@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
+import io.zmeu.api.resource.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.changelog.ChangeProcessor;
 import org.javers.core.commit.CommitMetadata;
@@ -92,7 +93,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
         var className = provider.getSchema(typeName);
 
-        var resource = mapper.convertValue(object.getAffectedObject().get(), className);
+        var resource = (Resource) mapper.convertValue(object.getAffectedObject().get(), className);
         provider.create(resource);
     }
 

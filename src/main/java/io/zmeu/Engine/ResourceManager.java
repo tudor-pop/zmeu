@@ -71,6 +71,7 @@ public class ResourceManager {
         if (sourceState != null) {
             sourceState.setResourceName(resource.getName());
             sourceState.setDependencies(resource.getDependencies());
+            sourceState.setReadOnly(resource.getReadOnly());
         }
     }
 

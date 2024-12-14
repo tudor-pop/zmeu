@@ -13,6 +13,7 @@ public class ResourceProperty {
     private String description;
     private String deprecationMessage;
     private boolean required;
+    private boolean readOnly;
     private boolean recreateOnChange;
     private boolean hidden;
 

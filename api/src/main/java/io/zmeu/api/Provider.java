@@ -15,6 +15,7 @@
  */
 package io.zmeu.api;
 
+import io.zmeu.api.resource.Resource;
 import io.zmeu.api.resource.Resources;
 import io.zmeu.api.schema.SchemaDefinition;
 import io.zmeu.api.schema.Schemas;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Extension
-public abstract class Provider<T> implements IProvider<T> {
+public abstract class Provider<T extends Resource> implements IProvider<T> {
     private final Map<String, Class<?>> schemaMap = new HashMap<>();
 
     public Provider() {

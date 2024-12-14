@@ -2,6 +2,7 @@ package io.zmeu.Resources;
 
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
+import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Javers;
@@ -14,12 +15,14 @@ import org.modelmapper.ModelMapper;
 @Log4j2
 class DiffTest {
     private Diff diff;
+    private Javers javers;
 
     @SneakyThrows
     @BeforeEach
     void init() {
-        Javers javers = JaversFactory.createNoDb();
-        diff = new Diff(javers, new ModelMapper());
+        javers = JaversFactory.createNoDb();
+        ModelMapper mapper = new ModelMapper();
+        diff = new Diff(javers, mapper);
     }
 
     @Test
@@ -135,22 +138,32 @@ class DiffTest {
     public void acceptSrc() {
         var localState = TestResource.builder()
                 .resourceName("main")
-                .content("src")
+                .content("local")
                 .build();
 
         var sourceState = TestResource.builder()
                 .resourceName("main")
+                .content("src")
                 .build();
 
 
         var remoteState = TestResource.builder()
                 .resourceName("main")
                 .content("remote")
+                .uid("cloud-id-random")
                 .build();
 
         var res = this.diff.merge(localState, sourceState, remoteState);
 
-        Assertions.assertEquals(res.resource(), sourceState);
+
+        var expected = TestResource.builder()
+                .resourceName("main")
+                .content("src")
+                .uid("cloud-id-random")
+                .build();
+
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        Assertions.assertEquals(expected, res.resource());
     }
 
 
@@ -172,7 +185,7 @@ class DiffTest {
                 .build();
 
         var res = diff.merge(localState, srcState, remoteState);
-        var plan =  TestResource.builder()
+        var plan = TestResource.builder()
                 .resourceName("main")
                 .build();
 
@@ -181,17 +194,17 @@ class DiffTest {
 
     @Test
     void localHiddenIsNotRemovedBySrc() {
-        var localState =  TestResource.builder()
+        var localState = TestResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState =  TestResource.builder()
+        var sourceState = TestResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
-        var cloudState =  TestResource.builder()
+        var cloudState = TestResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
