@@ -15,6 +15,7 @@ import org.pf4j.PluginWrapper;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 public class PluginFactory {
@@ -79,5 +80,12 @@ public class PluginFactory {
 
     public Provider getProvider(String provider) {
         return pluginHashMap.get(provider);
+    }
+
+    public String schemas() {
+        return pluginHashMap.values()
+                .stream()
+                .map(Provider::schemasString)
+                .collect(Collectors.joining());
     }
 }

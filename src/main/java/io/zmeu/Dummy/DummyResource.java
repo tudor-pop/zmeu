@@ -1,4 +1,4 @@
-package io.zmeu.Resources;
+package io.zmeu.Dummy;
 
 import io.zmeu.api.resource.Resource;
 import io.zmeu.api.schema.Property;
@@ -17,7 +17,7 @@ import org.javers.core.metamodel.annotation.TypeName;
 @NoArgsConstructor
 @Schema(description = "", typeName = "TestResource")
 @TypeName("TestResource")
-public class TestResource extends Resource {
+public class DummyResource extends Resource {
     private String name;
     private String content;
 

@@ -27,6 +27,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
 import static io.zmeu.Utils.BoolUtils.isTruthy;
@@ -670,6 +671,15 @@ public final class Interpreter implements Visitor<Object> {
     static void runtimeError(RuntimeError error) {
         System.err.printf("%s\n[line %d]%n", error.getMessage(), error.getToken().line());
         hadRuntimeError = true;
+    }
+
+    public Map<String, Environment<ResourceValue>> resourcesGroupedBySchema() {
+        return env.getVariables()
+                .values()
+                .stream()
+                .filter(it -> it instanceof SchemaValue)
+                .map(SchemaValue.class::cast)
+                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
     }
 
 }

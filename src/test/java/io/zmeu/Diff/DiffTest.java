@@ -1,7 +1,7 @@
 package io.zmeu.Diff;
 
 import io.zmeu.Base.JaversTest;
-import io.zmeu.Resources.TestResource;
+import io.zmeu.Dummy.DummyResource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -25,23 +25,23 @@ class DiffTest extends JaversTest {
 
     @Test
     void noChanges() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var cloudState = TestResource.builder()
+        var cloudState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var expected = TestResource.builder()
+        var expected = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
@@ -52,23 +52,23 @@ class DiffTest extends JaversTest {
 
     @Test
     void srcOverridesRemote() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
-        var cloudState = TestResource.builder()
+        var cloudState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = TestResource.builder()
+        var plan = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
@@ -80,18 +80,18 @@ class DiffTest extends JaversTest {
 
     @Test
     void addResourceToRemote() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
         var res = diff.merge(localState, sourceState, null);
-        var plan = TestResource.builder()
+        var plan = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
@@ -105,16 +105,16 @@ class DiffTest extends JaversTest {
 
     @Test
     void addResourceToLocal() {
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
-        var remoteState = TestResource.builder()
+        var remoteState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
         var res = diff.merge(null, sourceState, remoteState);
-        var expected = TestResource.builder()
+        var expected = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
@@ -128,13 +128,13 @@ class DiffTest extends JaversTest {
     @Test
     @DisplayName("First apply creates remote and local states")
     void addResourceToLocalAndRemote() {
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
         var res = diff.merge(null, sourceState, null);
-        var plan = TestResource.builder()
+        var plan = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
@@ -148,25 +148,25 @@ class DiffTest extends JaversTest {
     @SneakyThrows
     @Test
     public void acceptSrc() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
 
-        var remoteState = TestResource.builder()
+        var remoteState = DummyResource.builder()
                 .resourceName("main")
                 .content("remote")
                 .uid("cloud-id-random")
                 .build();
 
         var res = this.diff.merge(localState, sourceState, remoteState);
-        var expected = TestResource.builder()
+        var expected = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .uid("cloud-id-random")
@@ -182,22 +182,22 @@ class DiffTest extends JaversTest {
     @Test
     @DisplayName("Deleting src must delete local and remote regardless of their state")
     void removeResourcePropertiesFromSrc() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
-        var srcState = TestResource.builder()
+        var srcState = DummyResource.builder()
                 .resourceName("main")
                 .build();
 
-        var remoteState = TestResource.builder()
+        var remoteState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
         var res = diff.merge(localState, srcState, remoteState);
-        var plan = TestResource.builder()
+        var plan = DummyResource.builder()
                 .resourceName("main")
                 .build();
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
@@ -209,24 +209,24 @@ class DiffTest extends JaversTest {
 
     @Test
     void srcChangesLocalAndRemote() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var sourceState = TestResource.builder()
+        var sourceState = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
 
-        var cloudState = TestResource.builder()
+        var cloudState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = TestResource.builder()
+        var plan = DummyResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
@@ -238,12 +238,12 @@ class DiffTest extends JaversTest {
     }
     @Test
     void srcRemovalDeletesRemote() {
-        var localState = TestResource.builder()
+        var localState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
 
-        var cloudState = TestResource.builder()
+        var cloudState = DummyResource.builder()
                 .resourceName("main")
                 .content("local")
                 .uid("cloud-id-random")
@@ -252,7 +252,7 @@ class DiffTest extends JaversTest {
         var res = diff.merge(localState, null, cloudState);
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
-        Assertions.assertEquals(new TestResource(), res.resource());
+        Assertions.assertEquals(new DummyResource(), res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ObjectRemoved.class,res.changes().get(0));
     }

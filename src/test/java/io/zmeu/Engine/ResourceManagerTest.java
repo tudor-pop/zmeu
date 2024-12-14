@@ -6,15 +6,12 @@ import io.zmeu.Diff.Diff;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
-import io.zmeu.Runtime.Values.SchemaValue;
-import io.zmeu.api.Provider;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Log4j2
 class ResourceManagerTest extends JaversWithInterpreterTest {
@@ -39,24 +36,14 @@ class ResourceManagerTest extends JaversWithInterpreterTest {
 
     @Test
     void resourceDependencyIsAdded() {
-        var schemasString = new StringBuilder(factory.getPluginHashMap()
-                .values()
-                .stream()
-                .map(Provider::schemasString)
-                .collect(Collectors.joining()));
-
-        schemasString.append("""
+        var schemas = factory.schemas() + """
                 resource TypeResource main {
                 
                 }
-                """);
+                """;
 
-        var evalRes = interpreter.eval(checker.eval(parser.produceAST(tokenizer.tokenize(schemasString.toString()))));
-        var resources = interpreter.getEnv()
-                .getVariables().values().stream()
-                .filter(it -> it instanceof SchemaValue)
-                .map(SchemaValue.class::cast)
-                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
+        var evalRes = interpreter.eval(checker.eval(parser.produceAST(tokenizer.tokenize(schemas))));
+        var resources = interpreter.resourcesGroupedBySchema();
 
         manager.plan(resources);
     }
