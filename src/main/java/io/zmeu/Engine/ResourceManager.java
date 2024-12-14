@@ -38,8 +38,8 @@ public class ResourceManager {
 
             PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
             for (ResourceValue resourceObject : instances.getVariables().values()) {
-                var changes = plan(pluginRecord, resourceObject);
-                plan.add(changes);
+                var mergeResult = plan(pluginRecord, resourceObject);
+                plan.add(mergeResult);
             }
         }
         return plan;

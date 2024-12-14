@@ -98,11 +98,12 @@ class DiffTest {
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
-        Assertions.assertFalse(res.changes().isEmpty()); // should be an add change
+        // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
+        Assertions.assertFalse(res.changes().isEmpty());
     }
 
     @Test
-    void addClusterToLocal() {
+    void addResourceToLocal() {
         var sourceState = TestResource.builder()
                 .resourceName("main")
                 .content("src")
@@ -112,13 +113,15 @@ class DiffTest {
                 .content("src")
                 .build();
         var res = diff.merge(null, sourceState, remoteState);
-        var plan = TestResource.builder()
+        var expected = TestResource.builder()
                 .resourceName("main")
                 .content("src")
                 .build();
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
-        Assertions.assertEquals(plan, res.resource());
+        Assertions.assertEquals(expected, res.resource());
+        // should be empty because the resource exists in cloud and in code but is missing in state so we just need to add it in state
+        Assertions.assertTrue(res.changes().isEmpty());
     }
 
     @Test
