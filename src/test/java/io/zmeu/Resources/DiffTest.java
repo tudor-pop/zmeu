@@ -43,11 +43,12 @@ class DiffTest {
                 .build();
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = TestResource.builder()
+        var expected = TestResource.builder()
                 .resourceName("main")
                 .content("local")
                 .build();
-        Assertions.assertEquals(plan, res.resource());
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        Assertions.assertEquals(expected, res.resource());
     }
 
     @Test
@@ -72,6 +73,7 @@ class DiffTest {
                 .resourceName("main")
                 .content("src")
                 .build();
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
     }
@@ -93,6 +95,7 @@ class DiffTest {
                 .resourceName("main")
                 .content("src")
                 .build();
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
     }
@@ -112,6 +115,7 @@ class DiffTest {
                 .resourceName("main")
                 .content("src")
                 .build();
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
     }
@@ -129,6 +133,7 @@ class DiffTest {
                 .resourceName("main")
                 .content("src")
                 .build();
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
     }
@@ -154,8 +159,6 @@ class DiffTest {
                 .build();
 
         var res = this.diff.merge(localState, sourceState, remoteState);
-
-
         var expected = TestResource.builder()
                 .resourceName("main")
                 .content("src")
@@ -188,6 +191,7 @@ class DiffTest {
         var plan = TestResource.builder()
                 .resourceName("main")
                 .build();
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
     }
@@ -215,6 +219,7 @@ class DiffTest {
                 .resourceName("main")
                 .content("src")
                 .build();
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
     }
