@@ -6,6 +6,8 @@ import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Javers;
+import org.javers.core.diff.changetype.NewObject;
+import org.javers.core.diff.changetype.ValueChange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +51,7 @@ class DiffTest {
                 .build();
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
         Assertions.assertEquals(expected, res.resource());
+        Assertions.assertTrue(res.changes().isEmpty());
     }
 
     @Test
@@ -76,6 +79,7 @@ class DiffTest {
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
     }
 
     @Test
@@ -100,6 +104,7 @@ class DiffTest {
         Assertions.assertEquals(plan, res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
         Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
     }
 
     @Test
@@ -126,7 +131,7 @@ class DiffTest {
 
     @Test
     @DisplayName("First apply creates remote and local states")
-    void addClusterToLocalAndRemote() {
+    void addResourceToLocalAndRemote() {
         var sourceState = TestResource.builder()
                 .resourceName("main")
                 .content("src")
@@ -140,6 +145,8 @@ class DiffTest {
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
     }
 
     @SneakyThrows
@@ -171,6 +178,8 @@ class DiffTest {
 
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
         Assertions.assertEquals(expected, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
     }
 
 
