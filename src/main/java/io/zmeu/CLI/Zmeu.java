@@ -52,7 +52,11 @@ public class Zmeu {
     @SneakyThrows
     public void run() {
         this.pluginFactory.loadPlugins();
-        var schemasString = new StringBuilder(pluginFactory.getPluginHashMap().values().stream().map(it -> it.provider().schemasString()).collect(Collectors.joining()));
+        var schemasString = new StringBuilder(pluginFactory.getPluginHashMap()
+                .values()
+                .stream()
+                .map(it -> it.provider().schemasString())
+                .collect(Collectors.joining()));
         var byFileName = loadZuFiles();
         for (var file : byFileName) {
             var resources = Files.readString(file.toPath());

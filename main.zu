@@ -1,6 +1,6 @@
-// resource File users {
-//    name = "student"
-//    content = "poop"
-// }
+resource File users {
+   name = "student"
+   content = "poop"
+}
 
 

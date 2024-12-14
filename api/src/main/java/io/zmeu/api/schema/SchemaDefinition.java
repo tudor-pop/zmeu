@@ -35,7 +35,7 @@ public class SchemaDefinition {
                 properties.append("\tvar ");
             }
             properties.append(name);
-            properties.append("\t");
+            properties.append("\t:");
             properties.append(property.type().name());
             properties.append("\n");
         }

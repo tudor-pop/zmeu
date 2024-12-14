@@ -8,6 +8,7 @@ import io.zmeu.api.schema.SchemaDefinition;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.pf4j.DefaultPluginManager;
 import org.pf4j.PluginWrapper;
 
 import java.nio.file.Path;
@@ -19,7 +20,7 @@ public class PluginFactory {
     @Getter
     private final HashMap<String, PluginRecord> pluginHashMap = new HashMap<>();
     @Getter
-    private final CustomPluginManager pluginManager;
+    private final DefaultPluginManager pluginManager;
     private final Zmeufile zmeufile;
 
     public PluginFactory(Zmeufile zmeufile) {
@@ -28,7 +29,7 @@ public class PluginFactory {
     }
 
     @SneakyThrows
-    public CustomPluginManager loadPlugins() {
+    public DefaultPluginManager loadPlugins() {
         Path pluginPath = zmeufile.pluginsPath();
         for (Dependency dependency : zmeufile.dependencies().dependencies()) {
             Path resolve = pluginPath.resolve(dependency.versionedName());
@@ -69,5 +70,9 @@ public class PluginFactory {
         // stop the plugins
 //        pluginManager.stopPlugins();
         return pluginManager;
+    }
+
+    public void stopPlugins() {
+        pluginManager.stopPlugins();
     }
 }

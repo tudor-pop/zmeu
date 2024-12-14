@@ -33,6 +33,9 @@ public class SchemaValue {
     public static SchemaValue of(Identifier name, Environment environment) {
         return new SchemaValue(name, environment);
     }
+    public static SchemaValue of(String name, Environment environment) {
+        return new SchemaValue(Identifier.id(name), environment);
+    }
 
     @NotNull
     public FunValue getMethod(String methodName) {

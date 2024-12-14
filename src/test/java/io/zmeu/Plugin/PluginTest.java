@@ -3,7 +3,6 @@ package io.zmeu.Plugin;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
-import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.Runtime.BaseRuntimeTest;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
@@ -12,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.javers.common.reflection.ReflectionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pf4j.DefaultPluginManager;
 
 import java.util.List;
 
@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Log4j2
 public class PluginTest extends BaseRuntimeTest {
-    private CustomPluginManager pluginManager;
+    private DefaultPluginManager pluginManager;
     private Zmeufile zmeufile;
 
     @BeforeEach
     void init() {
-        zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("files@0.0.1"))));
+        zmeufile = new Zmeufile(new Dependencies(List.of()));
         pluginManager = new PluginFactory(zmeufile).loadPlugins();
     }
 
