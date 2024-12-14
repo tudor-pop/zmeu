@@ -32,7 +32,7 @@ public class SchemaDefinition {
             var property = field.getAnnotation(Property.class);
             var name = property.name().isBlank() ? field.getName() : property.name();
             if (property.readonly()) {
-                properties.append("\tval ");
+                properties.append("\treadonly ");
             } else {
                 properties.append("\tvar ");
             }
