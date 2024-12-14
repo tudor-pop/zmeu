@@ -23,11 +23,11 @@ public class ResourceManager {
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
-    public ResourceManager(PluginFactory factory, ObjectMapper mapper, Diff diff, Javers javers) {
+    public ResourceManager(PluginFactory factory, ObjectMapper mapper, Diff diff) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
-        this.javers = javers;
+        this.javers = diff.getJavers();
     }
 
     @SneakyThrows

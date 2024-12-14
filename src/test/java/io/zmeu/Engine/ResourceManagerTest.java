@@ -21,7 +21,7 @@ class ResourceManagerTest extends JaversTest {
     void setUp() {
         YAMLMapper yamlMapper = YAMLMapper.builder().build();
         PluginFactory factory = new PluginFactory(new Zmeufile(new Dependencies(List.of())));
-        manager = new ResourceManager(factory, yamlMapper, new Diff(), javers);
+        manager = new ResourceManager(factory, yamlMapper, new Diff(javers, mapper));
     }
 
     @Test

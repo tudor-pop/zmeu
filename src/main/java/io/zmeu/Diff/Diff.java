@@ -4,6 +4,7 @@ import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Changes;
@@ -17,6 +18,7 @@ import org.modelmapper.ModelMapper;
  */
 @Log4j2
 public class Diff {
+    @Getter
     private Javers javers;
     private ModelMapper mapper;
 
