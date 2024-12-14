@@ -3,11 +3,15 @@ package io.zmeu.Engine;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
+import io.zmeu.Diff.Plan;
+import io.zmeu.Dummy.DummyResource;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,40 +40,19 @@ class ResourceManagerTest extends JaversWithInterpreterTest {
 
     @Test
     void resourceDependencyIsAdded() {
-        var schemas = factory.schemas() + """
-                resource TypeResource main {
-                
-                }
-                """;
+        var dummyResource = DummyResource.builder()
+                .resourceName("dummy")
+                .content("dummy")
+                .build();
 
-        var evalRes = interpreter.eval(checker.eval(parser.produceAST(tokenizer.tokenize(schemas))));
-        var resources = interpreter.resourcesGroupedBySchema();
+        var mergeResult = manager.plan(dummyResource, DummyResource.class);
+        var plan = new Plan();
+        plan.add(mergeResult);
 
-        manager.plan(resources);
+        manager.apply(plan);
+        var src = mergeResult.resource();
+        var state = (Resource) JaversUtils.mapSnapshotToObject(javers.getLatestSnapshot("dummy", DummyResource.class).get(), DummyResource.class);
+        Assertions.assertEquals(src, state);
     }
-//
-//    @Test
-//    void resourceDependencyReverseOrder() {
-//        var res = eval("""
-//                schema vm {
-//                    var name:String
-//                    var maxCount=0
-//                }
-//
-//                resource vm second {
-//                    name = "second"
-//                    maxCount = vm.main.maxCount
-//                }
-//
-//                resource vm main {
-//                    name = "first"
-//                    maxCount=1
-//                }
-//                """);
-//        var vm = (SchemaValue) global.lookup("vm");
-//        var second = vm.getInstance("second");
-//        assertEquals(2, engine.getResources().size());
-//        assertEquals(second, engine.getResources().get(0));
-//    }
 
 }

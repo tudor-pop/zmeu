@@ -82,6 +82,10 @@ public class PluginFactory {
         return pluginHashMap.get(provider);
     }
 
+    public List<Provider> getProviders() {
+        return pluginManager.getExtensions(Provider.class);
+    }
+
     public String schemas() {
         return pluginHashMap.values()
                 .stream()

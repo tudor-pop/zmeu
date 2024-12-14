@@ -77,7 +77,7 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan apply(Plan plan, HashMap<String, Provider> pluginRecords) {
+    public Plan apply(Plan plan, HashMap<String, Provider> map) {
         var changeProcessor = new ResourceChangeLog(true);
 
         for (MergeResult mergeResult : plan.getMergeResults()) {
@@ -87,7 +87,7 @@ public class Diff {
             for (ChangesByObject changes : changes1.groupByObject()) {
                 var typeName = changes.getGlobalId().getTypeName();
 
-                var provider = pluginRecords.get(typeName);
+                var provider = map.get(typeName);
 
                 if (!changes.getNewObjects().isEmpty()) {
                     provider.create(mergeResult.resource());

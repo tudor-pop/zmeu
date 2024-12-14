@@ -15,12 +15,14 @@ import org.javers.core.metamodel.annotation.TypeName;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "", typeName = "TestResource")
-@TypeName("TestResource")
+@Schema(description = "", typeName = "DummyResource")
+@TypeName("DummyResource")
 public class DummyResource extends Resource {
+    @Property(type = Property.Type.String)
     private String name;
+    @Property(type = Property.Type.String)
     private String content;
 
-    @Property(type = Property.Type.String, readonly = true)
+    @Property(type = Property.Type.String)
     private String uid;
 }

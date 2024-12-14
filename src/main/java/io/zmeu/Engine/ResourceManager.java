@@ -47,7 +47,7 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    private MergeResult plan(Provider provider, ResourceValue resource, Class schema) {
+    public MergeResult plan(Provider provider, ResourceValue resource, Class schema) {
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), schema);
         updateStateMetadata(resource, sourceState);
 
@@ -64,9 +64,32 @@ public class ResourceManager {
         return diff.merge(javersState, sourceState, cloudState);
     }
 
+    @SneakyThrows
+    public MergeResult plan(Resource srcResource, Class schema) {
+        var cloudState = factory.get(schema.getSimpleName()).read(srcResource);
+        updateStateMetadata(srcResource, cloudState);
+
+        var snapshot = javers.getLatestSnapshot(srcResource.getResourceName(), schema).orElse(null);
+        if (snapshot == null) {
+            return diff.merge(null, srcResource, cloudState);
+        }
+
+        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, schema);
+        updateStateMetadata(srcResource, javersState);
+        return diff.merge(javersState, srcResource, cloudState);
+    }
+
     private static void updateStateMetadata(ResourceValue resource, Resource sourceState) {
         if (sourceState != null) {
             sourceState.setResourceName(resource.getName());
+            sourceState.setDependencies(resource.getDependencies());
+            sourceState.setReadOnly(resource.getReadOnly());
+        }
+    }
+
+    private static void updateStateMetadata(Resource resource, Resource sourceState) {
+        if (sourceState != null) {
+            sourceState.setResourceName(resource.getResourceName());
             sourceState.setDependencies(resource.getDependencies());
             sourceState.setReadOnly(resource.getReadOnly());
         }
