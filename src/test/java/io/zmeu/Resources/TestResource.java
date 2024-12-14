@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.javers.core.metamodel.annotation.TypeName;
 
 @SuperBuilder
 @Data
@@ -15,6 +16,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "", typeName = "TestResource")
+@TypeName("TestResource")
 public class TestResource extends Resource {
     private String name;
     private String content;
