@@ -40,7 +40,7 @@ public abstract class Provider<T extends Resource> implements IProvider<T> {
         var resources = resources().list();
         var list = new ArrayList<SchemaDefinition>(resources.size());
         for (var res : resources) {
-            var schemaDefinition = SchemaDefinition.toSchemaDefinition(res);
+            var schemaDefinition = SchemaDefinition.toSchema(res);
             list.add(schemaDefinition);
         }
         return new Schemas(list);
@@ -48,7 +48,7 @@ public abstract class Provider<T extends Resource> implements IProvider<T> {
 
     private Map<String, Class<?>> schemasMap() {
         for (var res : resources().list()) {
-            var definition = SchemaDefinition.toSchemaDefinition(res);
+            var definition = SchemaDefinition.toSchema(res);
             schemaMap.put(definition.getName(), definition.getResourceClass());
         }
         return schemaMap;
@@ -60,7 +60,7 @@ public abstract class Provider<T extends Resource> implements IProvider<T> {
 
     public String schemasString() {
         return resources().list().stream()
-                .map(SchemaDefinition::toSchema)
+                .map(SchemaDefinition::toString)
                 .collect(Collectors.joining());
     }
 

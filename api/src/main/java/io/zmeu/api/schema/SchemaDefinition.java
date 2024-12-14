@@ -23,11 +23,9 @@ public class SchemaDefinition {
 
     private Map<String, ResourceProperty> properties;
 
-    public static String toSchema(Object resource) {
-        var annotation = resource.getClass().getAnnotation(Schema.class);
+    public static String toString(Object resource) {
         var fields = resource.getClass().getDeclaredFields();
-        var properties = new StringBuilder();
-        properties.append(" { \n");
+        var properties = new StringBuilder(" { \n");
         for (Field field : fields) {
             var property = field.getAnnotation(Property.class);
             var name = property.name().isBlank() ? field.getName() : property.name();
@@ -37,16 +35,17 @@ public class SchemaDefinition {
                 properties.append("\tvar ");
             }
             properties.append(name);
-            properties.append("\t:");
+            properties.append("\t");
             properties.append(property.type().name());
             properties.append("\n");
         }
         properties.append("} \n");
 
-        return "schema " + annotation.typeName() + properties;
+        var annotation = resource.getClass().getAnnotation(Schema.class);
+        return "schema %s%s".formatted(annotation.typeName(), properties);
     }
 
-    public static SchemaDefinition toSchemaDefinition(Object resource) {
+    public static SchemaDefinition toSchema(Object resource) {
         var builder = SchemaDefinition.builder();
         var schemaDefinition = resource.getClass().getAnnotation(Schema.class);
         if (schemaDefinition == null) {
