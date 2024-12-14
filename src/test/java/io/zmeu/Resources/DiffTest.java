@@ -18,12 +18,13 @@ import org.modelmapper.ModelMapper;
 class DiffTest {
     private Diff diff;
     private Javers javers;
+    private ModelMapper mapper;
 
     @SneakyThrows
     @BeforeEach
     void init() {
         javers = JaversFactory.createNoDb();
-        ModelMapper mapper = new ModelMapper();
+        mapper = new ModelMapper();
         diff = new Diff(javers, mapper);
     }
 
@@ -185,7 +186,7 @@ class DiffTest {
 
     @Test
     @DisplayName("Deleting src must delete local and remote regardless of their state")
-    void removeClusterPropertiesFromSrc() {
+    void removeResourcePropertiesFromSrc() {
         var localState = TestResource.builder()
                 .resourceName("main")
                 .content("src")
@@ -207,10 +208,12 @@ class DiffTest {
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class,res.changes().get(0));
     }
 
     @Test
-    void localHiddenIsNotRemovedBySrc() {
+    void srcChangesLocalAndRemote() {
         var localState = TestResource.builder()
                 .resourceName("main")
                 .content("local")
@@ -235,6 +238,8 @@ class DiffTest {
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class,res.changes().get(0));
     }
 
 }

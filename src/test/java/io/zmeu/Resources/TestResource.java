@@ -2,6 +2,7 @@ package io.zmeu.Resources;
 
 import io.zmeu.api.resource.Resource;
 import io.zmeu.api.schema.Property;
+import io.zmeu.api.schema.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "", typeName = "TestResource")
 public class TestResource extends Resource {
     private String name;
     private String content;
