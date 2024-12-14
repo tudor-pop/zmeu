@@ -68,8 +68,10 @@ public class Diff {
 
         if (merged == null) {
             merged = left;
-        } else {
+        } else if (left != null) {
             mapper.map(left, merged);
+        } else {
+            merged = merged.getClass().newInstance();
         }
 
         return new MergeResult(diff.getChanges(), merged);

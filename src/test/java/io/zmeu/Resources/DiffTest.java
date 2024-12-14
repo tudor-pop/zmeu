@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Javers;
 import org.javers.core.diff.changetype.NewObject;
+import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -240,6 +241,26 @@ class DiffTest {
         Assertions.assertEquals(plan, res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ValueChange.class,res.changes().get(0));
+    }
+    @Test
+    void srcRemovalDeletesRemote() {
+        var localState = TestResource.builder()
+                .resourceName("main")
+                .content("local")
+                .build();
+
+        var cloudState = TestResource.builder()
+                .resourceName("main")
+                .content("local")
+                .uid("cloud-id-random")
+                .build();
+
+        var res = diff.merge(localState, null, cloudState);
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertEquals(new TestResource(), res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ObjectRemoved.class,res.changes().get(0));
     }
 
 }

@@ -84,7 +84,8 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         append("\n");
         this.type = switch (change) {
             case ObjectRemoved removed -> REMOVE;
-            case NewObject ignored1 -> ADD;
+            case TerminalValueChange removed -> REMOVE;
+            case NewObject object -> ADD;
             case InitialValueChange ignored -> ADD;
             case PropertyChange ignored -> CHANGE;
             default -> NO_OP;
@@ -95,6 +96,8 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         switch (change) {
             case InitialValueChange valueChange ->
                     append("%s\t%s%s%s".formatted(ADD.coloredOperation(), change.getPropertyName(), EQUALS, quotes(change.getRight())));
+            case TerminalValueChange valueChange ->
+                    append("%s\t%s%s%s".formatted(REMOVE.coloredOperation(), change.getPropertyName(), EQUALS, quotes(change.getRight())));
             default ->
                     append("\n%s\t%s%s%s -> %s".formatted(CHANGE.coloredOperation(), change.getPropertyName(), EQUALS, quotes(change.getLeft()), quotes(change.getRight())));
         }
