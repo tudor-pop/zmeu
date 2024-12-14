@@ -54,16 +54,23 @@ public class Diff {
              * will be set on the base since they are probably already out of date in the base state
              * */
             mapper.map(right, merged);
+        } else {
+            merged = null;
         }
         // Preserve cloud-managed properties explicitly.
         // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
-        if (base != null && left != null) {
+        if (merged != null && left != null) {
             updateReadOnlyProperties(merged, left);
         }
 
         var diff = this.javers.compare(merged, left);
 
-        mapper.map(left, merged);
+
+        if (merged == null) {
+            merged = left;
+        } else {
+            mapper.map(left, merged);
+        }
 
         return new MergeResult(diff.getChanges(), merged);
     }

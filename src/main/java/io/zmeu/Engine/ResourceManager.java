@@ -54,7 +54,7 @@ public class ResourceManager {
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), className);
         updateStateMetadata(resource, sourceState);
 
-        var cloudState = (Resource) provider.read(sourceState);
+        var cloudState = provider.read(sourceState);
         updateStateMetadata(resource, cloudState);
 
         var snapshot = javers.getLatestSnapshot(resource.getName(), className).orElse(null);

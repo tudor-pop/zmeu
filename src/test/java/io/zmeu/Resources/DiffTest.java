@@ -52,7 +52,7 @@ class DiffTest {
     }
 
     @Test
-    void sourceChangeOverridesRemote() {
+    void srcOverridesRemote() {
         var localState = TestResource.builder()
                 .resourceName("main")
                 .content("local")
@@ -79,7 +79,7 @@ class DiffTest {
     }
 
     @Test
-    void addClusterToRemote() {
+    void addResourceToRemote() {
         var localState = TestResource.builder()
                 .resourceName("main")
                 .content("src")
@@ -98,6 +98,7 @@ class DiffTest {
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty()); // should be an add change
     }
 
     @Test
