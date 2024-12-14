@@ -87,9 +87,8 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         }
 
         String typeName = object.getAffectedGlobalId().getTypeName();
-        var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
 
-        Provider provider = pluginRecord.provider();
+        Provider provider = pluginFactory.getProvider(typeName);
 
         var className = provider.getSchema(typeName);
 
@@ -104,7 +103,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         InstanceId id = (InstanceId) object.getAffectedGlobalId();
         if (object.getAffectedObject().isPresent()) {
             String typeName = object.getAffectedGlobalId().getTypeName();
-            var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
+            var pluginRecord = pluginFactory.getProvider(typeName);
 
 //            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
 //            var resource = mapper.convertValue(object.getAffectedObject().get(), className);

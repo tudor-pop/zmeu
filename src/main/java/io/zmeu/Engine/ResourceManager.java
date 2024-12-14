@@ -1,11 +1,9 @@
 package io.zmeu.Engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Diff;
+import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
-import io.zmeu.Plugin.PluginFactory;
-import io.zmeu.Plugin.PluginRecord;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
@@ -17,13 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceManager {
-    private final PluginFactory factory;
+    private final HashMap<String, Provider> factory;
     private final ObjectMapper mapper;
     private final Diff diff;
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
-    public ResourceManager(PluginFactory factory, ObjectMapper mapper, Diff diff) {
+    public ResourceManager(HashMap<String, Provider> factory, ObjectMapper mapper, Diff diff) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
@@ -37,9 +35,8 @@ public class ResourceManager {
             String schemaName = schemaValue.getKey();
             Environment<ResourceValue> instances = schemaValue.getValue();
 
-            PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
             for (ResourceValue resourceObject : instances.getVariables().values()) {
-                var provider = pluginRecord.provider();
+                var provider = factory.get(schemaName);
 
                 var className = provider.getSchema(resourceObject.getSchema().getType());
                 var mergeResult = plan(provider, resourceObject, className);

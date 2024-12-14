@@ -6,6 +6,7 @@ import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
 import io.zmeu.api.schema.SchemaDefinition;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.pf4j.DefaultPluginManager;
@@ -18,9 +19,10 @@ import java.util.List;
 @Log4j2
 public class PluginFactory {
     @Getter
-    private final HashMap<String, PluginRecord> pluginHashMap = new HashMap<>();
+    private final HashMap<String, Provider> pluginHashMap = new HashMap<>();
     @Getter
-    private final DefaultPluginManager pluginManager;
+    @Setter
+    private DefaultPluginManager pluginManager;
     private final Zmeufile zmeufile;
 
     public PluginFactory(Zmeufile zmeufile) {
@@ -41,27 +43,26 @@ public class PluginFactory {
 
         log.info("Plugin directory: {}", pluginManager.getPluginsRoot());
 //        pluginManager.enablePlugin("welcome-plugin");
-
+//        pluginManager.loadPlugins();
         pluginManager.startPlugins();
 
         List<PluginWrapper> startedPlugins = pluginManager.getStartedPlugins();
         for (PluginWrapper plugin : startedPlugins) {
             String pluginId = plugin.getDescriptor().getPluginId();
 //            ClassLoader pluginClassLoader = pluginManager.getPluginClassLoader(pluginId);
-
             log.info("Extensions added by plugin {}", pluginId);
+        }
 
-            List<Provider> providers = pluginManager.getExtensions(Provider.class);
-            log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
-            for (var provider : providers) {
-                log.info("Loading provider {}", provider.getClass().getName());
+        List<Provider> providers = pluginManager.getExtensions(Provider.class);
+        log.info("Found {} extensions for extension point '{}'", providers.size(), Provider.class.getName());
+        for (var provider : providers) {
+            log.info("Loading provider {}", provider.getClass().getName());
 //                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
 
-                for (SchemaDefinition schema : provider.schemas().getItems()) {
-                    var record = this.pluginHashMap.get(schema.getName());
-                    if (record == null) {
-                        this.pluginHashMap.put(schema.getName(), new PluginRecord(provider, plugin));
-                    }
+            for (SchemaDefinition schema : provider.schemas().getItems()) {
+                var record = this.pluginHashMap.get(schema.getName());
+                if (record == null) {
+                    this.pluginHashMap.put(schema.getName(), provider);
                 }
             }
         }
@@ -74,5 +75,9 @@ public class PluginFactory {
 
     public void stopPlugins() {
         pluginManager.stopPlugins();
+    }
+
+    public Provider getProvider(String provider) {
+        return pluginHashMap.get(provider);
     }
 }

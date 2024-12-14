@@ -13,6 +13,7 @@ import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.TypeChecker.TypeChecker;
+import io.zmeu.api.Provider;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
 import org.modelmapper.ModelMapper;
@@ -46,7 +47,7 @@ public class Zmeu {
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
-        this.resourceManager = new ResourceManager(pluginFactory, objectMapper, diff);
+        this.resourceManager = new ResourceManager(pluginFactory.getPluginHashMap(), objectMapper, diff);
     }
 
     @SneakyThrows
@@ -55,7 +56,7 @@ public class Zmeu {
         var schemasString = new StringBuilder(pluginFactory.getPluginHashMap()
                 .values()
                 .stream()
-                .map(it -> it.provider().schemasString())
+                .map(Provider::schemasString)
                 .collect(Collectors.joining()));
         var byFileName = loadZuFiles();
         for (var file : byFileName) {

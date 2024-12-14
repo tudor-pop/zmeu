@@ -1,6 +1,5 @@
 package io.zmeu.Diff;
 
-import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
@@ -12,6 +11,8 @@ import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 import org.modelmapper.ModelMapper;
+
+import java.util.HashMap;
 
 /**
  *
@@ -76,7 +77,7 @@ public class Diff {
     }
 
     @SneakyThrows
-    public Plan apply(Plan plan, PluginFactory pluginFactory) {
+    public Plan apply(Plan plan, HashMap<String, Provider> pluginRecords) {
         var changeProcessor = new ResourceChangeLog(true);
 
         for (MergeResult mergeResult : plan.getMergeResults()) {
@@ -84,17 +85,14 @@ public class Diff {
             javers.processChangeList(changes1, changeProcessor);
 
             for (ChangesByObject changes : changes1.groupByObject()) {
-                String typeName = changes.getGlobalId().getTypeName();
-                var pluginRecord = pluginFactory.getPluginHashMap().get(typeName);
+                var typeName = changes.getGlobalId().getTypeName();
 
-                Provider provider = pluginRecord.provider();
+                var provider = pluginRecords.get(typeName);
 
                 if (!changes.getNewObjects().isEmpty()) {
                     provider.create(mergeResult.resource());
-
                 } else if (!changes.getObjectsRemoved().isEmpty()) {
                     provider.delete(mergeResult.resource());
-
                 } else {
                     changeProcessor.setType(ResourceChange.CHANGE);
                     provider.update(mergeResult.resource());
