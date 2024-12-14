@@ -8,6 +8,7 @@ import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Plugin.PluginRecord;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
+import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
@@ -38,7 +39,10 @@ public class ResourceManager {
 
             PluginRecord pluginRecord = factory.getPluginHashMap().get(schemaName);
             for (ResourceValue resourceObject : instances.getVariables().values()) {
-                var mergeResult = plan(pluginRecord, resourceObject);
+                var provider = pluginRecord.provider();
+
+                var className = provider.getSchema(resourceObject.getSchema().getType());
+                var mergeResult = plan(provider, resourceObject, className);
                 plan.add(mergeResult);
             }
         }
@@ -46,23 +50,19 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    private MergeResult plan(PluginRecord pluginRecord, ResourceValue resource) {
-//        var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
-        var provider = pluginRecord.provider();
-
-        var className = provider.getSchema(resource.getSchema().getType());
-        var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), className);
+    private MergeResult plan(Provider provider, ResourceValue resource, Class schema) {
+        var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), schema);
         updateStateMetadata(resource, sourceState);
 
         var cloudState = provider.read(sourceState);
         updateStateMetadata(resource, cloudState);
 
-        var snapshot = javers.getLatestSnapshot(resource.getName(), className).orElse(null);
+        var snapshot = javers.getLatestSnapshot(resource.getName(), schema).orElse(null);
         if (snapshot == null) {
             return diff.merge(null, sourceState, cloudState);
         }
 
-        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, className);
+        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, schema);
         updateStateMetadata(resource, javersState);
         return diff.merge(javersState, sourceState, cloudState);
     }
