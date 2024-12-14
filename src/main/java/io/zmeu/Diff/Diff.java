@@ -1,20 +1,16 @@
 package io.zmeu.Diff;
 
 import io.zmeu.Plugin.PluginFactory;
-import io.zmeu.Utils.Reflections;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.javers.core.Changes;
 import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 import org.modelmapper.ModelMapper;
-
-import java.lang.reflect.Field;
 
 /**
  *
@@ -45,7 +41,7 @@ public class Diff {
      */
     @SneakyThrows
     public MergeResult merge(@Nullable Resource base, Resource left, @Nullable Resource right) {
-        validate(base, left, right);
+        DiffUtils.validate(base, left, right);
 
         var merged = base == null ? left : base;
         if (right != null) {
@@ -60,7 +56,7 @@ public class Diff {
         // Preserve cloud-managed properties explicitly.
         // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
         if (merged != null && left != null) {
-            updateReadOnlyProperties(merged, left);
+            DiffUtils.updateReadOnlyProperties(merged, left);
         }
 
         var diff = this.javers.compare(merged, left);
@@ -70,38 +66,11 @@ public class Diff {
             merged = left;
         } else if (left != null) {
             mapper.map(left, merged);
-        } else {
+        } else { // on object removed (src doesn't exist because it was removed) create an empty object of the same type
             merged = merged.getClass().newInstance();
         }
 
         return new MergeResult(diff.getChanges(), merged);
-    }
-
-    private static void updateReadOnlyProperties(Resource source, Resource target) {
-        for (Field property : target.getClass().getDeclaredFields()) {
-            if (Reflections.isReadOnly(property)) {
-                try {
-                    Field field = source.getClass().getDeclaredField(property.getName());
-                    field.setAccessible(true);
-                    property.setAccessible(true);
-                    property.set(target, field.get(source));
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    private static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
-        if (localState != null && StringUtils.isBlank(localState.getResourceName())) {
-            throw new IllegalArgumentException(localState + " is missing resource name");
-        }
-        if (sourceState != null && StringUtils.isBlank(sourceState.getResourceName())) {
-            throw new IllegalArgumentException(sourceState + " is missing resource name");
-        }
-        if (cloudState != null && StringUtils.isBlank(cloudState.getResourceName())) {
-            throw new IllegalArgumentException(cloudState + " is missing resource name");
-        }
     }
 
     @SneakyThrows
