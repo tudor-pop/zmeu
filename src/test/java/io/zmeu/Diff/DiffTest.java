@@ -1,7 +1,6 @@
-package io.zmeu.Resources;
+package io.zmeu.Diff;
 
-import io.zmeu.Diff.Diff;
-import io.zmeu.Diff.JaversFactory;
+import io.zmeu.Resources.TestResource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
