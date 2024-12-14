@@ -1,10 +1,10 @@
 package io.zmeu.Diff;
 
+import io.zmeu.Base.JaversTest;
 import io.zmeu.Resources.TestResource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.javers.core.Javers;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
@@ -12,19 +12,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 
 @Log4j2
-class DiffTest {
+class DiffTest extends JaversTest {
     private Diff diff;
-    private Javers javers;
-    private ModelMapper mapper;
 
     @SneakyThrows
     @BeforeEach
     void init() {
-        javers = JaversFactory.createNoDb();
-        mapper = new ModelMapper();
         diff = new Diff(javers, mapper);
     }
 
