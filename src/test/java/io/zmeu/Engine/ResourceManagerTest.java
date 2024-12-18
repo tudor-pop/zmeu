@@ -38,6 +38,9 @@ class ResourceManagerTest extends JaversWithInterpreterTest {
         factory.stopPlugins();
     }
 
+    /**
+     * resource doesn't exist in cloud or state
+     */
     @Test
     void resourceDependencyIsAdded() {
         var dummyResource = DummyResource.builder()
@@ -51,8 +54,13 @@ class ResourceManagerTest extends JaversWithInterpreterTest {
 
         manager.apply(plan);
         var src = mergeResult.resource();
-        var state = (Resource) JaversUtils.mapSnapshotToObject(javers.getLatestSnapshot("dummy", DummyResource.class).get(), DummyResource.class);
+        var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
+        var state = (Resource) JaversUtils.mapSnapshotToObject(dummy, DummyResource.class);
         Assertions.assertEquals(src, state);
+
+        var provider = manager.getProvider(DummyResource.class);
+        var cloud = provider.read(src);
+        Assertions.assertEquals(src, cloud);
     }
 
 }

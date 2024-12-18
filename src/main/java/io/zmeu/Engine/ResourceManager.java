@@ -36,7 +36,7 @@ public class ResourceManager {
             Environment<ResourceValue> instances = schemaValue.getValue();
 
             for (ResourceValue resourceObject : instances.getVariables().values()) {
-                var provider = factory.get(schemaName);
+                var provider = getProvider(schemaName);
 
                 var className = provider.getSchema(resourceObject.getSchema().getType());
                 var mergeResult = plan(provider, resourceObject, className);
@@ -66,7 +66,7 @@ public class ResourceManager {
 
     @SneakyThrows
     public MergeResult plan(Resource srcResource, Class schema) {
-        var cloudState = factory.get(schema.getSimpleName()).read(srcResource);
+        var cloudState = getProvider(schema).read(srcResource);
         updateStateMetadata(srcResource, cloudState);
 
         var snapshot = javers.getLatestSnapshot(srcResource.getResourceName(), schema).orElse(null);
@@ -101,6 +101,14 @@ public class ResourceManager {
 
     public ResourceValue add(ResourceValue resource) {
         return resources.put(resource.name(), resource);
+    }
+
+    public Provider getProvider(String schema) {
+        return factory.get(schema);
+    }
+
+    public Provider getProvider(Class schema) {
+        return factory.get(schema.getSimpleName());
     }
 
 }
