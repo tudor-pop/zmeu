@@ -1,10 +1,11 @@
-package io.zmeu.Engine;
+package io.zmeu.Dummy;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.Plan;
-import io.zmeu.Dummy.DummyResource;
+import io.zmeu.Engine.JaversUtils;
+import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
@@ -14,13 +15,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.util.List;
 
 @Log4j2
-class ResourceManagerTest extends JaversWithInterpreterTest {
+class DummyProviderTest extends JaversWithInterpreterTest {
     private ResourceManager manager;
     private PluginFactory factory;
+    @Mock
+    private DummyProvider provider;
 
     @BeforeEach
     void setUp() {
@@ -42,7 +46,7 @@ class ResourceManagerTest extends JaversWithInterpreterTest {
      * resource doesn't exist in cloud or state
      */
     @Test
-    void resourceDependencyIsAdded() {
+    void resourceMissingCloudAndState() {
         var dummyResource = DummyResource.builder()
                 .resourceName("dummy")
                 .content("dummy")
@@ -61,6 +65,39 @@ class ResourceManagerTest extends JaversWithInterpreterTest {
         var provider = manager.getProvider(DummyResource.class);
         var cloud = provider.read(src);
         Assertions.assertEquals(src, cloud);
+    }
+
+    /**
+     * resource doesn't exist in cloud or state
+     */
+    @Test
+    void addResourceToJaversExistingResourceInCloud() {
+        var dummyResource = DummyResource.builder()
+                .resourceName("dummy")
+                .content("dummy")
+                .build();
+
+        var provider = manager.getProvider(DummyResource.class);
+        provider.create(dummyResource);
+
+        var mergeResult = manager.plan(dummyResource, DummyResource.class);
+        var plan = new Plan();
+        plan.add(mergeResult);
+
+        // when cloud resource exists in src and cloud but not in javers, just update javers data
+        // no changes should be shown in cli output but the objects should be commited to jvers
+        Assertions.assertTrue(mergeResult.changes().isEmpty());
+        Assertions.assertNotNull(mergeResult.resource());
+
+        manager.apply(plan);
+        var src = mergeResult.resource();
+        var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
+        var state = (Resource) JaversUtils.mapSnapshotToObject(dummy, DummyResource.class);
+        Assertions.assertEquals(src, state);
+
+        var cloud = provider.read(src);
+        Assertions.assertEquals(src, cloud);
+        Assertions.assertEquals(src, state);
     }
 
 }

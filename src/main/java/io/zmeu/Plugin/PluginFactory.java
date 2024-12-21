@@ -61,10 +61,7 @@ public class PluginFactory {
 //                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
 
             for (SchemaDefinition schema : provider.schemas().getItems()) {
-                var record = this.pluginHashMap.get(schema.getName());
-                if (record == null) {
-                    this.pluginHashMap.put(schema.getName(), provider);
-                }
+                this.pluginHashMap.putIfAbsent(schema.getName(), provider);
             }
         }
 
@@ -72,6 +69,10 @@ public class PluginFactory {
         // stop the plugins
 //        pluginManager.stopPlugins();
         return pluginManager;
+    }
+
+    public void putProvider(String key, Provider provider) {
+        this.pluginHashMap.put(key, provider);
     }
 
     public void stopPlugins() {
