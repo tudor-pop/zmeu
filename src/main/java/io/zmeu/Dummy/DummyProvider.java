@@ -27,11 +27,11 @@ public class DummyProvider extends Provider<DummyResource> {
 
     @Override
     public DummyResource update(DummyResource resource) {
-        return null;
+        return resources.put(resource.getResourceName(), resource);
     }
 
     @Override
     public boolean delete(DummyResource resource) {
-        return false;
+        return resources.remove(resource.getResourceName()) != null;
     }
 }

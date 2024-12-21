@@ -68,7 +68,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     }
 
     /**
-     * resource doesn't exist in cloud or state
+     * resource exist in src and cloud but not in javers not should show cli output
+     * when cloud resource exists in src and cloud but not in javers, just update javers data
+     * no changes should be shown in cli output but the objects should be commited to jvers
      */
     @Test
     void addResourceToJaversExistingResourceInCloud() {
@@ -87,6 +89,37 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         // when cloud resource exists in src and cloud but not in javers, just update javers data
         // no changes should be shown in cli output but the objects should be commited to jvers
         Assertions.assertTrue(mergeResult.changes().isEmpty());
+        Assertions.assertNotNull(mergeResult.resource());
+
+        manager.apply(plan);
+        var src = mergeResult.resource();
+        var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
+        var state = (Resource) JaversUtils.mapSnapshotToObject(dummy, DummyResource.class);
+        Assertions.assertEquals(src, state);
+
+        var cloud = provider.read(src);
+        Assertions.assertEquals(src, cloud);
+        Assertions.assertEquals(src, state);
+    }
+
+    /**
+     * resource exist in src and state but not in cloud should show cli output as ADD operation
+     */
+    @Test
+    void resourceExistsSrcAndJaversMissingCloud() {
+        var dummyResource = DummyResource.builder()
+                .resourceName("dummy")
+                .content("dummy")
+                .build();
+
+        var provider = manager.getProvider(DummyResource.class);
+        javers.commit("dummy", dummyResource);
+
+        var mergeResult = manager.plan(dummyResource, DummyResource.class);
+        var plan = new Plan();
+        plan.add(mergeResult);
+
+        Assertions.assertFalse(mergeResult.changes().isEmpty());
         Assertions.assertNotNull(mergeResult.resource());
 
         manager.apply(plan);
