@@ -22,6 +22,7 @@ public class DummyProvider extends Provider<DummyResource> {
 
     @Override
     public DummyResource read(DummyResource resource) {
+        if (resource == null) return null;
         return resources.get(resource.getResourceName());
     }
 

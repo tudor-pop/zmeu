@@ -133,4 +133,38 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(src, state);
     }
 
+    /**
+     * Update resource using provider
+     */
+    @Test
+    void resourceUpdated() {
+        var provider = manager.getProvider(DummyResource.class);
+
+        var dummyResource = DummyResource.builder()
+                .resourceName("dummy")
+                .content("dummy")
+                .build();
+        var initMerge = manager.plan(dummyResource, DummyResource.class);
+        var initPlan = new Plan();
+        initPlan.add(initMerge);
+        manager.apply(initPlan);
+
+        var dummyUpdated = DummyResource.builder()
+                .resourceName("dummy")
+                .content("updated")
+                .build();
+        var updateMerge = manager.plan(dummyUpdated, DummyResource.class);
+        var updatePlan = new Plan();
+        updatePlan.add(updateMerge);
+        manager.apply(updatePlan);
+
+        var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
+        var state = (Resource) JaversUtils.mapSnapshotToObject(dummy, DummyResource.class);
+        Assertions.assertEquals(dummyUpdated, state);
+
+        var cloud = provider.read(dummyUpdated);
+        Assertions.assertEquals(dummyUpdated, cloud);
+        Assertions.assertEquals(dummyUpdated, state);
+    }
+
 }
