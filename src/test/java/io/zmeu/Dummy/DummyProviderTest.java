@@ -52,7 +52,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 .content("dummy")
                 .build();
 
-        var mergeResult = manager.plan(dummyResource, DummyResource.class);
+        var mergeResult = manager.merge(dummyResource, DummyResource.class);
         var plan = new Plan();
         plan.add(mergeResult);
 
@@ -82,7 +82,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         var provider = manager.getProvider(DummyResource.class);
         provider.create(dummyResource);
 
-        var mergeResult = manager.plan(dummyResource, DummyResource.class);
+        var mergeResult = manager.merge(dummyResource, DummyResource.class);
         var plan = new Plan();
         plan.add(mergeResult);
 
@@ -115,7 +115,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         var provider = manager.getProvider(DummyResource.class);
         javers.commit("dummy", dummyResource);
 
-        var mergeResult = manager.plan(dummyResource, DummyResource.class);
+        var mergeResult = manager.merge(dummyResource, DummyResource.class);
         var plan = new Plan();
         plan.add(mergeResult);
 
@@ -144,18 +144,14 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 .resourceName("dummy")
                 .content("dummy")
                 .build();
-        var initMerge = manager.plan(dummyResource, DummyResource.class);
-        var initPlan = new Plan();
-        initPlan.add(initMerge);
+        var initPlan = manager.plan(dummyResource, DummyResource.class);
         manager.apply(initPlan);
 
         var dummyUpdated = DummyResource.builder()
                 .resourceName("dummy")
                 .content("updated")
                 .build();
-        var updateMerge = manager.plan(dummyUpdated, DummyResource.class);
-        var updatePlan = new Plan();
-        updatePlan.add(updateMerge);
+        var updatePlan = manager.plan(dummyUpdated, DummyResource.class);
         manager.apply(updatePlan);
 
         var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
@@ -177,17 +173,13 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 .resourceName("dummy")
                 .content("dummy")
                 .build();
-        var initMerge = manager.plan(dummyResource, DummyResource.class);
-        var initPlan = new Plan();
-        initPlan.add(initMerge);
-        manager.apply(initPlan);
+        var plan = manager.plan(dummyResource, DummyResource.class);
+        manager.apply(plan);
 
         var dummyUpdated = DummyResource.builder()
                 .resourceName("dummy")
                 .build();
-        var updateMerge = manager.plan(dummyUpdated, DummyResource.class);
-        var updatePlan = new Plan();
-        updatePlan.add(updateMerge);
+        var updatePlan = manager.plan(dummyUpdated, DummyResource.class);
         manager.apply(updatePlan);
 
         var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
@@ -197,6 +189,32 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         var cloud = provider.read(dummyUpdated);
         Assertions.assertEquals(dummyUpdated, cloud);
         Assertions.assertEquals(dummyUpdated, state);
+    }
+
+    /**
+     * Resource present in javers but removed from src should remove it from javers & cloud
+     */
+    @Test
+    void removeSrc() {
+        var provider = manager.getProvider(DummyResource.class);
+
+        // create the resource in cloud/javers
+        var resource = DummyResource.builder()
+                .resourceName("dummy")
+                .content("dummy")
+                .build();
+
+//        javers.commit(Diff.AUTHOR, resource);
+
+        var plan = manager.plan(resource, DummyResource.class);
+        manager.apply(plan);
+
+        // remove it from src
+        var removedPlan = manager.plan(null, DummyResource.class);
+        manager.apply(removedPlan);
+
+        Assertions.assertNull(javers.getLatestSnapshot("dummy", DummyResource.class).isEmpty());
+        Assertions.assertNull(provider.read(resource));
     }
 
 }

@@ -22,6 +22,7 @@ public class Diff {
     @Getter
     private Javers javers;
     private ModelMapper mapper;
+    public static String AUTHOR = "Tudor";
 
     @SneakyThrows
     public Diff(Javers javers, ModelMapper mapper) {
@@ -99,7 +100,7 @@ public class Diff {
                 }
 
             }
-            javers.commit("Tudor", mergeResult.resource());
+            javers.commit(AUTHOR, mergeResult.resource());
         }
         return plan;
     }
