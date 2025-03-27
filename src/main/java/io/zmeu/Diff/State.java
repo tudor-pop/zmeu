@@ -15,8 +15,6 @@ public class State {
     private String id = "javers";
     private List<Resource> resources = new ArrayList<>();
 
-    public State() {
-    }
 
     public void addResource(Resource resource) {
         resources.add(resource);

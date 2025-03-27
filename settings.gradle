@@ -3,3 +3,5 @@ rootProject.name = 'zmeu'
 include 'api'
 include 'plugins'
 include 'plugins:files'
+include 'core'
+

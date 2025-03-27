@@ -8,15 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 
 public class DiffUtils {
-    static void validate(@Nullable Resource localState, Resource sourceState, @Nullable Resource cloudState) {
-        if (localState != null && StringUtils.isBlank(localState.getResourceName())) {
-            throw new IllegalArgumentException(localState + " is missing resource name");
+    static void validate(@Nullable Resource resource) {
+        if (resource == null) {
+            return;
         }
-        if (sourceState != null && StringUtils.isBlank(sourceState.getResourceName())) {
-            throw new IllegalArgumentException(sourceState + " is missing resource name");
-        }
-        if (cloudState != null && StringUtils.isBlank(cloudState.getResourceName())) {
-            throw new IllegalArgumentException(cloudState + " is missing resource name");
+        if (StringUtils.isBlank(resource.getResourceName())) {
+            throw new IllegalArgumentException(resource + " is missing resource name");
         }
     }
 

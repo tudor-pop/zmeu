@@ -8,13 +8,10 @@ import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ResourceManager {
@@ -32,7 +29,7 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public Plan merge(Map<String, Environment<ResourceValue>> schemas) {
+    public Plan plan(Map<String, Environment<ResourceValue>> schemas) {
         var plan = new Plan();
         for (var schemaValue : schemas.entrySet()) {
             String schemaName = schemaValue.getKey();
@@ -42,7 +39,7 @@ public class ResourceManager {
                 var provider = getProvider(schemaName);
 
                 var className = provider.getSchema(resourceObject.getSchema().getType());
-                var mergeResult = merge(provider, resourceObject, className);
+                var mergeResult = plan(provider, resourceObject, className);
                 plan.add(mergeResult);
             }
         }
@@ -50,7 +47,7 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public MergeResult merge(Provider provider, ResourceValue resource, Class schema) {
+    public MergeResult plan(Provider provider, ResourceValue resource, Class schema) {
         var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), schema);
         updateStateMetadata(resource, sourceState);
 
@@ -68,11 +65,7 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public MergeResult merge(@NonNull List<Resource> srcResource, Class schema) {
-
-    }
-
-    public MergeResult merge(@Nullable Resource srcResource, Class schema) {
+    public MergeResult plan(Resource srcResource, Class schema) {
         var cloudState = getProvider(schema).read(srcResource);
         updateStateMetadata(srcResource, cloudState);
 
@@ -84,12 +77,6 @@ public class ResourceManager {
         var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, schema);
         updateStateMetadata(srcResource, javersState);
         return diff.merge(javersState, srcResource, cloudState);
-    }
-
-    @SneakyThrows
-    public Plan plan(@Nullable Resource srcResource, Class schema) {
-        var merge = merge(srcResource, schema);
-        return new Plan(merge);
     }
 
     private static void updateStateMetadata(ResourceValue resource, Resource sourceState) {
