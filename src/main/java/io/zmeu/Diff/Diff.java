@@ -44,8 +44,10 @@ public class Diff {
      * @return
      */
     @SneakyThrows
-    public MergeResult merge(@Nullable Resource base, Resource left, @Nullable Resource right) {
-        DiffUtils.validate(base, left, right);
+    public MergeResult merge(@Nullable State base, State left, @Nullable State right) {
+        DiffUtils.validate(base);
+        DiffUtils.validate(left);
+        DiffUtils.validate(right);
 
         var merged = base == null ? left : base;
         if (right != null) {
@@ -53,7 +55,7 @@ public class Diff {
              * accept right/theirs/cloud changes. Any undeclared properties in the state (like unique cloud ids)
              * will be set on the base since they are probably already out of date in the base state
              * */
-            mapper.map(right, merged);
+            mapper.map(right.getResources(), merged.getResources());
         } else {
             merged = null;
         }

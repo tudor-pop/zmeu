@@ -8,4 +8,5 @@ open module zmeu.api {
     requires static lombok;
     requires org.pf4j;
     requires java.compiler;
+    requires org.apache.commons.lang3;
 }
