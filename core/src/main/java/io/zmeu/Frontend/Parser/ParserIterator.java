@@ -127,12 +127,12 @@ public class ParserIterator {
     public void synchronize() {
         while (hasNext()) {
             var next = eat();
-            if (next.isLineTerminator() || next.is(TokenType.EOF)) {
-                return;
+            if (next.isLineTerminator()) {
+                continue;
             }
 
             switch (next.type()) {
-                case Resource, Fun, Var, For, While, Return -> {
+                case Resource, Fun, Var, For, While, Return, EOF, CloseBraces -> {
                     return;
                 }
             }

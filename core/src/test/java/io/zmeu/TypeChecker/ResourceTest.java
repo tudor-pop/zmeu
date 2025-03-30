@@ -1,5 +1,6 @@
 package io.zmeu.TypeChecker;
 
+import io.zmeu.ErrorSystem;
 import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.TypeChecker.Types.ResourceType;
 import io.zmeu.TypeChecker.Types.SchemaType;
@@ -16,14 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ResourceTest extends BaseChecker {
     @Test
     void newResourceThrowsIfNoNameIsSpecified() {
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            checker.eval(src("""
-                    schema Server { }
-                    resource Server {
-                    
-                    }
-                    """));
-        });
+        checker.eval(src("""
+                schema Server { }
+                resource Server {
+                
+                }
+                """));
+        Assertions.assertFalse(ErrorSystem.getErrors().isEmpty());
     }
 
     /**
@@ -38,7 +38,7 @@ public class ResourceTest extends BaseChecker {
     void resourceIsDefinedInSchemaEnv() {
         ResourceType res = (ResourceType) checker.eval(src("""
                 schema Server { }
-                resource Server main {
+                resource main Server {
                 
                 }
                 """));
@@ -60,7 +60,7 @@ public class ResourceTest extends BaseChecker {
                     var maxCount = 0
                     var enabled  = true
                 }
-                resource vm main {
+                resource main vm {
                     name     = "first"
                     maxCount = 1
                     enabled  = false
@@ -87,12 +87,12 @@ public class ResourceTest extends BaseChecker {
                     var maxCount =0
                     var enabled  = true
                 }
-                resource vm main {
+                resource main vm {
                     name     = "first"
                     maxCount = 1
                     enabled  = false
                 }
-                resource vm second {
+                resource second vm {
                     name     = "second"
                     maxCount = vm.main.maxCount
                 }
@@ -138,7 +138,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource main vm {
                 
                 }
                 """));
@@ -157,7 +157,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource main vm {
                 
                 }
                 var y = vm.main
@@ -186,7 +186,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource  main vm {
                 
                 }
                 vm.main.y = 3
@@ -200,7 +200,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource Vm main {
+                resource  main Vm {
                 
                 }
                 Vm.main.x = "test"
@@ -214,7 +214,7 @@ public class ResourceTest extends BaseChecker {
                    var x = "2"
                 }
                 
-                resource vm main {
+                resource main vm {
                     x = "3"
                 }
                 """));
@@ -235,7 +235,7 @@ public class ResourceTest extends BaseChecker {
                    var x :Boolean
                 }
                 
-                resource vm main {
+                resource main vm {
                     x = true
                 }
                 """));

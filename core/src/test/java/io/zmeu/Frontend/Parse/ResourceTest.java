@@ -14,7 +14,7 @@ public class ResourceTest extends BaseTest {
 
     @Test
     void resourceDeclaration() {
-        var res = parse("resource vm main {  }");
+        var res = parse("resource main vm {  }");
         var expected = program(resource("vm", "main", block()));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -29,7 +29,7 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceWithStringAssignment() {
         var res = parse("""
-                    resource vm main { 
+                    resource main vm { 
                         name = "main" 
                     }
                 """);
@@ -43,7 +43,7 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceWithNumberAssignment() {
         var res = parse("""
-                    resource vm main { 
+                    resource main vm { 
                         name = 1
                     }
                 """);
@@ -57,7 +57,7 @@ public class ResourceTest extends BaseTest {
     @Test
     void resourceWithMemberAssignment() {
         var res = parse("""
-                    resource vm main { 
+                    resource main vm { 
                         name = a.b
                     }
                 """);

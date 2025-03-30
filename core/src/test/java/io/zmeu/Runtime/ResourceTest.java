@@ -1,5 +1,7 @@
 package io.zmeu.Runtime;
 
+import io.zmeu.ErrorSystem;
+import io.zmeu.Frontend.Parser.errors.ParseError;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.Runtime.exceptions.NotFoundException;
@@ -16,14 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ResourceTest extends BaseRuntimeTest {
     @Test
     void newResourceThrowsIfNoNameIsSpecified() {
-        Assertions.assertThrows(RuntimeException.class, () -> {
-            eval("""
-                    schema vm { }
-                    resource vm {
-                    
-                    }
-                    """);
-        });
+        eval("""
+                schema vm { }
+                resource vm {
+                
+                }
+                """);
+        Assertions.assertFalse(ErrorSystem.getErrors().isEmpty());
     }
 
     /**
@@ -38,7 +39,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void resourceIsDefinedInSchemaEnv() {
         var res = eval("""
                 schema vm { }
-                resource vm main {
+                resource  main vm {
                 
                 }
                 """);
@@ -49,7 +50,7 @@ public class ResourceTest extends BaseRuntimeTest {
         assertEquals("vm", schema.getType());
 
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
 
         assertNotNull(resource);
         assertEquals("main", resource.getName());
@@ -62,11 +63,11 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource vm main {
+                resource  main vm {
                     name = "first"
                     maxCount=1
                 }
-                resource vm second {
+                resource  second vm{
                     name = "second"
                     maxCount = vm.main.maxCount
                 }
@@ -78,14 +79,14 @@ public class ResourceTest extends BaseRuntimeTest {
         assertEquals("vm", schema.getType());
 
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
 
         assertNotNull(resource);
         assertEquals("main", resource.getName());
         assertEquals("first", resource.argVal("name"));
         assertEquals(1, resource.argVal("maxCount"));
 
-        var second = (ResourceValue) schema.getInstances().get("second");
+        var second = schema.getInstances().get("second");
 
         assertNotNull(second);
         assertEquals("second", second.getName());
@@ -100,11 +101,11 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource vm main {
+                resource  main vm {
                     name = "first"
                     maxCount=1
                 }
-                resource vm second {
+                resource  second vm {
                     name = "second"
                     maxCount = vm.main.maxCount
                 }
@@ -112,10 +113,10 @@ public class ResourceTest extends BaseRuntimeTest {
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
         assertNotNull(resource);
 
-        var second = (ResourceValue) schema.getInstances().get("second");
+        var second = schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals(1, second.getDependencies().size());
     }
@@ -127,15 +128,15 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource vm main {
+                resource  main vm{
                     name = vm.third.name
                     maxCount=vm.second.maxCount
                 }
-                resource vm second {
+                resource  second vm {
                     name = "second"
                     maxCount = 2
                 }
-                resource vm third {
+                resource  third vm {
                     name = "third"
                     maxCount = 3
                 }
@@ -143,10 +144,10 @@ public class ResourceTest extends BaseRuntimeTest {
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
         assertNotNull(resource);
 
-        var second = (ResourceValue) schema.getInstances().get("second");
+        var second = schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals(2, resource.getDependencies().size());
     }
@@ -158,15 +159,15 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource vm second {
+                resource  second vm {
                     name = "second"
                     maxCount = 2
                 }
-                resource vm third {
+                resource  third vm {
                     name = "third"
                     maxCount = 3
                 }
-                resource vm main {
+                resource  main vm {
                     name = vm.third.name
                     maxCount=vm.second.maxCount
                 }
@@ -175,12 +176,12 @@ public class ResourceTest extends BaseRuntimeTest {
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var main = (ResourceValue) schema.getInstances().get("main");
+        var main = schema.getInstances().get("main");
         assertNotNull(main);
         assertEquals(2, main.argVal("maxCount"));
         assertEquals("third", main.argVal("name"));
 
-        var second = (ResourceValue) schema.getInstances().get("second");
+        var second = schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals(2, main.getDependencies().size());
     }
@@ -194,12 +195,12 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=0
                 }
-                resource vm second {
+                resource  second vm {
                     name = "second"
                     maxCount = vm.main.maxCount
                     minCount = vm.main.minCount
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = 2
                     minCount = 1
@@ -212,14 +213,14 @@ public class ResourceTest extends BaseRuntimeTest {
         assertEquals("vm", schema.getType());
 
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
         assertNotNull(resource);
         assertEquals("main", resource.getName());
         assertEquals("main", resource.argVal("name"));
         assertEquals(2, resource.argVal("maxCount"));
         assertEquals(1, resource.argVal("minCount"));
 
-        var second = (ResourceValue) schema.getInstances().get("second");
+        var second = schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals("second", second.getName());
         assertEquals("second", second.argVal("name"));
@@ -236,12 +237,12 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm second {
+                resource  second vm {
                     name = "second"
                     maxCount = vm.main.maxCount
                     minCount = vm.main.minCount
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = 2
                 }
@@ -253,14 +254,14 @@ public class ResourceTest extends BaseRuntimeTest {
         assertEquals("vm", schema.getType());
 
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
         assertNotNull(resource);
         assertEquals("main", resource.getName());
         assertEquals("main", resource.argVal("name"));
         assertEquals(2, resource.argVal("maxCount"));
         assertEquals(1, resource.argVal("minCount"));
 
-        var second = (ResourceValue) schema.getInstances().get("second");
+        var second = schema.getInstances().get("second");
         assertNotNull(second);
         assertEquals("second", second.getName());
         assertEquals("second", second.argVal("name"));
@@ -277,16 +278,16 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                     minCount = vm.dep2.minCount
                 }
-                resource vm dep1 {
+                resource  dep1 vm {
                     name = "dep1"
                     maxCount = 2
                 }
-                resource vm dep2 {
+                resource  dep2 vm {
                     name = "dep2"
                     minCount = 3
                 }
@@ -297,21 +298,21 @@ public class ResourceTest extends BaseRuntimeTest {
         assertNotNull(schema);
         assertEquals("vm", schema.getType());
 
-        var resource = (ResourceValue) schema.getInstances().get("dep2");
+        var resource = schema.getInstances().get("dep2");
         assertNotNull(resource);
         assertEquals("dep2", resource.getName());
         assertEquals("dep2", resource.argVal("name"));
         assertEquals(0, resource.argVal("maxCount"));
         assertEquals(3, resource.argVal("minCount"));
 
-        var dep1 = (ResourceValue) schema.getInstances().get("dep1");
+        var dep1 = schema.getInstances().get("dep1");
         assertNotNull(dep1);
         assertEquals("dep1", dep1.getName());
         assertEquals("dep1", dep1.argVal("name"));
         assertEquals(2, dep1.argVal("maxCount"));
         assertEquals(1, dep1.argVal("minCount"));
 
-        var main = (ResourceValue) schema.getInstances().get("main");
+        var main = schema.getInstances().get("main");
         assertNotNull(main);
         assertEquals("main", main.getName());
         assertEquals("main", main.argVal("name"));
@@ -328,16 +329,16 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                     minCount = vm.dep2.minCount
                 }
-                resource vm dep1 {
+                resource  dep1 vm {
                     name = "dep1"
                     maxCount = vm.dep2.maxCount
                 }
-                resource vm dep2 {
+                resource  dep2 vm {
                     name = "dep2"
                     minCount = 2
                     maxCount = 3
@@ -349,21 +350,21 @@ public class ResourceTest extends BaseRuntimeTest {
         assertNotNull(schema);
         assertEquals("vm", schema.getType());
 
-        var resource = (ResourceValue) schema.getInstances().get("dep2");
+        var resource = schema.getInstances().get("dep2");
         assertNotNull(resource);
         assertEquals("dep2", resource.getName());
         assertEquals("dep2", resource.argVal("name"));
         assertEquals(3, resource.argVal("maxCount"));
         assertEquals(2, resource.argVal("minCount"));
 
-        var dep1 = (ResourceValue) schema.getInstances().get("dep1");
+        var dep1 = schema.getInstances().get("dep1");
         assertNotNull(dep1);
         assertEquals("dep1", dep1.getName());
         assertEquals("dep1", dep1.argVal("name"));
         assertEquals(3, dep1.argVal("maxCount"));
         assertEquals(1, dep1.argVal("minCount"));
 
-        var main = (ResourceValue) schema.getInstances().get("main");
+        var main = schema.getInstances().get("main");
         assertNotNull(main);
         assertEquals("main", main.getName());
         assertEquals("main", main.argVal("name"));
@@ -380,16 +381,16 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                     minCount = vm.dep2.minCount
                 }
-                resource vm dep1 {
+                resource  dep1 vm{
                     name = "dep1"
                     maxCount = vm.dep2.maxCount
                 }
-                resource vm dep2 {
+                resource  dep2 vm {
                     name = "dep2"
                     minCount = 2
                 }
@@ -400,21 +401,21 @@ public class ResourceTest extends BaseRuntimeTest {
         assertNotNull(schema);
         assertEquals("vm", schema.getType());
 
-        var resource = (ResourceValue) schema.getInstances().get("dep2");
+        var resource = schema.getInstances().get("dep2");
         assertNotNull(resource);
         assertEquals("dep2", resource.getName());
         assertEquals("dep2", resource.argVal("name"));
         assertEquals(0, resource.argVal("maxCount"));
         assertEquals(2, resource.argVal("minCount"));
 
-        var dep1 = (ResourceValue) schema.getInstances().get("dep1");
+        var dep1 = schema.getInstances().get("dep1");
         assertNotNull(dep1);
         assertEquals("dep1", dep1.getName());
         assertEquals("dep1", dep1.argVal("name"));
         assertEquals(0, dep1.argVal("maxCount"));
         assertEquals(1, dep1.argVal("minCount"));
 
-        var main = (ResourceValue) schema.getInstances().get("main");
+        var main = schema.getInstances().get("main");
         assertNotNull(main);
         assertEquals("main", main.getName());
         assertEquals("main", main.argVal("name"));
@@ -431,11 +432,11 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                 }
-                resource vm dep1 {
+                resource  dep1 vm {
                     name = "dep1"
                     maxCount = vm.main.maxCount
                 }
@@ -452,7 +453,7 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm main {
+                resource  main vm {
                     name = "main"
                     maxCount = vm.main.maxCount
                 }
@@ -469,15 +470,15 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource vm a {
+                resource  a vm {
                     name = "a"
                     maxCount = vm.b.maxCount
                 }
-                resource vm b {
+                resource  b vm{
                     name = "b"
                     maxCount = vm.c.maxCount
                 }
-                resource vm c {
+                resource  c vm{
                     name = "c"
                     maxCount = vm.a.maxCount
                 }
@@ -492,7 +493,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                 }
                 
-                resource vm main {
+                resource  main vm {
                     x = 3
                 }
                 """));
@@ -506,14 +507,14 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource  main vm{
                 
                 }
                 """);
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
 
         Assertions.assertEquals(2, resource.getProperties().lookup("x"));
     }
@@ -525,7 +526,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource  main vm {
                 
                 }
                 var y = vm.main
@@ -535,7 +536,7 @@ public class ResourceTest extends BaseRuntimeTest {
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
         assertSame(2, resource.getProperties().get("x"));
         // make sure main's x has been changed
         Assertions.assertEquals(2, resource.getProperties().get("x"));
@@ -562,7 +563,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource  main vm{
                 
                 }
                 vm.main.x = 3
@@ -576,14 +577,14 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource  main vm{
                     x = 3
                 }
                 """);
         log.warn(toJson(res));
         var schema = (SchemaValue) global.get("vm");
 
-        var resource = (ResourceValue) schema.getInstances().get("main");
+        var resource = schema.getInstances().get("main");
 
         // default x in schema remains the same
         Assertions.assertEquals(2, schema.getEnvironment().get("x"));
@@ -601,7 +602,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource vm main {
+                resource  main vm {
                     x = 3
                 }
                 """);
