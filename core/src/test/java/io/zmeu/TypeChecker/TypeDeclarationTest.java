@@ -18,7 +18,7 @@ public class TypeDeclarationTest extends BaseTest {
 
     @Test
     void testNumber() {
-        var res = parse("var x:Number");
+        var res = parse("var x Number");
         var expected = program(statement(var("x", type("Number"))));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -26,7 +26,7 @@ public class TypeDeclarationTest extends BaseTest {
 
     @Test
     void testBoolean() {
-        var res = parse("var x:Boolean");
+        var res = parse("var x Boolean");
         var expected = program(statement(var("x", type("Boolean"))));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -34,7 +34,7 @@ public class TypeDeclarationTest extends BaseTest {
 
     @Test
     void testString() {
-        var res = parse("var x:String");
+        var res = parse("var x String");
         var expected = program(statement(var("x", type("String"))));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -42,7 +42,7 @@ public class TypeDeclarationTest extends BaseTest {
 
     @Test
     void testCustom() {
-        var res = parse("var x:Subnet");
+        var res = parse("var x Subnet");
         var expected = program(statement(var("x", type("Subnet"))));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -50,7 +50,7 @@ public class TypeDeclarationTest extends BaseTest {
 
     @Test
     void testCustomPath() {
-        var res = parse("var x :Aws.Networking.Subnet");
+        var res = parse("var x  Aws.Networking.Subnet");
         var expected = program(statement(var("x", type("Aws.Networking.Subnet"))));
         assertEquals(expected, res);
         log.info(toJson(res));

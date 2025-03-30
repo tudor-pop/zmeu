@@ -20,7 +20,7 @@ public class SchemaDefinitionTest extends BaseTest {
     void schemaDeclaration() {
         var actual = (Program) parse("""
                 schema square { 
-                    var x:Number=1
+                    var x Number=1
                 }
                 """);
         var expected = program(

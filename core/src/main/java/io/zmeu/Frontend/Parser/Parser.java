@@ -319,7 +319,7 @@ public class Parser {
 
     /**
      * VariableDeclaration
-     * : Identifier (:TypeDeclaration)? VariableInitialization?
+     * : Identifier (TypeDeclaration)? VariableInitialization?
      * ;
      */
     private VariableDeclaration VariableDeclaration() {
@@ -439,7 +439,7 @@ public class Parser {
 
     private ParameterIdentifier FunParameter() {
         var symbol = SymbolIdentifier();
-        if (IsLookAhead(Identifier, Colon)) {
+        if (IsLookAhead(Identifier, OpenParenthesis)) { // OpenParenthesis because fun onClick(callback (Number)->Number) callback's type is a function
             var type = typeParser.Declaration();
             return param(symbol, type);
         } else {

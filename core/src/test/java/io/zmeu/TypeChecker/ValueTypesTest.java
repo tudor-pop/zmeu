@@ -22,7 +22,7 @@ public class ValueTypesTest extends BaseTest {
 
     @Test
     void testString() {
-        var res = parse("var x:String\n");
+        var res = parse("var x String\n");
         var expected = program(Factory.var(id("x"), type("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -30,7 +30,7 @@ public class ValueTypesTest extends BaseTest {
 
     @Test
     void testStringEOF() {
-        var res = parse("var x:String");
+        var res = parse("var x String");
         var expected = program(Factory.var(id("x"), type("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -38,7 +38,7 @@ public class ValueTypesTest extends BaseTest {
 
     @Test
     void testStringLineTerminator() {
-        var res = parse("var x:String;");
+        var res = parse("var x String;");
         var expected = program(Factory.var(id("x"), type("String")));
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -47,7 +47,7 @@ public class ValueTypesTest extends BaseTest {
     @Test
     void testStringInit() {
         var res = parse("""
-                var x:String="test"
+                var x String="test"
                 """);
         var expected = program(var(id("x"), type("String"), string("test")));
         assertEquals(expected, res);
@@ -57,7 +57,7 @@ public class ValueTypesTest extends BaseTest {
     @Test
     void testNumberInitDouble() {
         var actual = parse("""
-                var x:Number=0.2
+                var x Number=0.2
                 """);
         var errors = ErrorSystem.getErrors();
         log.info(actual);
@@ -69,7 +69,7 @@ public class ValueTypesTest extends BaseTest {
     @Test
     void testNumberFromStd() {
         var actual = parse("""
-                var x:std.Number
+                var x std.Number
                 """);
         var expected = program(Factory.var(id("x"), type("std.Number")));
         assertEquals(expected, actual);
@@ -79,7 +79,7 @@ public class ValueTypesTest extends BaseTest {
     @Test
     void testNumberFromStdInit() {
         var actual = parse("""
-                var x:std.Number=2
+                var x std.Number=2
                 """);
         var expected = program(var(id("x"), type("std.Number"), number(2)));
         assertEquals(expected, actual);
@@ -88,7 +88,7 @@ public class ValueTypesTest extends BaseTest {
     @Test
     void testSpace() {
         var actual = parse("""
-                var x    : std.Number=2
+                var x      std.Number=2
                 """);
         var expected = program(var(id("x"), type("std.Number"), number(2)));
         assertEquals(expected, actual);

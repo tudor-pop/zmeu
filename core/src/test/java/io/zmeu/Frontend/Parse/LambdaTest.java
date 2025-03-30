@@ -37,7 +37,7 @@ public class LambdaTest extends BaseTest {
 
     @Test
     void lambdaArgTypeWithReturnType() {
-        var res = parse("(x:Number):Number -> x*x");
+        var res = parse("(x Number) Number -> x*x");
         var expected = program(expressionStatement(
                         lambda(ParameterIdentifier.param("x", type(ValueType.Number)), binary("*", "x", "x"), type(ValueType.Number))
                 )
@@ -49,7 +49,7 @@ public class LambdaTest extends BaseTest {
     @Test
     void lambdaNoReturn() {
         var res = parse("""
-                (x:Number) -> {
+                (x Number) -> {
                     print(x)
                 }
                 """);

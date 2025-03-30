@@ -130,7 +130,7 @@ public class SchemaDefinitionTest extends BaseRuntimeTest {
     void initDeclarationWithPathType() {
         var res = eval("""
                 schema Vm {
-                    var x:Number = 1;
+                    var x Number = 1;
                 }
                 """);
 
@@ -145,7 +145,7 @@ public class SchemaDefinitionTest extends BaseRuntimeTest {
     void initDeclarationWithWrontInit() {
         var res = eval("""
                 schema Vm {
-                    var x:Number = "test";
+                    var x Number = "test";
                 }
                 """);
 

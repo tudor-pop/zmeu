@@ -26,7 +26,7 @@ public class LoopTest extends BaseChecker {
     void increment() {
         var res = checker.eval(src("""
                  var a = 0
-                 var temp:Number
+                 var temp Number
                  for (var b = 1; a < 100; b = temp + b) {
                    temp = a;
                    a = b;

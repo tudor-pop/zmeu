@@ -15,7 +15,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testFunInputAndReturn() {
         var actual = checker.eval(src("""
-                fun square(x :Number) :Number {
+                fun square(x  Number)  Number {
                     return x * x
                 }
                 // square(2)
@@ -29,7 +29,7 @@ public class FunctionTest extends BaseChecker {
     void testNoParamTypes() {
         assertThrows(IllegalArgumentException.class, () -> {
             checker.eval(src("""
-                    fun square(x) :Number { return x * x }
+                    fun square(x)  Number { return x * x }
                     """));
         });
     }
@@ -37,7 +37,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testNoParams() {
         var actual = checker.eval(src("""
-                fun square() :Number { return 2 * 2 }
+                fun square()  Number { return 2 * 2 }
                 """));
         Type expected = TypeFactory.fromString("()->Number");
         assertEquals(expected, actual);
@@ -47,7 +47,7 @@ public class FunctionTest extends BaseChecker {
     void testVoidThrows() {
         assertThrows(TypeError.class, () -> {
             checker.eval(src("""
-                    fun square() :Void { return 2 * 2 }
+                    fun square()  Void { return 2 * 2 }
                     """));
         });
     }
@@ -55,7 +55,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testVoidDoesntThrow() {
         var actual = checker.eval(src("""
-                fun square() :Void { return; }
+                fun square()  Void { return; }
                 """));
         Type expected = TypeFactory.fromString("()->Void");
         assertEquals(expected, actual);
@@ -81,7 +81,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testFunCall() {
         var actual = checker.eval(src("""
-                fun square(x :Number) :Number {
+                fun square(x  Number)  Number {
                     return x * x
                 }
                 square(2)
@@ -93,7 +93,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testFunCallDecimal() {
         var actual = checker.eval(src("""
-                fun square(x :Number) :Number {
+                fun square(x  Number)  Number {
                     return x * x
                 }
                 square(2.2)
@@ -105,7 +105,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testFunCallWrongArg() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                fun square(x :Number) :Number {
+                fun square(x  Number)  Number {
                     return x * x
                 }
                 square("2")
@@ -116,7 +116,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testFunCallWrongNumberOfArg() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                fun square(x :Number) :Number {
+                fun square(x  Number)  Number {
                     return x * x
                 }
                 square(2,3)
@@ -127,7 +127,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testFunCallWrongNumberOfParam() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                fun square(x :Number,y :Number) :Number {
+                fun square(x  Number,y  Number)  Number {
                     return x * y
                 }
                 square(2)
@@ -138,7 +138,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testMultiInputsAndReturn() {
         var actual = checker.eval(src("""
-                fun multiply(x :Number,y :Number) :Number {
+                fun multiply(x  Number,y  Number)  Number {
                     return x * y
                 }
                 multiply(2, 3)
@@ -159,7 +159,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testWrongArgType() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                fun multiply(x :Number,y :Number) :Number {
+                fun multiply(x  Number,y  Number)  Number {
                     return x * y
                 }
                 multiply(2, "3")
@@ -171,10 +171,10 @@ public class FunctionTest extends BaseChecker {
     void testHigherOrderFunction() {
         var actual = checker.eval(src("""
                 var global=10
-                fun outer(x :Number, y :Number) :(Number)->Number {
+                fun outer(x  Number, y  Number)  (Number)->Number {
                     var z = x+y
                 
-                    fun inner(p:Number):Number {
+                    fun inner(p Number) Number {
                         return p+z+global
                     }
                     return inner
@@ -192,10 +192,10 @@ public class FunctionTest extends BaseChecker {
     void testClojureFunctionMultipleArgs() {
         var actual = checker.eval(src("""
                 var global=10
-                fun outer(x :Number, y :Number) :(Number,Number,Number)->Number {
+                fun outer(x  Number, y  Number)  (Number,Number,Number)->Number {
                     var z = x+y
                 
-                    fun inner(p:Number,q:Number,o:Number):Number {
+                    fun inner(p Number,q Number,o Number) Number {
                         return p+z+global
                     }
                     return inner
@@ -212,7 +212,7 @@ public class FunctionTest extends BaseChecker {
     @Test
     void testRecursionFun() {
         var actual = checker.eval(src("""
-                fun recursive(x :Number) :Number {
+                fun recursive(x  Number)  Number {
                     if (x == 1) return x
                     return recursive(x-1)
                 }

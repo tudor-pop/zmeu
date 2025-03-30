@@ -2,6 +2,7 @@ package io.zmeu.TypeChecker.Types;
 
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
+import io.zmeu.Frontend.Parser.Literals.SymbolIdentifier;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.Parser;
 import org.jetbrains.annotations.NotNull;
@@ -46,14 +47,14 @@ public class TypeParser {
     }
 
     public TypeIdentifier Declaration() {
-        if (parser.IsLookAhead(Colon)) {
-            parser.eat(Colon);
-            if (parser.IsLookAhead(OpenParenthesis)) {
-                return FunctionType();
-            } else {
-                return TypeIdentifier();
-            }
+//        if (parser.IsLookAhead(Colon)) {
+//            parser.eat(Colon);
+        if (parser.IsLookAhead(OpenParenthesis)) {
+            return FunctionType();
+        } else if (parser.IsLookAhead(Identifier)) {
+            return TypeIdentifier();
         }
+//        }
         return null;
     }
 
@@ -62,7 +63,7 @@ public class TypeParser {
         var params = OptParameterList();  // optimisation idea: why create ParameterIdentifier then extract just the type
         parser.eat(CloseParenthesis, "Expected ')' but got: " + parser.lookAhead());
         parser.eat(Lambda, "Expected -> but got: " + parser.lookAhead());
-        var returnType = TypeIdentifier();
+        var returnType = Declaration();
 
         var type = new FunType(params, returnType.getType());
         return TypeIdentifier.builder()

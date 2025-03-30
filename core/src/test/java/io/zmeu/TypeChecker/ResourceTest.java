@@ -31,7 +31,7 @@ public class ResourceTest extends BaseChecker {
      * vm.main
      * All resources are defined in the schema
      * global env{
-     * vm : SchemaValue -> variables{ main -> resource vm}
+     * vm   SchemaValue -> variables{ main -> resource vm}
      * }
      */
     @Test
@@ -56,7 +56,7 @@ public class ResourceTest extends BaseChecker {
     void resourceIsDefinedInSchema() {
         var res = checker.eval(src("""
                 schema vm {
-                    var name     :String
+                    var name      String
                     var maxCount = 0
                     var enabled  = true
                 }
@@ -83,7 +83,7 @@ public class ResourceTest extends BaseChecker {
     void propertyAccessThroughOtherResource() {
         var res = checker.eval(src("""
                 schema vm {
-                    var name :String
+                    var name  String
                     var maxCount =0
                     var enabled  = true
                 }
@@ -232,7 +232,7 @@ public class ResourceTest extends BaseChecker {
     void resourceInitBoolean() {
         var res = checker.eval(src("""
                 schema vm {
-                   var x :Boolean
+                   var x  Boolean
                 }
                 
                 resource main vm {

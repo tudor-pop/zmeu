@@ -34,7 +34,7 @@ public class AssignmentTest extends BaseChecker {
     @Test
     void testStringInitWrongTypeInt() {
         assertThrows(TypeError.class, () -> checker.eval(src("""
-                var x:String=1
+                var x String=1
                 """))
         );
     }
@@ -42,7 +42,7 @@ public class AssignmentTest extends BaseChecker {
 //    @Test
 //    void testStringInitWrongType() {
 //        var actual = parse("""
-//                var x:Number="test"
+//                var x Number="test"
 //                """);
 //        var errors = ErrorSystem.getErrors();
 //        log.info(actual);

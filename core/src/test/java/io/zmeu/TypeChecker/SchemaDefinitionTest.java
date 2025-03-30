@@ -40,7 +40,7 @@ public class SchemaDefinitionTest extends BaseChecker {
     void singleProperty() {
         var actual = checker.eval(src("""
                 schema Vm {
-                   var x: Number
+                   var x  Number
                 }
                 """));
         assertEquals(SchemaType.class, actual.getClass());
@@ -54,7 +54,7 @@ public class SchemaDefinitionTest extends BaseChecker {
     void singlePropertyInit() {
         var actual = checker.eval(src("""
                 schema Vm {
-                   var x: Number = 1
+                   var x  Number = 1
                 }
                 """));
         assertEquals(SchemaType.class, actual.getClass());
@@ -68,7 +68,7 @@ public class SchemaDefinitionTest extends BaseChecker {
     void singlePropertyInitThrows() {
         Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
                 schema Vm {
-                   var x: Number = true
+                   var x  Number = true
                 }
                 """)));
     }
@@ -77,8 +77,8 @@ public class SchemaDefinitionTest extends BaseChecker {
     void multipleProperty() {
         var actual = checker.eval(src("""
                 schema Vm {
-                   var x: Number
-                   var y: String
+                   var x  Number
+                   var y  String
                 }
                 """));
         assertEquals(SchemaType.class, actual.getClass());
@@ -93,8 +93,8 @@ public class SchemaDefinitionTest extends BaseChecker {
     void multiplePropertyInit() {
         var actual = checker.eval(src("""
                 schema Vm {
-                   var x: Number = 2
-                   var y: String = "test"
+                   var x  Number = 2
+                   var y  String = "test"
                 }
                 """));
         assertEquals(SchemaType.class, actual.getClass());

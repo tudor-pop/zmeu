@@ -32,7 +32,7 @@ public class ResourceTest extends BaseRuntimeTest {
      * vm.main
      * All resources are defined in the schema
      * global env{
-     * vm : SchemaValue -> variables{ main -> resource vm}
+     * vm   SchemaValue -> variables{ main -> resource vm}
      * }
      */
     @Test
@@ -191,7 +191,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void resourceIsDefinedInSchemaDependencyFirst() {
         var res = eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=0
                 }
@@ -233,7 +233,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void evalDependencyFirstMissingProperty() {
         var res = eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
@@ -274,7 +274,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void evalMultipleDependencies() {
         var res = eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
@@ -325,7 +325,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void evalChainOfDependencies() {
         var res = eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
@@ -377,7 +377,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void evalChainOfDependenciesDefaultSchema() {
         var res = eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
@@ -428,7 +428,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void circularSimpleDependencies() {
         assertThrows(RuntimeException.class, () -> eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
@@ -449,7 +449,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void cycleDetectionSelf() {
         assertThrows(RuntimeException.class, () -> eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
@@ -466,7 +466,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void circularIndirectDependency() {
         assertThrows(RuntimeException.class, () -> eval("""
                 schema vm { 
-                    var name:String
+                    var name String
                     var maxCount=0
                     var minCount=1
                 }
