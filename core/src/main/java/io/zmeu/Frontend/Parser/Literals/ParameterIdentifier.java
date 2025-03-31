@@ -37,6 +37,7 @@ public final class ParameterIdentifier extends Identifier {
     public static ParameterIdentifier param(String name) {
         return new ParameterIdentifier(SymbolIdentifier.id(name));
     }
+
     public static ParameterIdentifier param(SymbolIdentifier name) {
         return new ParameterIdentifier(name);
     }
@@ -44,6 +45,7 @@ public final class ParameterIdentifier extends Identifier {
     public static ParameterIdentifier param(SymbolIdentifier name, TypeIdentifier type) {
         return new ParameterIdentifier(name, type);
     }
+
     public static ParameterIdentifier param(String name, TypeIdentifier type) {
         return new ParameterIdentifier(SymbolIdentifier.id(name), type);
     }

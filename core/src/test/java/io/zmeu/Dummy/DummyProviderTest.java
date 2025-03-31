@@ -7,6 +7,7 @@ import io.zmeu.Diff.Plan;
 import io.zmeu.Engine.JaversUtils;
 import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Import.Dependencies;
+import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.resource.Resource;
@@ -166,6 +167,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(dummyUpdated, cloud);
         Assertions.assertEquals(dummyUpdated, state);
     }
+
     /**
      * Update resource property to null
      */
