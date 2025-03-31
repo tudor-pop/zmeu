@@ -16,41 +16,36 @@
 package io.zmeu.api;
 
 import io.zmeu.api.resource.Resource;
-import io.zmeu.api.resource.Resources;
 import io.zmeu.api.schema.SchemaDefinition;
-import io.zmeu.api.schema.Schemas;
+import lombok.Getter;
 import org.pf4j.Extension;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Extension
 public abstract class Provider<T extends Resource> implements IProvider<T> {
     private final Map<String, Class<?>> schemaMap = new HashMap<>();
+    @Getter
+    private final T resource;
 
     public Provider() {
+        this.resource = initResource();
         schemasMap();
     }
 
-    abstract public Resources<T> resources();
+    /**
+     * Use this method to create an instance of your resource
+     */
+    protected abstract T initResource();
 
-    public Schemas schemas() {
-        var resources = resources().list();
-        var list = new ArrayList<SchemaDefinition>(resources.size());
-        for (var res : resources) {
-            var schemaDefinition = SchemaDefinition.toSchema(res);
-            list.add(schemaDefinition);
-        }
-        return new Schemas(list);
+    public SchemaDefinition schema() {
+        return SchemaDefinition.toSchema(resource);
     }
 
     private Map<String, Class<?>> schemasMap() {
-        for (var res : resources().list()) {
-            var definition = SchemaDefinition.toSchema(res);
-            schemaMap.put(definition.getName(), definition.getResourceClass());
-        }
+        var definition = SchemaDefinition.toSchema(resource);
+        schemaMap.put(definition.getName(), definition.getResourceClass());
         return schemaMap;
     }
 
@@ -59,9 +54,7 @@ public abstract class Provider<T extends Resource> implements IProvider<T> {
     }
 
     public String schemasString() {
-        return resources().list().stream()
-                .map(SchemaDefinition::toString)
-                .collect(Collectors.joining());
+        return SchemaDefinition.toString(resource);
     }
 
 }

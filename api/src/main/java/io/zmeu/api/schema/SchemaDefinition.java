@@ -3,10 +3,12 @@ package io.zmeu.api.schema;
 import io.zmeu.api.resource.ResourceProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Data
 @Builder
@@ -46,6 +48,7 @@ public class SchemaDefinition {
     }
 
     public static SchemaDefinition toSchema(Object resource) {
+        Objects.requireNonNull(resource);
         var builder = SchemaDefinition.builder();
         var schemaDefinition = resource.getClass().getAnnotation(Schema.class);
         if (schemaDefinition == null) {

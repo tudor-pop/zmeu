@@ -64,7 +64,7 @@ public class PluginTest extends BaseRuntimeTest {
             assertEquals("second", second.argVal("name"));
             assertEquals("provider schema", second.argVal("content"));
 
-            var pname = extensions.getFirst().resources().list().getFirst().getClass().getPackageName();
+            var pname = extensions.getFirst().getResource().getClass().getPackageName();
             var file = ReflectionUtil.classForName(pname + ".FileResource");
             log.info(file);
 

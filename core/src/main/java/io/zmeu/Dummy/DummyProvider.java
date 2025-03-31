@@ -3,6 +3,7 @@ package io.zmeu.Dummy;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resources;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,8 @@ public class DummyProvider extends Provider<DummyResource> {
     private final Map<String, DummyResource> resources = new HashMap<>();
 
     @Override
-    public Resources<DummyResource> resources() {
-        return new Resources<>(List.of(new DummyResource()));
+    public DummyResource initResource() {
+        return new DummyResource();
     }
 
     @Override

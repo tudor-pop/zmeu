@@ -59,10 +59,8 @@ public class PluginFactory {
         for (var provider : providers) {
             log.info("Loading provider {}", provider.getClass().getName());
 //                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
-
-            for (SchemaDefinition schema : provider.schemas().getItems()) {
-                this.pluginHashMap.putIfAbsent(schema.getName(), provider);
-            }
+            var schema = provider.schema();
+            this.pluginHashMap.putIfAbsent(schema.getName(), provider);
         }
 
 

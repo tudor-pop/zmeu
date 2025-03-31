@@ -30,9 +30,6 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     @BeforeEach
     void setUp() {
         YAMLMapper yamlMapper = YAMLMapper.builder().build();
-        System.setProperty("pf4j.mode", "development");
-        System.setProperty("pf4j.logLevel", "DEBUG");
-        System.setProperty("pf4j.pluginsDir", "src/test/java/io/zmeu/Plugin");
         factory = new PluginFactory(new Zmeufile(new Dependencies(List.of())));
         manager = new ResourceManager(factory.getPluginHashMap(), yamlMapper, new Diff(javers, mapper));
         factory.loadPlugins();
