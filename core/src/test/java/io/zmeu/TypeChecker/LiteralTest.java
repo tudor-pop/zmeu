@@ -72,7 +72,7 @@ class LiteralTest extends BaseChecker {
 
     @Test
     void testStringLiteral() {
-        var t1 = checker.eval("hello");
+        var t1 = eval("hello");
         Assertions.assertEquals(t1, ValueType.String);
     }
 
@@ -90,54 +90,54 @@ class LiteralTest extends BaseChecker {
 
     @Test
     void testAddition() {
-        var t1 = checker.eval(src("1+1"));
+        var t1 = eval("1+1");
         Assertions.assertEquals(t1, ValueType.Number);
     }
 
 
     @Test
     void testSubstraction() {
-        var t1 = checker.eval(src("1-1"));
+        var t1 = eval("1-1");
         Assertions.assertEquals(t1, ValueType.Number);
     }
 
     @Test
     void testDivision() {
-        var t1 = checker.eval(src("1/1"));
+        var t1 = eval("1/1");
         Assertions.assertEquals(t1, ValueType.Number);
     }
 
     @Test
     void testMod() {
-        var t1 = checker.eval(src("1 % 1"));
+        var t1 = eval("1 % 1");
         Assertions.assertEquals(t1, ValueType.Number);
     }
 
     @Test
     void testMultiplication() {
-        var t1 = checker.eval(src("1*1"));
+        var t1 = eval("1*1");
         Assertions.assertEquals(t1, ValueType.Number);
     }
 
     @Test
     void testNumberWithStringAddition() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 "1"+1
-                """)));
+                """));
     }
 
     @Test
     void testStringWithNumberAddition() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 1+"1"
-                """)));
+                """));
     }
 
     @Test
     void testStringWithNumberEq() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 1 == "1"
-                """)));
+                """));
     }
 
     @Test
@@ -147,24 +147,24 @@ class LiteralTest extends BaseChecker {
 
     @Test
     void testStringWithStringAddition() {
-        var actual = checker.eval(src("""
+        var actual = eval("""
                 "hello" + "world"
-                """));
+                """);
         Assertions.assertEquals(actual, ValueType.String);
     }
 
     @Test
     void testStringWithStringSubstraction() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 "hello" - "world"
-                """)));
+                """));
     }
 
     @Test
     void testStringWithStringDivision() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 "hello" / "world"
-                 """)));
+                 """));
     }
 
     @Test

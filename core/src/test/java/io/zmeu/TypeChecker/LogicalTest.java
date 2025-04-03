@@ -8,174 +8,166 @@ public class LogicalTest extends BaseChecker {
 
     @Test
     void trueOrTrue() {
-        var res = checker.eval(src("true || true"));
+        var res = eval("true || true");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void trueOrFalse() {
         // true || false -> true
-        var res = checker.eval(src("true || false"));
+        var res = eval("true || false");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void falseOrTrue() {
         // false || true -> true
-        var res = checker.eval(src("false || true"));
+        var res = eval("false || true");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void falseOrFalse() {
         // false || false -> true
-        var res = checker.eval(src("false || false"));
+        var res = eval("false || false");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void nullAndNumber() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("null && 2")));
+        Assertions.assertThrows(TypeError.class, () -> eval("null && 2"));
     }
 
     @Test
     void nullOrNumber() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("null || 2")));
+        Assertions.assertThrows(TypeError.class, () -> eval("null || 2"));
     }
 
     @Test
     void booleanOrNumber() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("true || 2")));
+        Assertions.assertThrows(TypeError.class, () -> eval("true || 2"));
     }
 
     @Test
     void booleanOrString() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 true || "test" 
-                """)));
+                """));
     }
 
     @Test
     void booleanAndNumber() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 true && 3 
-                """)));
+                """));
     }
 
     @Test
     void stringAndString() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 "true" && "3" 
-                """)));
+                """));
     }
 
     @Test
     void nullAndNull() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 null && null 
-                """)));
+                """));
     }
 
     @Test
     void nullOrNull() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 null || null 
-                """)));
+                """));
     }
 
     @Test
     void numberAndBoolean() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 3 && true 
-                """)));
+                """));
     }
 
     @Test
     void booleanAndString() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 true && "test" 
-                """)));
+                """));
     }
 
     @Test
     void stringAndBoolean() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 "test" && true 
-                """)));
+                """));
     }
 
 
     @Test
     void stringAndFalse() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 "test" && false 
-                """)));
+                """));
     }
 
     @Test
     void nullAndFalse() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                null && false 
-                """)));
+        Assertions.assertThrows(TypeError.class, () -> eval(" null && false "));
     }
 
     @Test
     void nullOrFalse() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                null || false 
-                """)));
+        Assertions.assertThrows(TypeError.class, () -> eval(" null || false "));
     }
 
     @Test
     void nullAndTrue() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                null && true 
-                """)));
+        Assertions.assertThrows(TypeError.class, () -> eval(" null && true "));
     }
 
     @Test
     void nullOrTrue() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
-                null || true 
-                """)));
+        Assertions.assertThrows(TypeError.class, () -> eval(" null || true "));
     }
 
     @Test
     void numberAndNull() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("2 && null")));
+        Assertions.assertThrows(TypeError.class, () -> eval("2 && null"));
     }
 
     @Test
     void numberAndNumber() {
         // 1 && 2 -> throw
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("1 && 2")));
+        Assertions.assertThrows(TypeError.class, () -> eval("1 && 2"));
     }
 
     @Test
     void falseAndFalse() {
         // false && false -> false
-        var res = checker.eval(src("false && false"));
+        var res = eval("false && false");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void trueAndFalse() {
         // false && false -> false
-        var res = checker.eval(src("true && false"));
+        var res = eval("true && false");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void trueAndTrue() {
         // false && false -> false
-        var res = checker.eval(src("true && true"));
+        var res = eval("true && true");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 
     @Test
     void falseAndTrue() {
         // false && false -> false
-        var res = checker.eval(src("false && true"));
+        var res = eval("false && true");
         Assertions.assertEquals(ValueType.Boolean, res);
     }
 

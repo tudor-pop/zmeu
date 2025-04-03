@@ -11,7 +11,7 @@ public class IfTest extends BaseChecker {
 
     @Test
     void testBlock() {
-        var actual = checker.eval(src("""
+        var actual = eval("""
                 var x = 10
                 var y = 10
                 if (x<=10) {
@@ -20,7 +20,7 @@ public class IfTest extends BaseChecker {
                    y = 3
                 }
                 y
-                """));
+                """);
         assertEquals(ValueType.Number, actual);
     }
 

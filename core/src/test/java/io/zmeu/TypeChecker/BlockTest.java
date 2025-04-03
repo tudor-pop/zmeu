@@ -11,35 +11,35 @@ public class BlockTest extends BaseChecker {
 
     @Test
     void testBlock() {
-        var actual = checker.eval(src("""
+        var actual = eval("""
                 var x = 10
                 var y = 10
                 x*2+y
-                """));
+                """);
         assertEquals(ValueType.Number, actual);
     }
 
     @Test
     void testNestedBlock() {
-        var actual = checker.eval(src("""
+        var actual = eval("""
                 var x = 10
                 {
                     var x = "hello"
                 }
                 x * 2
-                """));
+                """);
         assertEquals(ValueType.Number, actual);
     }
 
     @Test
     void testScopeChainLookup() {
-        var actual = checker.eval(src("""
+        var actual = eval("""
                 var x = 10
                 {
                     var y = 10
                     x+y
                 }
-                """));
+                """);
         assertEquals(ValueType.Number, actual);
     }
 }

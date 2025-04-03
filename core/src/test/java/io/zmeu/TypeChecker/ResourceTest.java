@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ResourceTest extends BaseChecker {
     @Test
     void newResourceThrowsIfNoNameIsSpecified() {
-        checker.eval(src("""
+        eval("""
                 schema Server { }
                 resource Server {
                 
                 }
-                """));
+                """);
         Assertions.assertFalse(ErrorSystem.getErrors().isEmpty());
     }
 
@@ -36,12 +36,12 @@ public class ResourceTest extends BaseChecker {
      */
     @Test
     void resourceIsDefinedInSchemaEnv() {
-        ResourceType res = (ResourceType) checker.eval(src("""
+        ResourceType res = (ResourceType) eval("""
                 schema Server { }
                 resource main Server {
                 
                 }
-                """));
+                """);
         var schema = (SchemaType) checker.getEnv().get("Server");
 
         assertNotNull(schema);
@@ -54,7 +54,7 @@ public class ResourceTest extends BaseChecker {
 
     @Test
     void resourceIsDefinedInSchema() {
-        var res = checker.eval(src("""
+        eval("""
                 schema vm {
                     var name      String
                     var maxCount = 0
@@ -65,7 +65,7 @@ public class ResourceTest extends BaseChecker {
                     maxCount = 1
                     enabled  = false
                 }
-                """));
+                """);
         var schema = (SchemaType) checker.getEnv().get("vm");
 
         assertNotNull(schema);
@@ -81,7 +81,7 @@ public class ResourceTest extends BaseChecker {
 
     @Test
     void propertyAccessThroughOtherResource() {
-        var res = checker.eval(src("""
+        eval("""
                 schema vm {
                     var name  String
                     var maxCount =0
@@ -96,7 +96,7 @@ public class ResourceTest extends BaseChecker {
                     name     = "second"
                     maxCount = vm.main.maxCount
                 }
-                """));
+                """);
         var schema = (SchemaType) checker.getEnv().get("vm");
 
         assertNotNull(schema);
@@ -120,20 +120,20 @@ public class ResourceTest extends BaseChecker {
     @Test
     @DisplayName("throw if a resource uses a field not defined in the schema")
     void resourceThrowsIfFieldNotDefinedInSchema() {
-        Assertions.assertThrows(NotFoundException.class, () -> checker.eval(src("""
+        Assertions.assertThrows(NotFoundException.class, () -> eval("""
                 schema vm {
                 }
                 
                 resource vm main {
                     x = 3
                 }
-                """)));
+                """));
     }
 
 
     @Test
     void resourceInheritsDefaultSchemaValue() {
-        var res = checker.eval(src("""
+        var res = eval("""
                 schema vm {
                    var x = 2
                 }
@@ -141,7 +141,7 @@ public class ResourceTest extends BaseChecker {
                 resource main vm {
                 
                 }
-                """));
+                """);
         log.warn(toJson(res));
         var schema = (SchemaType) checker.getEnv().get("vm");
 
@@ -152,7 +152,7 @@ public class ResourceTest extends BaseChecker {
 
     @Test
     void resourceMemberAccess() {
-        var res = checker.eval(src("""
+        var res = eval("""
                 schema vm {
                    var x = 2
                 }
@@ -163,7 +163,7 @@ public class ResourceTest extends BaseChecker {
                 var y = vm.main
                 var z = vm.main.x
                 z
-                """));
+                """);
         var schema = (SchemaType) checker.getEnv().get("vm");
 
         var main = (ResourceType) schema.getInstance("main");
@@ -181,7 +181,7 @@ public class ResourceTest extends BaseChecker {
 
     @Test
     void resourceSetValueOnMissingProperty() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval("""
                 schema vm {
                    var x = 2
                 }
@@ -190,12 +190,12 @@ public class ResourceTest extends BaseChecker {
                 
                 }
                 vm.main.y = 3
-                """)));
+                """));
     }
 
     @Test
     void resourceSetValueTypeOnWrongProperty() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> eval(("""
                 schema Vm {
                    var x = 2
                 }
@@ -209,7 +209,7 @@ public class ResourceTest extends BaseChecker {
 
     @Test
     void resourceInit() {
-        var res = checker.eval(src("""
+        eval("""
                 schema vm {
                    var x = "2"
                 }
@@ -217,7 +217,7 @@ public class ResourceTest extends BaseChecker {
                 resource main vm {
                     x = "3"
                 }
-                """));
+                """);
         var schema = (SchemaType) checker.getEnv().get("vm");
         // default x in schema remains the same
         Assertions.assertEquals(ValueType.String, schema.getProperty("x"));
@@ -230,7 +230,7 @@ public class ResourceTest extends BaseChecker {
     @SneakyThrows
     @Test
     void resourceInitBoolean() {
-        var res = checker.eval(src("""
+        eval("""
                 schema vm {
                    var x  Boolean
                 }
@@ -238,7 +238,7 @@ public class ResourceTest extends BaseChecker {
                 resource main vm {
                     x = true
                 }
-                """));
+                """);
         var schema = (SchemaType) checker.getEnv().get("vm");
 
         var resource = schema.getInstance("main");

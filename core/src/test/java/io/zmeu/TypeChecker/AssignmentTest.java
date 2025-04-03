@@ -14,29 +14,26 @@ public class AssignmentTest extends BaseChecker {
 
     @Test
     void testSimpleAssignment() {
-        var actual = checker.eval(src("""
+        var actual = eval("""
                 var x = 10
                 x = 1
-                """));
+                """);
         assertEquals(ValueType.Number, actual);
     }
 
     @Test
     void testWrongAssignment() {
-        assertThrows(TypeError.class, () -> checker.eval(src("""
+        assertThrows(TypeError.class, () -> eval("""
                 // init with number type
                 var x = 10 
                 // try to change to boolean should throw
                 x = false 
-                """)));
+                """));
     }
 
     @Test
     void testStringInitWrongTypeInt() {
-        assertThrows(TypeError.class, () -> checker.eval(src("""
-                var x String=1
-                """))
-        );
+        assertThrows(TypeError.class, () -> eval("var x String=1"));
     }
 //
 //    @Test
