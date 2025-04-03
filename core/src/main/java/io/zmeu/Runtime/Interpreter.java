@@ -682,4 +682,10 @@ public final class Interpreter implements Visitor<Object> {
                 .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
     }
 
+    public Map<String, Environment<ResourceValue>> getResources() {
+        return getEnv().getVariables().values().stream()
+                .filter(it-> it instanceof SchemaValue)
+                .map(SchemaValue.class::cast)
+                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
+    }
 }

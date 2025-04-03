@@ -69,11 +69,7 @@ public class Zmeu {
         Program program = parser.produceAST(tokens);
         typeChecker.eval(program);
         var evalRes = interpreter.eval(program);
-        var resources = interpreter.getEnv()
-                .getVariables().values().stream()
-                .filter(it-> it instanceof SchemaValue)
-                .map(SchemaValue.class::cast)
-                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
+        var resources = interpreter.getResources();
         var plan = resourceManager.plan(resources);
 
         resourceManager.apply(plan);

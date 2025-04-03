@@ -85,10 +85,4 @@ public class BaseRuntimeTest {
         return parser.produceAST(tokenizer.tokenize(source));
     }
 
-
-//    @Test
-//    void testList() {
-//        var evalRes = interpreter.eval(Arrays.asList("+", 1, 2, Arrays.asList("*", 2, 3)), new Environment());
-//        Assertions.assertEquals(3, ((IntegerValue) evalRes).getValue());
-//    }
 }
