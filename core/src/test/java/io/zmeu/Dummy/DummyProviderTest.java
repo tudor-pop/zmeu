@@ -7,12 +7,8 @@ import io.zmeu.Diff.Plan;
 import io.zmeu.Engine.JaversUtils;
 import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Import.Dependencies;
-import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
-import io.zmeu.TypeChecker.Types.ResourceType;
-import io.zmeu.TypeChecker.Types.SchemaType;
-import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
@@ -53,23 +49,27 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                     var content String
                 }
                 resource dummy DummyResource {
-                   content = "dummy"
+                   content = "some content";
                 }
                 """);
         interpreter.eval(program);
 
-        var resources = interpreter.getResources();
 
+        var resources = interpreter.getResources();
         var plan = manager.plan(resources);
         manager.apply(plan);
-//        var src = plan.resource();
-//        var dummy = javers.getLatestSnapshot("dummy", DummyResource.class).get();
-//        var state = (Resource) JaversUtils.mapSnapshotToObject(dummy, DummyResource.class);
-//        Assertions.assertEquals(src, state);
-//
-//        var provider = manager.getProvider(DummyResource.class);
-//        var cloud = provider.read(src);
-//        Assertions.assertEquals(src, cloud);
+
+        var src = plan.getMergeResults().getFirst().resource();
+        Assertions.assertNotNull(src); // assert it gets evaluated
+
+        var resourceFromState = javers.getLatestSnapshot("dummy", DummyResource.class).get();
+        var state = (Resource) JaversUtils.mapSnapshotToObject(resourceFromState, DummyResource.class);
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
+
+        var provider = manager.getProvider(DummyResource.class);
+        var cloud = provider.read(src);
+        Assertions.assertEquals(src, cloud);
     }
 
     /**

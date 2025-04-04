@@ -7,6 +7,7 @@ import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -30,4 +31,10 @@ public class Resource {
         this.resourceName = resourceName;
     }
 
+    public Set<String> getDependencies() {
+        if (dependencies == null) {
+            dependencies = new HashSet<>();
+        }
+        return dependencies;
+    }
 }

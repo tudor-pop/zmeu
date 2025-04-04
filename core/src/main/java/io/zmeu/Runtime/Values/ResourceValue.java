@@ -88,6 +88,12 @@ public class ResourceValue  {
         }
         return dependencies;
     }
+    public Set<String> dependenciesOrNull() {
+        if (dependencies != null && dependencies.isEmpty()) {
+            return null;
+        }
+        return dependencies;
+    }
 
     public boolean hasDependencies() {
         return !getDependencies().isEmpty();
