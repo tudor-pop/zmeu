@@ -24,10 +24,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Extension
-public abstract class Provider<T extends Resource> implements IProvider<T> {
+public abstract class Provider implements IProvider {
     private final Map<String, Class<?>> schemaMap = new HashMap<>();
     @Getter
-    private final T resource;
+    private final Object resource;
 
     public Provider() {
         this.resource = initResource();
@@ -37,7 +37,7 @@ public abstract class Provider<T extends Resource> implements IProvider<T> {
     /**
      * Use this method to create an instance of your resource
      */
-    protected abstract T initResource();
+    protected abstract Object initResource();
 
     public SchemaDefinition schema() {
         return SchemaDefinition.toSchema(resource);

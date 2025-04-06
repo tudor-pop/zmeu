@@ -1,6 +1,7 @@
 package io.zmeu.Dummy;
 
 import io.zmeu.api.Provider;
+import io.zmeu.api.resource.Resource;
 import io.zmeu.api.resource.Resources;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,32 +9,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DummyProvider extends Provider<DummyResource> {
-    private final Map<String, DummyResource> resources = new HashMap<>();
+public class DummyProvider extends Provider {
+    private final Map<String, Resource> resources = new HashMap<>();
 
     @Override
-    public DummyResource initResource() {
+    public Object initResource() {
         return new DummyResource();
     }
 
     @Override
-    public DummyResource create(DummyResource resource) {
+    public Resource create(Resource resource) {
         return resources.put(resource.getResourceName(), resource);
     }
 
     @Override
-    public DummyResource read(DummyResource resource) {
+    public Resource read(Resource resource) {
         if (resource == null) return null;
         return resources.get(resource.getResourceName());
     }
 
     @Override
-    public DummyResource update(DummyResource resource) {
+    public Resource update(Resource resource) {
         return resources.put(resource.getResourceName(), resource);
     }
 
     @Override
-    public boolean delete(DummyResource resource) {
+    public boolean delete(Resource resource) {
         return resources.remove(resource.getResourceName()) != null;
     }
 }

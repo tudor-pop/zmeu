@@ -4,7 +4,6 @@ import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
-import io.zmeu.api.schema.SchemaDefinition;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -90,5 +89,9 @@ public class PluginFactory {
                 .stream()
                 .map(Provider::schemasString)
                 .collect(Collectors.joining());
+    }
+
+    public Class<?> getSchema(String schema) {
+        return pluginHashMap.get(schema).getSchema(schema);
     }
 }

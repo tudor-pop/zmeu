@@ -12,17 +12,16 @@ import org.javers.core.metamodel.annotation.TypeName;
 
 @SuperBuilder
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "", typeName = "DummyResource")
 @TypeName("DummyResource")
-public class DummyResource extends Resource {
+public class DummyResource {
     @Property(type = Property.Type.String)
     private String name;
     @Property(type = Property.Type.String)
     private String content;
-
     @Property(type = Property.Type.String)
     private String uid;
 }

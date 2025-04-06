@@ -38,8 +38,7 @@ public class ResourceManager {
             for (ResourceValue resourceObject : instances.getVariables().values()) {
                 var provider = getProvider(schemaName);
 
-                var className = provider.getSchema(resourceObject.getSchema().getType());
-                var mergeResult = plan(provider, resourceObject, className);
+                var mergeResult = plan(provider, resourceObject);
                 plan.add(mergeResult);
             }
         }
@@ -47,14 +46,16 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public MergeResult plan(Provider provider, ResourceValue resource, Class schema) {
-        var sourceState = (Resource) mapper.convertValue(resource.getProperties().getVariables(), schema);
+    public MergeResult plan(Provider provider, ResourceValue resource) {
+        var schema = provider.getSchema(resource.getSchema().getType());
+        var o = mapper.convertValue(resource.getProperties().getVariables(), schema);
+        var sourceState = new Resource(o);
         updateStateMetadata(resource, sourceState);
 
         var cloudState = provider.read(sourceState);
         updateStateMetadata(resource, cloudState);
 
-        var snapshot = javers.getLatestSnapshot(resource.getName(), schema).orElse(null);
+        var snapshot = javers.getLatestSnapshot(resource.getName(), Resource.class).orElse(null);
         if (snapshot == null) {
             return diff.merge(null, sourceState, cloudState);
         }
@@ -65,11 +66,12 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public MergeResult plan(Resource srcResource, Class schema) {
+    public MergeResult plan(Resource srcResource) {
+        var schema = srcResource.getResource().getClass();
         var cloudState = getProvider(schema).read(srcResource);
         updateStateMetadata(srcResource, cloudState);
 
-        var snapshot = javers.getLatestSnapshot(srcResource.getResourceName(), schema).orElse(null);
+        var snapshot = javers.getLatestSnapshot(srcResource.getResourceName(), srcResource.getClass()).orElse(null);
         if (snapshot == null) {
             return diff.merge(null, srcResource, cloudState);
         }

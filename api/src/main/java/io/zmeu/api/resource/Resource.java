@@ -1,5 +1,7 @@
 package io.zmeu.api.resource;
 
+import io.zmeu.api.schema.Property;
+import io.zmeu.api.schema.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -8,10 +10,10 @@ import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
-@SuperBuilder
 @Entity
 @EqualsAndHashCode
 public class Resource {
@@ -23,12 +25,27 @@ public class Resource {
 
     private Set<String> dependencies;
     private Set<String> readOnly;
+    private Object resource;
+    private String type;
 
     public Resource() {
     }
 
+    public Resource(Object resource) {
+        setResource(resource);
+    }
+
     public Resource(String resourceName) {
         this.resourceName = resourceName;
+    }
+    public Resource(String resourceName, Object resource) {
+        this.resourceName = resourceName;
+        setResource(resource);
+    }
+
+    public void setResource(Object resource) {
+        this.resource = resource;
+        this.type = resource.getClass().getAnnotation(Schema.class).typeName();
     }
 
     public Set<String> getDependencies() {
