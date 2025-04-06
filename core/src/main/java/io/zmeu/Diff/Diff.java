@@ -87,23 +87,24 @@ public class Diff {
             javers.processChangeList(changes1, changeProcessor);
 
             for (ChangesByObject changes : changes1.groupByObject()) {
-                var typeName = changes.getGlobalId().getTypeName();
+                var provider = map.get(mergeResult.resource().getType());
 
-                var provider = map.get(typeName);
-
-                if (!changes.getNewObjects().isEmpty()) {
-                    provider.create(mergeResult.resource());
-                } else if (!changes.getObjectsRemoved().isEmpty()) {
-                    provider.delete(mergeResult.resource());
-                } else {
-                    changeProcessor.setType(ResourceChange.CHANGE);
-                    provider.update(mergeResult.resource());
-                }
-
+                apply(mergeResult, changes, provider, changeProcessor);
             }
             javers.commit("Tudor", mergeResult.resource());
         }
         return plan;
+    }
+
+    private static void apply(MergeResult mergeResult, ChangesByObject changes, Provider provider, ResourceChangeLog changeProcessor) {
+        if (!changes.getNewObjects().isEmpty()) {
+            provider.create(mergeResult.resource());
+        } else if (!changes.getObjectsRemoved().isEmpty()) {
+            provider.delete(mergeResult.resource());
+        } else {
+            changeProcessor.setType(ResourceChange.CHANGE);
+            provider.update(mergeResult.resource());
+        }
     }
 
 }

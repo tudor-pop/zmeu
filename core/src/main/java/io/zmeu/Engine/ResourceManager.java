@@ -10,18 +10,19 @@ import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
+import org.modelmapper.ModelMapper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceManager {
     private final HashMap<String, Provider> factory;
-    private final ObjectMapper mapper;
+    private final ModelMapper mapper;
     private final Diff diff;
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
-    public ResourceManager(HashMap<String, Provider> factory, ObjectMapper mapper, Diff diff) {
+    public ResourceManager(HashMap<String, Provider> factory, ModelMapper mapper, Diff diff) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
@@ -48,7 +49,7 @@ public class ResourceManager {
     @SneakyThrows
     public MergeResult plan(Provider provider, ResourceValue resource) {
         var schema = provider.getSchema(resource.getSchema().getType());
-        var o = mapper.convertValue(resource.getProperties().getVariables(), schema);
+        var o = mapper.map(resource.getProperties().getVariables(), schema);
         var sourceState = new Resource(o);
         updateStateMetadata(resource, sourceState);
 
@@ -111,6 +112,19 @@ public class ResourceManager {
 
     public Provider getProvider(Class schema) {
         return factory.get(schema.getSimpleName());
+    }
+
+    public Object findByResourceName(String resourceName) {
+        var snapshot = javers.getLatestSnapshot(resourceName, Resource.class).get();
+        var state = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
+        state.setResource(mapper.map(state.getResource(), getSchema(state)));
+
+        return state;
+    }
+
+    private Class<?> getSchema(Resource state) {
+        return getProvider(state.getType())
+                .getSchema(state.getType());
     }
 
 }

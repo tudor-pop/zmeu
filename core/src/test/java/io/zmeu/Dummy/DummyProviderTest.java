@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
@@ -30,10 +31,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
     @BeforeEach
     void setUp() {
-        var yamlMapper = YAMLMapper.builder().build();
         var diff = new Diff(JaversFactory.createNoDb(), mapper);
         factory = new PluginFactory(new Zmeufile(new Dependencies(List.of())));
-        manager = new ResourceManager(factory.getPluginHashMap(), yamlMapper, diff);
+        manager = new ResourceManager(factory.getPluginHashMap(), new ModelMapper(), diff);
         factory.loadPlugins();
     }
 
@@ -65,9 +65,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         var src = plan.getMergeResults().getFirst().resource();
         Assertions.assertNotNull(src); // assert it gets evaluated
 
-        var resourceFromState = javers.getLatestSnapshot("dummy", Resource.class).get();
-        var state = JaversUtils.mapSnapshotToObject(resourceFromState, Resource.class);
-        mapper.map(resourceFromState, DummyResource.class);
+        var state = manager.findByResourceName("dummy");
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
@@ -85,8 +83,8 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     void addResourceToJaversExistingResourceInCloud() {
         var resource = new Resource("dummy",
                 DummyResource.builder()
-                .content("dummy")
-                .build()
+                        .content("dummy")
+                        .build()
         );
 
 
@@ -103,28 +101,27 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertNotNull(mergeResult.resource());
 
         manager.apply(plan);
-        var src = mergeResult.resource();
-        var dummy = javers.getLatestSnapshot("dummy", Resource.class).get();
-        var state = JaversUtils.mapSnapshotToObject(dummy, Resource.class);
-        state.setResource(mapper.map(state.getResource(), factory.getSchema(state.getType())));
-        Assertions.assertEquals(src, state);
+        var srcResource = mergeResult.resource();
 
-        var cloud = provider.read(src);
-        Assertions.assertEquals(src, cloud);
-        Assertions.assertEquals(src, state);
+        var stateResource = manager.findByResourceName("dummy");
+        Assertions.assertEquals(srcResource, stateResource);
+
+        var cloud = provider.read(srcResource);
+        Assertions.assertEquals(srcResource, cloud);
+        Assertions.assertEquals(srcResource, stateResource);
     }
 
-    /**
-     * resource exist in src and state but not in cloud should show cli output as ADD operation
-     */
+//    /**
+//     * resource exist in src and state but not in cloud should show cli output as ADD operation
+//     */
 //    @Test
 //    void resourceExistsSrcAndJaversMissingCloud() {
-//        var resource = Resource.builder()
-//                .resourceName("dummy")
-//                .resource(DummyResource.builder()
+//        var resource = new Resource(
+//                "dummy",
+//                DummyResource.builder()
 //                        .content("dummy")
-//                        .build())
-//                .build();
+//                        .build()
+//        );
 //
 //        var provider = manager.getProvider(DummyResource.class);
 //        javers.commit("dummy", resource);

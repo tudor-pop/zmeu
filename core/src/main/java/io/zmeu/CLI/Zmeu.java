@@ -47,7 +47,7 @@ public class Zmeu {
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
-        this.resourceManager = new ResourceManager(pluginFactory.getPluginHashMap(), objectMapper, diff);
+        this.resourceManager = new ResourceManager(pluginFactory.getPluginHashMap(), new ModelMapper(), diff);
     }
 
     @SneakyThrows
