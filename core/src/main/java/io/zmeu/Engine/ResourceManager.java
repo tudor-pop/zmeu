@@ -8,12 +8,17 @@ import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+
+import static io.zmeu.Engine.ResourceManagerUtils.updateStateMetadata;
 
 public class ResourceManager {
     private final HashMap<String, Provider> factory;
@@ -47,55 +52,36 @@ public class ResourceManager {
     }
 
     @SneakyThrows
-    public MergeResult plan(Provider provider, ResourceValue resource) {
+    private MergeResult plan(Provider provider, ResourceValue resource) {
         var schema = provider.getSchema(resource.getSchema().getType());
-        var o = mapper.map(resource.getProperties().getVariables(), schema);
-        var sourceState = new Resource(o);
+        var srcResource = mapper.map(resource.getProperties().getVariables(), schema);
+        var sourceState = new Resource(srcResource);
         updateStateMetadata(resource, sourceState);
 
-        var cloudState = provider.read(sourceState);
-        updateStateMetadata(resource, cloudState);
-
-        var snapshot = javers.getLatestSnapshot(resource.getName(), Resource.class).orElse(null);
-        if (snapshot == null) {
-            return diff.merge(null, sourceState, cloudState);
-        }
-
-        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, schema);
-        updateStateMetadata(resource, javersState);
-        return diff.merge(javersState, sourceState, cloudState);
+        return plan(sourceState);
     }
 
     @SneakyThrows
-    public MergeResult plan(Resource srcResource) {
-        var schema = srcResource.getResource().getClass();
-        var cloudState = getProvider(schema).read(srcResource);
-        updateStateMetadata(srcResource, cloudState);
+    public MergeResult plan(Resource src) {
+        Provider provider = getProvider(src.getType());
 
-        var snapshot = javers.getLatestSnapshot(srcResource.getResourceName(), srcResource.getClass()).orElse(null);
+        var cloudState = provider.read(src);
+        updateStateMetadata(src, cloudState);
+
+        var snapshot = javers.getLatestSnapshot(src.getResourceName(), src.getClass()).orElse(null);
         if (snapshot == null) {
-            return diff.merge(null, srcResource, cloudState);
+            return diff.merge(null, src, cloudState);
         }
 
-        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, schema);
-        updateStateMetadata(srcResource, javersState);
-        return diff.merge(javersState, srcResource, cloudState);
+        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, src.getResourceClass());
+        updateStateMetadata(src, javersState);
+        return diff.merge(javersState, src, cloudState);
     }
 
-    private static void updateStateMetadata(ResourceValue resource, Resource sourceState) {
-        if (sourceState != null) {
-            sourceState.setResourceName(resource.getName());
-            sourceState.setDependencies(resource.getDependencies());
-            sourceState.setReadOnly(resource.getReadOnly());
-        }
-    }
-
-    private static void updateStateMetadata(Resource resource, Resource sourceState) {
-        if (sourceState != null) {
-            sourceState.setResourceName(resource.getResourceName());
-            sourceState.setDependencies(resource.getDependencies());
-            sourceState.setReadOnly(resource.getReadOnly());
-        }
+    public Plan toPlan(MergeResult src) {
+        Plan plan = new Plan();
+        plan.add(src);
+        return plan;
     }
 
     public Plan apply(Plan plan) {

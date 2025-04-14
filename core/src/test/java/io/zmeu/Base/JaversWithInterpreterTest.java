@@ -26,4 +26,10 @@ public class JaversWithInterpreterTest extends BaseChecker {
         closeable.close();
     }
 
+    @Override
+    protected Object eval(String source) {
+        program = super.src(source);
+        checker.eval(program);
+        return interpreter.eval(program);
+    }
 }

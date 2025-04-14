@@ -3,7 +3,6 @@ package io.zmeu.Dummy;
 import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
-import io.zmeu.Diff.Plan;
 import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
@@ -37,30 +36,28 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     }
 
     /**
-     * resource doesn't exist in cloud or state
+     * resource doesn't exist in cloud or state. Should be created/added
      */
     @Test
     void resourceMissingCloudAndState() {
-        eval("""
-                schema DummyResource {
-                    var content String
-                }
-                resource dummy DummyResource {
-                   content = "some content";
-                }
-                """);
-        interpreter.eval(program);
+        var dummyResource = DummyResource.builder()
+                .content("some content")
+                .build();
+        var src = new Resource("dummy", dummyResource);
 
-        var plan = manager.apply(interpreter.getResources());
+        var plan = manager.plan(src);
+        Assertions.assertTrue(plan.isNewResource()); // if true, resource should be added to both state and cloud
 
-        var src = plan.findByResourceName("dummy").orElseThrow();
-
+        // apply to state
+        manager.apply(manager.toPlan(plan));
         var state = manager.findByResourceName("dummy");
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
+        // read from cloud
         var provider = manager.getProvider(DummyResource.class);
         var cloud = provider.read(src);
+        Assertions.assertNotNull(cloud); // assert resource was saved in state
         Assertions.assertEquals(src, cloud);
     }
 
@@ -71,34 +68,31 @@ class DummyProviderTest extends JaversWithInterpreterTest {
      */
     @Test
     void addResourceToJaversExistingResourceInCloud() {
-        var resource = new Resource("dummy",
-                DummyResource.builder()
-                        .content("dummy")
-                        .build()
-        );
+        eval("""
+                schema DummyResource {
+                    var content String
+                }
+                resource dummy DummyResource {
+                   content = "some content";
+                }
+                """);
+        // resource present in code
+        var plan = manager.plan(interpreter.getResources());
+        var resource = plan.findByResourceName("dummy").orElseThrow();
 
-
+        // resource present in cloud
         var provider = manager.getProvider(DummyResource.class);
-        provider.create(resource);
-
-        var mergeResult = manager.plan(resource);
-        var plan = new Plan();
-        plan.add(mergeResult);
+        provider.create(resource); // create it in cloud
 
         // when cloud resource exists in src and cloud but not in javers, just update javers data
         // no changes should be shown in cli output but the objects should be commited to jvers
-        Assertions.assertTrue(mergeResult.changes().isEmpty());
-        Assertions.assertNotNull(mergeResult.resource());
-
         manager.apply(plan);
-        var srcResource = mergeResult.resource();
-
         var stateResource = manager.findByResourceName("dummy");
-        Assertions.assertEquals(srcResource, stateResource);
+        Assertions.assertEquals(resource, stateResource);
 
-        var cloud = provider.read(srcResource);
-        Assertions.assertEquals(srcResource, cloud);
-        Assertions.assertEquals(srcResource, stateResource);
+        var cloud = provider.read(resource);
+        Assertions.assertEquals(resource, cloud);
+        Assertions.assertEquals(resource, stateResource);
     }
 
 //    /**

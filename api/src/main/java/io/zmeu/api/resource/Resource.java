@@ -54,4 +54,8 @@ public class Resource {
         }
         return dependencies;
     }
+
+    public Class<?> getResourceClass() {
+        return resource.getClass();
+    }
 }
