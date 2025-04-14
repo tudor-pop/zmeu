@@ -57,13 +57,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 """);
         interpreter.eval(program);
 
+        var plan = manager.apply(interpreter.getResources());
 
-        var resources = interpreter.getResources();
-        var plan = manager.plan(resources);
-        manager.apply(plan);
-
-        var src = plan.getMergeResults().getFirst().resource();
-        Assertions.assertNotNull(src); // assert it gets evaluated
+        var src = plan.findResourceByName("dummy").orElseThrow();
 
         var state = manager.findByResourceName("dummy");
         Assertions.assertNotNull(state); // assert resource was saved in state

@@ -98,8 +98,12 @@ public class ResourceManager {
         }
     }
 
-    public void apply(Plan plan) {
-        diff.apply(plan, this.factory);
+    public Plan apply(Plan plan) {
+        return diff.apply(plan, this.factory);
+    }
+
+    public Plan apply(Map<String, Environment<ResourceValue>> schemas) {
+        return apply(plan(schemas));
     }
 
     public ResourceValue add(ResourceValue resource) {
@@ -115,8 +119,11 @@ public class ResourceManager {
     }
 
     public Object findByResourceName(String resourceName) {
-        var snapshot = javers.getLatestSnapshot(resourceName, Resource.class).get();
-        var state = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
+        var snapshot = javers.getLatestSnapshot(resourceName, Resource.class);
+        if (snapshot.isEmpty()) {
+            return null;
+        }
+        var state = JaversUtils.mapSnapshotToObject(snapshot.get(), Resource.class);
         state.setResource(mapper.map(state.getResource(), getSchema(state)));
 
         return state;
