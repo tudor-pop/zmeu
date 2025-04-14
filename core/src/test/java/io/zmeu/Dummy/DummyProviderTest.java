@@ -1,25 +1,19 @@
 package io.zmeu.Dummy;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
 import io.zmeu.Diff.Plan;
-import io.zmeu.Engine.JaversUtils;
 import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
-import org.javers.repository.jql.JqlQuery;
-import org.javers.repository.jql.QueryBuilder;
-import org.javers.shadow.Shadow;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
@@ -57,13 +51,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 """);
         interpreter.eval(program);
 
+        var plan = manager.apply(interpreter.getResources());
 
-        var resources = interpreter.getResources();
-        var plan = manager.plan(resources);
-        manager.apply(plan);
-
-        var src = plan.getMergeResults().getFirst().resource();
-        Assertions.assertNotNull(src); // assert it gets evaluated
+        var src = plan.findByResourceName("dummy").orElseThrow();
 
         var state = manager.findByResourceName("dummy");
         Assertions.assertNotNull(state); // assert resource was saved in state
