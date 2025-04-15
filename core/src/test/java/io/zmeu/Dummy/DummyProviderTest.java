@@ -67,32 +67,26 @@ class DummyProviderTest extends JaversWithInterpreterTest {
      * no changes should be shown in cli output but the objects should be commited to jvers
      */
     @Test
-    void addResourceToJaversExistingResourceInCloud() {
-        eval("""
-                schema DummyResource {
-                    var content String
-                }
-                resource dummy DummyResource {
-                   content = "some content";
-                }
-                """);
-        // resource present in code
-        var plan = manager.plan(interpreter.getResources());
-        var resource = plan.findByResourceName("dummy").orElseThrow();
+    void importToJaversFromCloudShouldFailWithoutImport() {
+        var dummyResource = DummyResource.builder()
+                .content("some content")
+                .build();
+        var src = new Resource("dummy", dummyResource);
 
-        // resource present in cloud
+        var plan = manager.plan(src);
+        Assertions.assertTrue(plan.isNewResource()); // if true, resource should be added to both state and cloud
+
+        // apply to state
+        manager.apply(manager.toPlan(plan));
+        var state = manager.findByResourceName("dummy");
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
+
+        // read from cloud
         var provider = manager.getProvider(DummyResource.class);
-        provider.create(resource); // create it in cloud
-
-        // when cloud resource exists in src and cloud but not in javers, just update javers data
-        // no changes should be shown in cli output but the objects should be commited to jvers
-        manager.apply(plan);
-        var stateResource = manager.findByResourceName("dummy");
-        Assertions.assertEquals(resource, stateResource);
-
-        var cloud = provider.read(resource);
-        Assertions.assertEquals(resource, cloud);
-        Assertions.assertEquals(resource, stateResource);
+        var cloud = provider.read(src);
+        Assertions.assertNotNull(cloud); // assert resource was saved in state
+        Assertions.assertEquals(src, cloud);
     }
 
 //    /**

@@ -89,21 +89,21 @@ public class Diff {
             for (ChangesByObject changes : changes1.groupByObject()) {
                 var provider = map.get(mergeResult.resource().getType());
 
-                apply(mergeResult, changes, provider, changeProcessor);
+                apply(mergeResult.resource(), changes, provider, changeProcessor);
             }
             javers.commit("Tudor", mergeResult.resource());
         }
         return plan;
     }
 
-    private static void apply(MergeResult mergeResult, ChangesByObject changes, Provider provider, ResourceChangeLog changeProcessor) {
+    private static void apply(Resource resource, ChangesByObject changes, Provider provider, ResourceChangeLog changeProcessor) {
         if (!changes.getNewObjects().isEmpty()) {
-            provider.create(mergeResult.resource());
+            provider.create(resource);
         } else if (!changes.getObjectsRemoved().isEmpty()) {
-            provider.delete(mergeResult.resource());
+            provider.delete(resource);
         } else {
             changeProcessor.setType(ResourceChange.CHANGE);
-            provider.update(mergeResult.resource());
+            provider.update(resource);
         }
     }
 

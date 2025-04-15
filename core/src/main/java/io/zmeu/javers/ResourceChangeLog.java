@@ -1,6 +1,7 @@
 package io.zmeu.javers;
 
 import io.zmeu.Diff.ResourceChange;
+import io.zmeu.api.resource.Resource;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.Ansi;
@@ -28,6 +29,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private InstanceId id;
     private static final String EQUALS = "\t= ";
     private boolean resourcePrinted = false;
+    private Resource resource;
 
     public ResourceChangeLog(boolean enableStdout) {
         this.enableStdout = enableStdout;
@@ -66,12 +68,16 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             case InitialValueChange ignored -> ADD;
             default -> CHANGE;
         };
-        if (this.id == null) {
-            this.id = (InstanceId) change.getAffectedGlobalId();
+
+        if (this.id == null && change.getAffectedGlobalId() instanceof InstanceId instanceId) {
+            this.id = instanceId;
+        }
+        if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource resource) {
+            this.resource = resource;
         }
         if (!resourcePrinted) {
             resourcePrinted = true;
-            append(getText(type, this.id));
+            append(getText(type, this.resource));
         }
     }
 
@@ -119,11 +125,8 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     public void onNewObject(NewObject newObject) {
     }
 
-    private @NotNull String getText(ResourceChange coloredChange, GlobalId affectedGlobalId) {
-        if (affectedGlobalId instanceof InstanceId instanceId) {
-            id = instanceId;
-        }
-        return coloredChange.coloredOperation() + " resource %s %s {".formatted(id.getTypeName(), id.getCdoId());
+    private @NotNull String getText(ResourceChange coloredChange,  Resource resource) {
+        return coloredChange.coloredOperation() + " resource %s %s {".formatted(resource.getResourceName(), resource.getType());
     }
 
     @Override

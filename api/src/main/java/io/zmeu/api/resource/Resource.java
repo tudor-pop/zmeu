@@ -1,16 +1,13 @@
 package io.zmeu.api.resource;
 
-import io.zmeu.api.schema.Property;
 import io.zmeu.api.schema.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.SuperBuilder;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -22,7 +19,6 @@ public class Resource {
     @Id
     @DiffIgnore
     private String resourceName;
-
     private Set<String> dependencies;
     private Set<String> readOnly;
     private Object resource;
