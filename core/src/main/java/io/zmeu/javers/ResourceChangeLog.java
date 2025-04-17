@@ -1,5 +1,8 @@
 package io.zmeu.javers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
 import io.zmeu.api.resource.Resource;
 import lombok.Setter;
@@ -17,6 +20,10 @@ import org.javers.core.metamodel.object.GlobalId;
 import org.javers.core.metamodel.object.InstanceId;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static io.zmeu.Diff.ResourceChange.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -30,12 +37,15 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private static final String EQUALS = "\t= ";
     private boolean resourcePrinted = false;
     private Resource resource;
+    private ObjectMapper mapper = new ObjectMapper();
 
     public ResourceChangeLog(boolean enableStdout) {
+        this();
         this.enableStdout = enableStdout;
     }
 
     public ResourceChangeLog() {
+        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
     }
 
     @Override
@@ -87,7 +97,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void afterChange(Change change) {
-        append("\n");
+//        append("\n");
         this.type = switch (change) {
             case ObjectRemoved removed -> REMOVE;
             case TerminalValueChange removed -> REMOVE;
@@ -99,13 +109,23 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     public void onValueChange(ValueChange change) {
+        var right = change.getRight();
+        if (right instanceof String) return;
+
+        var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {});
         switch (change) {
             case InitialValueChange valueChange ->
-                    append("%s\t%s%s%s".formatted(ADD.coloredOperation(), change.getPropertyName(), EQUALS, quotes(change.getRight())));
+                    attributes.forEach((property, value) ->
+                            appendln("%s\t%s%s%s".formatted(ADD.coloredOperation(), property, EQUALS, quotes(value)))
+                    );
             case TerminalValueChange valueChange ->
-                    append("%s\t%s%s%s".formatted(REMOVE.coloredOperation(), change.getPropertyName(), EQUALS, quotes(change.getRight())));
+                    attributes.forEach((property,value)->
+                            appendln("%s\t%s%s%s".formatted(REMOVE.coloredOperation(), property, EQUALS, quotes(value)))
+                    );
             default ->
-                    append("\n%s\t%s%s%s -> %s".formatted(CHANGE.coloredOperation(), change.getPropertyName(), EQUALS, quotes(change.getLeft()), quotes(change.getRight())));
+                    attributes.forEach((property,value)->
+                            appendln("\n%s\t%s%s%s -> %s".formatted(CHANGE.coloredOperation(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
+                    );
         }
     }
 
@@ -123,6 +143,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onNewObject(NewObject newObject) {
+        append("\n");
     }
 
     private @NotNull String getText(ResourceChange coloredChange,  Resource resource) {
