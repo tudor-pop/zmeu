@@ -110,7 +110,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     public void onValueChange(ValueChange change) {
         var right = change.getRight();
-        if (!change.getPropertyName().equals("resource")) return;
+        if (!change.getPropertyName().equals("resource")) return; // only print resource properties, not anything else
 
         var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {});
         switch (change) {
