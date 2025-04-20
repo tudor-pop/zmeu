@@ -16,7 +16,7 @@ public enum ResourceChange {
         this.color = color;
     }
 
-    public String coloredOperation() {
+    public String toColor() {
         return color.formatted(symbol);
     }
 

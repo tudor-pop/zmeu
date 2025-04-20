@@ -20,9 +20,7 @@ import org.javers.core.metamodel.object.GlobalId;
 import org.javers.core.metamodel.object.InstanceId;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static io.zmeu.Diff.ResourceChange.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -57,7 +55,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Override
     public void afterChangeList() {
         if (type != NO_OP) {
-            append(type.coloredOperation() + " }");
+            append(type.toColor() + " }");
         }
         ansi = ansi.render(result());
         if (enableStdout) {
@@ -116,15 +114,15 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         switch (change) {
             case InitialValueChange valueChange ->
                     attributes.forEach((property, value) ->
-                            appendln("%s\t%s%s%s".formatted(ADD.coloredOperation(), property, EQUALS, quotes(value)))
+                            appendln("%s\t%s%s%s".formatted(ADD.toColor(), property, EQUALS, quotes(value)))
                     );
             case TerminalValueChange valueChange ->
                     attributes.forEach((property,value)->
-                            appendln("%s\t%s%s%s".formatted(REMOVE.coloredOperation(), property, EQUALS, quotes(value)))
+                            appendln("%s\t%s%s%s".formatted(REMOVE.toColor(), property, EQUALS, quotes(value)))
                     );
             default ->
                     attributes.forEach((property,value)->
-                            appendln("\n%s\t%s%s%s -> %s".formatted(CHANGE.coloredOperation(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
+                            appendln("\n%s\t%s%s%s -> %s".formatted(CHANGE.toColor(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
                     );
         }
     }
@@ -138,7 +136,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onReferenceChange(ReferenceChange change) {
-        appendln(CHANGE.coloredOperation() + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
+        appendln(CHANGE.toColor() + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
     }
 
     @Override
@@ -147,7 +145,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     private @NotNull String getText(ResourceChange coloredChange,  Resource resource) {
-        return coloredChange.coloredOperation() + " resource %s %s {".formatted(resource.getResourceName(), resource.getType());
+        return coloredChange.toColor() + " resource %s %s {".formatted(resource.getResourceName(), resource.getType());
     }
 
     @Override
