@@ -1,12 +1,14 @@
 package io.zmeu.Engine;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.javers.core.metamodel.annotation.Id;
 import org.javers.core.metamodel.object.CdoSnapshot;
 import org.javers.core.metamodel.object.InstanceId;
 
 import java.lang.reflect.Field;
 
+@Slf4j
 public class JaversUtils {
     // Method to map snapshot properties to an instance of the target class
     public static <T> T mapSnapshotToObject(@NonNull CdoSnapshot snapshot, Class<T> targetClass) {
@@ -29,6 +31,7 @@ public class JaversUtils {
                     field.setAccessible(true);
                     field.set(instance, propertyValue);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
+                    log.error(e.getMessage(), e);
                     // Ignore fields that are not in the target class
                 }
             });

@@ -1,6 +1,6 @@
 package io.zmeu.Utils;
 
-import io.zmeu.api.schema.Property;
+import io.zmeu.api.annotations.Property;
 
 import java.lang.reflect.Field;
 

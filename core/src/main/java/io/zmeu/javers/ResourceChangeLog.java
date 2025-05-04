@@ -18,6 +18,7 @@ import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
 import org.javers.core.metamodel.object.InstanceId;
+import org.javers.core.metamodel.object.ValueObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -31,7 +32,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private ResourceChange type = NO_OP;
     private Ansi ansi;
     private boolean enableStdout;
-    private InstanceId id;
     private static final String EQUALS = "\t= ";
     private boolean resourcePrinted = false;
     private Resource resource;
@@ -65,7 +65,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onAffectedObject(GlobalId globalId) {
-        this.id = (InstanceId) globalId;
     }
 
     @Override
@@ -77,9 +76,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             default -> CHANGE;
         };
 
-        if (this.id == null && change.getAffectedGlobalId() instanceof InstanceId instanceId) {
-            this.id = instanceId;
-        }
+
         if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource resource) {
             this.resource = resource;
         }

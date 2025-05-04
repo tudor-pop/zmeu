@@ -1,5 +1,7 @@
 package io.zmeu.api.schema;
 
+import io.zmeu.api.annotations.Schema;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -11,6 +13,7 @@ import java.util.Set;
 @SupportedAnnotationTypes("io.zmeu.Schema")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class SchemaProcessor extends AbstractProcessor {
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (var element : roundEnv.getElementsAnnotatedWith(Schema.class)) {

@@ -1,8 +1,8 @@
 package io.zmeu.Dummy;
 
-import io.zmeu.api.resource.Resource;
-import io.zmeu.api.schema.Property;
-import io.zmeu.api.schema.Schema;
+import io.zmeu.api.annotations.Property;
+import io.zmeu.api.annotations.Schema;
+import io.zmeu.api.schema.Type;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,10 +18,10 @@ import org.javers.core.metamodel.annotation.TypeName;
 @Schema(description = "", typeName = "DummyResource")
 @TypeName("DummyResource")
 public class DummyResource {
-    @Property(type = Property.Type.String)
+    @Property(type = Type.String)
     private String name;
-    @Property(type = Property.Type.String)
+    @Property(type = Type.String)
     private String content;
-    @Property(type = Property.Type.String)
+    @Property(type = Type.String)
     private String uid;
 }

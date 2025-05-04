@@ -21,7 +21,10 @@ public class ResourceValue  {
     @JsonProperty("resourceName")
     private String name;
     private Set<String> dependencies;
-    private Set<String> readOnly;
+    /**
+     * indicate if the cloud resource should only be read and not updated
+     */
+    private Boolean readOnly;
 
     public ResourceValue() {
     }

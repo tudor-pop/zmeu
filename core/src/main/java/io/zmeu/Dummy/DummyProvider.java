@@ -2,7 +2,6 @@ package io.zmeu.Dummy;
 
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
-import io.zmeu.api.resource.Resources;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;

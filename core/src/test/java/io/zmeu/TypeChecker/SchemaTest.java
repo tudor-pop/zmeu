@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
 @DisplayName("TypeChecker Schema")
-public class SchemaDefinitionTest extends BaseChecker {
+public class SchemaTest extends BaseChecker {
 
     @Test
     void equals() {

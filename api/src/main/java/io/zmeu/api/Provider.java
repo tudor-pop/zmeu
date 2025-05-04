@@ -15,8 +15,7 @@
  */
 package io.zmeu.api;
 
-import io.zmeu.api.resource.Resource;
-import io.zmeu.api.schema.SchemaDefinition;
+import io.zmeu.api.schema.Schema;
 import lombok.Getter;
 import org.pf4j.Extension;
 
@@ -39,12 +38,12 @@ public abstract class Provider implements IProvider {
      */
     protected abstract Object initResource();
 
-    public SchemaDefinition schema() {
-        return SchemaDefinition.toSchema(resource);
+    public Schema schema() {
+        return Schema.toSchema(resource);
     }
 
     private Map<String, Class<?>> schemasMap() {
-        var definition = SchemaDefinition.toSchema(resource);
+        var definition = Schema.toSchema(resource);
         schemaMap.put(definition.getName(), definition.getResourceClass());
         return schemaMap;
     }
@@ -54,7 +53,7 @@ public abstract class Provider implements IProvider {
     }
 
     public String schemasString() {
-        return SchemaDefinition.toString(resource);
+        return Schema.toString(resource);
     }
 
 }

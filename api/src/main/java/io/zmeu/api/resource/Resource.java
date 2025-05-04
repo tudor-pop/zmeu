@@ -1,6 +1,6 @@
 package io.zmeu.api.resource;
 
-import io.zmeu.api.schema.Schema;
+import io.zmeu.api.annotations.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -20,9 +20,12 @@ public class Resource {
     @DiffIgnore
     private String resourceName;
     private Set<String> dependencies;
-    private Set<String> readOnly;
     private Object resource;
     private String type;
+    /**
+     * indicate if this resource should only read from cloud and not write/update the cloud/javers state
+     */
+    private Boolean readOnly;
 
     public Resource() {
     }

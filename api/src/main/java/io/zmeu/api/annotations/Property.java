@@ -1,6 +1,6 @@
-package io.zmeu.api.schema;
+package io.zmeu.api.annotations;
 
-import lombok.Getter;
+import io.zmeu.api.schema.Type;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,16 +25,5 @@ public @interface Property {
     boolean recreateOnChange() default false;
 
     boolean hidden() default false;
-
-    @Getter
-    enum Type {
-        String("String"), Number("Number"), Boolean("Boolean");
-        private final String value;
-
-        Type(String value) {
-            this.value = value;
-        }
-
-    }
 
 }
