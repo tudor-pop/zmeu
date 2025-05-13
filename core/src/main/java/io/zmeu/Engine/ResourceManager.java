@@ -8,26 +8,22 @@ import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
-import org.jetbrains.annotations.NotNull;
-import org.modelmapper.ModelMapper;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static io.zmeu.Engine.ResourceManagerUtils.updateStateMetadata;
 
 public class ResourceManager {
     private final HashMap<String, Provider> factory;
-    private final ModelMapper mapper;
+    private final ObjectMapper mapper;
     private final Diff diff;
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
-    public ResourceManager(HashMap<String, Provider> factory, ModelMapper mapper, Diff diff) {
+    public ResourceManager(HashMap<String, Provider> factory, ObjectMapper mapper, Diff diff) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
@@ -54,8 +50,8 @@ public class ResourceManager {
     @SneakyThrows
     private MergeResult plan(Provider provider, ResourceValue resource) {
         var schema = provider.getSchema(resource.getSchema().getType());
-        var srcResource = mapper.map(resource.getProperties().getVariables(), schema);
-        var sourceState = new Resource(srcResource);
+        var srcResource =  mapper.convertValue(resource.getProperties().getVariables(), schema);
+        var sourceState = new Resource(resource.getName(), srcResource);
         updateStateMetadata(resource, sourceState);
 
         return plan(sourceState);
@@ -63,7 +59,8 @@ public class ResourceManager {
 
     @SneakyThrows
     public MergeResult plan(Resource src) {
-        Provider provider = getProvider(src.getType());
+        var provider = getProvider(src.getType());
+        var schema = provider.getSchema(src.getType());
 
         var cloudState = provider.read(src);
         updateStateMetadata(src, cloudState);
@@ -72,8 +69,8 @@ public class ResourceManager {
         if (snapshot == null) {
             return diff.merge(null, src, cloudState);
         }
-
-        var javersState = (Resource) JaversUtils.mapSnapshotToObject(snapshot, src.getResourceClass());
+        var javersState = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
+        javersState.setResource(mapper.convertValue(javersState.getResource(), schema));
         updateStateMetadata(src, javersState);
         return diff.merge(javersState, src, cloudState);
     }
@@ -110,7 +107,7 @@ public class ResourceManager {
             return null;
         }
         var state = JaversUtils.mapSnapshotToObject(snapshot.get(), Resource.class);
-        state.setResource(mapper.map(state.getResource(), getSchema(state)));
+        state.setResource(mapper.convertValue(state.getResource(), getSchema(state)));
 
         return state;
     }

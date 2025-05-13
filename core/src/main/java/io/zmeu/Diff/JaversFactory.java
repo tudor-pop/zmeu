@@ -1,6 +1,7 @@
 package io.zmeu.Diff;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;
 import org.javers.core.diff.ListCompareAlgorithm;
@@ -12,6 +13,7 @@ import org.javers.repository.sql.SqlRepositoryBuilder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
+@Slf4j
 public class JaversFactory {
     @SneakyThrows
     public static Javers create(String connection, String username, String password) {
@@ -38,9 +40,46 @@ public class JaversFactory {
         return getJavers(sqlRepository);
     }
 
+    private static final String password = "zmeu";
+    private static final String user = "zmeu";
+
     @SneakyThrows
-    public static Javers createH2() {
-        var dbConnection = DriverManager.getConnection("jdbc:h2:mem:test", "sa", null);
+    public static Javers createH2Memory() {
+        log.debug("Create H2");
+        log.debug("H2: user={} password={}", user, password);
+        // you won't be able to see the data in the database because intellij creates a new connection into h2
+        // and h2 creates a new database per connection. Ask GPT
+        // this database is only good for running tests. If you want to see the data, use a file h2 database
+        var dbConnection = DriverManager.getConnection("jdbc:h2:mem:test", user, password);
+        var connectionProvider = new ConnectionProvider() {
+            @Override
+            public Connection getConnection() {
+                //suitable only for testing!
+                return dbConnection;
+            }
+        };
+        var sqlRepository = SqlRepositoryBuilder
+                .sqlRepository()
+                .withConnectionProvider(connectionProvider)
+                .withDialect(DialectName.H2)
+                .withCommitTableName("zmeu_commit")
+                .withGlobalIdTableName("zmeu_global_id")
+                .withSnapshotTableName("zmeu_snapshot")
+                .withCommitPropertyTableName("zmeu_commit_property")
+                .build();
+
+        //given
+        return getJavers(sqlRepository);
+    }
+
+    @SneakyThrows
+    public static Javers createH2File() {
+        log.debug("Create H2");
+        log.debug("H2: user={} password={}", user, password);
+        // you won't be able to see the data in the database because intellij creates a new connection into h2
+        // and h2 creates a new database per connection. Ask GPT
+        // this database is only good for running tests. If you want to see the data, use a file h2 database
+        var dbConnection = DriverManager.getConnection("jdbc:h2:file:./zmeu", user, password);
         var connectionProvider = new ConnectionProvider() {
             @Override
             public Connection getConnection() {

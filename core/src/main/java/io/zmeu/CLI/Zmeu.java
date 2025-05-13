@@ -11,7 +11,6 @@ import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Plugin.PluginFactory;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
-import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.TypeChecker.TypeChecker;
 import io.zmeu.api.Provider;
 import lombok.SneakyThrows;
@@ -47,7 +46,7 @@ public class Zmeu {
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
-        this.resourceManager = new ResourceManager(pluginFactory.getPluginHashMap(), new ModelMapper(), diff);
+        this.resourceManager = new ResourceManager(pluginFactory.getPluginHashMap(), objectMapper, diff);
     }
 
     @SneakyThrows

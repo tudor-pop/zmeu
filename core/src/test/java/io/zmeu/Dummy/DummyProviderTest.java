@@ -13,7 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
@@ -24,9 +23,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
     @BeforeEach
     void setUp() {
-        var diff = new Diff(JaversFactory.createNoDb(), mapper);
+        var diff = new Diff(JaversFactory.createH2File(), mapper);
         factory = new PluginFactory(new Zmeufile(new Dependencies(List.of())));
-        manager = new ResourceManager(factory.getPluginHashMap(), new ModelMapper(), diff);
+        manager = new ResourceManager(factory.getPluginHashMap(), gson, diff);
         factory.loadPlugins();
     }
 
