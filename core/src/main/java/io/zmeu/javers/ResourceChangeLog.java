@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
 import io.zmeu.api.resource.Resource;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.Ansi;
@@ -17,8 +18,6 @@ import org.javers.core.diff.changetype.container.ListChange;
 import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
-import org.javers.core.metamodel.object.InstanceId;
-import org.javers.core.metamodel.object.ValueObjectId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -34,6 +33,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private boolean enableStdout;
     private static final String EQUALS = "\t= ";
     private boolean resourcePrinted = false;
+    @Getter
     private Resource resource;
     private ObjectMapper mapper = new ObjectMapper();
 

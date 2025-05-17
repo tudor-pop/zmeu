@@ -1,14 +1,9 @@
 package io.zmeu.Diff;
 
-import io.zmeu.Plugin.Providers;
-import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
-import io.zmeu.javers.ResourceChangeLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.javers.core.Changes;
-import org.javers.core.ChangesByObject;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 import org.modelmapper.ModelMapper;
@@ -21,14 +16,12 @@ public class Diff {
     @Getter
     private Javers javers;
     private ModelMapper mapper;
-    private Providers providers;
 
     @SneakyThrows
-    public Diff(Javers javers, ModelMapper mapper, Providers providers) {
+    public Diff(Javers javers, ModelMapper mapper) {
         this();
         this.javers = javers;
         this.mapper = mapper;
-        this.providers = providers;
     }
 
     public Diff() {
@@ -77,35 +70,6 @@ public class Diff {
         }
 
         return new MergeResult(diff.getChanges(), merged);
-    }
-
-    @SneakyThrows
-    public Plan apply(Plan plan) {
-        var changeProcessor = new ResourceChangeLog(true);
-
-        for (MergeResult mergeResult : plan.getMergeResults()) {
-            Changes changes1 = mergeResult.changes();
-            javers.processChangeList(changes1, changeProcessor);
-
-            for (ChangesByObject changes : changes1.groupByObject()) {
-                var provider = providers.get(mergeResult.resource().getType());
-
-                apply(mergeResult.resource(), changes, provider, changeProcessor);
-            }
-            javers.commit("Tudor", mergeResult.resource());
-        }
-        return plan;
-    }
-
-    private static void apply(Resource resource, ChangesByObject changes, Provider provider, ResourceChangeLog changeProcessor) {
-        if (!changes.getNewObjects().isEmpty()) {
-            provider.create(resource);
-        } else if (!changes.getObjectsRemoved().isEmpty()) {
-            provider.delete(resource);
-        } else {
-            changeProcessor.setType(ResourceChange.CHANGE);
-            provider.update(resource);
-        }
     }
 
 }

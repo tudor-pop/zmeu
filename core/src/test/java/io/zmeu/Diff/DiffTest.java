@@ -1,8 +1,6 @@
 package io.zmeu.Diff;
 
 import io.zmeu.Base.JaversTest;
-import io.zmeu.Import.Zmeufile;
-import io.zmeu.Plugin.Providers;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +12,7 @@ class DiffTest extends JaversTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff(javers, mapper,new Providers());
+        diff = new Diff(javers, mapper);
     }
 
 //    @Test

@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
+import io.zmeu.Plugin.ResourceProvider;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
+import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
+import org.javers.core.Changes;
 import org.javers.core.Javers;
 
 import java.util.HashMap;
@@ -23,12 +26,16 @@ public class ResourceManager {
     private final Diff diff;
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
+    private final ResourceChangeLog changeLog;
+    private final ResourceProvider resourceProvider;
 
     public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
         this.javers = diff.getJavers();
+        this.changeLog = new ResourceChangeLog();
+        this.resourceProvider = new ResourceProvider(factory);
     }
 
     @SneakyThrows
@@ -82,8 +89,18 @@ public class ResourceManager {
         return plan;
     }
 
+    /**
+     * Calls the provider CRUD methods and saves the state into javers
+     */
+    @SneakyThrows
     public Plan apply(Plan plan) {
-        return diff.apply(plan);
+        for (MergeResult mergeResult : plan.getMergeResults()) {
+            Changes changes1 = mergeResult.changes();
+            javers.processChangeList(changes1, changeLog);
+            javers.processChangeList(changes1, resourceProvider);
+            javers.commit("Tudor", resourceProvider.result());
+        }
+        return plan;
     }
 
     public Plan apply(Map<String, Environment<ResourceValue>> schemas) {
