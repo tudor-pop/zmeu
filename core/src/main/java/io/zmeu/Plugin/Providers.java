@@ -17,17 +17,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
-public class PluginFactory {
-    @Getter
-    private final HashMap<String, Provider> pluginHashMap = new HashMap<>();
+public class Providers {
+    private final HashMap<String, Provider> plugins = new HashMap<>();
     @Getter
     @Setter
     private DefaultPluginManager pluginManager;
     private final Zmeufile zmeufile;
 
-    public PluginFactory(Zmeufile zmeufile) {
+    public Providers(Zmeufile zmeufile) {
         this.zmeufile = zmeufile;
         this.pluginManager = new CustomPluginManager(zmeufile.pluginsPath());
+    }
+
+    public Providers() {
+        this(new Zmeufile());
     }
 
     @SneakyThrows
@@ -59,7 +62,7 @@ public class PluginFactory {
             log.info("Loading provider {}", provider.getClass().getName());
 //                var loadedClass = pluginClassLoader.loadClass(provider.resourceType());
             var schema = provider.schema();
-            this.pluginHashMap.putIfAbsent(schema.getName(), provider);
+            this.plugins.putIfAbsent(schema.getName(), provider);
         }
 
 
@@ -69,7 +72,7 @@ public class PluginFactory {
     }
 
     public void putProvider(String key, Provider provider) {
-        this.pluginHashMap.put(key, provider);
+        this.plugins.put(key, provider);
     }
 
     public void stopPlugins() {
@@ -77,7 +80,7 @@ public class PluginFactory {
     }
 
     public Provider getProvider(String provider) {
-        return pluginHashMap.get(provider);
+        return plugins.get(provider);
     }
 
     public List<Provider> getProviders() {
@@ -85,13 +88,17 @@ public class PluginFactory {
     }
 
     public String schemas() {
-        return pluginHashMap.values()
+        return plugins.values()
                 .stream()
                 .map(Provider::schemasString)
                 .collect(Collectors.joining());
     }
 
     public Class<?> getSchema(String schema) {
-        return pluginHashMap.get(schema).getSchema(schema);
+        return plugins.get(schema).getSchema(schema);
+    }
+
+    public Provider get(String type) {
+        return plugins.get(type);
     }
 }

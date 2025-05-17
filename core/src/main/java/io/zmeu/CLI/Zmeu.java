@@ -8,11 +8,10 @@ import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.Parser.Program;
-import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Plugin.Providers;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
 import io.zmeu.TypeChecker.TypeChecker;
-import io.zmeu.api.Provider;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
 import org.modelmapper.ModelMapper;
@@ -20,7 +19,6 @@ import org.modelmapper.ModelMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.zmeu.CLI.FileHelpers.loadZuFiles;
 
@@ -29,34 +27,30 @@ public class Zmeu {
     private final Tokenizer tokenizer;
     private final Parser parser;
     private final TypeChecker typeChecker;
-    private final PluginFactory pluginFactory;
+    private final Providers providers;
     private final Javers javers;
     private final Diff diff;
     private final ResourceManager resourceManager;
     private final ObjectMapper objectMapper;
 
     public Zmeu() throws IOException {
-        this.pluginFactory = new PluginFactory(ZmeuInjector.createZmeufile());
+        this.providers = new Providers(ZmeuInjector.createZmeufile());
 
         this.objectMapper = ZmeuInjector.createMapper();
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
-        this.diff = new Diff(javers, new ModelMapper());
+        this.diff = new Diff(javers, new ModelMapper(), providers);
 
         this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
-        this.resourceManager = new ResourceManager(pluginFactory.getPluginHashMap(), objectMapper, diff);
+        this.resourceManager = new ResourceManager(providers, objectMapper, diff);
     }
 
     @SneakyThrows
     public void run() {
-        this.pluginFactory.loadPlugins();
-        var schemasString = new StringBuilder(pluginFactory.getPluginHashMap()
-                .values()
-                .stream()
-                .map(Provider::schemasString)
-                .collect(Collectors.joining()));
+        this.providers.loadPlugins();
+        var schemasString = new StringBuilder(providers.schemas());
         var byFileName = loadZuFiles();
         for (var file : byFileName) {
             var resources = Files.readString(file.toPath());

@@ -2,7 +2,7 @@ package io.zmeu.javers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
-import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Plugin.Providers;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import lombok.SneakyThrows;
@@ -21,16 +21,16 @@ import org.javers.core.metamodel.object.InstanceId;
 public class ResourceApplyPlan implements ChangeProcessor<String> {
     private final ResourceChangeLog log;
     private final ObjectMapper mapper = new ObjectMapper();
-    private final PluginFactory pluginFactory;
+    private final Providers providers;
 
-    public ResourceApplyPlan(ResourceChangeLog textChangeLog, PluginFactory pluginFactory) {
+    public ResourceApplyPlan(ResourceChangeLog textChangeLog, Providers providers) {
         this.log = textChangeLog;
-        this.pluginFactory = pluginFactory;
+        this.providers = providers;
     }
 
-    public ResourceApplyPlan(PluginFactory pluginFactory) {
+    public ResourceApplyPlan(Providers providers) {
         this.log = new ResourceChangeLog(true);
-        this.pluginFactory = pluginFactory;
+        this.providers = providers;
     }
 
     public void setType(ResourceChange change) {
@@ -88,7 +88,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
 
         String typeName = object.getAffectedGlobalId().getTypeName();
 
-        Provider provider = pluginFactory.getProvider(typeName);
+        Provider provider = providers.getProvider(typeName);
 
         var className = provider.getSchema(typeName);
 
@@ -103,7 +103,7 @@ public class ResourceApplyPlan implements ChangeProcessor<String> {
         InstanceId id = (InstanceId) object.getAffectedGlobalId();
         if (object.getAffectedObject().isPresent()) {
             String typeName = object.getAffectedGlobalId().getTypeName();
-            var pluginRecord = pluginFactory.getProvider(typeName);
+            var pluginRecord = providers.getProvider(typeName);
 
 //            var className = pluginRecord.classLoader().loadClass(pluginRecord.provider().resourceType());
 //            var resource = mapper.convertValue(object.getAffectedObject().get(), className);

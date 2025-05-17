@@ -5,6 +5,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 public record Zmeufile(
         Dependencies dependencies,
@@ -25,4 +26,9 @@ public record Zmeufile(
     public Zmeufile(Dependencies dependencies) {
         this(dependencies, Path.of(URI.create("file:///" + Paths.get(".zmeu/plugins").toAbsolutePath())));
     }
+
+    public Zmeufile() {
+        this(new Dependencies(Collections.emptyList()));
+    }
+
 }

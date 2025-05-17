@@ -6,7 +6,7 @@ import io.zmeu.Diff.JaversFactory;
 import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Zmeufile;
-import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Plugin.Providers;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
@@ -19,19 +19,19 @@ import java.util.List;
 @Log4j2
 class DummyProviderTest extends JaversWithInterpreterTest {
     private ResourceManager manager;
-    private PluginFactory factory;
+    private Providers providers;
 
     @BeforeEach
     void setUp() {
-        var diff = new Diff(JaversFactory.createH2File(), mapper);
-        factory = new PluginFactory(new Zmeufile(new Dependencies(List.of())));
-        manager = new ResourceManager(factory.getPluginHashMap(), gson, diff);
-        factory.loadPlugins();
+        providers = new Providers(new Zmeufile(new Dependencies(List.of())));
+        var diff = new Diff(JaversFactory.createH2File(), mapper, providers);
+        manager = new ResourceManager(providers, gson, diff);
+        providers.loadPlugins();
     }
 
     @AfterEach
     void tearDown() {
-        factory.stopPlugins();
+        providers.stopPlugins();
     }
 
     /**
@@ -61,9 +61,8 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     }
 
     /**
-     * resource exist in src and cloud but not in javers not should show cli output
-     * when cloud resource exists in src and cloud but not in javers, just update javers data
-     * no changes should be shown in cli output but the objects should be commited to jvers
+     * resource exist in src and cloud but not in state -> try implicit or explicit import or throw error if it can't be imported
+     * show import intent in cli
      */
     @Test
     void importToJaversFromCloudShouldFailWithoutImport() {
@@ -74,18 +73,17 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
         var plan = manager.plan(src);
         Assertions.assertTrue(plan.isNewResource()); // if true, resource should be added to both state and cloud
+        // simulate existing resource in cloud
+        var provider = manager.getProvider(DummyResource.class);
+        provider.create(src); // can be any resource. We just use the existing one
+        var cloud = provider.read(src);
+        Assertions.assertEquals(src, cloud);
 
-        // apply to state
         manager.apply(manager.toPlan(plan));
         var state = manager.findByResourceName("dummy");
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
-        // read from cloud
-        var provider = manager.getProvider(DummyResource.class);
-        var cloud = provider.read(src);
-        Assertions.assertNotNull(cloud); // assert resource was saved in state
-        Assertions.assertEquals(src, cloud);
     }
 
 //    /**

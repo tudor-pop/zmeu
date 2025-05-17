@@ -3,7 +3,7 @@ package io.zmeu;
 import io.zmeu.Import.Dependencies;
 import io.zmeu.Import.Dependency;
 import io.zmeu.Import.Zmeufile;
-import io.zmeu.Plugin.PluginFactory;
+import io.zmeu.Plugin.Providers;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
@@ -46,7 +46,7 @@ public class Main {
 
     public static void run() {
         var zmeufile = new Zmeufile(new Dependencies(List.of(new Dependency("files"))));
-        var pluginFactory = new PluginFactory(zmeufile);
+        var pluginFactory = new Providers(zmeufile);
         pluginFactory.loadPlugins();
     }
 }

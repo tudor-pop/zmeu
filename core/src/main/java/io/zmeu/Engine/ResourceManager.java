@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
+import io.zmeu.Plugin.Providers;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
@@ -17,13 +18,13 @@ import java.util.Map;
 import static io.zmeu.Engine.ResourceManagerUtils.updateStateMetadata;
 
 public class ResourceManager {
-    private final HashMap<String, Provider> factory;
+    private final Providers factory;
     private final ObjectMapper mapper;
     private final Diff diff;
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
 
-    public ResourceManager(HashMap<String, Provider> factory, ObjectMapper mapper, Diff diff) {
+    public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
@@ -82,7 +83,7 @@ public class ResourceManager {
     }
 
     public Plan apply(Plan plan) {
-        return diff.apply(plan, this.factory);
+        return diff.apply(plan);
     }
 
     public Plan apply(Map<String, Environment<ResourceValue>> schemas) {

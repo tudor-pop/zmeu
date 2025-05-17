@@ -1,18 +1,11 @@
 package io.zmeu.Diff;
 
 import io.zmeu.Base.JaversTest;
-import io.zmeu.Dummy.DummyResource;
-import io.zmeu.api.resource.Resource;
-import io.zmeu.javers.ResourceChangeLog;
+import io.zmeu.Import.Zmeufile;
+import io.zmeu.Plugin.Providers;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.javers.core.diff.changetype.NewObject;
-import org.javers.core.diff.changetype.ObjectRemoved;
-import org.javers.core.diff.changetype.ValueChange;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 @Log4j2
 class DiffTest extends JaversTest {
@@ -21,7 +14,7 @@ class DiffTest extends JaversTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff(javers, mapper);
+        diff = new Diff(javers, mapper,new Providers());
     }
 
 //    @Test
