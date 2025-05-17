@@ -38,7 +38,7 @@ public class ResourceTest extends BaseChecker {
     void resourceIsDefinedInSchemaEnv() {
         ResourceType res = (ResourceType) eval("""
                 schema Server { }
-                resource main Server {
+                resource Server main  {
                 
                 }
                 """);
@@ -60,7 +60,7 @@ public class ResourceTest extends BaseChecker {
                     var maxCount = 0
                     var enabled  = true
                 }
-                resource main vm {
+                resource vm main {
                     name     = "first"
                     maxCount = 1
                     enabled  = false
@@ -87,12 +87,12 @@ public class ResourceTest extends BaseChecker {
                     var maxCount =0
                     var enabled  = true
                 }
-                resource main vm {
+                resource vm main {
                     name     = "first"
                     maxCount = 1
                     enabled  = false
                 }
-                resource second vm {
+                resource vm second {
                     name     = "second"
                     maxCount = vm.main.maxCount
                 }
@@ -138,7 +138,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource main vm {
+                resource vm main {
                 
                 }
                 """);
@@ -157,7 +157,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource main vm {
+                resource vm main {
                 
                 }
                 var y = vm.main
@@ -186,7 +186,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource  main vm {
+                resource vm main {
                 
                 }
                 vm.main.y = 3
@@ -200,7 +200,7 @@ public class ResourceTest extends BaseChecker {
                    var x = 2
                 }
                 
-                resource  main Vm {
+                resource Vm main {
                 
                 }
                 Vm.main.x = "test"
@@ -214,7 +214,7 @@ public class ResourceTest extends BaseChecker {
                    var x = "2"
                 }
                 
-                resource main vm {
+                resource vm main {
                     x = "3"
                 }
                 """);
@@ -235,7 +235,7 @@ public class ResourceTest extends BaseChecker {
                    var x  Boolean
                 }
                 
-                resource main vm {
+                resource vm main {
                     x = true
                 }
                 """);

@@ -6,7 +6,6 @@ import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Statements.*;
-import io.zmeu.Frontend.Parser.errors.ParseError;
 import io.zmeu.TypeChecker.Types.TypeParser;
 import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.SyntaxPrinter;
@@ -15,7 +14,10 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static io.zmeu.Frontend.Lexer.TokenType.*;
 import static io.zmeu.Frontend.Parser.Literals.ParameterIdentifier.param;
@@ -685,22 +687,20 @@ public class Parser {
 
     /**
      * ResourceDeclaration
-     * : resource name TypeIdentifier '{'
+     * : resource TypeIdentifier name '{'
      * :    VariableDeclaration
      * : '}'
      * ;
      */
     private Statement ResourceDeclaration() {
         eat(Resource);
+        var type = typeParser.TypeIdentifier();
         Identifier name = null;
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
-        }
-        if (!IsLookAhead(TokenType.Identifier)) {
-//            BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body."); // discard the block so parsing continues
+        } else {
             throw ErrorSystem.error("Missing identifier when declaring: resource " + name.string());
         }
-        var type = typeParser.TypeIdentifier();
         var body = BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body.");
 
         return ResourceExpression.resource(type, name, (BlockExpression) body);

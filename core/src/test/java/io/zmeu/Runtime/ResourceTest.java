@@ -1,7 +1,6 @@
 package io.zmeu.Runtime;
 
 import io.zmeu.ErrorSystem;
-import io.zmeu.Frontend.Parser.errors.ParseError;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;
 import io.zmeu.Runtime.exceptions.NotFoundException;
@@ -39,7 +38,7 @@ public class ResourceTest extends BaseRuntimeTest {
     void resourceIsDefinedInSchemaEnv() {
         var res = eval("""
                 schema vm { }
-                resource  main vm {
+                resource vm main {
                 
                 }
                 """);
@@ -63,11 +62,11 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource  main vm {
+                resource vm main {
                     name = "first"
                     maxCount=1
                 }
-                resource  second vm{
+                resource vm second {
                     name = "second"
                     maxCount = vm.main.maxCount
                 }
@@ -101,11 +100,11 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource  main vm {
+                resource vm main {
                     name = "first"
                     maxCount=1
                 }
-                resource  second vm {
+                resource vm second {
                     name = "second"
                     maxCount = vm.main.maxCount
                 }
@@ -128,15 +127,15 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource  main vm{
+                resource vm main {
                     name = vm.third.name
                     maxCount=vm.second.maxCount
                 }
-                resource  second vm {
+                resource vm second  {
                     name = "second"
                     maxCount = 2
                 }
-                resource  third vm {
+                resource vm third  {
                     name = "third"
                     maxCount = 3
                 }
@@ -159,15 +158,15 @@ public class ResourceTest extends BaseRuntimeTest {
                     var name
                     var maxCount=0
                 }
-                resource  second vm {
+                resource vm second {
                     name = "second"
                     maxCount = 2
                 }
-                resource  third vm {
+                resource vm third {
                     name = "third"
                     maxCount = 3
                 }
-                resource  main vm {
+                resource vm main {
                     name = vm.third.name
                     maxCount=vm.second.maxCount
                 }
@@ -195,12 +194,12 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=0
                 }
-                resource  second vm {
+                resource vm second {
                     name = "second"
                     maxCount = vm.main.maxCount
                     minCount = vm.main.minCount
                 }
-                resource  main vm {
+                resource vm main {
                     name = "main"
                     maxCount = 2
                     minCount = 1
@@ -237,12 +236,12 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource  second vm {
+                resource vm second {
                     name = "second"
                     maxCount = vm.main.maxCount
                     minCount = vm.main.minCount
                 }
-                resource  main vm {
+                resource vm main {
                     name = "main"
                     maxCount = 2
                 }
@@ -278,16 +277,16 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource  main vm {
+                resource vm main {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                     minCount = vm.dep2.minCount
                 }
-                resource  dep1 vm {
+                resource vm dep1 {
                     name = "dep1"
                     maxCount = 2
                 }
-                resource  dep2 vm {
+                resource vm dep2 {
                     name = "dep2"
                     minCount = 3
                 }
@@ -329,16 +328,16 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource  main vm {
+                resource vm main {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                     minCount = vm.dep2.minCount
                 }
-                resource  dep1 vm {
+                resource vm dep1 {
                     name = "dep1"
                     maxCount = vm.dep2.maxCount
                 }
-                resource  dep2 vm {
+                resource vm dep2 {
                     name = "dep2"
                     minCount = 2
                     maxCount = 3
@@ -381,16 +380,16 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource  main vm {
+                resource vm main {
                     name = "main"
                     maxCount = vm.dep1.maxCount
                     minCount = vm.dep2.minCount
                 }
-                resource  dep1 vm{
+                resource vm dep1 {
                     name = "dep1"
                     maxCount = vm.dep2.maxCount
                 }
-                resource  dep2 vm {
+                resource vm dep2 {
                     name = "dep2"
                     minCount = 2
                 }
@@ -453,7 +452,7 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource  main vm {
+                resource vm main {
                     name = "main"
                     maxCount = vm.main.maxCount
                 }
@@ -470,15 +469,15 @@ public class ResourceTest extends BaseRuntimeTest {
                     var maxCount=0
                     var minCount=1
                 }
-                resource  a vm {
+                resource vm a {
                     name = "a"
                     maxCount = vm.b.maxCount
                 }
-                resource  b vm{
+                resource vm b {
                     name = "b"
                     maxCount = vm.c.maxCount
                 }
-                resource  c vm{
+                resource vm c {
                     name = "c"
                     maxCount = vm.a.maxCount
                 }
@@ -493,7 +492,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 schema vm {
                 }
                 
-                resource  main vm {
+                resource vm main {
                     x = 3
                 }
                 """));
@@ -507,7 +506,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource  main vm{
+                resource vm main {
                 
                 }
                 """);
@@ -526,7 +525,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource  main vm {
+                resource vm main  {
                 
                 }
                 var y = vm.main
@@ -563,7 +562,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource  main vm{
+                resource vm  main {
                 
                 }
                 vm.main.x = 3
@@ -577,7 +576,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource  main vm{
+                resource vm main {
                     x = 3
                 }
                 """);
@@ -602,7 +601,7 @@ public class ResourceTest extends BaseRuntimeTest {
                    var x = 2
                 }
                 
-                resource  main vm {
+                resource vm main  {
                     x = 3
                 }
                 """);
