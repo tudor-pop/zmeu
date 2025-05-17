@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import io.zmeu.Import.Dependencies;
-import io.zmeu.Import.Zmeufile;
+import io.zmeu.Zmeufile.Dependencies;
+import io.zmeu.Zmeufile.Zmeufile;
 
 import java.io.IOException;
 import java.net.URI;

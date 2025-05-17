@@ -1,8 +1,8 @@
 package io.zmeu;
 
-import io.zmeu.Import.Dependencies;
-import io.zmeu.Import.Dependency;
-import io.zmeu.Import.Zmeufile;
+import io.zmeu.Zmeufile.Dependencies;
+import io.zmeu.Zmeufile.Dependency;
+import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.Plugin.Providers;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;

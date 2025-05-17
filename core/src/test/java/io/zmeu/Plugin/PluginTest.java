@@ -1,8 +1,8 @@
 package io.zmeu.Plugin;
 
-import io.zmeu.Import.Dependencies;
-import io.zmeu.Import.Dependency;
-import io.zmeu.Import.Zmeufile;
+import io.zmeu.Zmeufile.Dependencies;
+import io.zmeu.Zmeufile.Dependency;
+import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.Runtime.BaseRuntimeTest;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.Runtime.Values.SchemaValue;

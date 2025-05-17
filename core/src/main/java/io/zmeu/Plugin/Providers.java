@@ -1,7 +1,7 @@
 package io.zmeu.Plugin;
 
-import io.zmeu.Import.Dependency;
-import io.zmeu.Import.Zmeufile;
+import io.zmeu.Zmeufile.Dependency;
+import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.Plugin.config.CustomPluginManager;
 import io.zmeu.api.Provider;
 import lombok.Getter;

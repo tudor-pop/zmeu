@@ -1,4 +1,4 @@
-package io.zmeu.Import;
+package io.zmeu.Zmeufile;
 
 import org.jetbrains.annotations.Nullable;
 
