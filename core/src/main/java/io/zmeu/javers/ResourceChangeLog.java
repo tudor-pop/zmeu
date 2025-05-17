@@ -163,7 +163,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onNewObject(NewObject newObject) {
-        append("\n");
     }
 
     private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
