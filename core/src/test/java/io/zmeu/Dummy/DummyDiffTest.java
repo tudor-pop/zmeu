@@ -323,16 +323,16 @@ class DummyDiffTest extends JaversTest {
 
         /*
         ~ resource DummyResource main {
-        	name    = null
-        	content = "local"
-        ~	uid     = "cloud-id-random" -> null
+            name    = null
+            content = "local"
+        -	uid     = "cloud-id-random" -> null
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
                 	content = "local"
-                @|yellow ~|@	uid     = "cloud-id-random" -> null
+                @|red -|@	uid     = "cloud-id-random" @|white ->|@ @|white null|@
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
