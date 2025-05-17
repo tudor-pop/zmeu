@@ -110,17 +110,25 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
         var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {
         });
+
+        int maxPropLen = attributes.keySet().stream()
+                .mapToInt(String::length)
+                .max()
+                .orElse(0);
         switch (change) {
-            case InitialValueChange valueChange -> attributes.forEach((property, value) ->
-                    appendln("%s\t%s%s%s".formatted(ADD.toColor(), property, EQUALS, quotes(value)))
-            );
-            case TerminalValueChange valueChange -> attributes.forEach((property, value) ->
-                    appendln("%s\t%s%s%s".formatted(REMOVE.toColor(), property, EQUALS, quotes(value)))
-            );
+            case InitialValueChange valueChange -> formatProperty(attributes, ADD, maxPropLen);
+            case TerminalValueChange valueChange -> formatProperty(attributes, REMOVE, maxPropLen);
             default -> attributes.forEach((property, value) ->
-                    appendln("\n%s\t%s%s%s -> %s".formatted(CHANGE.toColor(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
+                    appendln(("\n%s\t%" + maxPropLen + "s%s%s -> %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
             );
         }
+    }
+
+    private void formatProperty(LinkedHashMap<String, Object> attributes, ResourceChange color, int maxPropLen) {
+        attributes.forEach((property, value) ->
+                // %-10s Left justifies the output. Spaces ('\u0020') will be added at the end of the converted value as required to fill the minimum width of the field
+                appendln(("%s\t%-" + maxPropLen + "s%s%s").formatted(color.toColor(), property, EQUALS, quotes(value)))
+        );
     }
 
     private static Object quotes(Object change) {

@@ -26,39 +26,29 @@ class DiffTest extends JaversTest {
 
     @Test
     void noChanges() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build());
 
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
-        var cloudState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var expected = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                )
-                .build();
+        var expected = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
         Assertions.assertEquals(expected, res.resource());
         Assertions.assertTrue(res.changes().isEmpty());
@@ -66,38 +56,29 @@ class DiffTest extends JaversTest {
 
     @Test
     void srcOverridesRemote() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
 
-        var cloudState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
-
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
@@ -106,30 +87,23 @@ class DiffTest extends JaversTest {
 
     @Test
     void addResourceToRemote() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
 
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
 
         var res = diff.merge(localState, sourceState, null);
-        var plan = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build()
-                ).build();
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
@@ -140,28 +114,21 @@ class DiffTest extends JaversTest {
 
     @Test
     void addResourceToLocal() {
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build()
-                ).build();
-        var remoteState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build()
-                ).build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+        var remoteState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
         var res = diff.merge(null, sourceState, remoteState);
-        var expected = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var expected = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(expected, res.resource());
@@ -172,22 +139,16 @@ class DiffTest extends JaversTest {
     @Test
     @DisplayName("First apply creates remote and local states")
     void addResourceToLocalAndRemote() {
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
 
         var res = diff.merge(null, sourceState, null);
-        var plan = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
@@ -198,41 +159,33 @@ class DiffTest extends JaversTest {
     @SneakyThrows
     @Test
     public void acceptSrc() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build()
-                ).build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
 
 
-        var remoteState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("remote")
-                                .uid("cloud-id-random")
-                                .build()
-                ).build();
+        var remoteState = new Resource("main",
+                DummyResource.builder()
+                        .content("remote")
+                        .uid("cloud-id-random")
+                        .build()
+        );
 
         var res = this.diff.merge(localState, sourceState, remoteState);
-        var expected = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .uid("cloud-id-random")
-                                .build()
-                ).build();
+        var expected = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("cloud-id-random")
+                        .build()
+        );
 
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
         Assertions.assertEquals(expected, res.resource());
@@ -244,36 +197,27 @@ class DiffTest extends JaversTest {
     @Test
     @DisplayName("Deleting src must delete local and remote regardless of their state")
     void removeResourcePropertiesFromSrc() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build()
-                ).build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
 
-        var srcState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .build()
-                ).build();
+        var srcState = new Resource("main",
+                DummyResource.builder()
+                        .build()
+        );
 
-        var remoteState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var remoteState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
 
         var res = diff.merge(localState, srcState, remoteState);
-        var plan = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .build()
-                ).build();
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .build()
+        );
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
@@ -283,38 +227,31 @@ class DiffTest extends JaversTest {
 
     @Test
     void srcChangesLocalAndRemote() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build())
-                .build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
-        var sourceState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("src")
-                                .build())
-                .build();
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
 
-        var cloudState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build())
-                .build();
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
 
         var res = diff.merge(localState, sourceState, cloudState);
-        var plan = Resource.builder()
-                .resourceName("main")
-                .resource(DummyResource.builder()
+        var plan = new Resource("main",
+                DummyResource.builder()
                         .content("src")
-                        .build())
-                .build();
+                        .build()
+        );
         javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(plan, res.resource());
@@ -324,13 +261,11 @@ class DiffTest extends JaversTest {
 
     @Test
     void srcRemovalDeletesRemote() {
-        var localState = Resource.builder()
-                .resourceName("main")
-                .resource(
-                        DummyResource.builder()
-                                .content("local")
-                                .build()
-                ).build();
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
         var cloudState = new Resource("main",
                 DummyResource.builder()
@@ -348,11 +283,11 @@ class DiffTest extends JaversTest {
 
         Assertions.assertEquals("""
                 @|red -|@ resource DummyResource main {
-                @|red -|@	name	= null
+                @|red -|@	name   	= null
                 @|red -|@	content	= "local"
-                @|red -|@	uid	    = "cloud-id-random"
+                @|red -|@	uid    	= "cloud-id-random"
                 @|red -|@ }
-                """, log);
+                """.trim(), log); // assert formatting remains intact
     }
 
 }

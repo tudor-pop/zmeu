@@ -1,8 +1,6 @@
 package io.zmeu.api.resource;
 
 import io.zmeu.api.annotations.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.javers.core.metamodel.annotation.DiffIgnore;
@@ -15,8 +13,6 @@ import java.util.Set;
 @Data
 @Entity
 @EqualsAndHashCode
-@Builder
-@AllArgsConstructor
 public class Resource {
     // must be ignored during diffs because if we don't it will show up as a resource property
     // however we need to use this as an Id
