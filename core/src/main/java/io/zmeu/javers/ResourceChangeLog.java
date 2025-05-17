@@ -21,6 +21,7 @@ import org.javers.core.metamodel.object.GlobalId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 import static io.zmeu.Diff.ResourceChange.*;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -104,23 +105,21 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     public void onValueChange(ValueChange change) {
-        var right = change.getRight();
+        var right = Optional.ofNullable(change.getRight()).orElse(change.getLeft());
         if (!change.getPropertyName().equals("resource")) return; // only print resource properties, not anything else
 
-        var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {});
+        var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {
+        });
         switch (change) {
-            case InitialValueChange valueChange ->
-                    attributes.forEach((property, value) ->
-                            appendln("%s\t%s%s%s".formatted(ADD.toColor(), property, EQUALS, quotes(value)))
-                    );
-            case TerminalValueChange valueChange ->
-                    attributes.forEach((property,value)->
-                            appendln("%s\t%s%s%s".formatted(REMOVE.toColor(), property, EQUALS, quotes(value)))
-                    );
-            default ->
-                    attributes.forEach((property,value)->
-                            appendln("\n%s\t%s%s%s -> %s".formatted(CHANGE.toColor(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
-                    );
+            case InitialValueChange valueChange -> attributes.forEach((property, value) ->
+                    appendln("%s\t%s%s%s".formatted(ADD.toColor(), property, EQUALS, quotes(value)))
+            );
+            case TerminalValueChange valueChange -> attributes.forEach((property, value) ->
+                    appendln("%s\t%s%s%s".formatted(REMOVE.toColor(), property, EQUALS, quotes(value)))
+            );
+            default -> attributes.forEach((property, value) ->
+                    appendln("\n%s\t%s%s%s -> %s".formatted(CHANGE.toColor(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
+            );
         }
     }
 
@@ -141,12 +140,13 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         append("\n");
     }
 
-    private @NotNull String getText(ResourceChange coloredChange,  Resource resource) {
-        return coloredChange.toColor() + " resource %s %s {".formatted(resource.getResourceName(), resource.getType());
+    private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
+        return coloredChange.toColor() + " resource %s %s {".formatted(resource.getType(), resource.getResourceName());
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
+        append("\n");
     }
 
     @Override
