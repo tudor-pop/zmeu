@@ -1,7 +1,7 @@
-package io.zmeu.Diff;
+package io.zmeu.Dummy;
 
 import io.zmeu.Base.JaversTest;
-import io.zmeu.Dummy.DummyResource;
+import io.zmeu.Diff.Diff;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @Log4j2
-class DiffTest extends JaversTest {
+class DummyDiffTest extends JaversTest {
     private Diff diff;
 
     @SneakyThrows
@@ -277,6 +277,7 @@ class DiffTest extends JaversTest {
         var res = diff.merge(localState, null, cloudState);
         var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
+        // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(new Resource(), res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ObjectRemoved.class, res.changes().get(0));
@@ -287,6 +288,52 @@ class DiffTest extends JaversTest {
                 @|red -|@	content	= "local"
                 @|red -|@	uid    	= "cloud-id-random"
                 @|red -|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    void srcPropertyRemovalDeletesPropertyRemote() {
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .uid("cloud-id-random")
+                        .build()
+        );
+
+        var srcState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
+
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .uid("cloud-id-random")
+                        .build()
+        );
+
+        var res = diff.merge(localState, srcState, cloudState);
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
+        Assertions.assertEquals(srcState, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+
+        /*
+        ~ resource DummyResource main {
+        	name    = null
+        	content = "local"
+        ~	uid     = "cloud-id-random" -> null
+        ~ }
+         */
+        Assertions.assertEquals("""
+                @|yellow ~|@ resource DummyResource main {
+                	name    = null
+                	content = "local"
+                @|yellow ~|@	uid     = "cloud-id-random" -> null
+                @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
 

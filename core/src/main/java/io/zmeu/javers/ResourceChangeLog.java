@@ -21,6 +21,8 @@ import org.javers.core.metamodel.object.GlobalId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static io.zmeu.Diff.ResourceChange.*;
@@ -32,7 +34,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private ResourceChange type = NO_OP;
     private Ansi ansi;
     private boolean enableStdout;
-    private static final String EQUALS = "\t= ";
+    private static final String EQUALS = " = ";
     private boolean resourcePrinted = false;
     @Getter
     private Resource resource;
@@ -105,7 +107,9 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     public void onValueChange(ValueChange change) {
-        var right = Optional.ofNullable(change.getRight()).orElse(change.getLeft());
+        var left = change.getLeft();
+
+        var right = Optional.ofNullable(change.getRight()).orElse(left);
         if (!change.getPropertyName().equals("resource")) return; // only print resource properties, not anything else
 
         var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {
@@ -115,12 +119,24 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
                 .mapToInt(String::length)
                 .max()
                 .orElse(0);
+        append("\n");
         switch (change) {
             case InitialValueChange valueChange -> formatProperty(attributes, ADD, maxPropLen);
             case TerminalValueChange valueChange -> formatProperty(attributes, REMOVE, maxPropLen);
-            default -> attributes.forEach((property, value) ->
-                    appendln(("\n%s\t%" + maxPropLen + "s%s%s -> %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change.getLeft()), quotes(value)))
-            );
+            case ValueChange valueChange -> {
+                var attributesLeft = mapper.convertValue(left, new TypeReference<LinkedHashMap<String, Object>>() {
+                });
+                for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+                    String property = entry.getKey();
+                    Object value = entry.getValue();
+                    Object change1 = attributesLeft.get(property);
+                    if (Objects.equals(change1, value)) {
+                        appendln(("\t%-" + maxPropLen + "s%s%s").formatted(property, EQUALS, quotes(value)));
+                    } else {
+                        appendln(("%s\t%-" + maxPropLen + "s%s%s -> %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change1), quotes(value)));
+                    }
+                }
+            }
         }
     }
 
@@ -154,7 +170,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
-        append("\n");
+        newLine();
     }
 
     @Override
