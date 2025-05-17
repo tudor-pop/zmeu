@@ -284,9 +284,9 @@ class DummyDiffTest extends JaversTest {
 
         Assertions.assertEquals("""
                 @|red -|@ resource DummyResource main {
-                @|red -|@	name   	= null
-                @|red -|@	content	= "local"
-                @|red -|@	uid    	= "cloud-id-random"
+                @|red -|@	name    = null
+                @|red -|@	content = "local"
+                @|red -|@	uid     = "cloud-id-random"
                 @|red -|@ }
                 """.trim(), log); // assert formatting remains intact
     }
