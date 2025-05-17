@@ -10,7 +10,8 @@ import org.junit.platform.suite.api.Suite;
         "io.zmeu.Runtime",
         "io.zmeu.Frontend.Token",
         "io.zmeu.Frontend.Lexical",
-        "io.zmeu.Engine"
+        "io.zmeu.Engine",
+        "io.zmeu.Dummy"
 })
 public class _Suite {
 }
