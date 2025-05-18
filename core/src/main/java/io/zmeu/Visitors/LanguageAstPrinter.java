@@ -15,12 +15,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     private static final Ansi ansi = Ansi.ansi();
 
     public String print(Expression expr) {
-        return expr.accept(this);
-    }
-
-    @Override
-    public String eval(Expression expression) {
-        return expression.accept(this);
+        return eval(expr);
     }
 
     @Override
@@ -111,11 +106,6 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
                 .stream()
                 .map(this::eval)
                 .collect(Collectors.joining("\n"));
-    }
-
-    @Override
-    public String eval(Statement statement) {
-        return statement.accept(this);
     }
 
     @Override
@@ -260,7 +250,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
         builder.append("(").append(name);
         for (Expression expr : exprs) {
             builder.append(" ");
-            builder.append(expr.accept(this));
+            builder.append(eval(expr));
         }
         builder.append(")");
 

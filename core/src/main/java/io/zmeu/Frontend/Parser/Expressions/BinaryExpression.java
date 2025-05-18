@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 import io.zmeu.Frontend.Parser.Literals.BooleanLiteral;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -88,9 +87,5 @@ public final class BinaryExpression extends Expression {
         return binary(operator, Identifier.id(identifier), NumberLiteral.of(left));
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 
 }

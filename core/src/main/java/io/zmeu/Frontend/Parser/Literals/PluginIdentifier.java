@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -76,8 +75,4 @@ public final class PluginIdentifier extends Identifier {
         return identifier;
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

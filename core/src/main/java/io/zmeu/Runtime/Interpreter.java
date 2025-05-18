@@ -564,11 +564,6 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(Statement statement) {
-        return execute(statement);
-    }
-
-    @Override
     public Object eval(Type type) {
         return type;
     }
@@ -618,11 +613,11 @@ public final class Interpreter implements Visitor<Object> {
         }
     }
 
-    Object executeBlock(Expression statement, Environment environment) {
+    Object executeBlock(Expression expression, Environment environment) {
         Environment previous = this.env;
         try {
             this.env = environment;
-            return execute(statement);
+            return Visitor.super.eval(expression);
         } finally {
             this.env = previous;
         }
@@ -639,11 +634,11 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     private Object execute(Statement stmt) {
-        return stmt.accept(this);
+        return Visitor.super.eval(stmt);
     }
 
     private Object execute(Expression stmt) {
-        return stmt.accept(this);
+        return eval(stmt);
     }
 
     static void runtimeError(RuntimeError error) {

@@ -201,7 +201,7 @@ public final class AstPrinter implements Visitor<String> {
         builder.append("(").append(name);
         for (Expression expr : exprs) {
             builder.append(" ");
-            builder.append(expr.accept(this));
+            builder.append(eval(expr));
         }
         builder.append(")");
 

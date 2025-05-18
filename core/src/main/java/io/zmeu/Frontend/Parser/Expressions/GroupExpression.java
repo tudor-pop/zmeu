@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,9 +12,5 @@ public final class GroupExpression extends Expression {
         this.expression = expression;
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 
 }

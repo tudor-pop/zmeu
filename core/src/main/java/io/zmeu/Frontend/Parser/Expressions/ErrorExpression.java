@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
-import io.zmeu.Visitors.Visitor;
 
 public final class ErrorExpression extends Expression {
     private String msg;
@@ -29,11 +28,6 @@ public final class ErrorExpression extends Expression {
 
     public ErrorExpression() {
         this.msg = "Unknown token found during parsing";
-    }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
     }
 
 }

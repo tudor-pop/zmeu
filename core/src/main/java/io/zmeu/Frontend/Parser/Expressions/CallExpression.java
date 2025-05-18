@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,12 +63,6 @@ public final class CallExpression<E extends Expression> extends Expression {
 
     public static <E extends Expression> Expression call(Expression callee, List<E> arguments) {
         return new CallExpression(callee, arguments);
-    }
-
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval((CallExpression<Expression>) this);
     }
 
 }

@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Literals;
 import io.zmeu.TypeChecker.Types.Type;
 import io.zmeu.TypeChecker.Types.TypeFactory;
 import io.zmeu.TypeChecker.Types.ValueType;
-import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -72,8 +71,4 @@ public final class TypeIdentifier extends Identifier {
         };
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

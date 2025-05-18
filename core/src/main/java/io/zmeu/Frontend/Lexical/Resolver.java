@@ -47,11 +47,11 @@ public final class Resolver implements Visitor<Void> {
     }
 
     private void resolve(@NotNull Statement stmt) {
-        stmt.accept(this);
+        Visitor.super.eval(stmt);
     }
 
     private void resolve(@NotNull Expression expr) {
-        expr.accept(this);
+        Visitor.super.eval(expr);
     }
 
     @Override
@@ -160,12 +160,6 @@ public final class Resolver implements Visitor<Void> {
 
     @Override
     public Void eval(Program program) {
-        return null;
-    }
-
-    @Override
-    public Void eval(Statement statement) {
-        resolve(statement);
         return null;
     }
 

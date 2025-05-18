@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
-import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -55,11 +54,6 @@ public final class MemberExpression extends Expression {
 
     public static Expression member(Expression object, Expression property) {
         return new MemberExpression(false, object, property);
-    }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
     }
 
 }

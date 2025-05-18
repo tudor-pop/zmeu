@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Literals;
 
 import io.zmeu.Frontend.Parser.SyntaxError;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -41,8 +40,4 @@ public class BooleanLiteral extends Literal {
         return value;
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

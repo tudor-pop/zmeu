@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.ModuleExpression;
 import io.zmeu.Frontend.Parser.Expressions.ResourceExpression;
 import io.zmeu.Frontend.Parser.Program;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 
 /**
@@ -31,5 +30,4 @@ public abstract sealed class Statement permits ModuleExpression,
         IfStatement, InitStatement, ReturnStatement,
         SchemaDeclaration, VariableStatement, WhileStatement {
 
-    public abstract  <R> R accept(Visitor<R> visitor);
 }

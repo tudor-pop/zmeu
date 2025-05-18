@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -68,8 +67,4 @@ public final class IfStatement extends Statement {
         return new IfStatement(test, StringLiteral.of(value), null);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.TypeChecker.Types.ValueType;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -86,8 +85,4 @@ public final class FunctionDeclaration extends Statement {
         return FunctionDeclaration.fun(test, params, StringLiteral.of(value));
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

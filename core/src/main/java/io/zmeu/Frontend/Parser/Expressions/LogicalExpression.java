@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Lexer.TokenType;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -36,11 +35,6 @@ public final class LogicalExpression extends Expression {
 
     public static Expression and(Expression left, Expression right) {
         return new LogicalExpression(left, right, TokenType.Logical_And);
-    }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
     }
 
 }

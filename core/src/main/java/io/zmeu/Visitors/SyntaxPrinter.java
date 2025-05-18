@@ -9,17 +9,12 @@ import io.zmeu.TypeChecker.Types.Type;
 public non-sealed class SyntaxPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
-        return expr.accept(this);
-    }
-
-    @Override
-    public String eval(Expression expression) {
-        return expression.accept(this);
+        return eval(expr);
     }
 
     @Override
     public String eval(BinaryExpression expression) {
-        return "%s %s %s".formatted(expression.getLeft().accept(this), expression.getOperator(), expression.getRight().accept(this));
+        return "%s %s %s".formatted(eval(expression.getLeft()), expression.getOperator(), eval(expression.getRight()));
     }
 
     @Override
@@ -64,7 +59,7 @@ public non-sealed class SyntaxPrinter implements Visitor<String> {
 
     @Override
     public String eval(AssignmentExpression expression) {
-        return expression.getLeft().accept(this) + expression.getOperator() + expression.getRight().accept(this);
+        return eval(expression.getLeft()) + expression.getOperator() + eval(expression.getRight());
     }
 
     @Override
@@ -206,7 +201,7 @@ public non-sealed class SyntaxPrinter implements Visitor<String> {
         builder.append("(");
         for (Expression expr : exprs) {
             builder.append(" ");
-            builder.append(expr.accept(this));
+            builder.append(eval(expr));
         }
         builder.append(")");
 

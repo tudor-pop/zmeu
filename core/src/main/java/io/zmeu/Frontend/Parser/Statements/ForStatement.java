@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,10 +42,6 @@ public final class ForStatement extends Statement {
         return new ForStatement();
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 
     public boolean hasInit() {
         return init != null;

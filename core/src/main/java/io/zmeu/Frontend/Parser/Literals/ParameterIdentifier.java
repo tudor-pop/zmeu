@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 
 /**
@@ -58,8 +57,4 @@ public final class ParameterIdentifier extends Identifier {
         return name.string() + " :" + type.string();
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

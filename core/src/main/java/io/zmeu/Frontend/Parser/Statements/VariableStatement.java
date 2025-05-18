@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -53,8 +52,4 @@ public final class VariableStatement extends Statement {
         return new VariableStatement();
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

@@ -42,6 +42,24 @@ public sealed interface Visitor<R>
         };
     }
 
+    default R eval(Statement statement){
+        return switch (statement){
+            case ResourceExpression resourceExpression -> eval(resourceExpression);
+            case Program program -> eval(program);
+            case ExpressionStatement expressionStatement -> eval(expressionStatement);
+            case ForStatement forStatement -> eval(forStatement);
+            case FunctionDeclaration functionDeclaration -> eval(functionDeclaration);
+            case IfStatement ifStatement -> eval(ifStatement);
+            case InitStatement initStatement -> eval(initStatement);
+            case ReturnStatement returnStatement -> eval(returnStatement);
+            case SchemaDeclaration schemaDeclaration -> eval(schemaDeclaration);
+            case VariableStatement variableStatement -> eval(variableStatement);
+            case WhileStatement whileStatement -> eval(whileStatement);
+            default -> throw new IllegalStateException("Unexpected value: " + statement);
+        };
+    }
+
+
     R eval(NumberLiteral expression);
 
     R eval(BooleanLiteral expression);
@@ -88,7 +106,6 @@ public sealed interface Visitor<R>
 
     R eval(Program program);
 
-    R eval(Statement statement);
 
     R eval(Type type);
 

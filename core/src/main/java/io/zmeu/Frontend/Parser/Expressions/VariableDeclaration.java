@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.Statements.VariableStatement;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -90,11 +89,6 @@ public final class VariableDeclaration extends Expression {
 
     public boolean hasInit() {
         return init != null;
-    }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
     }
 
     public boolean hasType() {

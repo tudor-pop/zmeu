@@ -5,7 +5,6 @@ import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
@@ -103,11 +102,6 @@ public non-sealed class LambdaExpression extends Expression {
 
     public static Expression lambda(List<ParameterIdentifier> params, String value) {
         return new LambdaExpression(params, StringLiteral.of(value));
-    }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
     }
 
 }

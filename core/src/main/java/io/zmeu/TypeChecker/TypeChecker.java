@@ -50,7 +50,7 @@ public final class TypeChecker implements Visitor<Type> {
     @Override
     public Type eval(Expression expression) {
         try {
-            return expression.accept(this);
+            return Visitor.super.eval(expression);
         } catch (NotFoundException | TypeError exception) {
             log.error(exception.getMessage());
             throw exception;
@@ -271,12 +271,6 @@ public final class TypeChecker implements Visitor<Type> {
             }
             default -> throw new RuntimeException("Operator could not be evaluated: " + expression.getOperator());
         };
-    }
-
-
-    @Override
-    public Type eval(Statement statement) {
-        return statement.accept(this);
     }
 
     @Override

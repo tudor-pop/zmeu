@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -46,9 +45,5 @@ public final class SymbolIdentifier extends Identifier {
         return new SymbolIdentifier(left);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 
 }

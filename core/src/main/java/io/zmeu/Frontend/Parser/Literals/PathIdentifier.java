@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,8 +42,4 @@ public final class PathIdentifier extends Identifier {
         return new PathIdentifier(object);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

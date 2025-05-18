@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Literals;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -55,8 +54,4 @@ public class StringLiteral extends Literal {
         return value;
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

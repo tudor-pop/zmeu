@@ -1,7 +1,6 @@
 package io.zmeu.TypeChecker.Types;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Visitors.Visitor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +49,4 @@ public sealed abstract class Type extends Expression
         return StringUtils.isNotBlank(value);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

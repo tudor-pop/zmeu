@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,8 +61,4 @@ public final class WhileStatement extends Statement {
         return new WhileStatement(test, StringLiteral.of(value));
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

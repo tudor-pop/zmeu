@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser;
 
 import io.zmeu.Frontend.Parser.Statements.Statement;
-import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -44,10 +43,6 @@ public final class Program extends Statement {
         return body.listIterator().next();
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 
     public boolean hasBody() {
         return body != null;

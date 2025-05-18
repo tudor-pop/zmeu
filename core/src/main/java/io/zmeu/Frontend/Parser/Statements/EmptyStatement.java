@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Statements;
 
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,8 +20,4 @@ public final class EmptyStatement extends Statement {
         return new EmptyStatement();
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 }

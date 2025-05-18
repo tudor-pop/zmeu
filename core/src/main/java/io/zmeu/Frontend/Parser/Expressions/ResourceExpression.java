@@ -7,7 +7,6 @@ import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.Statement;
 import io.zmeu.Runtime.Interpreter;
 import io.zmeu.Runtime.Values.DeferredObserverValue;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,12 +64,6 @@ public final class ResourceExpression extends Statement implements DeferredObser
     public String name() {
         return name.string();
     }
-
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
-
 
     @Override
     public Object notify(Interpreter interpreter) {

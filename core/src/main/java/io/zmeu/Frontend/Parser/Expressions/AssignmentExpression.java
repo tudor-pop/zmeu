@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -55,8 +54,5 @@ public final class AssignmentExpression extends Expression {
         return new AssignmentExpression(left, NumberLiteral.of(right), operator);
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
+
 }

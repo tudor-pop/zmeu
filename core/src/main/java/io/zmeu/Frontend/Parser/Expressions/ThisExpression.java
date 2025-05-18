@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
-import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,9 +29,5 @@ public final class ThisExpression extends Expression {
         return new ThisExpression();
     }
 
-    @Override
-    public <R> R accept(Visitor<R> visitor) {
-        return visitor.eval(this);
-    }
 
 }
