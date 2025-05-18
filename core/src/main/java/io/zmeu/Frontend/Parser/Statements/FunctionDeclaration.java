@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FunctionDeclaration extends Statement {
+public final class FunctionDeclaration extends Statement {
     private Identifier name;
     private List<ParameterIdentifier> params;
     private Statement body;

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ReturnStatement extends Statement {
+public final class ReturnStatement extends Statement {
     private Identifier name;
     private Statement argument;
 

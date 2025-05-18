@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class EmptyStatement extends Statement {
+public final class EmptyStatement extends Statement {
 
     public EmptyStatement() {
         this.kind = NodeType.EmptyStatement;

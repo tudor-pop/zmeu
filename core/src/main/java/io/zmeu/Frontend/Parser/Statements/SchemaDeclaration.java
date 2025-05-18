@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SchemaDeclaration extends Statement {
+public final class SchemaDeclaration extends Statement {
     private Identifier name;
     private Statement body;
 

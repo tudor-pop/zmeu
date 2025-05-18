@@ -23,7 +23,7 @@ import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.*;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
-public class VariableStatement extends Statement {
+public final class VariableStatement extends Statement {
     private List<VariableDeclaration> declarations;
 
     private VariableStatement(@Nullable List<VariableDeclaration> declarations) {

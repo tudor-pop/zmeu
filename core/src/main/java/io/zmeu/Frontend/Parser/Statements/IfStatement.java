@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IfStatement extends Statement {
+public final class IfStatement extends Statement {
     private Expression test;
     private Statement consequent;
     private Statement alternate;

@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ExpressionStatement extends Statement {
+public final class ExpressionStatement extends Statement {
     private Expression statement;
 
     private ExpressionStatement(Expression statement) {

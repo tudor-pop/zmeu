@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class InitStatement extends Statement {
+public final class InitStatement extends Statement {
     private Identifier name = Identifier.id("init");
     private List<ParameterIdentifier> params;
     private Statement body;

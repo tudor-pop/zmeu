@@ -21,7 +21,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @AllArgsConstructor
-public class ForStatement extends Statement {
+public final class ForStatement extends Statement {
     private Expression test;
     @Nullable
     private Statement init;

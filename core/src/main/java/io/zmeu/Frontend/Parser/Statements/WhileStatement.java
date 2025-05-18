@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
-public class WhileStatement extends Statement {
+public final class WhileStatement extends Statement {
     private Expression test;
     private Statement body;
 

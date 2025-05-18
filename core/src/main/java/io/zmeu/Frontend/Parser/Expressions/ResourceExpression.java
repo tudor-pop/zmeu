@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Data
-public class ResourceExpression extends Statement implements DeferredObserverValue {
+public final class ResourceExpression extends Statement implements DeferredObserverValue {
     private Identifier type;
     @Nullable
     private Identifier name;

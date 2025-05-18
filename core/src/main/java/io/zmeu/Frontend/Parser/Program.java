@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-public class Program extends Statement {
+public final class Program extends Statement {
     private List<Statement> body;
 
     public Program() {

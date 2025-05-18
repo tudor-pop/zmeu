@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ModuleExpression extends Statement {
+public final class ModuleExpression extends Statement {
     private PluginIdentifier type;
     @Nullable
     private Identifier name;
