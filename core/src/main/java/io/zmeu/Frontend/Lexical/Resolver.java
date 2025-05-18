@@ -47,31 +47,31 @@ public final class Resolver implements Visitor<Void> {
     }
 
     private void resolve(@NotNull Statement stmt) {
-        Visitor.super.eval(stmt);
+        Visitor.super.visit(stmt);
     }
 
     private void resolve(@NotNull Expression expr) {
-        Visitor.super.eval(expr);
+        Visitor.super.visit(expr);
     }
 
     @Override
-    public Void eval(Expression expression) {
+    public Void visit(Expression expression) {
         resolve(expression);
         return null;
     }
 
     @Override
-    public Void eval(NumberLiteral expression) {
+    public Void visit(NumberLiteral expression) {
         return null;
     }
 
     @Override
-    public Void eval(BooleanLiteral expression) {
+    public Void visit(BooleanLiteral expression) {
         return null;
     }
 
     @Override
-    public Void eval(/* VariableExpression*/ Identifier identifier) {
+    public Void visit(/* VariableExpression*/ Identifier identifier) {
         if (!scopes.isEmpty() && scopes.peek().get(identifier.string()) == Boolean.FALSE) {
             throw ErrorSystem.error("Can't read local variable in its own initializer: " + identifier.string());
         }
@@ -91,7 +91,7 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(BlockExpression expression) {
+    public Void visit(BlockExpression expression) {
         beginScope();
         resolve(expression.getExpression());
         endScope();
@@ -107,20 +107,20 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(GroupExpression expression) {
+    public Void visit(GroupExpression expression) {
         resolve(expression.getExpression());
         return null;
     }
 
     @Override
-    public Void eval(BinaryExpression expression) {
+    public Void visit(BinaryExpression expression) {
         resolve(expression.getLeft());
         resolve(expression.getRight());
         return null;
     }
 
     @Override
-    public Void eval(CallExpression<Expression> expression) {
+    public Void visit(CallExpression<Expression> expression) {
         resolve(expression.getCallee());
         for (Expression argument : expression.getArguments()) {
             resolve(argument);
@@ -129,58 +129,58 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(ErrorExpression expression) {
+    public Void visit(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public Void eval(LogicalExpression expression) {
+    public Void visit(LogicalExpression expression) {
         resolve(expression.getLeft());
         resolve(expression.getRight());
         return null;
     }
 
     @Override
-    public Void eval(MemberExpression expression) {
+    public Void visit(MemberExpression expression) {
         // Since properties are looked up dynamically, they don’t get resolved
         resolve(expression.getObject());
         return null;
     }
 
     @Override
-    public Void eval(ThisExpression expression) {
+    public Void visit(ThisExpression expression) {
         return null;
     }
 
     @Override
-    public Void eval(UnaryExpression expression) {
+    public Void visit(UnaryExpression expression) {
         resolve(expression.getValue());
         return null;
     }
 
     @Override
-    public Void eval(Program program) {
+    public Void visit(Program program) {
         return null;
     }
 
     @Override
-    public Void eval(Type type) {
+    public Void visit(Type type) {
         return null;
     }
 
     @Override
-    public Void eval(InitStatement statement) {
+    public Void visit(InitStatement statement) {
         return null;
     }
 
     @Override
-    public Void eval(LambdaExpression expression) {
+    public Void visit(LambdaExpression expression) {
         resolveFunction(expression.getParams(), expression.getBody(), FunctionType.FUNCTION);
         return null;
     }
 
     @Override
-    public Void eval(FunctionDeclaration statement) {
+    public Void visit(FunctionDeclaration statement) {
         declare(statement.getName());
         define(statement.getName());
 
@@ -230,15 +230,15 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(ExpressionStatement statement) {
+    public Void visit(ExpressionStatement statement) {
         resolve(statement.getStatement());
         return null;
     }
 
     @Override
-    public Void eval(VariableStatement statement) {
+    public Void visit(VariableStatement statement) {
         for (VariableDeclaration declaration : statement.getDeclarations()) {
-            eval(declaration);
+            visit(declaration);
         }
         return null;
     }
@@ -250,7 +250,7 @@ public final class Resolver implements Visitor<Void> {
      * Since either one could be reached at runtime, we resolve both.
      */
     @Override
-    public Void eval(IfStatement statement) {
+    public Void visit(IfStatement statement) {
         resolve(statement.getTest());
         resolve(statement.getConsequent());
         if (statement.hasElse()) {
@@ -263,14 +263,14 @@ public final class Resolver implements Visitor<Void> {
      * As in if statements, with a while statement, we resolve its condition and resolve the body exactly once.
      */
     @Override
-    public Void eval(WhileStatement statement) {
+    public Void visit(WhileStatement statement) {
         resolve(statement.getTest());
         resolve(statement.getBody());
         return null;
     }
 
     @Override
-    public Void eval(ResourceExpression expression) {
+    public Void visit(ResourceExpression expression) {
         beginScope();
         if (expression.getName() != null) {
             declare(expression.getName());
@@ -294,7 +294,7 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(ForStatement statement) {
+    public Void visit(ForStatement statement) {
         beginScope();
         if (statement.getInit() != null) {
             resolve(statement.getInit());
@@ -307,7 +307,7 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(SchemaDeclaration statement) {
+    public Void visit(SchemaDeclaration statement) {
 //        beginScope();
 //        resolve(statement.getName());
 //        resolveNoBlock(statement.getBody());
@@ -316,7 +316,7 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(ReturnStatement statement) {
+    public Void visit(ReturnStatement statement) {
         if (currentFunction == FunctionType.NONE) {
             throw ErrorSystem.error("Can't return from top level code");
         }
@@ -327,7 +327,7 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(VariableDeclaration declaration) {
+    public Void visit(VariableDeclaration declaration) {
         declare(declaration.getId());
         if (declaration.hasInit()) {
             resolve(declaration.getInit());
@@ -362,45 +362,45 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void eval(AssignmentExpression expression) {
+    public Void visit(AssignmentExpression expression) {
         resolve(expression.getRight());
         resolve(expression.getLeft());
         return null;
     }
 
     @Override
-    public Void eval(float expression) {
+    public Void visit(float expression) {
         return null;
     }
 
     @Override
-    public Void eval(double expression) {
+    public Void visit(double expression) {
         return null;
     }
 
     @Override
-    public Void eval(int expression) {
+    public Void visit(int expression) {
         return null;
     }
 
     @Override
-    public Void eval(boolean expression) {
+    public Void visit(boolean expression) {
         return null;
     }
 
     @Override
-    public Void eval(String expression) {
+    public Void visit(String expression) {
         return null;
     }
 
 
     @Override
-    public Void eval(NullLiteral expression) {
+    public Void visit(NullLiteral expression) {
         return null;
     }
 
     @Override
-    public Void eval(StringLiteral expression) {
+    public Void visit(StringLiteral expression) {
         return null;
     }
 

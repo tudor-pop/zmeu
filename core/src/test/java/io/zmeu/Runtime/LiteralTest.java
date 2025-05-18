@@ -9,25 +9,25 @@ import org.junit.jupiter.api.Test;
 public class LiteralTest extends BaseRuntimeTest {
     @Test
     void literal() {
-        var res = interpreter.eval(10.0);
+        var res = interpreter.visit(10.0);
         Assertions.assertEquals(10.0, res);
     }
 
     @Test
     void literalDouble() {
-        var res = interpreter.eval(10.1);
+        var res = interpreter.visit(10.1);
         Assertions.assertEquals(10.1, res);
     }
 
     @Test
     void integerLiteral() {
-        var res = interpreter.eval(NumberLiteral.of(10));
+        var res = interpreter.visit(NumberLiteral.of(10));
         Assertions.assertEquals(10, res);
     }
 
     @Test
     void stringLiteral() {
-        var res = interpreter.eval("""
+        var res = interpreter.visit("""
                 "hello world!"
                 """);
         Assertions.assertEquals("\"hello world!\"\n", res);
@@ -35,25 +35,25 @@ public class LiteralTest extends BaseRuntimeTest {
 
     @Test
     void stringLiterals() {
-        var res = interpreter.eval("hello world!");
+        var res = interpreter.visit("hello world!");
         Assertions.assertEquals("hello world!", res);
     }
 
     @Test
     void boolFalse() {
-        var res = (Boolean) interpreter.eval(false);
+        var res = (Boolean) interpreter.visit(false);
         Assertions.assertFalse(res);
     }
 
     @Test
     void boolTrue() {
-        var res = (Boolean) interpreter.eval(true);
+        var res = (Boolean) interpreter.visit(true);
         Assertions.assertTrue(res);
     }
 
     @Test
     void NullTest() {
-        var res = (NullValue) interpreter.eval(new SymbolIdentifier());
+        var res = (NullValue) interpreter.visit(new SymbolIdentifier());
         Assertions.assertEquals(NullValue.of(), res.getRuntimeValue());
     }
 }

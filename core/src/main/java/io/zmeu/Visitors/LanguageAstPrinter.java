@@ -15,119 +15,119 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     private static final Ansi ansi = Ansi.ansi();
 
     public String print(Expression expr) {
-        return eval(expr);
+        return visit(expr);
     }
 
     @Override
-    public String eval(BinaryExpression expression) {
-        return eval(expression.getLeft()) + " " + expression.getOperator() + " " + eval(expression.getRight());
+    public String visit(BinaryExpression expression) {
+        return visit(expression.getLeft()) + " " + expression.getOperator() + " " + visit(expression.getRight());
     }
 
     @Override
-    public String eval(CallExpression<Expression> expression) {
-        var callName = eval(expression.getCallee());
+    public String visit(CallExpression<Expression> expression) {
+        var callName = visit(expression.getCallee());
         var args = expression.getArguments()
                 .stream()
-                .map(this::eval)
+                .map(this::visit)
                 .collect(Collectors.joining(","));
         return callName + "(" + args + ")";
     }
 
     @Override
-    public String eval(ErrorExpression expression) {
+    public String visit(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public String eval(LogicalExpression expression) {
-        return "(" + eval(expression.getLeft()) + " " + expression.getOperator().toString() + " " + eval(expression.getRight()) + ")";
+    public String visit(LogicalExpression expression) {
+        return "(" + visit(expression.getLeft()) + " " + expression.getOperator().toString() + " " + visit(expression.getRight()) + ")";
     }
 
     @Override
-    public String eval(MemberExpression expression) {
-        return eval(expression.getObject()) + "." + eval(expression.getProperty());
+    public String visit(MemberExpression expression) {
+        return visit(expression.getObject()) + "." + visit(expression.getProperty());
     }
 
     @Override
-    public String eval(ThisExpression expression) {
-        return "this." + eval(expression.getInstance());
+    public String visit(ThisExpression expression) {
+        return "this." + visit(expression.getInstance());
     }
 
     @Override
-    public String eval(UnaryExpression expression) {
+    public String visit(UnaryExpression expression) {
         return parenthesize(expression.getOperator(), expression.getValue());
     }
 
     @Override
-    public String eval(VariableDeclaration expression) {
+    public String visit(VariableDeclaration expression) {
         StringBuilder var = new StringBuilder("var " + expression.getId().string());
         if (expression.hasType()) {
             var.append(" :").append(expression.getType().getType().getValue());
         }
         if (expression.hasInit()) {
-            var.append(" = ").append(eval(expression.getInit()));
+            var.append(" = ").append(visit(expression.getInit()));
         }
         return var.toString();
     }
 
     @Override
-    public String eval(AssignmentExpression expression) {
-        return eval(expression.getLeft()) + " " + expression.getOperator().toString() + " " + eval(expression.getRight());
+    public String visit(AssignmentExpression expression) {
+        return visit(expression.getLeft()) + " " + expression.getOperator().toString() + " " + visit(expression.getRight());
     }
 
     @Override
-    public String eval(float expression) {
+    public String visit(float expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(double expression) {
+    public String visit(double expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(int expression) {
+    public String visit(int expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(boolean expression) {
+    public String visit(boolean expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(String expression) {
+    public String visit(String expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(Program program) {
+    public String visit(Program program) {
         return program.getBody()
                 .stream()
-                .map(this::eval)
+                .map(this::visit)
                 .collect(Collectors.joining("\n"));
     }
 
     @Override
-    public String eval(Type type) {
+    public String visit(Type type) {
         return type.getValue();
     }
 
     @Override
-    public String eval(InitStatement statement) {
+    public String visit(InitStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(FunctionDeclaration statement) {
+    public String visit(FunctionDeclaration statement) {
         return "fun " +
-                statement.getName().string() +
-                "("
-                + statement.getParams().stream().map(LanguageAstPrinter::formatParameter).collect(Collectors.joining(","))
-                + ") "
-                + "{ \n"
-                + eval(statement.getBody())
-                + "\n} \n";
+               statement.getName().string() +
+               "("
+               + statement.getParams().stream().map(LanguageAstPrinter::formatParameter).collect(Collectors.joining(","))
+               + ") "
+               + "{ \n"
+               + visit(statement.getBody())
+               + "\n} \n";
     }
 
     private static @NotNull String formatParameter(ParameterIdentifier it) {
@@ -138,62 +138,62 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(ExpressionStatement statement) {
-        return eval(statement.getStatement());
+    public String visit(ExpressionStatement statement) {
+        return visit(statement.getStatement());
     }
 
     @Override
-    public String eval(VariableStatement statement) {
+    public String visit(VariableStatement statement) {
         return "var " + statement.getDeclarations()
                 .stream()
-                .map(this::eval)
+                .map(this::visit)
                 .collect(Collectors.joining(","));
     }
 
     @Override
-    public String eval(IfStatement statement) {
-        var string = new StringBuilder().append("if ").append(eval(statement.getTest())).append("{\n").append(eval(statement.getConsequent())).append("\n}\n");
+    public String visit(IfStatement statement) {
+        var string = new StringBuilder().append("if ").append(visit(statement.getTest())).append("{\n").append(visit(statement.getConsequent())).append("\n}\n");
         if (statement.hasElse()) {
             string.append(" else {\n")
-                    .append(eval(statement.getAlternate()))
+                    .append(visit(statement.getAlternate()))
                     .append("\n}\n");
         }
         return string.toString();
     }
 
     @Override
-    public String eval(WhileStatement statement) {
-        return "while (" + eval(statement.getTest()) + ") {\n"
-                + eval(statement.getBody())
-                + "\n}\n";
+    public String visit(WhileStatement statement) {
+        return "while (" + visit(statement.getTest()) + ") {\n"
+               + visit(statement.getBody())
+               + "\n}\n";
     }
 
     @Override
-    public String eval(ForStatement statement) {
+    public String visit(ForStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(SchemaDeclaration statement) {
-        return "schema " + eval(statement.getName()) + " {\n" +
-                eval(statement.getBody())
-                + "\n}\n";
+    public String visit(SchemaDeclaration statement) {
+        return "schema " + visit(statement.getName()) + " {\n" +
+               visit(statement.getBody())
+               + "\n}\n";
     }
 
     @Override
-    public String eval(ReturnStatement statement) {
-        return "return " + eval(statement.getArgument());
+    public String visit(ReturnStatement statement) {
+        return "return " + visit(statement.getArgument());
     }
 
     @Override
-    public String eval(ResourceExpression expression) {
-        return "resource " + eval(expression.getType()) + " " + eval(expression.getName()) + " {\n"
-                + eval(expression.getBlock())
-                + "}\n";
+    public String visit(ResourceExpression expression) {
+        return "resource " + visit(expression.getType()) + " " + visit(expression.getName()) + " {\n"
+               + visit(expression.getBlock())
+               + "}\n";
     }
 
     @Override
-    public String eval(NumberLiteral expression) {
+    public String visit(NumberLiteral expression) {
         if (expression.getVal() == null) {
             return "null";
         }
@@ -201,12 +201,12 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(BooleanLiteral expression) {
+    public String visit(BooleanLiteral expression) {
         return expression.getVal().toString();
     }
 
     @Override
-    public String eval(Identifier expression) {
+    public String visit(Identifier expression) {
         return switch (expression) {
             case ParameterIdentifier parameterIdentifier -> formatParameter(parameterIdentifier);
             default -> expression.string();
@@ -214,33 +214,33 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(NullLiteral expression) {
+    public String visit(NullLiteral expression) {
         return "null";
     }
 
     @Override
-    public String eval(StringLiteral expression) {
+    public String visit(StringLiteral expression) {
         return "\"" + expression.getValue() + "\"";
     }
 
     @Override
-    public String eval(BlockExpression expression) {
+    public String visit(BlockExpression expression) {
         StringBuilder result = new StringBuilder();
         for (Statement statement : expression.getExpression()) {
             result.append("\t");
-            result.append(eval(statement));
+            result.append(visit(statement));
             result.append("\n");
         }
         return result.toString();
     }
 
     @Override
-    public String eval(GroupExpression expression) {
+    public String visit(GroupExpression expression) {
         return parenthesize("group", expression.getExpression());
     }
 
     @Override
-    public String eval(LambdaExpression expression) {
+    public String visit(LambdaExpression expression) {
         return null;
     }
 
@@ -250,7 +250,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
         builder.append("(").append(name);
         for (Expression expr : exprs) {
             builder.append(" ");
-            builder.append(eval(expr));
+            builder.append(visit(expr));
         }
         builder.append(")");
 

@@ -60,8 +60,8 @@ public class Zmeu {
         List<Token> tokens = tokenizer.tokenize(schemasString.toString());
 
         Program program = parser.produceAST(tokens);
-        typeChecker.eval(program);
-        var evalRes = interpreter.eval(program);
+        typeChecker.visit(program);
+        var evalRes = interpreter.visit(program);
         var resources = interpreter.getResources();
         var plan = resourceManager.plan(resources);
 

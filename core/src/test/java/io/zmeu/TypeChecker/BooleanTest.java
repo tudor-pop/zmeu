@@ -16,31 +16,31 @@ class BooleanTest extends BaseChecker {
 
     @Test
     void testTrue() {
-        var t1 = checker.eval(true);
+        var t1 = checker.visit(true);
         assertEquals(t1, ValueType.Boolean);
     }
 
     @Test
     void testFalse() {
-        var t1 = checker.eval(false);
+        var t1 = checker.visit(false);
         assertEquals(t1, ValueType.Boolean);
     }
 
     @Test
     void testTrueLiteral() {
-        var t1 = checker.eval(bool(true));
+        var t1 = checker.visit(bool(true));
         assertEquals(t1, ValueType.Boolean);
     }
 
     @Test
     void testFalseLiteral() {
-        var t1 = checker.eval(bool(false));
+        var t1 = checker.visit(bool(false));
         assertEquals(t1, ValueType.Boolean);
     }
 
     @Test
     void testNull() {
-        var t1 = checker.eval(NullLiteral.of());
+        var t1 = checker.visit(NullLiteral.of());
         assertEquals(t1, ValueType.Null);
     }
 

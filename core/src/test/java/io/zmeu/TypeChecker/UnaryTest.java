@@ -11,7 +11,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void incrementInt() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = 1
                     ++x
@@ -22,7 +22,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void decrementInt() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = 1
                     --x
@@ -33,7 +33,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void incrementDecimal() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = 1.1
                     ++x
@@ -44,7 +44,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void decrementDecimal() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = 1.1
                     --x
@@ -55,7 +55,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void unaryMinus() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = 1
                     -x
@@ -66,7 +66,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void unaryMinusDecimal() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = 1.5
                     -x
@@ -77,7 +77,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void notFalse() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = false
                     !x 
@@ -88,7 +88,7 @@ public class UnaryTest extends BaseChecker {
 
     @Test
     void notTrue() {
-        var res = checker.eval(src("""
+        var res = checker.visit(src("""
                 {
                     var x = true
                     !x 

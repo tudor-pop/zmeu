@@ -27,7 +27,7 @@ public class SchemaTest extends BaseChecker {
 
     @Test
     void empty() {
-        var actual = checker.eval(src("""
+        var actual = checker.visit(src("""
                 schema Vm {
                 
                 }
@@ -38,7 +38,7 @@ public class SchemaTest extends BaseChecker {
 
     @Test
     void singleProperty() {
-        var actual = checker.eval(src("""
+        var actual = checker.visit(src("""
                 schema Vm {
                    var x  Number
                 }
@@ -52,7 +52,7 @@ public class SchemaTest extends BaseChecker {
 
     @Test
     void singlePropertyInit() {
-        var actual = checker.eval(src("""
+        var actual = checker.visit(src("""
                 schema Vm {
                    var x  Number = 1
                 }
@@ -66,7 +66,7 @@ public class SchemaTest extends BaseChecker {
 
     @Test
     void singlePropertyInitThrows() {
-        Assertions.assertThrows(TypeError.class, () -> checker.eval(src("""
+        Assertions.assertThrows(TypeError.class, () -> checker.visit(src("""
                 schema Vm {
                    var x  Number = true
                 }
@@ -75,7 +75,7 @@ public class SchemaTest extends BaseChecker {
 
     @Test
     void multipleProperty() {
-        var actual = checker.eval(src("""
+        var actual = checker.visit(src("""
                 schema Vm {
                    var x  Number
                    var y  String
@@ -91,7 +91,7 @@ public class SchemaTest extends BaseChecker {
 
     @Test
     void multiplePropertyInit() {
-        var actual = checker.eval(src("""
+        var actual = checker.visit(src("""
                 schema Vm {
                    var x  Number = 2
                    var y  String = "test"

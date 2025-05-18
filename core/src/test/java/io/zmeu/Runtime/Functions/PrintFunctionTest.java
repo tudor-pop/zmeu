@@ -29,7 +29,7 @@ class PrintFunctionTest extends BaseRuntimeTest {
 
     @Test
     void printlnMixStrings() {
-        interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        interpreter.visit(parser.produceAST(tokenizer.tokenize("""
                 print(1,2,3)
                 print("hi!","my","name","is","Bob")
                 print("hi! my name is Bob")

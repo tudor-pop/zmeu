@@ -73,49 +73,49 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(int expression) {
+    public Object visit(int expression) {
         return expression;
     }
 
     @Override
-    public Object eval(boolean expression) {
+    public Object visit(boolean expression) {
         return expression;
     }
 
     @Override
-    public Object eval(String expression) {
+    public Object visit(String expression) {
         return expression;
     }
 
     @Override
-    public Object eval(double expression) {
+    public Object visit(double expression) {
         return expression;
     }
 
     @Override
-    public Object eval(float expression) {
+    public Object visit(float expression) {
         return expression;
     }
 
     @Override
-    public Object eval(Expression expression) {
+    public Object visit(Expression expression) {
         return executeBlock(expression, env);
     }
 
     @Override
-    public Object eval(NumberLiteral expression) {
+    public Object visit(NumberLiteral expression) {
         return switch (expression) {
             case NumberLiteral literal -> literal.getValue();
         };
     }
 
     @Override
-    public Object eval(BooleanLiteral expression) {
+    public Object visit(BooleanLiteral expression) {
         return expression.isValue();
     }
 
     @Override
-    public Object eval(Identifier expression) {
+    public Object visit(Identifier expression) {
         return lookupVar(expression);
     }
 
@@ -124,24 +124,24 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(NullLiteral expression) {
+    public Object visit(NullLiteral expression) {
         return null;
     }
 
     @Override
-    public Object eval(StringLiteral expression) {
+    public Object visit(StringLiteral expression) {
         return expression.getValue();
     }
 
     @Override
-    public Object eval(LambdaExpression expression) {
+    public Object visit(LambdaExpression expression) {
         var params = expression.getParams();
         var body = expression.getBody();
         return FunValue.of((Identifier) null, params, body, env);
     }
 
     @Override
-    public Object eval(BlockExpression block) {
+    public Object visit(BlockExpression block) {
         Object res = NullValue.of();
         var env = new Environment(this.env);
         for (var it : block.getExpression()) {
@@ -151,7 +151,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(VariableStatement statement) {
+    public Object visit(VariableStatement statement) {
         Object res = NullValue.of();
         for (var it : statement.getDeclarations()) {
             res = executeBlock(it, env);
@@ -160,12 +160,12 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(GroupExpression expression) {
+    public Object visit(GroupExpression expression) {
         return null;
     }
 
     @Override
-    public Object eval(BinaryExpression expression) {
+    public Object visit(BinaryExpression expression) {
         Object lhs = executeBlock(expression.getLeft(), env);
         Object rhs = executeBlock(expression.getRight(), env);
         if (expression.getOperator() instanceof String op
@@ -209,7 +209,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(CallExpression<Expression> expression) {
+    public Object visit(CallExpression<Expression> expression) {
         var callee = executeBlock(expression.getCallee(), env);
         if (callee instanceof Callable function) {
 
@@ -267,29 +267,29 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(ReturnStatement statement) {
+    public Object visit(ReturnStatement statement) {
         Object value = null;
         if (statement.getArgument() != null) {
-            value = eval(statement.getArgument());
+            value = visit(statement.getArgument());
         }
         throw new Return(value);
     }
 
     @Override
-    public Object eval(ErrorExpression expression) {
+    public Object visit(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public Object eval(LogicalExpression expression) {
-        var left = eval(expression.getLeft());
-        var right = eval(expression.getRight());
+    public Object visit(LogicalExpression expression) {
+        var left = visit(expression.getLeft());
+        var right = visit(expression.getRight());
 
         if (left == null || right == null) {
-            throw new IllegalArgumentException("Left expression does not exist: " + printer.eval(expression));
+            throw new IllegalArgumentException("Left expression does not exist: " + printer.visit(expression));
         }
         if (!(left instanceof Boolean) || !(right instanceof Boolean)) {
-            throw new IllegalArgumentException("Left expression does not exist: " + printer.eval(expression));
+            throw new IllegalArgumentException("Left expression does not exist: " + printer.visit(expression));
         }
 
         if (expression.getOperator() == TokenType.Logical_Or) {
@@ -312,11 +312,11 @@ public final class Interpreter implements Visitor<Object> {
             return right;
         }
 
-        throw new IllegalArgumentException("Left expression does not exist: " + printer.eval(expression));
+        throw new IllegalArgumentException("Left expression does not exist: " + printer.visit(expression));
     }
 
     @Override
-    public Object eval(AssignmentExpression expression) {
+    public Object visit(AssignmentExpression expression) {
         switch (expression.getLeft()) {
             case MemberExpression memberExpression -> {
                 var instanceEnv = executeBlock(memberExpression.getObject(), env);
@@ -340,7 +340,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(MemberExpression expression) {
+    public Object visit(MemberExpression expression) {
         if (!(expression.getProperty() instanceof SymbolIdentifier resourceName)) {
             throw new OperationNotImplementedException("Membership expression not implemented for: " + expression.getObject());
         }
@@ -365,7 +365,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(ResourceExpression resource) {
+    public Object visit(ResourceExpression resource) {
         if (resource.getName() == null) {
             throw new InvalidInitException("Resource does not have a name: " + resource.name());
         }
@@ -426,12 +426,12 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(ThisExpression expression) {
+    public Object visit(ThisExpression expression) {
         return null;
     }
 
     @Override
-    public Object eval(IfStatement statement) {
+    public Object visit(IfStatement statement) {
         var eval = (Boolean) executeBlock(statement.getTest(), env);
         if (eval) {
             return executeBlock(statement.getConsequent(), env);
@@ -445,17 +445,17 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(WhileStatement statement) {
+    public Object visit(WhileStatement statement) {
         Object result = NullValue.of();
 
-        while (isTruthy(eval(statement.getTest()))) {
+        while (isTruthy(visit(statement.getTest()))) {
             result = executeBlock(statement.getBody(), env);
         }
         return result;
     }
 
     @Override
-    public Object eval(ForStatement statement) {
+    public Object visit(ForStatement statement) {
         List<Statement> statements = statement.discardBlock();
         statements.add(ExpressionStatement.expressionStatement(statement.getUpdate()));
         var whileStatement = WhileStatement.of(statement.getTest(), BlockExpression.block(statements));
@@ -466,7 +466,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(SchemaDeclaration expression) {
+    public Object visit(SchemaDeclaration expression) {
         switch (expression.getBody()) {
             case ExpressionStatement statement when statement.getStatement() instanceof BlockExpression blockExpression -> {
                 var typeEnv = new Environment<>(env);
@@ -482,7 +482,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(UnaryExpression expression) {
+    public Object visit(UnaryExpression expression) {
         Object operator = expression.getOperator();
         if (operator instanceof String op) {
             return switch (op) {
@@ -536,7 +536,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(VariableDeclaration expression) {
+    public Object visit(VariableDeclaration expression) {
         String symbol = expression.getId().string();
         Object value = null;
         if (expression.hasInit()) {
@@ -550,7 +550,7 @@ public final class Interpreter implements Visitor<Object> {
 
 
     @Override
-    public Object eval(Program program) {
+    public Object visit(Program program) {
         Object lastEval = new NullValue();
 
         if (ErrorSystem.hadErrors()) {
@@ -564,17 +564,17 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(Type type) {
+    public Object visit(Type type) {
         return type;
     }
 
     @Override
-    public Object eval(InitStatement statement) {
-        return eval(fun(statement.getName(), statement.getParams(), statement.getBody()));
+    public Object visit(InitStatement statement) {
+        return visit(fun(statement.getName(), statement.getParams(), statement.getBody()));
     }
 
     @Override
-    public Object eval(FunctionDeclaration declaration) {
+    public Object visit(FunctionDeclaration declaration) {
         var name = declaration.getName();
         var params = declaration.getParams();
         var body = declaration.getBody();
@@ -582,7 +582,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object eval(ExpressionStatement statement) {
+    public Object visit(ExpressionStatement statement) {
         return executeBlock(statement.getStatement(), env);
     }
 
@@ -617,7 +617,7 @@ public final class Interpreter implements Visitor<Object> {
         Environment previous = this.env;
         try {
             this.env = environment;
-            return Visitor.super.eval(expression);
+            return Visitor.super.visit(expression);
         } finally {
             this.env = previous;
         }
@@ -634,11 +634,11 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     private Object execute(Statement stmt) {
-        return Visitor.super.eval(stmt);
+        return Visitor.super.visit(stmt);
     }
 
     private Object execute(Expression stmt) {
-        return eval(stmt);
+        return visit(stmt);
     }
 
     static void runtimeError(RuntimeError error) {

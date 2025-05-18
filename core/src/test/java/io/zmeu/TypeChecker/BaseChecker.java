@@ -17,7 +17,7 @@ public class BaseChecker extends BaseTest {
     @Override
     protected Object eval(String source) {
         program = super.src(source);
-        return checker.eval(program);
+        return checker.visit(program);
     }
 
     protected Environment getEnvironment() {

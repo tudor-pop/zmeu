@@ -67,7 +67,7 @@ public final class ResourceExpression extends Statement implements DeferredObser
 
     @Override
     public Object notify(Interpreter interpreter) {
-        return interpreter.eval(this);
+        return interpreter.visit(this);
     }
 
 }

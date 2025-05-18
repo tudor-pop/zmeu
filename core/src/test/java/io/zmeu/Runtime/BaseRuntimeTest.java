@@ -64,11 +64,11 @@ public class BaseRuntimeTest {
     protected Object eval(String source) {
         Program program = parser.produceAST(tokenizer.tokenize(source));
         resolver.resolve(program);
-        return interpreter.eval(program);
+        return interpreter.visit(program);
     }
 
     protected Object interpret(String source) {
-        return interpreter.eval(parser.produceAST(tokenizer.tokenize(source)));
+        return interpreter.visit(parser.produceAST(tokenizer.tokenize(source)));
     }
 
     protected Object resolve(String source) {

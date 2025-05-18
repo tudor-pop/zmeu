@@ -591,7 +591,7 @@ public class Parser {
         if (target instanceof Literal n) {
             throw Error("Invalid left-hand side in assignment expression: %s %s %s".formatted(n.getVal(), operator, value));
         } else {
-            throw Error("Invalid left-hand side in assignment expression: %s %s %s".formatted(printer.eval(target), operator, value));
+            throw Error("Invalid left-hand side in assignment expression: %s %s %s".formatted(printer.visit(target), operator, value));
         }
     }
 

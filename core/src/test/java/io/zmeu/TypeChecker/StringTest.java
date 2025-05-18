@@ -12,7 +12,7 @@ class StringTest extends BaseChecker {
 
     @Test
     void testStringLiteral() {
-        var t1 = checker.eval("hello");
+        var t1 = checker.visit("hello");
         Assertions.assertEquals(t1, ValueType.String);
     }
 

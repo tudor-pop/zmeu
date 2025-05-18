@@ -12,128 +12,128 @@ import io.zmeu.Runtime.Interpreter;
 public sealed interface Visitor<R>
         permits Resolver, TypeChecker, Interpreter, AstPrinter, LanguageAstPrinter, SyntaxPrinter {
 
-    default R eval(Expression expr) {
+    default R visit(Expression expr) {
         return switch (expr) {
-            case BinaryExpression expression -> eval(expression);
-            case AssignmentExpression expression -> eval(expression);
-            case CallExpression expression -> eval((CallExpression<Expression>) expression);
-            case ErrorExpression expression -> eval(expression);
-            case GroupExpression expression -> eval(expression);
-            case LogicalExpression expression -> eval(expression);
-            case MemberExpression expression -> eval(expression);
-            case ThisExpression expression -> eval(expression);
-            case UnaryExpression expression -> eval(expression);
-            case VariableDeclaration expression -> eval(expression);
-            case Identifier identifier -> eval(identifier);
-            case Literal literal -> eval(literal);
-            case BlockExpression expression -> eval(expression);
-            case LambdaExpression expression -> eval(expression);
-            case Type type -> eval(type);
+            case BinaryExpression expression -> visit(expression);
+            case AssignmentExpression expression -> visit(expression);
+            case CallExpression expression -> visit((CallExpression<Expression>) expression);
+            case ErrorExpression expression -> visit(expression);
+            case GroupExpression expression -> visit(expression);
+            case LogicalExpression expression -> visit(expression);
+            case MemberExpression expression -> visit(expression);
+            case ThisExpression expression -> visit(expression);
+            case UnaryExpression expression -> visit(expression);
+            case VariableDeclaration expression -> visit(expression);
+            case Identifier identifier -> visit(identifier);
+            case Literal literal -> visit(literal);
+            case BlockExpression expression -> visit(expression);
+            case LambdaExpression expression -> visit(expression);
+            case Type type -> visit(type);
         };
     }
 
-    default R eval(Literal expression) {
+    default R visit(Literal expression) {
         return switch (expression) {
-            case NumberLiteral number -> eval(number);
-            case StringLiteral string -> eval(string);
-            case BooleanLiteral bool -> eval(bool);
-            case NullLiteral nullliteral -> eval(nullliteral);
+            case NumberLiteral number -> visit(number);
+            case StringLiteral string -> visit(string);
+            case BooleanLiteral bool -> visit(bool);
+            case NullLiteral nullliteral -> visit(nullliteral);
             default -> throw new IllegalStateException("Unexpected value: " + expression);
         };
     }
 
-    default R eval(Statement statement){
+    default R visit(Statement statement){
         return switch (statement){
-            case ResourceExpression resourceExpression -> eval(resourceExpression);
-            case Program program -> eval(program);
-            case ExpressionStatement expressionStatement -> eval(expressionStatement);
-            case ForStatement forStatement -> eval(forStatement);
-            case FunctionDeclaration functionDeclaration -> eval(functionDeclaration);
-            case IfStatement ifStatement -> eval(ifStatement);
-            case InitStatement initStatement -> eval(initStatement);
-            case ReturnStatement returnStatement -> eval(returnStatement);
-            case SchemaDeclaration schemaDeclaration -> eval(schemaDeclaration);
-            case VariableStatement variableStatement -> eval(variableStatement);
-            case WhileStatement whileStatement -> eval(whileStatement);
+            case ResourceExpression resourceExpression -> visit(resourceExpression);
+            case Program program -> visit(program);
+            case ExpressionStatement expressionStatement -> visit(expressionStatement);
+            case ForStatement forStatement -> visit(forStatement);
+            case FunctionDeclaration functionDeclaration -> visit(functionDeclaration);
+            case IfStatement ifStatement -> visit(ifStatement);
+            case InitStatement initStatement -> visit(initStatement);
+            case ReturnStatement returnStatement -> visit(returnStatement);
+            case SchemaDeclaration schemaDeclaration -> visit(schemaDeclaration);
+            case VariableStatement variableStatement -> visit(variableStatement);
+            case WhileStatement whileStatement -> visit(whileStatement);
             default -> throw new IllegalStateException("Unexpected value: " + statement);
         };
     }
 
 
-    R eval(NumberLiteral expression);
+    R visit(NumberLiteral expression);
 
-    R eval(BooleanLiteral expression);
+    R visit(BooleanLiteral expression);
 
-    R eval(Identifier expression);
+    R visit(Identifier expression);
 
-    R eval(NullLiteral expression);
+    R visit(NullLiteral expression);
 
-    R eval(StringLiteral expression);
+    R visit(StringLiteral expression);
 
-    R eval(LambdaExpression expression);
+    R visit(LambdaExpression expression);
 
-    R eval(BlockExpression expression);
+    R visit(BlockExpression expression);
 
-    R eval(GroupExpression expression);
+    R visit(GroupExpression expression);
 
-    R eval(BinaryExpression expression);
+    R visit(BinaryExpression expression);
 
-    R eval(CallExpression<Expression> expression);
+    R visit(CallExpression<Expression> expression);
 
-    R eval(ErrorExpression expression);
+    R visit(ErrorExpression expression);
 
-    R eval(LogicalExpression expression);
+    R visit(LogicalExpression expression);
 
-    R eval(MemberExpression expression);
+    R visit(MemberExpression expression);
 
-    R eval(ThisExpression expression);
+    R visit(ThisExpression expression);
 
-    R eval(UnaryExpression expression);
+    R visit(UnaryExpression expression);
 
-    R eval(VariableDeclaration expression);
+    R visit(VariableDeclaration expression);
 
-    R eval(AssignmentExpression expression);
+    R visit(AssignmentExpression expression);
 
-    R eval(float expression);
+    R visit(float expression);
 
-    R eval(double expression);
+    R visit(double expression);
 
-    R eval(int expression);
+    R visit(int expression);
 
-    R eval(boolean expression);
+    R visit(boolean expression);
 
-    R eval(String expression);
+    R visit(String expression);
 
-    R eval(Program program);
+    R visit(Program program);
 
 
-    R eval(Type type);
+    R visit(Type type);
 
     /**
      * InitStatement
      * Syntactic sugar for a function
      */
-    R eval(InitStatement statement);
+    R visit(InitStatement statement);
 
-    R eval(FunctionDeclaration statement);
+    R visit(FunctionDeclaration statement);
 
-    R eval(ExpressionStatement statement);
+    R visit(ExpressionStatement statement);
 
-    R eval(VariableStatement statement);
+    R visit(VariableStatement statement);
 
-    R eval(IfStatement statement);
+    R visit(IfStatement statement);
 
-    R eval(WhileStatement statement);
+    R visit(WhileStatement statement);
 
-    R eval(ForStatement statement);
+    R visit(ForStatement statement);
 
-    R eval(SchemaDeclaration statement);
+    R visit(SchemaDeclaration statement);
 
-    R eval(ReturnStatement statement);
+    R visit(ReturnStatement statement);
 
     /**
      * An instance of a Schema is an Environment!
      * the 'parent' component of the instance environment is set to the class environment making class members accessible
      */
-    R eval(ResourceExpression expression);
+    R visit(ResourceExpression expression);
 }

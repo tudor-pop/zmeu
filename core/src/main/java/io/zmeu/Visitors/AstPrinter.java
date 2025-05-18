@@ -9,151 +9,151 @@ import io.zmeu.TypeChecker.Types.Type;
 public final class AstPrinter implements Visitor<String> {
 
     public String print(Expression expr) {
-        return eval(expr);
+        return visit(expr);
     }
 
     @Override
-    public String eval(Expression expression) {
+    public String visit(Expression expression) {
         return print(expression);
     }
 
     @Override
-    public String eval(BinaryExpression expression) {
+    public String visit(BinaryExpression expression) {
         return parenthesize(expression.getOperator(), expression.getLeft(), expression.getRight());
     }
 
     @Override
-    public String eval(CallExpression expression) {
+    public String visit(CallExpression expression) {
         return null;
     }
 
     @Override
-    public String eval(ErrorExpression expression) {
+    public String visit(ErrorExpression expression) {
         return null;
     }
 
     @Override
-    public String eval(LogicalExpression expression) {
+    public String visit(LogicalExpression expression) {
         return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
     }
 
     @Override
-    public String eval(MemberExpression expression) {
+    public String visit(MemberExpression expression) {
         return null;
     }
 
     @Override
-    public String eval(ThisExpression expression) {
+    public String visit(ThisExpression expression) {
         return null;
     }
 
     @Override
-    public String eval(UnaryExpression expression) {
+    public String visit(UnaryExpression expression) {
         return parenthesize(expression.getOperator(), expression.getValue());
     }
 
     @Override
-    public String eval(VariableDeclaration expression) {
+    public String visit(VariableDeclaration expression) {
         return null;
     }
 
     @Override
-    public String eval(AssignmentExpression expression) {
+    public String visit(AssignmentExpression expression) {
         return parenthesize(expression.getOperator().toString(), expression.getLeft(), expression.getRight());
     }
 
     @Override
-    public String eval(float expression) {
+    public String visit(float expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(double expression) {
+    public String visit(double expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(int expression) {
+    public String visit(int expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(boolean expression) {
+    public String visit(boolean expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(String expression) {
+    public String visit(String expression) {
         return String.valueOf(expression);
     }
 
     @Override
-    public String eval(Program program) {
+    public String visit(Program program) {
         return "";
     }
 
     @Override
-    public String eval(Statement statement) {
+    public String visit(Statement statement) {
         return "";
     }
 
     @Override
-    public String eval(Type statement) {
+    public String visit(Type statement) {
         return "";
     }
 
     @Override
-    public String eval(InitStatement statement) {
+    public String visit(InitStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(FunctionDeclaration statement) {
+    public String visit(FunctionDeclaration statement) {
         return "";
     }
 
     @Override
-    public String eval(ExpressionStatement statement) {
+    public String visit(ExpressionStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(VariableStatement statement) {
+    public String visit(VariableStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(IfStatement statement) {
+    public String visit(IfStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(WhileStatement statement) {
+    public String visit(WhileStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(ForStatement statement) {
+    public String visit(ForStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(SchemaDeclaration statement) {
+    public String visit(SchemaDeclaration statement) {
         return "";
     }
 
     @Override
-    public String eval(ReturnStatement statement) {
+    public String visit(ReturnStatement statement) {
         return "";
     }
 
     @Override
-    public String eval(ResourceExpression expression) {
+    public String visit(ResourceExpression expression) {
         return "";
     }
 
     @Override
-    public String eval(NumberLiteral expression) {
+    public String visit(NumberLiteral expression) {
         if (expression.getVal() == null) {
             return "null";
         }
@@ -161,37 +161,37 @@ public final class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String eval(BooleanLiteral expression) {
+    public String visit(BooleanLiteral expression) {
         return expression.getVal().toString();
     }
 
     @Override
-    public String eval(Identifier expression) {
+    public String visit(Identifier expression) {
         return expression.string();
     }
 
     @Override
-    public String eval(NullLiteral expression) {
+    public String visit(NullLiteral expression) {
         return "null";
     }
 
     @Override
-    public String eval(StringLiteral expression) {
+    public String visit(StringLiteral expression) {
         return expression.getValue();
     }
 
     @Override
-    public String eval(BlockExpression expression) {
+    public String visit(BlockExpression expression) {
         return null;
     }
 
     @Override
-    public String eval(GroupExpression expression) {
+    public String visit(GroupExpression expression) {
         return parenthesize("group", expression.getExpression());
     }
 
     @Override
-    public String eval(LambdaExpression expression) {
+    public String visit(LambdaExpression expression) {
         return null;
     }
 
@@ -201,7 +201,7 @@ public final class AstPrinter implements Visitor<String> {
         builder.append("(").append(name);
         for (Expression expr : exprs) {
             builder.append(" ");
-            builder.append(eval(expr));
+            builder.append(visit(expr));
         }
         builder.append(")");
 

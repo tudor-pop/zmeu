@@ -29,7 +29,7 @@ class PrintlnFunctionTest extends BaseRuntimeTest {
 
     @Test
     void printlnStrings() {
-        interpreter.eval(parser.produceAST(tokenizer.tokenize("""
+        interpreter.visit(parser.produceAST(tokenizer.tokenize("""
                 println(1,2,3)
                 println("hi!","my","name","is","Bob")
                 println("hi! my name is Bob")

@@ -24,7 +24,7 @@ public class Validator {
         }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
-            String string = "Expected type " + expectedType + " but got " + actualType + " in expression: " + printer.eval(expectedVal);
+            String string = "Expected type " + expectedType + " but got " + actualType + " in expression: " + printer.visit(expectedVal);
             throw new TypeError(string);
         }
         return actualType;
@@ -39,7 +39,7 @@ public class Validator {
         }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
-            String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            String string = "Expected type " + expectedType + " for value " + printer.visit(expectedVal) + " but got " + actualType + " in expression: " + printer.visit(actualVal);
             throw new TypeError(string);
         }
         return actualType;
@@ -54,7 +54,7 @@ public class Validator {
         }
         if (!Objects.equals(actualType, expectedType)) {
             // only evaluate printing if we need to
-            String string = "Expected type " + expectedType + " for value " + printer.eval(expectedVal) + " but got " + actualType + " in expression: " + printer.eval(actualVal);
+            String string = "Expected type " + expectedType + " for value " + printer.visit(expectedVal) + " but got " + actualType + " in expression: " + printer.visit(actualVal);
             throw new TypeError(string);
         }
         return actualType;
