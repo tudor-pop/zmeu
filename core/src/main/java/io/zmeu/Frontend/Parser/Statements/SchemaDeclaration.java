@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,7 +30,6 @@ public final class SchemaDeclaration extends Statement {
     }
 
     public SchemaDeclaration() {
-        this.kind = NodeType.SchemaDeclaration;
     }
 
     public static Statement of(Identifier test, Expression body) {

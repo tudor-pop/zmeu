@@ -1,7 +1,6 @@
 package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +30,6 @@ public final class ForStatement extends Statement {
 
     private ForStatement(Expression test, @Nullable VariableStatement init, @Nullable Statement body,
                          @Nullable Expression update) {
-        this.kind = NodeType.IfStatement;
         this.update = update;
         this.init = init;
         this.test = test;
@@ -39,7 +37,6 @@ public final class ForStatement extends Statement {
     }
 
     public ForStatement() {
-        this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of() {

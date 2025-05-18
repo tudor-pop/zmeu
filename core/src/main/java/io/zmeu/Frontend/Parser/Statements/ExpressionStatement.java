@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +21,6 @@ public final class ExpressionStatement extends Statement {
     private Expression statement;
 
     private ExpressionStatement(Expression statement) {
-        this.kind = NodeType.ExpressionStatement;
         this.statement = statement;
     }
 

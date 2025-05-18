@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +22,6 @@ public final class IfStatement extends Statement {
     private Statement alternate;
 
     private IfStatement(Expression test, @Nullable Statement consequent, Statement alternate) {
-        this.kind = NodeType.IfStatement;
         this.test = test;
         this.consequent = consequent;
         this.alternate = alternate;
@@ -33,7 +31,6 @@ public final class IfStatement extends Statement {
     }
 
     private IfStatement() {
-        this.kind = NodeType.BlockStatement;
     }
 
     public boolean hasElse() {

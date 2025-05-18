@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.ParameterIdentifier;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,7 +34,6 @@ public final class InitStatement extends Statement {
     }
 
     public InitStatement() {
-        this.kind = NodeType.InitDeclaration;
     }
 
     public static Statement of(List<ParameterIdentifier> params, Expression body) {

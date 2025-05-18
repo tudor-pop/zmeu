@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Statements;
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Literals.StringLiteral;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +32,6 @@ public final class WhileStatement extends Statement {
     }
 
     public WhileStatement() {
-        this.kind = NodeType.BlockStatement;
     }
 
     public static Statement of(Expression test, Expression consequent) {

@@ -3,7 +3,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.SymbolIdentifier;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.Statement;
 import io.zmeu.Runtime.Interpreter;
@@ -24,7 +23,6 @@ public final class ResourceExpression extends Statement implements DeferredObser
     private boolean isEvaluated;
 
     private ResourceExpression() {
-        this.kind = NodeType.ResourceExpression;
         this.name = new SymbolIdentifier();
     }
 

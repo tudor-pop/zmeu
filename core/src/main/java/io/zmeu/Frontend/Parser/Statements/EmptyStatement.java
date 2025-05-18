@@ -1,6 +1,5 @@
 package io.zmeu.Frontend.Parser.Statements;
 
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +15,6 @@ import lombok.EqualsAndHashCode;
 public final class EmptyStatement extends Statement {
 
     public EmptyStatement() {
-        this.kind = NodeType.EmptyStatement;
     }
 
     public static Statement of() {

@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.Expression;
 import io.zmeu.Frontend.Parser.Literals.*;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.TypeChecker.Types.ValueType;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
@@ -45,7 +44,6 @@ public final class FunctionDeclaration extends Statement {
     }
 
     private FunctionDeclaration() {
-        this.kind = NodeType.FunctionDeclaration;
     }
 
     public static Statement fun(Identifier test, List<ParameterIdentifier> params, Expression body) {

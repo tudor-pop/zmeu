@@ -2,11 +2,9 @@ package io.zmeu.Frontend.Parser.Statements;
 
 import io.zmeu.Frontend.Parser.Expressions.ModuleExpression;
 import io.zmeu.Frontend.Parser.Expressions.ResourceExpression;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Visitors.Visitor;
 import lombok.Data;
-import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * Statements do not return a values as opposed to expressions
@@ -32,15 +30,6 @@ public abstract sealed class Statement permits ModuleExpression,
         ForStatement, FunctionDeclaration,
         IfStatement, InitStatement, ReturnStatement,
         SchemaDeclaration, VariableStatement, WhileStatement {
-    protected NodeType kind;
-
-    public boolean is(NodeType type) {
-        return kind == type;
-    }
-
-    public boolean is(NodeType... type) {
-        return ArrayUtils.contains(type, kind);
-    }
 
     public abstract  <R> R accept(Visitor<R> visitor);
 }

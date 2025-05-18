@@ -2,7 +2,6 @@ package io.zmeu.Frontend.Parser.Expressions;
 
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.PluginIdentifier;
-import io.zmeu.Frontend.Parser.NodeType;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.Statement;
 import io.zmeu.Visitors.Visitor;
@@ -21,7 +20,6 @@ public final class ModuleExpression extends Statement {
     private BlockExpression block;
 
     private ModuleExpression() {
-        this.kind = NodeType.ModuleExpression;
     }
 
     private ModuleExpression(PluginIdentifier type, Identifier name, BlockExpression block) {

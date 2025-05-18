@@ -21,7 +21,6 @@ public final class Program extends Statement {
     }
 
     public Program(List<Statement> body) {
-        this.kind = NodeType.Program;
         this.body = body;
     }
 

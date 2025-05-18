@@ -103,7 +103,7 @@ public class Parser {
                 break;
             }
             Statement statement = Declaration();
-            if (statement == null || statement.is(NodeType.EmptyStatement)) {
+            if (statement == null || statement instanceof EmptyStatement) {
                 if (iterator.hasNext()) {
                     continue;
                 } else {
