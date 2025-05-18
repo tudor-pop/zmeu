@@ -168,64 +168,42 @@ public final class Interpreter implements Visitor<Object> {
     public Object eval(BinaryExpression expression) {
         Object lhs = executeBlock(expression.getLeft(), env);
         Object rhs = executeBlock(expression.getRight(), env);
-        if ((Object) expression.getOperator() instanceof String op) {
-            if (lhs instanceof Integer lhsn && rhs instanceof Integer rhsn) {
+        if (expression.getOperator() instanceof String op
+            && lhs  instanceof Number ln
+            && rhs  instanceof Number rn)
+        {
+            // if both were ints, do int math → preserve integer result
+            if (ln instanceof Integer && rn instanceof Integer) {
+                int a = ln.intValue(), b = rn.intValue();
                 return switch (op) {
-                    case "+" -> lhsn + rhsn;
-                    case "-" -> lhsn - rhsn;
-                    case "/" -> lhsn / rhsn;
-                    case "*" -> lhsn * rhsn;
-                    case "%" -> lhsn % rhsn;
-                    case "==" -> lhsn.equals(rhsn);
-                    case "<" -> lhsn < rhsn;
-                    case "<=" -> lhsn <= rhsn;
-                    case ">" -> lhsn > rhsn;
-                    case ">=" -> lhsn >= rhsn;
-                    default -> throw new RuntimeException("Operator could not be evaluated");
-                };
-            } else if (lhs instanceof Double lhsn && rhs instanceof Double rhsn) {
-                return switch (op) {
-                    case "+" -> lhsn + rhsn;
-                    case "-" -> lhsn - rhsn;
-                    case "/" -> lhsn / rhsn;
-                    case "*" -> lhsn * rhsn;
-                    case "%" -> lhsn % rhsn;
-                    case "==" -> Double.compare(lhsn, rhsn) == 0;
-                    case "<" -> Double.compare(lhsn, rhsn) < 0;
-                    case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
-                    case ">" -> Double.compare(lhsn, rhsn) > 0;
-                    case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
-                    default -> throw new RuntimeException("Operator could not be evaluated");
-                };
-            } else if (lhs instanceof Double lhsn && rhs instanceof Integer rhsn) {
-                return switch (op) {
-                    case "+" -> lhsn + rhsn;
-                    case "-" -> lhsn - rhsn;
-                    case "/" -> lhsn / rhsn;
-                    case "*" -> lhsn * rhsn;
-                    case "%" -> lhsn % rhsn;
-                    case "==" -> Double.compare(lhsn, rhsn) == 0;
-                    case "<" -> Double.compare(lhsn, rhsn) < 0;
-                    case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
-                    case ">" -> Double.compare(lhsn, rhsn) > 0;
-                    case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
-                    default -> throw new RuntimeException("Operator could not be evaluated");
-                };
-            } else if (lhs instanceof Integer lhsn && rhs instanceof Double rhsn) {
-                return switch (op) {
-                    case "+" -> lhsn + rhsn;
-                    case "-" -> lhsn - rhsn;
-                    case "/" -> lhsn / rhsn;
-                    case "*" -> lhsn * rhsn;
-                    case "%" -> lhsn % rhsn;
-                    case "==" -> Double.compare(lhsn, rhsn) == 0;
-                    case "<" -> Double.compare(lhsn, rhsn) < 0;
-                    case "<=" -> Double.compare(lhsn, rhsn) < 0 || Double.compare(lhsn, rhsn) == 0;
-                    case ">" -> Double.compare(lhsn, rhsn) > 0;
-                    case ">=" -> Double.compare(lhsn, rhsn) > 0 || Double.compare(lhsn, rhsn) == 0;
-                    default -> throw new RuntimeException("Operator could not be evaluated");
+                    case "+"  -> a + b;
+                    case "-"  -> a - b;
+                    case "*"  -> a * b;
+                    case "/"  -> a / b;
+                    case "%"  -> a % b;
+                    case "==" -> a == b;
+                    case "<"  -> a < b;
+                    case "<=" -> a <= b;
+                    case ">"  -> a > b;
+                    case ">=" -> a >= b;
+                    default   -> throw new RuntimeException("Operator could not be evaluated: " + op);
                 };
             }
+            // otherwise treat both as doubles
+            double a = ln.doubleValue(), b = rn.doubleValue();
+            return switch (op) {
+                case "+"  -> a + b;
+                case "-"  -> a - b;
+                case "*"  -> a * b;
+                case "/"  -> a / b;
+                case "%"  -> a % b;
+                case "==" -> a == b;
+                case "<"  -> a < b;
+                case "<=" -> a <= b;
+                case ">"  -> a > b;
+                case ">=" -> a >= b;
+                default   -> throw new RuntimeException("Operator could not be evaluated: " + op);
+            };
         }
         throw new RuntimeException("Invalid number: %s %s".formatted(lhs, rhs));
     }
