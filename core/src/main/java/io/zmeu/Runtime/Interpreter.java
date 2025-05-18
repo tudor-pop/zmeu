@@ -26,7 +26,9 @@ import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
@@ -173,15 +175,14 @@ public final class Interpreter implements Visitor<Object> {
             && rhs  instanceof Number rn)
         {
             // if both were ints, do int math → preserve integer result
-            if (ln instanceof Integer && rn instanceof Integer) {
-                int a = ln.intValue(), b = rn.intValue();
+            if (ln instanceof Integer a && rn instanceof Integer b) {
                 return switch (op) {
                     case "+"  -> a + b;
                     case "-"  -> a - b;
                     case "*"  -> a * b;
                     case "/"  -> a / b;
                     case "%"  -> a % b;
-                    case "==" -> a == b;
+                    case "==" -> a.equals(b);
                     case "<"  -> a < b;
                     case "<=" -> a <= b;
                     case ">"  -> a > b;
