@@ -14,7 +14,6 @@ import io.zmeu.Runtime.Interpreter;
 import io.zmeu.TypeChecker.TypeChecker;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
-import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +37,7 @@ public class Zmeu {
 
         this.objectMapper = ZmeuInjector.createMapper();
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
-        this.diff = new Diff(javers, new ModelMapper());
+        this.diff = new Diff(javers, objectMapper);
 
         this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();
