@@ -33,13 +33,12 @@ dependencies {
     implementation 'org.fusesource.jansi:jansi:2.4.1'
     implementation "org.pf4j:pf4j:${pf4jVersion}"
     annotationProcessor "org.pf4j:pf4j:${pf4jVersion}"
-
+    implementation("commons-beanutils:commons-beanutils:1.10.1")
     implementation 'info.picocli:picocli:4.7.6'
     annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
     implementation 'org.javers:javers-core:7.8.0'
     implementation 'org.javers:javers-persistence-sql:7.8.0'
     implementation 'org.postgresql:postgresql:42.7.5'
-    implementation 'org.modelmapper:modelmapper:3.2.2'
 
     compileOnly "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
@@ -57,7 +56,6 @@ test {
     useJUnitPlatform()
 }
 extraJavaModuleInfo {
-    automaticModule('org.modelmapper:modelmapper', 'modelmapper')
     automaticModule('org.javers:javers-core', 'javers.core')
     automaticModule('org.javers:javers-persistence-sql', 'javers.persistence.sql')
     automaticModule('picocli-codegen-4.7.6.jar', 'info.picocli')

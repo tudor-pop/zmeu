@@ -22,7 +22,7 @@ class DummyDiffTest extends JaversTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff(javers, mapper);
+        diff = new Diff(javers);
     }
 
     /**
@@ -62,7 +62,7 @@ class DummyDiffTest extends JaversTest {
     void srcOverridesRemote() {
         var stopwatch = new StopWatch();
         stopwatch.start();
-        for (int i = 0; i < 200000; i++) {
+        for (int i = 0; i < 900000; i++) {
 
 
             var localState = new Resource("main",

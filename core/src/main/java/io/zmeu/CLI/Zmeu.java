@@ -37,7 +37,7 @@ public class Zmeu {
 
         this.objectMapper = ZmeuInjector.createMapper();
         this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
-        this.diff = new Diff(javers, objectMapper);
+        this.diff = new Diff(javers);
 
         this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();
