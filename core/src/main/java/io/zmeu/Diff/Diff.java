@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
-import org.modelmapper.ModelMapper;
 
 /**
  *
@@ -15,13 +14,11 @@ import org.modelmapper.ModelMapper;
 public class Diff {
     @Getter
     private Javers javers;
-    private ModelMapper mapper;
-
+    private final IgnoreNullBeanUtilsBean ignoreNullBeanUtils = new IgnoreNullBeanUtilsBean();
     @SneakyThrows
-    public Diff(Javers javers, ModelMapper mapper) {
+    public Diff(Javers javers) {
         this();
         this.javers = javers;
-        this.mapper = mapper;
     }
 
     public Diff() {
@@ -29,7 +26,6 @@ public class Diff {
     }
 
     /**
-     * make a 3-way merge between the resources
      *
      * @param base  javers state stored in the database
      * @param left  source code state
@@ -48,7 +44,7 @@ public class Diff {
              * accept right/theirs/cloud changes. Any undeclared properties in the state (like unique cloud ids)
              * will be set on the base since they are probably already out of date in the base state
              * */
-            mapper.map(right, merged);
+            ignoreNullBeanUtils.copyProperties(merged, right);
         } else {
             merged = null;
         }
@@ -64,7 +60,7 @@ public class Diff {
         if (merged == null) {
             merged = left;
         } else if (left != null) {
-            mapper.map(left, merged);
+            ignoreNullBeanUtils.copyProperties(merged, left);
         } else { // on object removed (src doesn't exist because it was removed) create an empty object of the same type
             merged = merged.getClass().newInstance();
         }
