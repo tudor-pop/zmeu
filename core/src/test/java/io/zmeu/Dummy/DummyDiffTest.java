@@ -6,7 +6,6 @@ import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.time.StopWatch;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
@@ -60,48 +59,40 @@ class DummyDiffTest extends JaversTest {
 
     @Test
     void srcOverridesRemote() {
-        var stopwatch = new StopWatch();
-        stopwatch.start();
-        for (int i = 0; i < 900000; i++) {
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
 
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
 
-            var localState = new Resource("main",
-                    DummyResource.builder()
-                            .content("local")
-                            .build()
-            );
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
+        var res = diff.merge(localState, sourceState, cloudState);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false));
 
-            var sourceState = new Resource("main",
-                    DummyResource.builder()
-                            .content("src")
-                            .build()
-            );
-
-            var cloudState = new Resource("main",
-                    DummyResource.builder()
-                            .content("local")
-                            .build()
-            );
-            var res = diff.merge(localState, sourceState, cloudState);
-            var plan = new Resource("main",
-                    DummyResource.builder()
-                            .content("src")
-                            .build()
-            );
-            var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false));
-
-            Assertions.assertEquals(plan, res.resource());
-            Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
-            Assertions.assertEquals("""
-                    @|yellow ~|@ resource DummyResource main {
-                    	name    = null
-                    @|yellow ~|@	content = "local" -> "src"
-                    	uid     = null
-                    @|yellow ~|@ }
-                    """.trim(), log); // assert formatting remains intact
-        }
-        stopwatch.stop();
-        System.out.println(stopwatch.formatTime());
+        Assertions.assertEquals(plan, res.resource());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+        Assertions.assertEquals("""
+                @|yellow ~|@ resource DummyResource main {
+                	name    = null
+                @|yellow ~|@	content = "local" -> "src"
+                	uid     = null
+                @|yellow ~|@ }
+                """.trim(), log); // assert formatting remains intact
     }
 
     @Test
