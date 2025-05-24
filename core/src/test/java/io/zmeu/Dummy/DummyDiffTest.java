@@ -326,7 +326,7 @@ class DummyDiffTest extends JaversTest {
 
         var srcState = new Resource("main",
                 DummyResource.builder()
-                        .content("local")
+                        .content("src")
                         .build()
         );
 
@@ -345,18 +345,23 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(srcState, res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+        // assert that:
+        // 1. name was removed
+        // 2. content is "src"
+        // 3. cloud readonly property was maintained
+        Assertions.assertEquals(res.resource().getResource(), localState.getResource());
 
         /*
         ~ resource DummyResource main {
         -	name    = "local" -> null
-            content = "local"
+        ~	content = "local" -> "src"
             uid     = "cloud-id-random"
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 @|red -|@	name    = "local" @|white ->|@ @|white null|@
-                	content = "local"
+                @|yellow ~|@	content = "local" -> "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
