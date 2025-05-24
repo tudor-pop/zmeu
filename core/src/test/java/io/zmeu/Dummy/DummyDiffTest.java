@@ -96,7 +96,7 @@ class DummyDiffTest extends JaversTest {
     }
 
     @Test
-    void addResourceToRemote() {
+    void deletedFromCloudButKeptInSrc() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("src")
@@ -183,6 +183,7 @@ class DummyDiffTest extends JaversTest {
         var expected = new Resource("main",
                 DummyResource.builder()
                         .content("src")
+                        .uid("cloud-id-random")
                         .build()
         );
 
@@ -195,7 +196,7 @@ class DummyDiffTest extends JaversTest {
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
                 @|yellow ~|@	content = "remote" -> "src"
-                @|red -|@	uid     = "cloud-id-random" @|white ->|@ @|white null|@
+                	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -300,7 +301,7 @@ class DummyDiffTest extends JaversTest {
         var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
-        Assertions.assertEquals(new Resource(), res.resource());
+        Assertions.assertEquals(cloudState, res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ObjectRemoved.class, res.changes().get(0));
 
@@ -318,6 +319,7 @@ class DummyDiffTest extends JaversTest {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
+                        .name("local")
                         .uid("cloud-id-random")
                         .build()
         );
@@ -330,6 +332,7 @@ class DummyDiffTest extends JaversTest {
 
         var cloudState = new Resource("main",
                 DummyResource.builder()
+                        .name("local")
                         .content("local")
                         .uid("cloud-id-random")
                         .build()
@@ -345,16 +348,16 @@ class DummyDiffTest extends JaversTest {
 
         /*
         ~ resource DummyResource main {
-            name    = null
+        -	name    = "local" -> null
             content = "local"
-        -	uid     = "cloud-id-random" -> null
+            uid     = "cloud-id-random"
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                	name    = null
+                @|red -|@	name    = "local" @|white ->|@ @|white null|@
                 	content = "local"
-                @|red -|@	uid     = "cloud-id-random" @|white ->|@ @|white null|@
+                	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }

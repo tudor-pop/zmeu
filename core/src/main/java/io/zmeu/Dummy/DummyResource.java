@@ -22,6 +22,6 @@ public class DummyResource {
     private String name;
     @Property(type = Type.String)
     private String content;
-    @Property(type = Type.String)
+    @Property(type = Type.String, readonly = true)
     private String uid;
 }
