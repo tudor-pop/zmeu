@@ -38,34 +38,34 @@ public class Diff {
         DiffUtils.validate(left);
         DiffUtils.validate(right);
 
-        var merged = base == null ? left : base;
+        base = base == null ? right : base;
         if (right != null) {
             /**
              * accept right/theirs/cloud changes. Any undeclared properties in the state (like unique cloud ids)
              * will be set on the base since they are probably already out of date in the base state
              * */
-            ignoreNullBeanUtils.copyProperties(merged, right);
+            ignoreNullBeanUtils.copyProperties(base, right);
         } else {
-            merged = null;
+            base = null;
         }
         // Preserve cloud-managed properties explicitly.
         // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
-        if (merged != null && left != null) {
-            DiffUtils.updateReadOnlyProperties(merged, left);
+        if (base != null && left != null) {
+            DiffUtils.updateReadOnlyProperties(base, left);
         }
 
-        var diff = this.javers.compare(merged, left);
+        var diff = this.javers.compare(base, left);
 
 
-        if (merged == null) {
-            merged = left;
+        if (base == null) {
+            base = left;
         } else if (left != null) {
-            ignoreNullBeanUtils.copyProperties(merged, left);
+            ignoreNullBeanUtils.copyProperties(base, left);
         } else { // on object removed (src doesn't exist because it was removed) create an empty object of the same type
-            merged = merged.getClass().newInstance();
+            base = base.getClass().newInstance();
         }
 
-        return new MergeResult(diff.getChanges(), merged);
+        return new MergeResult(diff.getChanges(), base);
     }
 
 }
