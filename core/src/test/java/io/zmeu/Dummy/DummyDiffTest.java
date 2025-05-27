@@ -14,6 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Use cases:
+ * 1. no changes between src, state and cloud
+ * 2. src and local override cloud
+ * 3. src overrides local and cloud
+ * 4. src adds to local and cloud
+ */
 @Log4j2
 class DummyDiffTest extends JaversTest {
     private Diff diff;
@@ -28,6 +35,7 @@ class DummyDiffTest extends JaversTest {
      * source code, state and cloud are consistent
      */
     @Test
+    @DisplayName("no changes between src, state and cloud")
     void noChanges() {
         var localState = new Resource("main",
                 DummyResource.builder()
@@ -58,6 +66,7 @@ class DummyDiffTest extends JaversTest {
     }
 
     @Test
+    @DisplayName("src and local override cloud")
     void srcOverridesRemote() {
         var localState = new Resource("main",
                 DummyResource.builder()
@@ -86,12 +95,79 @@ class DummyDiffTest extends JaversTest {
 
         Assertions.assertEquals(plan, res.resource());
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+        Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
                 @|yellow ~|@	content = "local" -> "src"
                 	uid     = null
                 @|yellow ~|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("src overrides local and cloud")
+    void srcAndLocalOverridesRemote() {
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
+        var res = diff.merge(localState, sourceState, cloudState);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false));
+
+        Assertions.assertEquals(plan, res.resource());
+        Assertions.assertEquals(sourceState, res.resource());
+        Assertions.assertEquals("""
+                @|yellow ~|@ resource DummyResource main {
+                	name    = null
+                @|yellow ~|@	content = "local" -> "src"
+                	uid     = null
+                @|yellow ~|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("src adds to local and cloud")
+    void addResourceToLocalAndRemote() {
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
+
+        var res = diff.merge(null, sourceState, null);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertEquals(plan, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertEquals(sourceState, res.resource());
+        Assertions.assertEquals("""
+                @|green +|@ resource DummyResource main {
+                @|green +|@	name    = null
+                @|green +|@	content = "src"
+                @|green +|@	uid     = null
+                @|green +|@ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -118,33 +194,6 @@ class DummyDiffTest extends JaversTest {
 
         Assertions.assertEquals(plan, res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
-        Assertions.assertFalse(res.changes().isEmpty());
-        Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
-        Assertions.assertEquals("""
-                @|green +|@ resource DummyResource main {
-                @|green +|@	name    = null
-                @|green +|@	content = "src"
-                @|green +|@	uid     = null
-                @|green +|@ }
-                """.trim(), log); // assert formatting remains intact
-    }
-
-    @Test
-    @DisplayName("First apply creates remote and local states")
-    void addResourceToLocalAndRemote() {
-        var sourceState = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build());
-
-        var res = diff.merge(null, sourceState, null);
-        var plan = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
-
-        Assertions.assertEquals(plan, res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
