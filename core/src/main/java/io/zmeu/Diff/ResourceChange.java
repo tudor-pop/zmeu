@@ -8,7 +8,7 @@ public enum ResourceChange {
     CHANGE("~", "@|yellow %s|@"),
     REMOVE("-", "@|red %s|@"),
     ADD("+", "@|green %s|@"),
-    WHITE("->", "@|white %s|@");
+    ARROW("->", "@|white %s|@");
     private final String symbol;
     private final String color;
 
@@ -23,5 +23,9 @@ public enum ResourceChange {
 
     public String color(String string) {
         return color.formatted(string);
+    }
+
+    public String color() {
+        return color.formatted();
     }
 }

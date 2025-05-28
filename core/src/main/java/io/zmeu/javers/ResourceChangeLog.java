@@ -133,9 +133,9 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
                     if (Objects.equals(change1, value)) {
                         appendln(("\t%-" + maxPropLen + "s%s%s").formatted(property, EQUALS, quotes(value)));
                     } else if (change1 != null && value == null) {
-                        appendln(("%s\t%-" + maxPropLen + "s%s%s %s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), WHITE.toColor(), WHITE.color(null)));
+                        appendln(("%s\t%-" + maxPropLen + "s%s%s %s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color()));
                     } else {
-                        appendln(("%s\t%-" + maxPropLen + "s%s%s -> %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change1), quotes(value)));
+                        appendln(("%s\t%-" + maxPropLen + "s%s%s %s %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), quotes(value)));
                     }
                 }
             }

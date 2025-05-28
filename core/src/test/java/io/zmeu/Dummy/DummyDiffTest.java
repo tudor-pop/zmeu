@@ -171,43 +171,10 @@ class DummyDiffTest extends JaversTest {
                 """.trim(), log); // assert formatting remains intact
     }
 
-    @Test
-    void deletedFromCloudButKeptInSrc() {
-        var localState = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build()
-        );
-
-        var sourceState = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build());
-
-        var res = diff.merge(localState, sourceState, null);
-        var plan = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build()
-        );
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
-
-        Assertions.assertEquals(plan, res.resource());
-        // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
-        Assertions.assertFalse(res.changes().isEmpty());
-        Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
-        Assertions.assertEquals("""
-                @|green +|@ resource DummyResource main {
-                @|green +|@	name    = null
-                @|green +|@	content = "src"
-                @|green +|@	uid     = null
-                @|green +|@ }
-                """.trim(), log); // assert formatting remains intact
-    }
-
     @SneakyThrows
     @Test
-    public void acceptSrc() {
+    @DisplayName("src does not override cloud generated id")
+    public void srcMergeWithCloudReadonly() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -244,47 +211,8 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "remote" -> "src"
+                @|yellow ~|@	content = "remote" @|white ->|@ "src"
                 	uid     = "cloud-id-random"
-                @|yellow ~|@ }
-                """.trim(), log); // assert formatting remains intact
-    }
-
-
-    @Test
-    @DisplayName("Deleting src must delete local and remote regardless of their state")
-    void removeResourcePropertiesFromSrc() {
-        var localState = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build()
-        );
-
-        var srcState = new Resource("main",
-                DummyResource.builder()
-                        .build()
-        );
-
-        var remoteState = new Resource("main",
-                DummyResource.builder()
-                        .content("src")
-                        .build());
-
-        var res = diff.merge(localState, srcState, remoteState);
-        var plan = new Resource("main",
-                DummyResource.builder()
-                        .build()
-        );
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
-
-        Assertions.assertEquals(plan, res.resource());
-        Assertions.assertFalse(res.changes().isEmpty());
-        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
-        Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
-                	name    = null
-                @|red -|@	content = "src" @|white ->|@ @|white null|@
-                	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -326,6 +254,79 @@ class DummyDiffTest extends JaversTest {
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
                 @|yellow ~|@	content = "local" -> "src"
+                	uid     = null
+                @|yellow ~|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+
+    @Test
+    void deletedFromCloudButKeptInSrc() {
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
+
+        var res = diff.merge(localState, sourceState, null);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertEquals(plan, res.resource());
+        // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
+        Assertions.assertEquals("""
+                @|green +|@ resource DummyResource main {
+                @|green +|@	name    = null
+                @|green +|@	content = "src"
+                @|green +|@	uid     = null
+                @|green +|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("Deleting src must delete local and remote regardless of their state")
+    void removeResourcePropertiesFromSrc() {
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+        var srcState = new Resource("main",
+                DummyResource.builder()
+                        .build()
+        );
+
+        var remoteState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
+
+        var res = diff.merge(localState, srcState, remoteState);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .build()
+        );
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertEquals(plan, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+        Assertions.assertEquals("""
+                @|yellow ~|@ resource DummyResource main {
+                	name    = null
+                @|red -|@	content = "src" @|white ->|@ @|white null|@
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
