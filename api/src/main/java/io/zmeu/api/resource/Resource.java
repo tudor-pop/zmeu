@@ -20,7 +20,7 @@ public class Resource {
     @DiffIgnore
     private String resourceName;
     private Set<String> dependencies;
-    private Object properties;
+    private Object resource;
     private String type;
     /**
      * indicate if this resource should only read from cloud and not write/update the cloud/javers state
@@ -30,21 +30,21 @@ public class Resource {
     public Resource() {
     }
 
-    public Resource(Object properties) {
-        setProperties(properties);
+    public Resource(Object resource) {
+        setResource(resource);
     }
 
     public Resource(String resourceName) {
         this.resourceName = resourceName;
     }
-    public Resource(String resourceName, Object properties) {
+    public Resource(String resourceName, Object resource) {
         this.resourceName = resourceName;
-        setProperties(properties);
+        setResource(resource);
     }
 
-    public void setProperties(Object properties) {
-        this.properties = properties;
-        this.type = properties.getClass().getAnnotation(Schema.class).typeName();
+    public void setResource(Object resource) {
+        this.resource = resource;
+        this.type = resource.getClass().getAnnotation(Schema.class).typeName();
     }
 
     public Set<String> getDependencies() {
@@ -55,6 +55,6 @@ public class Resource {
     }
 
     public Class<?> getResourceClass() {
-        return properties.getClass();
+        return resource.getClass();
     }
 }

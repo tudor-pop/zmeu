@@ -78,7 +78,7 @@ public class ResourceManager {
             return diff.merge(null, src, cloudState);
         }
         var javersState = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
-        javersState.setProperties(mapper.convertValue(javersState.getProperties(), schema));
+        javersState.setResource(mapper.convertValue(javersState.getResource(), schema));
         updateStateMetadata(src, javersState);
         return diff.merge(javersState, src, cloudState);
     }
@@ -125,7 +125,7 @@ public class ResourceManager {
             return null;
         }
         var state = JaversUtils.mapSnapshotToObject(snapshot.get(), Resource.class);
-        state.setProperties(mapper.convertValue(state.getProperties(), getSchema(state)));
+        state.setResource(mapper.convertValue(state.getResource(), getSchema(state)));
 
         return state;
     }

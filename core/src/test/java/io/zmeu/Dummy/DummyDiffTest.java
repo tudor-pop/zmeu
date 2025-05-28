@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Test;
  * 4. src adds to local and cloud
  * 5. src does not override cloud generated id but changes other cloud properties
  * 6. src changes local/cloud properties
+ * 7. removed/missing resources from cloud should be added back if present in src
+ * 8. removed resources from cloud should be added back if present in src and missing in local
  */
 @Log4j2
 class DummyDiffTest extends JaversTest {
@@ -107,7 +109,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "local" -> "src"
+                @|yellow ~|@	content = "local" @|white ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -146,7 +148,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "local" -> "src"
+                @|yellow ~|@	content = "local" @|white ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -302,9 +304,9 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertTrue(res.changes().isEmpty());
     }
 
-
     @Test
-    void deletedFromCloudButKeptInSrc() {
+    @DisplayName("removed resources from cloud should be added back if present in src")
+    void removedFromCloudGetsAddedBySrc() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("src")
@@ -317,6 +319,35 @@ class DummyDiffTest extends JaversTest {
                         .build());
 
         var res = diff.merge(localState, sourceState, null);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertEquals(plan, res.resource());
+        // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
+        Assertions.assertEquals("""
+                @|green +|@ resource DummyResource main {
+                @|green +|@	name    = null
+                @|green +|@	content = "src"
+                @|green +|@	uid     = null
+                @|green +|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("removed resources from cloud should be added back if present in src and missing in local")
+    void removedFromCloudGetsAddedBySrcAndLocal() {
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
+
+        var res = diff.merge(null, sourceState, null);
         var plan = new Resource("main",
                 DummyResource.builder()
                         .content("src")
@@ -442,7 +473,7 @@ class DummyDiffTest extends JaversTest {
         // 1. name was removed
         // 2. content is "src"
         // 3. cloud readonly property was maintained
-        Assertions.assertEquals(res.resource().getProperties(), localState.getProperties());
+        Assertions.assertEquals(res.resource().getResource(), localState.getResource());
 
         /*
         ~ resource DummyResource main {
