@@ -20,13 +20,13 @@ public class DiffUtils {
     }
 
     static void updateReadOnlyProperties(Resource source, Resource target) {
-        for (Field property : target.getResource().getClass().getDeclaredFields()) {
+        for (Field property : target.getProperties().getClass().getDeclaredFields()) {
             if (Reflections.isReadOnly(property)) {
                 try {
-                    Field field = source.getResource().getClass().getDeclaredField(property.getName());
+                    Field field = source.getProperties().getClass().getDeclaredField(property.getName());
                     field.setAccessible(true);
                     property.setAccessible(true);
-                    BeanUtilsBean2.getInstance().copyProperty(target.getResource(), property.getName(), property.get(source.getResource()));
+                    BeanUtilsBean2.getInstance().copyProperty(target.getProperties(), property.getName(), property.get(source.getProperties()));
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 } catch (InvocationTargetException e) {

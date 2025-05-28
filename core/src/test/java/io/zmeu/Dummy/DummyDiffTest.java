@@ -2,6 +2,7 @@ package io.zmeu.Dummy;
 
 import io.zmeu.Base.JaversTest;
 import io.zmeu.Diff.Diff;
+import io.zmeu.Plugin.Providers;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
@@ -20,15 +21,22 @@ import org.junit.jupiter.api.Test;
  * 2. src and local override cloud
  * 3. src overrides local and cloud
  * 4. src adds to local and cloud
+ * 5. src does not override cloud generated id but changes other cloud properties
+ * 6. src changes local/cloud properties
  */
 @Log4j2
 class DummyDiffTest extends JaversTest {
     private Diff diff;
+    private Providers providers ;
+
 
     @SneakyThrows
     @BeforeEach
     void init() {
         diff = new Diff(javers);
+        var provider = new DummyProvider();
+        providers = new Providers();
+        providers.putProvider(provider.schemasString(), provider);
     }
 
     /**
@@ -173,7 +181,7 @@ class DummyDiffTest extends JaversTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("src does not override cloud generated id")
+    @DisplayName("src does not override cloud generated id but changes other cloud properties")
     public void srcMergeWithCloudReadonly() {
         var localState = new Resource("main",
                 DummyResource.builder()
@@ -218,7 +226,8 @@ class DummyDiffTest extends JaversTest {
     }
 
     @Test
-    void srcChangesLocalAndRemote() {
+    @DisplayName("src changes local/cloud properties")
+    void srcChangesLocalAndCloud() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -253,10 +262,44 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "local" -> "src"
+                @|yellow ~|@	content = "local" @|white ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("src changes local/cloud properties")
+    void srcChangesLocal() {
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
+
+        var sourceState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+        var cloudState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+
+        var res = diff.merge(localState, sourceState, cloudState);
+        var plan = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertEquals(plan, res.resource());
+        Assertions.assertTrue(res.changes().isEmpty());
     }
 
 
@@ -399,7 +442,7 @@ class DummyDiffTest extends JaversTest {
         // 1. name was removed
         // 2. content is "src"
         // 3. cloud readonly property was maintained
-        Assertions.assertEquals(res.resource().getResource(), localState.getResource());
+        Assertions.assertEquals(res.resource().getProperties(), localState.getProperties());
 
         /*
         ~ resource DummyResource main {
