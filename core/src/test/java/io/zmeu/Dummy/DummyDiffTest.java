@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
  * 6. src changes local/cloud properties
  * 7. removed/missing resources from cloud should be added back if present in src
  * 8. removed resources from cloud should be added back if present in src and missing in local
+ * 9. no state returns null
+ * 10. deleting src property must delete local and remote
  */
 @Log4j2
 class DummyDiffTest extends JaversTest {
@@ -369,7 +371,18 @@ class DummyDiffTest extends JaversTest {
     }
 
     @Test
-    @DisplayName("Deleting src must delete local and remote regardless of their state")
+    @DisplayName("no state returns null")
+    void removedFromAllStates() {
+        var res = diff.merge(null, null, null);
+        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        Assertions.assertNull(res.resource());
+        // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
+        Assertions.assertTrue(res.changes().isEmpty());
+    }
+
+    @Test
+    @DisplayName("deleting src property must delete local and remote")
     void removeResourcePropertiesFromSrc() {
         var localState = new Resource("main",
                 DummyResource.builder()

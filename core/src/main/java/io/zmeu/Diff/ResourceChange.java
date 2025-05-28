@@ -26,6 +26,6 @@ public enum ResourceChange {
     }
 
     public String color() {
-        return color.formatted();
+        return color.formatted(null);
     }
 }
