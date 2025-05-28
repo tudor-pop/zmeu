@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
  * 8. removed resources from cloud should be added back if present in src and missing in local
  * 9. no state returns null
  * 10. deleting src property must delete local and remote
+ * 11. remove src resource removes remote
  */
 @Log4j2
 class DummyDiffTest extends JaversTest {
@@ -420,7 +421,8 @@ class DummyDiffTest extends JaversTest {
     }
 
     @Test
-    void srcRemovalDeletesRemote() {
+    @DisplayName("remove src resource removes remote")
+    void removeSrcResourceRemovesRemote() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -429,7 +431,7 @@ class DummyDiffTest extends JaversTest {
 
         var cloudState = new Resource("main",
                 DummyResource.builder()
-                        .content("local")
+                        .content("remote") // note remote state will be shown in console instead of local state
                         .uid("cloud-id-random")
                         .build()
         );
@@ -445,14 +447,15 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|red -|@ resource DummyResource main {
                 @|red -|@	name    = null
-                @|red -|@	content = "local"
+                @|red -|@	content = "remote"
                 @|red -|@	uid     = "cloud-id-random"
                 @|red -|@ }
                 """.trim(), log); // assert formatting remains intact
     }
 
     @Test
-    void srcPropertyRemovalDeletesPropertyRemote() {
+    @DisplayName("remove src property removes remote property")
+    void removeSrcPropertyRemovesRemoteProperty() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -470,7 +473,7 @@ class DummyDiffTest extends JaversTest {
         var cloudState = new Resource("main",
                 DummyResource.builder()
                         .name("local")
-                        .content("local")
+                        .content("remote")
                         .uid("cloud-id-random")
                         .build()
         );
@@ -491,14 +494,14 @@ class DummyDiffTest extends JaversTest {
         /*
         ~ resource DummyResource main {
         -	name    = "local" -> null
-        ~	content = "local" -> "src"
+        ~	content = "remote" -> "src"
             uid     = "cloud-id-random"
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 @|red -|@	name    = "local" @|white ->|@ @|white null|@
-                @|yellow ~|@	content = "local" -> "src"
+                @|yellow ~|@	content = "remote" @|white ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
