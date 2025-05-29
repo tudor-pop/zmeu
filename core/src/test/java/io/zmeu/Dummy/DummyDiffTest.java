@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 @Log4j2
 class DummyDiffTest extends JaversTest {
     private Diff diff;
-    private Providers providers ;
+    private Providers providers;
 
 
     @SneakyThrows
@@ -485,11 +485,20 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(srcState, res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+
+
+        var expected = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("cloud-id-random")
+                        .build()
+        );
+
         // assert that:
         // 1. name was removed
         // 2. content is "src"
         // 3. cloud immutable property was maintained
-        Assertions.assertEquals(res.resource().getResource(), localState.getResource());
+        Assertions.assertEquals(expected, res.resource());
 
         /*
         ~ resource DummyResource main {
