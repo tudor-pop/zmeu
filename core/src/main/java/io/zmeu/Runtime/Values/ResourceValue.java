@@ -24,7 +24,7 @@ public class ResourceValue  {
     /**
      * indicate if the cloud resource should only be read and not updated
      */
-    private Boolean readOnly;
+    private Boolean existing;
 
     public ResourceValue() {
     }

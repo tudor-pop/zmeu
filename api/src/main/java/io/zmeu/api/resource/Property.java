@@ -12,7 +12,7 @@ public record Property(
         String description,
         String deprecationMessage,
         boolean required,
-        boolean readOnly,
+        boolean immutable,
         boolean recreateOnChange,
         boolean hidden) {
 

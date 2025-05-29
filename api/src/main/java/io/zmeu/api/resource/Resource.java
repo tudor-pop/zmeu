@@ -23,9 +23,9 @@ public class Resource {
     private Object resource;
     private String type;
     /**
-     * indicate if this resource should only read from cloud and not write/update the cloud/javers state
+     * indicate if this resource should exist in cloud
      */
-    private Boolean readOnly;
+    private Boolean existing;
 
     public Resource() {
     }

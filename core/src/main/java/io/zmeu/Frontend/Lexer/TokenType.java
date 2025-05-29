@@ -39,7 +39,7 @@ public enum TokenType {
     Init("init"),
     For("for"),
     While("while"),
-    ReadOnly("readonly"),
+    Val("val"),
     If("if"),
     Else("else"),
     False("false"),
@@ -194,7 +194,7 @@ public enum TokenType {
             case "schema" -> Schema;
             case "return" -> Return;
             case "fun" -> Fun;
-            case "readonly" -> ReadOnly;
+            case "val" -> Val;
             case "if" -> If;
             case "else" -> Else;
             case "while" -> While;

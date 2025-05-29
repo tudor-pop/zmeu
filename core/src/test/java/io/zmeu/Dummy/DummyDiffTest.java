@@ -187,7 +187,7 @@ class DummyDiffTest extends JaversTest {
     @SneakyThrows
     @Test
     @DisplayName("src does not override cloud generated id but changes other cloud properties")
-    public void srcMergeWithCloudReadonly() {
+    public void srcMergeWithCloudImmutable() {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -488,7 +488,7 @@ class DummyDiffTest extends JaversTest {
         // assert that:
         // 1. name was removed
         // 2. content is "src"
-        // 3. cloud readonly property was maintained
+        // 3. cloud immutable property was maintained
         Assertions.assertEquals(res.resource().getResource(), localState.getResource());
 
         /*

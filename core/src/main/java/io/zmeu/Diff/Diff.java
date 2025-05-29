@@ -50,13 +50,13 @@ public class Diff {
             }
         }
         if (left != null && right != null) {
-            DiffUtils.updateReadOnlyProperties(right, left);
+            DiffUtils.updateImmutableProperties(right, left);
         }
 
         // Preserve cloud-managed properties explicitly.
         // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
         if (base != null && right != null && base != right) {
-            DiffUtils.updateReadOnlyProperties(right, base);
+            DiffUtils.updateImmutableProperties(right, base);
         }
 
         var diff = this.javers.compare(base, left);

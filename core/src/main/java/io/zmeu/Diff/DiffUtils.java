@@ -19,9 +19,9 @@ public class DiffUtils {
         }
     }
 
-    static void updateReadOnlyProperties(Resource source, Resource target) {
+    static void updateImmutableProperties(Resource source, Resource target) {
         for (Field property : target.getResource().getClass().getDeclaredFields()) {
-            if (Reflections.isReadOnly(property)) {
+            if (Reflections.isImmutable(property)) {
                 try {
                     Field field = source.getResource().getClass().getDeclaredField(property.getName());
                     field.setAccessible(true);

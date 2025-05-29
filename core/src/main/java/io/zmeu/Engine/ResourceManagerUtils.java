@@ -8,7 +8,7 @@ public class ResourceManagerUtils {
         if (sourceState != null) {
             sourceState.setResourceName(resource.getName());
             sourceState.setDependencies(resource.getDependencies());
-            sourceState.setReadOnly(resource.getReadOnly());
+            sourceState.setExisting(resource.getExisting());
         }
         return sourceState;
     }
@@ -17,7 +17,7 @@ public class ResourceManagerUtils {
         if (sourceState != null) {
             sourceState.setResourceName(resource.getResourceName());
             sourceState.setDependencies(resource.getDependencies());
-            sourceState.setReadOnly(resource.getReadOnly());
+            sourceState.setExisting(resource.getExisting());
         }
     }
 }

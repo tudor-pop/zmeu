@@ -20,7 +20,7 @@ public @interface Property {
 
     boolean optional() default true;
 
-    boolean readonly() default false;
+    boolean immutable() default false;
 
     boolean recreateOnChange() default false;
 

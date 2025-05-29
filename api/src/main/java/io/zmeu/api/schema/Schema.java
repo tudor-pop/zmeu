@@ -32,8 +32,8 @@ public class Schema {
         for (Field field : fields) {
             var property = field.getAnnotation(io.zmeu.api.annotations.Property.class);
             var name = property.name().isBlank() ? field.getName() : property.name();
-            if (property.readonly()) {
-                properties.append("\treadonly ");
+            if (property.immutable()) {
+                properties.append("\tval ");
             } else {
                 properties.append("\tvar ");
             }
@@ -70,7 +70,7 @@ public class Schema {
             property.type(propertySchema.type());
 
 
-            property.readOnly(propertySchema.readonly());
+            property.immutable(propertySchema.immutable());
             property.description(propertySchema.description());
 
             String name = propertySchema.name().isBlank() ? field.getName() : propertySchema.name();
