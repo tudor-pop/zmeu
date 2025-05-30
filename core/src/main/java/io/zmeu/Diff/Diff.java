@@ -4,6 +4,7 @@ import io.zmeu.api.resource.Resource;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +39,7 @@ public class Diff {
         DiffUtils.validate(left);
         DiffUtils.validate(right);
         if (left != null && right == null && base != null) {// missing from cloud but added in src
+            left.setId(base.getId()); // src and local ids should be the same
             var diff = this.javers.compare(null, left);
             return new MergeResult(diff.getChanges(), left);
         }
@@ -58,12 +60,17 @@ public class Diff {
         if (base != null && right != null && base != right) {
             DiffUtils.updateImmutableProperties(right, base);
         }
-
+        if (left != null && base != null) { // update src id if present in localstate. Else will be saved to state from src
+            left.setId(base.getId());
+        }
         var diff = this.javers.compare(base, left);
-
         if (left != null && base != null) {
+            if (!StringUtils.equals(base.resourceName().getName(), left.resourceName().getName())) {
+                left.resourceName().setRenamedFrom(base.resourceName().getName());
+            }
+            left.setId(base.getId());
             ignoreNullBeanUtils.copyProperties(base, left);
-        } else if (base==null && left!=null){ // on object removed (src doesn't exist because it was removed) create an empty object of the same type
+        } else if (base == null && left != null) { // on object removed (src doesn't exist because it was removed) create an empty object of the same type
             base = left;
         }
 

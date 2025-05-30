@@ -82,10 +82,10 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
         if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource resource) {
             this.resource = resource;
-        }
-        if (!resourcePrinted) {
-            resourcePrinted = true;
-            append(getText(type, this.resource));
+            if (!resourcePrinted) {
+                resourcePrinted = true;
+                append(getText(type, this.resource));
+            }
         }
     }
 
@@ -133,9 +133,9 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
                     if (Objects.equals(change1, value)) {
                         appendln(("\t%-" + maxPropLen + "s%s%s").formatted(property, EQUALS, quotes(value)));
                     } else if (change1 != null && value == null) {
-                        appendln(("%s\t%-" + maxPropLen + "s%s%s %s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color()));
+                        appendln(("%s\t%-" + maxPropLen + "s%s%s\t%s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color()));
                     } else {
-                        appendln(("%s\t%-" + maxPropLen + "s%s%s %s %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), quotes(value)));
+                        appendln(("%s\t%-" + maxPropLen + "s%s%s\t%s %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change1), CHANGE.color(ARROW.getSymbol()), quotes(value)));
                     }
                 }
             }
@@ -166,6 +166,9 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
+        if (resource.resourceName().getRenamedFrom() != null) {
+            return coloredChange.toColor() + " resource %s %s %s %s {".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), CHANGE.color(ARROW.getSymbol()), resource.resourceName().getName());
+        }
         return coloredChange.toColor() + " resource %s %s {".formatted(resource.getType(), resource.getResourceName());
     }
 

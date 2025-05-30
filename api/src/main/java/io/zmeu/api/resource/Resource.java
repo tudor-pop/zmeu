@@ -9,6 +9,7 @@ import org.javers.core.metamodel.annotation.Id;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -18,7 +19,9 @@ public class Resource {
     // however we need to use this as an Id
     @Id
     @DiffIgnore
-    private String resourceName;
+    private UUID id = UUID.randomUUID();
+    @DiffIgnore
+    private ResourceName resourceName;
     private Set<String> dependencies;
     private Object resource;
     private String type;
@@ -35,9 +38,15 @@ public class Resource {
     }
 
     public Resource(String resourceName) {
-        this.resourceName = resourceName;
+        this.resourceName = new ResourceName(resourceName);
     }
+
     public Resource(String resourceName, Object resource) {
+        this.resourceName = new ResourceName(resourceName);
+        setResource(resource);
+    }
+
+    public Resource(ResourceName resourceName, Object resource) {
         this.resourceName = resourceName;
         setResource(resource);
     }
@@ -56,5 +65,17 @@ public class Resource {
 
     public Class<?> getResourceClass() {
         return resource.getClass();
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = new ResourceName(resourceName);
+    }
+
+    public String getResourceName() {
+        return resourceName.getName();
+    }
+
+    public ResourceName resourceName() {
+        return resourceName;
     }
 }

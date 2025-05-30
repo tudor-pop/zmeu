@@ -71,7 +71,6 @@ public class ResourceManager {
         var schema = provider.getSchema(src.getType());
 
         var cloudState = provider.read(src);
-        updateStateMetadata(src, cloudState);
 
         var snapshot = javers.getLatestSnapshot(src.getResourceName(), src.getClass()).orElse(null);
         if (snapshot == null) {
@@ -79,7 +78,7 @@ public class ResourceManager {
         }
         var javersState = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
         javersState.setResource(mapper.convertValue(javersState.getResource(), schema));
-        updateStateMetadata(src, javersState);
+//        updateStateMetadata(src, javersState);
         return diff.merge(javersState, src, cloudState);
     }
 

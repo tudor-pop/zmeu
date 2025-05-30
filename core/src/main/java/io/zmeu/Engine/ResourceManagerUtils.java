@@ -13,11 +13,4 @@ public class ResourceManagerUtils {
         return sourceState;
     }
 
-    static void updateStateMetadata(Resource resource, Resource sourceState) {
-        if (sourceState != null) {
-            sourceState.setResourceName(resource.getResourceName());
-            sourceState.setDependencies(resource.getDependencies());
-            sourceState.setExisting(resource.getExisting());
-        }
-    }
 }

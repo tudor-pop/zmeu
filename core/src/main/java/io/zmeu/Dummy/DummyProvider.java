@@ -3,9 +3,7 @@ package io.zmeu.Dummy;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DummyProvider extends Provider {
