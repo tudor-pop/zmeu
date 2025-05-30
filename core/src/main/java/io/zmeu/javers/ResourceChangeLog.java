@@ -13,11 +13,9 @@ import org.javers.core.changelog.AbstractTextChangeLog;
 import org.javers.core.diff.Change;
 import org.javers.core.diff.changetype.*;
 import org.javers.core.diff.changetype.container.ArrayChange;
-import org.javers.core.diff.changetype.container.ContainerChange;
 import org.javers.core.diff.changetype.container.ListChange;
 import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
-import org.javers.core.metamodel.object.GlobalId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -38,7 +36,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private boolean resourcePrinted = false;
     @Getter
     private Resource resource;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public ResourceChangeLog(boolean enableStdout) {
         this();
@@ -67,10 +65,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     @Override
-    public void onAffectedObject(GlobalId globalId) {
-    }
-
-    @Override
     public void beforeChange(Change change) {
         this.type = switch (change) {
             case ObjectRemoved removed -> REMOVE;
@@ -80,8 +74,8 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         };
 
 
-        if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource resource) {
-            this.resource = resource;
+        if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource res) {
+            this.resource = res;
             if (!resourcePrinted) {
                 resourcePrinted = true;
                 append(getText(type, this.resource));
@@ -161,10 +155,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         appendln(CHANGE.toColor() + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
     }
 
-    @Override
-    public void onNewObject(NewObject newObject) {
-    }
-
     private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
         if (resource.resourceName().getRenamedFrom() != null) {
             return coloredChange.toColor() + " resource %s %s %s %s {".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), CHANGE.color(ARROW.getSymbol()), resource.resourceName().getName());
@@ -175,11 +165,6 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
         newLine();
-    }
-
-    @Override
-    public void onContainerChange(ContainerChange containerChange) {
-
     }
 
     @Override
