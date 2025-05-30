@@ -48,9 +48,18 @@ public class Diff {
 
         if (base != right) {
             if (right != null) {
+                // uuid doesn't come from cloud neither resource name so let's keep the state values that were generated when it was saved to state
+                right.setId(base.getId());
+                right.setResourceName(base.getResourceName());
                 ignoreNullBeanUtils.copyProperties(base, right); // update base with cloud
             }
         }
+
+        if (left != null && base != null) { // update src id if present in localstate. Else will be saved to state from src
+            left.setId(base.getId()); // must be done before detecting resource replacement in the next step
+        }
+
+        // this step detects replacement if immutable cloud property was changed in src, change the uuid of the local/src so that it's being replaced
         if (left != null && right != null) {
             DiffUtils.updateImmutableProperties(right, left);
         }
@@ -59,9 +68,7 @@ public class Diff {
         // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
         if (base != null && right != null && base != right) {
             DiffUtils.updateImmutableProperties(right, base);
-        }
-        if (left != null && base != null) { // update src id if present in localstate. Else will be saved to state from src
-            left.setId(base.getId());
+            base.setImmutable(right.getImmutable());
         }
         var diff = this.javers.compare(base, left);
         if (left != null && base != null) {
@@ -70,6 +77,7 @@ public class Diff {
             }
             left.setId(base.getId());
             ignoreNullBeanUtils.copyProperties(base, left);
+            base.setImmutable(left.getImmutable()); // for some reason copyProperties doesn't copy the set
         } else if (base == null && left != null) { // on object removed (src doesn't exist because it was removed) create an empty object of the same type
             base = left;
         }

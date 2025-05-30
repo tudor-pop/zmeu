@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 public class DiffUtils {
     static void validate(@Nullable Resource resource) {
@@ -26,10 +27,24 @@ public class DiffUtils {
                     Field field = source.getResource().getClass().getDeclaredField(property.getName());
                     field.setAccessible(true);
                     property.setAccessible(true);
-                    BeanUtilsBean2.getInstance().copyProperty(target.getResource(), property.getName(), property.get(source.getResource()));
+
+                    var sourceValue = property.get(source.getResource());
+                    // detect replacement. If 2 immutable fields differ (src/cloud) then mark src for replacement
+                    var targetProperty = BeanUtilsBean2.getInstance().getProperty(target.getResource(), property.getName());
+                    if (targetProperty != null && !Objects.equals(sourceValue, targetProperty)) {
+//                        target.setId(UUID.randomUUID());
+                        target.setReplace(true);
+                        target.addImmutable(property.getName());
+                        source.setReplace(true);
+                        source.setImmutable(target.getImmutable());
+                    } else {
+                        BeanUtilsBean2.getInstance().copyProperty(target.getResource(), property.getName(), sourceValue);
+                    }
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     throw new RuntimeException(e);
                 } catch (InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                } catch (NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
             }

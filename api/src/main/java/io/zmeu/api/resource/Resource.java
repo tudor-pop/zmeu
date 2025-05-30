@@ -25,16 +25,15 @@ public class Resource {
     private Set<String> dependencies;
     private Object resource;
     private String type;
+    private Boolean replace;
+    @DiffIgnore
+    private Set<String> immutable;
     /**
      * indicate if this resource should exist in cloud
      */
     private Boolean existing;
 
     public Resource() {
-    }
-
-    public Resource(Object resource) {
-        setResource(resource);
     }
 
     public Resource(String resourceName) {
@@ -77,5 +76,19 @@ public class Resource {
 
     public ResourceName resourceName() {
         return resourceName;
+    }
+
+    public void setReplace(Boolean replace) {
+        this.replace = replace;
+        if (this.immutable == null) {
+            this.immutable = HashSet.newHashSet(1);
+        }
+    }
+
+    public void addImmutable(String immutable) {
+        if (this.immutable == null) {
+            this.immutable = new HashSet<>();
+        }
+        this.immutable.add(immutable);
     }
 }

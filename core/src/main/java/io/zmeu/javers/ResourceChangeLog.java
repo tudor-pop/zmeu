@@ -66,16 +66,18 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void beforeChange(Change change) {
-        this.type = switch (change) {
-            case ObjectRemoved removed -> REMOVE;
-            case NewObject ignored1 -> ADD;
-            case InitialValueChange ignored -> ADD;
-            default -> CHANGE;
-        };
-
-
         if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource res) {
             this.resource = res;
+            if (this.resource.getReplace()) {
+                this.type = REPLACE;
+            } else {
+                this.type = switch (change) {
+                    case ObjectRemoved removed -> REMOVE;
+                    case NewObject ignored1 -> ADD;
+                    case InitialValueChange ignored -> ADD;
+                    default -> CHANGE;
+                };
+            }
             if (!resourcePrinted) {
                 resourcePrinted = true;
                 append(getText(type, this.resource));
@@ -103,10 +105,10 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     public void onValueChange(ValueChange change) {
         var left = change.getLeft();
 
-        var right = Optional.ofNullable(change.getRight()).orElse(left);
+        var resource = Optional.ofNullable(change.getRight()).orElse(left);
         if (!change.getPropertyName().equals("resource")) return; // only print resource properties, not anything else
 
-        var attributes = mapper.convertValue(right, new TypeReference<LinkedHashMap<String, Object>>() {
+        var attributes = mapper.convertValue(resource, new TypeReference<LinkedHashMap<String, Object>>() {
         });
 
         int maxPropLen = attributes.keySet().stream()
@@ -120,6 +122,12 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             case ValueChange valueChange -> {
                 var attributesLeft = mapper.convertValue(left, new TypeReference<LinkedHashMap<String, Object>>() {
                 });
+                int maxValueLen = attributesLeft.values().stream()
+                        .filter(it -> it instanceof String)
+                        .map(String.class::cast)
+                        .mapToInt(String::length)
+                        .max()
+                        .orElse(2)+3;
                 for (Map.Entry<String, Object> entry : attributes.entrySet()) {
                     String property = entry.getKey();
                     Object value = entry.getValue();
@@ -129,7 +137,11 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
                     } else if (change1 != null && value == null) {
                         appendln(("%s\t%-" + maxPropLen + "s%s%s\t%s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color()));
                     } else {
-                        appendln(("%s\t%-" + maxPropLen + "s%s%s\t%s %s").formatted(CHANGE.toColor(), property, EQUALS, quotes(change1), CHANGE.color(ARROW.getSymbol()), quotes(value)));
+                        var color = CHANGE;
+                        if (this.resource.getReplace() && this.resource.getImmutable().contains(property)) {
+                            color = REPLACE;
+                        }
+                        appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(color.toColor(), property, EQUALS, quotes(change1), color.color(ARROW.getSymbol()), quotes(value)));
                     }
                 }
             }
@@ -156,10 +168,14 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
-        if (resource.resourceName().getRenamedFrom() != null) {
-            return coloredChange.toColor() + " resource %s %s %s %s {".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), CHANGE.color(ARROW.getSymbol()), resource.resourceName().getName());
+        String text = null;
+        if (resource.getReplace()) {
+            text = REPLACE.color("# marked for replace");
         }
-        return coloredChange.toColor() + " resource %s %s {".formatted(resource.getType(), resource.getResourceName());
+        if (resource.resourceName().getRenamedFrom() != null) {
+            return coloredChange.toColor() + " resource %s %s %s %s { %s".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), coloredChange.color(ARROW.getSymbol()), resource.resourceName().getName(), text);
+        }
+        return coloredChange.toColor() + " resource %s %s { %s".formatted(resource.getType(), resource.getResourceName(), text);
     }
 
     @Override

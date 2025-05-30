@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
  * 11. remove src resource removes remote
  * 12. remove src property removes remote and local property
  * 13. resource renamed in src but not deleted/added - renaming detection
+ * 14. replace resource on immutable value change
+ * 15. resource rename should only happen between local and source
  */
 @Log4j2
 class DummyDiffTest extends JaversTest {
@@ -598,6 +600,137 @@ class DummyDiffTest extends JaversTest {
                 @|red -|@	name    = "local"	@|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
+                @|yellow ~|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+    @Test
+    @DisplayName("resource rename should only happen between local and source")
+    void renameDetectionShouldOnlyHappenBetweenLocalAndSource() {
+        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .name("local")
+                        .uid("cloud-id-random")
+                        .build()
+        );
+
+        var srcState = new Resource("newName",
+                DummyResource.builder()
+                        .content("src")
+                        .build()
+        );
+
+        var cloudState = new Resource("remote",
+                DummyResource.builder()
+                        .name("local")
+                        .content("remote")
+                        .uid("cloud-id-random")
+                        .build()
+        );
+
+        var res = diff.merge(localState, srcState, cloudState);
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
+        Assertions.assertEquals(srcState, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+
+
+        var expected = new Resource("newName",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("cloud-id-random")
+                        .build()
+        );
+        expected.setId(localState.getId());
+        Assertions.assertEquals(localState.getId(), srcState.getId());
+        // assert that:
+        // 1. name was removed
+        // 2. content is "src"
+        // 3. cloud immutable property was maintained
+        Assertions.assertEquals(expected, res.resource());
+
+        /*
+            ~ resource DummyResource main -> newName {
+            -	name    = "local"	-> null
+            ~	content = "remote"	-> "src"
+                uid     = "cloud-id-random"
+            ~ }
+         */
+        Assertions.assertEquals("""
+                @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
+                @|red -|@	name    = "local"	@|white ->|@ @|white null|@
+                @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
+                	uid     = "cloud-id-random"
+                @|yellow ~|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("replace resource on immutable value change")
+    void replaceDetection() {
+        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
+
+        var srcState = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("immutable-change")
+                        .build()
+        );
+
+        var cloudState = new Resource("unknown",
+                DummyResource.builder()
+                        .content("remote")
+                        .uid("immutable")
+                        .build()
+        );
+
+        var res = diff.merge(localState, srcState, cloudState);
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
+        Assertions.assertEquals(srcState, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+
+
+        var expected = new Resource("main",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("immutable-change")
+                        .build()
+        );
+        expected.setId(localState.getId());
+        expected.setImmutable(localState.getImmutable());
+        expected.setReplace(localState.getReplace());
+        Assertions.assertEquals(localState.getId(), srcState.getId());
+        // assert that:
+        // 1. name was removed
+        // 2. content is "src"
+        // 3. cloud immutable property was maintained
+        Assertions.assertEquals(expected, res.resource());
+
+        /*
+            ± resource DummyResource main {
+                name    = null
+            ~	content = "remote"    -> "src"
+            ±	uid     = "immutable" -> "immutable-change"
+            ~ }
+
+            ~ }
+         */
+        Assertions.assertEquals("""
+                @|Magenta ±|@ resource DummyResource main {
+                	name    = null
+                @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
+                @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
