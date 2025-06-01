@@ -39,7 +39,10 @@ public class Diff {
         DiffUtils.validate(left);
         DiffUtils.validate(right);
         if (left != null && right == null && base != null) {// missing from cloud but added in src
-            left.setId(base.getId()); // src and local ids should be the same
+            // src and local ids should be the same.
+            // The names should note because src could rename a resource and we don't want it to be replaced
+            left.setId(base.getIdentity().getId());
+
             var diff = this.javers.compare(null, left);
             return new MergeResult(diff.getChanges(), left);
         }

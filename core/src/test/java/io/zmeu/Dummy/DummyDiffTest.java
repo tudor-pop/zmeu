@@ -120,7 +120,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                	name    = null
+                	color   = null
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
@@ -161,7 +161,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                	name    = null
+                	color   = null
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
@@ -189,7 +189,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|green +|@ resource DummyResource main {
-                @|green +|@	name    = null
+                @|green +|@	color   = null
                 @|green +|@	content = "src"
                 @|green +|@	uid     = null
                 @|green +|@ }
@@ -238,7 +238,7 @@ class DummyDiffTest extends JaversTest {
 
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                	name    = null
+                	color   = null
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
@@ -283,7 +283,7 @@ class DummyDiffTest extends JaversTest {
 
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                	name    = null
+                	color   = null
                 @|yellow ~|@	content = "local" @|yellow ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
@@ -346,7 +346,6 @@ class DummyDiffTest extends JaversTest {
                         .content("src")
                         .build()
         );
-        expected.setId(localState.getId());
         var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(expected, res.resource());
@@ -355,7 +354,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
                 @|green +|@ resource DummyResource main {
-                @|green +|@	name    = null
+                @|green +|@	color   = null
                 @|green +|@	content = "src"
                 @|green +|@	uid     = null
                 @|green +|@ }
@@ -384,7 +383,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
                 @|green +|@ resource DummyResource main {
-                @|green +|@	name    = null
+                @|green +|@	color   = null
                 @|green +|@	content = "src"
                 @|green +|@	uid     = null
                 @|green +|@ }
@@ -434,7 +433,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                	name    = null
+                	color   = null
                 @|red -|@	content = "src" @|white ->|@ @|white null|@
                 	uid     = null
                 @|yellow ~|@ }
@@ -467,7 +466,7 @@ class DummyDiffTest extends JaversTest {
 
         Assertions.assertEquals("""
                 @|red -|@ resource DummyResource main {
-                @|red -|@	name    = null
+                @|red -|@	color   = null
                 @|red -|@	content = "remote"
                 @|red -|@	uid     = "cloud-id-random"
                 @|red -|@ }
@@ -480,7 +479,7 @@ class DummyDiffTest extends JaversTest {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
-                        .name("local")
+                        .color("local")
                         .uid("cloud-id-random")
                         .build()
         );
@@ -493,7 +492,7 @@ class DummyDiffTest extends JaversTest {
 
         var cloudState = new Resource("main",
                 DummyResource.builder()
-                        .name("local")
+                        .color("local")
                         .content("remote")
                         .uid("cloud-id-random")
                         .build()
@@ -517,21 +516,21 @@ class DummyDiffTest extends JaversTest {
         expected.setId(localState.getId());
         Assertions.assertEquals(localState.getId(), srcState.getId());
         // assert that:
-        // 1. name was removed
+        // 1. color was removed
         // 2. content is "src"
         // 3. cloud immutable property was maintained
         Assertions.assertEquals(expected, res.resource());
 
         /*
         ~ resource DummyResource main {
-        -	name    = "local"  -> null
+        -	color    = "local"  -> null
         ~	content = "remote" -> "src"
             uid     = "cloud-id-random"
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                @|red -|@	name    = "local"  @|white ->|@ @|white null|@
+                @|red -|@	color   = "local"  @|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
@@ -545,7 +544,7 @@ class DummyDiffTest extends JaversTest {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
-                        .name("local")
+                        .color("local")
                         .uid("cloud-id-random")
                         .build()
         );
@@ -558,7 +557,7 @@ class DummyDiffTest extends JaversTest {
 
         var cloudState = new Resource("main",
                 DummyResource.builder()
-                        .name("local")
+                        .color("local")
                         .content("remote")
                         .uid("cloud-id-random")
                         .build()
@@ -597,7 +596,7 @@ class DummyDiffTest extends JaversTest {
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
-                @|red -|@	name    = "local"  @|white ->|@ @|white null|@
+                @|red -|@	color   = "local"  @|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
@@ -610,7 +609,7 @@ class DummyDiffTest extends JaversTest {
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
-                        .name("local")
+                        .color("local")
                         .uid("cloud-id-random")
                         .build()
         );
@@ -623,7 +622,7 @@ class DummyDiffTest extends JaversTest {
 
         var cloudState = new Resource("remote",
                 DummyResource.builder()
-                        .name("local")
+                        .color("local")
                         .content("remote")
                         .uid("cloud-id-random")
                         .build()
@@ -662,7 +661,7 @@ class DummyDiffTest extends JaversTest {
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
-                @|red -|@	name    = "local"  @|white ->|@ @|white null|@
+                @|red -|@	color   = "local"  @|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
@@ -727,7 +726,7 @@ class DummyDiffTest extends JaversTest {
          */
         Assertions.assertEquals("""
                 @|Magenta ±|@ resource DummyResource main {@|Magenta  # marked for replace|@
-                	name    = null
+                	color   = null
                 @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
                 @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
                 @|Magenta ±|@ }
@@ -793,7 +792,7 @@ class DummyDiffTest extends JaversTest {
          */
         Assertions.assertEquals("""
                 @|Magenta ±|@ resource DummyResource main @|Magenta ->|@ newMain {@|Magenta  # marked for replace|@
-                	name    = null
+                	color   = null
                 @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
                 @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
                 @|Magenta ±|@ }

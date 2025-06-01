@@ -9,10 +9,7 @@ import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -95,6 +92,32 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(src, state);
 
         state = manager.findByResourceName(src.getIdentity());
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
+    }
+
+    @Test
+    @DisplayName("src should update cloud property")
+    void srcShouldUpdateCloudProperty() {
+        var src = new Resource("src",
+                DummyResource.builder()
+                        .content("src")
+                        .build());
+        var plan = manager.plan(src);
+        manager.apply(manager.toPlan(plan)); // create cloud resource
+
+        var provider = manager.getProvider(DummyResource.class);
+        var cloud = provider.read(src);
+        Assertions.assertEquals(src, cloud);
+
+        var dummy = (DummyResource) src.getResource();
+        dummy.setContent("new content"); // change some content
+        dummy.setColor("new color");
+        plan = manager.plan(src);
+        manager.apply(manager.toPlan(plan));
+
+        // asert old src with generated ID can be retrieved from state
+        var state = manager.findByResourceName(src.getIdentity());
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
     }

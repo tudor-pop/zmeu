@@ -22,7 +22,14 @@ public class DummyProvider extends Provider {
 
     @Override
     public Resource create(Resource resource) {
-        return resources.put(resource.getId(), resource);
+        resources.put(resource.getId(), resource);
+        return resources.get(resource.getId());
+    }
+
+    @Override
+    public void onNewId(Resource resource) {
+        resource.setId("arn:random:" + resources.size());
+        resources.put(resource.getId(), resource);
     }
 
     @Override

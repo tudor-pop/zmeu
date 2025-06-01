@@ -19,7 +19,7 @@ import org.javers.core.metamodel.annotation.TypeName;
 @TypeName("DummyResource")
 public class DummyResource {
     @Property(type = Type.String)
-    private String name;
+    private String color;
     @Property(type = Type.String)
     private String content;
     @Property(type = Type.String, immutable = true)

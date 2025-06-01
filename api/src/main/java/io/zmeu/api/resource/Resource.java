@@ -90,4 +90,8 @@ public class Resource {
     public void setId(String id) {
         identity.setId(id);
     }
+
+    public void setResourceName(String resourceName) {
+        identity.setName(resourceName);
+    }
 }

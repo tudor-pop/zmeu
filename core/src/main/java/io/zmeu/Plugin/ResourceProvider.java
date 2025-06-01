@@ -3,6 +3,7 @@ package io.zmeu.Plugin;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.javers.core.changelog.ChangeProcessor;
 import org.javers.core.commit.CommitMetadata;
 import org.javers.core.diff.Change;
@@ -19,6 +20,8 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
     private final Providers providers;
     private Provider provider;
     private Resource resource;
+    // Temporary flag to know “this resource has pending updates”
+    private boolean dirty = false;
 
     public ResourceProvider(Providers providers) {
         this.providers = providers;
@@ -41,7 +44,11 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
 
     @Override
     public void afterChangeList() {
-
+        if (dirty && provider != null) {
+            log.info("Applying batched update for resource {}", resource.getIdentity());
+            this.resource = provider.update(resource);
+        }
+        dirty = false;
     }
 
     @Override
@@ -54,7 +61,6 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
 
     @Override
     public void afterChange(Change change) {
-
     }
 
     @Override
@@ -71,18 +77,25 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
         if (change instanceof InitialValueChange) {// initial value change is same as onNewObject which we already saved
             return;
         }
+        // Mark that this Resource needs an update
+        dirty = true;
+        log.info("Queued field‐change {} on resource {}", change.getPropertyName(), resource.getIdentity());
     }
 
     @Override
-    public void onReferenceChange(ReferenceChange referenceChange) {
-
+    public void onReferenceChange(ReferenceChange change) {
+        // Mark that this Resource needs an update
+        dirty = true;
+        log.info("Queued field‐change {} on resource {}", change.getPropertyName(), resource.getIdentity());
     }
 
     @Override
     public void onNewObject(NewObject newObject) {
         log.info("onNewObject {}", newObject);
-        provider.setId(resource);
-        provider.create(resource);
+        this.resource = provider.create(resource);
+        if (StringUtils.isBlank(this.resource.getIdentity().getId())) { // callback to stable ID
+            provider.onNewId(this.resource);
+        }
     }
 
     @Override
