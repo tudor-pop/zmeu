@@ -50,7 +50,7 @@ public class Diff {
             if (right != null) {
                 // uuid doesn't come from cloud neither resource name so let's keep the state values that were generated when it was saved to state
                 right.setId(base.getId());
-                right.setResourceName(base.getResourceName());
+                right.setIdentity(base.getIdentity());
                 ignoreNullBeanUtils.copyProperties(base, right); // update base with cloud
             }
         }

@@ -582,6 +582,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         expected.setId(localState.getId());
+        expected.getIdentity().setRenamedFrom(localState.getIdentity().getRenamedFrom());
         Assertions.assertEquals(localState.getId(), srcState.getId());
         // assert that:
         // 1. name was removed
@@ -646,6 +647,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         expected.setId(localState.getId());
+        expected.getIdentity().setRenamedFrom(localState.getIdentity().getRenamedFrom());
         Assertions.assertEquals(localState.getId(), srcState.getId());
         // assert that:
         // 1. name was removed
@@ -776,6 +778,7 @@ class DummyDiffTest extends JaversTest {
         expected.setId(localState.getId());
         expected.setImmutable(localState.getImmutable());
         expected.setReplace(localState.getReplace());
+        expected.getIdentity().setRenamedFrom(localState.getIdentity().getRenamedFrom());
         Assertions.assertEquals(localState.getId(), srcState.getId());
         // assert that:
         // 1. name was removed

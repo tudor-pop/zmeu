@@ -4,16 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
-import io.zmeu.Plugin.ResourceProvider;
 import io.zmeu.Plugin.Providers;
+import io.zmeu.Plugin.ResourceProvider;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
+import io.zmeu.api.resource.Identity;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import org.javers.core.Changes;
 import org.javers.core.Javers;
+import org.javers.repository.jql.QueryBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,10 +74,12 @@ public class ResourceManager {
 
         var cloudState = provider.read(src);
 
-        var snapshot = javers.getLatestSnapshot(src.getResourceName(), src.getClass()).orElse(null);
-        if (snapshot == null) {
+//        var snapshot = javers.getLatestSnapshot(src.getResourceName(), src.getClass()).orElse(null);
+        var snapshots = javers.findSnapshots(QueryBuilder.byInstanceId(src.resourceName(), src.getClass()).limit(1).build());
+        if (snapshots == null || snapshots.isEmpty()) {
             return diff.merge(null, src, cloudState);
         }
+        var snapshot = snapshots.get(0);
         var javersState = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
         javersState.setResource(mapper.convertValue(javersState.getResource(), schema));
 //        updateStateMetadata(src, javersState);
@@ -119,7 +123,7 @@ public class ResourceManager {
     }
 
     public Object findByResourceName(String resourceName) {
-        var snapshot = javers.getLatestSnapshot(resourceName, Resource.class);
+        var snapshot = javers.getLatestSnapshot(new Identity(resourceName), Resource.class);
         if (snapshot.isEmpty()) {
             return null;
         }

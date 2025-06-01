@@ -15,7 +15,7 @@ public class DiffUtils {
         if (resource == null) {
             return;
         }
-        if (StringUtils.isBlank(resource.getResourceName())) {
+        if (StringUtils.isBlank(resource.getResourceNameString())) {
             throw new IllegalArgumentException(resource + " is missing resource name");
         }
     }

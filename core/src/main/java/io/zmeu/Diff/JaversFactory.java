@@ -1,5 +1,6 @@
 package io.zmeu.Diff;
 
+import io.zmeu.api.resource.Identity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Javers;
@@ -105,6 +106,7 @@ public class JaversFactory {
         return JaversBuilder.javers()
                 .withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
                 .registerJaversRepository(sqlRepository)
+                .registerValue(Identity.class, new IdentityComparator())
                 .withPrettyPrint(true)
                 .build();
     }
@@ -112,6 +114,7 @@ public class JaversFactory {
     public static Javers createNoDb() {
         return JaversBuilder.javers()
                 .withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE)
+                .registerValue(Identity.class, new IdentityComparator())
                 .withPrettyPrint(true)
                 .build();
     }

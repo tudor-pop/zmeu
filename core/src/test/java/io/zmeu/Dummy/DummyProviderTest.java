@@ -49,7 +49,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
         // apply to state
         manager.apply(manager.toPlan(plan));
-        var state = manager.findByResourceName("dummy");
+        var state = manager.findByResourceName(src.getId());
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
@@ -80,7 +80,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(src, cloud);
 
         manager.apply(manager.toPlan(plan));
-        var state = manager.findByResourceName("dummy");
+        var state = manager.findByResourceName(src.getId().toString());
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 

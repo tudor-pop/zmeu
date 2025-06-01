@@ -9,19 +9,14 @@ import org.javers.core.metamodel.annotation.Id;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Data
 @Entity
 @EqualsAndHashCode
 public class Resource {
-    // must be ignored during diffs because if we don't it will show up as a resource property
-    // however we need to use this as an Id
+    @DiffIgnore
     @Id
-    @DiffIgnore
-    private UUID id = UUID.randomUUID();
-    @DiffIgnore
-    private ResourceName resourceName;
+    private Identity identity;
     private Set<String> dependencies;
     private Object resource;
     private String type;
@@ -38,16 +33,16 @@ public class Resource {
     }
 
     public Resource(String resourceName) {
-        this.resourceName = new ResourceName(resourceName);
+        this.identity = new Identity(resourceName);
     }
 
     public Resource(String resourceName, Object resource) {
-        this.resourceName = new ResourceName(resourceName);
+        this.identity = new Identity(resourceName);
         setResource(resource);
     }
 
-    public Resource(ResourceName resourceName, Object resource) {
-        this.resourceName = resourceName;
+    public Resource(Identity identity, Object resource) {
+        this.identity = identity;
         setResource(resource);
     }
 
@@ -67,17 +62,14 @@ public class Resource {
         return resource.getClass();
     }
 
-    public void setResourceName(String resourceName) {
-        this.resourceName = new ResourceName(resourceName);
+    public Identity resourceName() {
+        return identity;
     }
 
-    public String getResourceName() {
-        return resourceName.getName();
+    public String getResourceNameString() {
+        return identity.getName();
     }
 
-    public ResourceName resourceName() {
-        return resourceName;
-    }
 
     public void addImmutable(String immutable) {
         if (this.immutable == null) {
@@ -88,5 +80,13 @@ public class Resource {
 
     public boolean isReplace() {
         return replace != null && replace;
+    }
+
+    public String getId() {
+        return identity.getId();
+    }
+
+    public void setId(String id) {
+        identity.setId(id);
     }
 }

@@ -16,22 +16,22 @@ public class DummyProvider extends Provider {
 
     @Override
     public Resource create(Resource resource) {
-        return resources.put(resource.getResourceName(), resource);
+        return resources.put(resource.getId(), resource);
     }
 
     @Override
     public Resource read(Resource resource) {
         if (resource == null) return null;
-        return resources.get(resource.getResourceName());
+        return resources.get(resource.getId());
     }
 
     @Override
     public Resource update(Resource resource) {
-        return resources.put(resource.getResourceName(), resource);
+        return resources.put(resource.getId(), resource);
     }
 
     @Override
     public boolean delete(Resource resource) {
-        return resources.remove(resource.getResourceName()) != null;
+        return resources.remove(resource.getId()) != null;
     }
 }
