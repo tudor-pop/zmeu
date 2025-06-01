@@ -29,13 +29,14 @@ public class DiffUtils {
                     property.setAccessible(true);
 
                     var sourceValue = property.get(source.getResource());
-                    // detect replacement. If 2 immutable fields differ (src/cloud) then mark src for replacement
+                    // detect replacement. If immutable fields differ (src/cloud) then mark src for replacement by setting a new ID
+                    // which will be detected as an remove/add operation
                     var targetProperty = BeanUtilsBean2.getInstance().getProperty(target.getResource(), property.getName());
                     if (targetProperty != null && !Objects.equals(sourceValue, targetProperty)) {
 //                        target.setId(UUID.randomUUID());
                         target.setReplace(true);
-                        target.addImmutable(property.getName());
                         source.setReplace(true);
+                        target.addImmutable(property.getName());
                         source.setImmutable(target.getImmutable());
                     } else {
                         BeanUtilsBean2.getInstance().copyProperty(target.getResource(), property.getName(), sourceValue);

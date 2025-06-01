@@ -69,6 +69,7 @@ public class Diff {
         if (base != null && right != null && base != right) {
             DiffUtils.updateImmutableProperties(right, base);
             base.setImmutable(right.getImmutable());
+            base.setReplace(right.getReplace());
         }
         var diff = this.javers.compare(base, left);
         if (left != null && base != null) {

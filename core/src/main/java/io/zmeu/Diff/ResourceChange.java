@@ -26,7 +26,7 @@ public enum ResourceChange {
         return color.formatted(string);
     }
 
-    public String color() {
-        return color.formatted(null);
+    public String color(Object... args) {
+        return color.formatted(args);
     }
 }

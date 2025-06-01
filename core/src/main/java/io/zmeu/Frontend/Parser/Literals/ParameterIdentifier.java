@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Parser.Literals;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * A path is a sequence of one or more path segments logically separated by a package qualifier (.)
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 //@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true )
 @Data
+@EqualsAndHashCode(callSuper = true)
 public final class ParameterIdentifier extends Identifier {
     private TypeIdentifier type;
     private SymbolIdentifier name;

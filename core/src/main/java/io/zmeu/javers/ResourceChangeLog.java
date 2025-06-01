@@ -68,16 +68,13 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     public void beforeChange(Change change) {
         if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource res) {
             this.resource = res;
-            if (this.resource.getReplace()) {
-                this.type = REPLACE;
-            } else {
-                this.type = switch (change) {
-                    case ObjectRemoved removed -> REMOVE;
-                    case NewObject ignored1 -> ADD;
-                    case InitialValueChange ignored -> ADD;
-                    default -> CHANGE;
-                };
-            }
+            this.type = switch (change) {
+                case ObjectRemoved removed -> this.resource.isReplace() ? REPLACE : REMOVE;
+                case NewObject ignored1 -> this.resource.isReplace() ? REPLACE : ADD;
+                case InitialValueChange ignored -> this.resource.isReplace() ? REPLACE : ADD;
+                default -> this.resource.isReplace() ? REPLACE : CHANGE;
+            };
+
             if (!resourcePrinted) {
                 resourcePrinted = true;
                 append(getText(type, this.resource));
@@ -92,6 +89,10 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Override
     public void afterChange(Change change) {
 //        append("\n");
+        if (this.resource.isReplace()) {
+            this.type = REPLACE;
+            return;
+        }
         this.type = switch (change) {
             case ObjectRemoved removed -> REMOVE;
             case TerminalValueChange removed -> REMOVE;
@@ -119,31 +120,39 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         switch (change) {
             case InitialValueChange valueChange -> formatProperty(attributes, ADD, maxPropLen);
             case TerminalValueChange valueChange -> formatProperty(attributes, REMOVE, maxPropLen);
-            case ValueChange valueChange -> {
-                var attributesLeft = mapper.convertValue(left, new TypeReference<LinkedHashMap<String, Object>>() {
-                });
-                int maxValueLen = attributesLeft.values().stream()
-                        .filter(it -> it instanceof String)
-                        .map(String.class::cast)
-                        .mapToInt(String::length)
-                        .max()
-                        .orElse(2)+3;
-                for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-                    String property = entry.getKey();
-                    Object value = entry.getValue();
-                    Object change1 = attributesLeft.get(property);
-                    if (Objects.equals(change1, value)) {
-                        appendln(("\t%-" + maxPropLen + "s%s%s").formatted(property, EQUALS, quotes(value)));
-                    } else if (change1 != null && value == null) {
-                        appendln(("%s\t%-" + maxPropLen + "s%s%s\t%s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color()));
-                    } else {
-                        var color = CHANGE;
-                        if (this.resource.getReplace() && this.resource.getImmutable().contains(property)) {
-                            color = REPLACE;
-                        }
-                        appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(color.toColor(), property, EQUALS, quotes(change1), color.color(ARROW.getSymbol()), quotes(value)));
-                    }
-                }
+            case ValueChange valueChange -> valueChange(left, attributes, maxPropLen);
+        }
+    }
+
+    private void valueChange(Object left, LinkedHashMap<String, Object> attributes, int maxPropLen) {
+        var attributesLeft = mapper.convertValue(left, new TypeReference<LinkedHashMap<String, Object>>() {
+        });
+        /*
+        * compute where how many spaces after property value -> should be placed. Only consider properties that have changed
+        * -	name    = "local"  -> null
+        * ~	content = "remote" -> "src"
+        * */
+        int maxValueLen = attributesLeft.entrySet().stream()
+                                  .filter(it -> !Objects.equals(attributes.get(it.getKey()), it.getValue()))
+                                  .map(it -> {
+                                      if (it.getValue() instanceof String string) {
+                                          return string.length();
+                                      }
+                                      return 1;
+                                  })
+                                  .max(Integer::compareTo)
+                                  .orElse(1) + 3; // 3 for quotes "" and one extra space. Alternative is more computing in the map like: quotes(s).length();
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            String property = entry.getKey();
+            Object value = entry.getValue();
+            Object change1 = attributesLeft.get(property);
+            if (Objects.equals(change1, value)) {
+                appendln(("\t%-" + maxPropLen + "s%s%s").formatted(property, EQUALS, quotes(value)));
+            } else if (change1 != null && value == null) {
+                appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color("null")));
+            } else {
+                var color = this.resource.isReplace() && this.resource.getImmutable().contains(property) ? REPLACE : CHANGE;
+                appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(color.toColor(), property, EQUALS, quotes(change1), color.color(ARROW.getSymbol()), quotes(value)));
             }
         }
     }
@@ -168,18 +177,21 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     }
 
     private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
-        String text = null;
-        if (resource.getReplace()) {
-            text = REPLACE.color("# marked for replace");
+        String text = "";
+        if (resource.isReplace()) {
+            text = REPLACE.color(" # marked for replace");
         }
         if (resource.resourceName().getRenamedFrom() != null) {
-            return coloredChange.toColor() + " resource %s %s %s %s { %s".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), coloredChange.color(ARROW.getSymbol()), resource.resourceName().getName(), text);
+            return coloredChange.toColor() + " resource %s %s %s %s {%s".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), coloredChange.color(ARROW.getSymbol()), resource.resourceName().getName(), text);
         }
-        return coloredChange.toColor() + " resource %s %s { %s".formatted(resource.getType(), resource.getResourceName(), text);
+        return coloredChange.toColor() + " resource %s %s {%s".formatted(resource.getType(), resource.getResourceName(), text);
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
+        if (this.resource.isReplace()) {
+            return; // we can choose to handle replace in onNewObject or onObjectRemoved. We handle it in onNewObject
+        }
         newLine();
     }
 

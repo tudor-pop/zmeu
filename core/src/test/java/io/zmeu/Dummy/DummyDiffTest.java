@@ -120,7 +120,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
+                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -284,7 +284,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "local"	@|yellow ->|@ "src"
+                @|yellow ~|@	content = "local" @|yellow ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -525,15 +525,15 @@ class DummyDiffTest extends JaversTest {
 
         /*
         ~ resource DummyResource main {
-        -	name    = "local" -> null
+        -	name    = "local"  -> null
         ~	content = "remote" -> "src"
             uid     = "cloud-id-random"
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
-                @|red -|@	name    = "local"	@|white ->|@ @|white null|@
-                @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
+                @|red -|@	name    = "local"  @|white ->|@ @|white null|@
+                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -722,16 +722,14 @@ class DummyDiffTest extends JaversTest {
                 name    = null
             ~	content = "remote"    -> "src"
             ±	uid     = "immutable" -> "immutable-change"
-            ~ }
-
-            ~ }
+            ± }
          */
         Assertions.assertEquals("""
-                @|Magenta ±|@ resource DummyResource main {
+                @|Magenta ±|@ resource DummyResource main { @|Magenta # marked for replace|@
                 	name    = null
                 @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
                 @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
-                @|yellow ~|@ }
+                @|Magenta ±|@ }
                 """.trim(), log); // assert formatting remains intact
     }
 

@@ -6,6 +6,7 @@ import io.zmeu.TypeChecker.Types.ValueType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public final class TypeIdentifier extends Identifier {
     private Type type;
     private PathIdentifier path;

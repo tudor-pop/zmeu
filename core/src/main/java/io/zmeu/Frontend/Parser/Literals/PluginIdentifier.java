@@ -3,6 +3,7 @@ package io.zmeu.Frontend.Parser.Literals;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public final class PluginIdentifier extends Identifier {
     private PathIdentifier path;
     private TypeIdentifier type;

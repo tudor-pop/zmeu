@@ -25,6 +25,7 @@ public class Resource {
     private Set<String> dependencies;
     private Object resource;
     private String type;
+    @DiffIgnore
     private Boolean replace;
     @DiffIgnore
     private Set<String> immutable;
@@ -90,5 +91,9 @@ public class Resource {
             this.immutable = new HashSet<>();
         }
         this.immutable.add(immutable);
+    }
+
+    public boolean isReplace() {
+        return replace != null && replace;
     }
 }
