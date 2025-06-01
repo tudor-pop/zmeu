@@ -181,7 +181,6 @@ class DummyDiffTest extends JaversTest {
                 DummyResource.builder()
                         .content("src")
                         .build());
-        expected.setId(sourceState.getId());
         var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(expected.getId(), sourceState.getId());
@@ -377,7 +376,6 @@ class DummyDiffTest extends JaversTest {
                         .content("src")
                         .build()
         );
-        expected.setId(sourceState.getId());
         var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(expected, res.resource());

@@ -5,6 +5,7 @@ import io.zmeu.api.resource.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class DummyProvider extends Provider {
     private final Map<String, Resource> resources = new HashMap<>();
@@ -12,6 +13,11 @@ public class DummyProvider extends Provider {
     @Override
     public Object initResource() {
         return new DummyResource();
+    }
+
+    @Override
+    public void setId(Resource resource) {
+        resource.setId(UUID.randomUUID().toString());
     }
 
     @Override

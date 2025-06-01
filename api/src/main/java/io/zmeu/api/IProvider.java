@@ -12,4 +12,5 @@ public interface IProvider extends ExtensionPoint {
 
     boolean delete(Resource resource);
 
+    void setId(Resource resource);
 }

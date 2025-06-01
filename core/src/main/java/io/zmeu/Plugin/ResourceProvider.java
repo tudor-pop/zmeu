@@ -81,6 +81,7 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
     @Override
     public void onNewObject(NewObject newObject) {
         log.info("onNewObject {}", newObject);
+        provider.setId(resource);
         provider.create(resource);
     }
 

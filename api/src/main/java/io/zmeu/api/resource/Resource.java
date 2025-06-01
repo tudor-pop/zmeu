@@ -8,6 +8,7 @@ import org.javers.core.metamodel.annotation.Entity;
 import org.javers.core.metamodel.annotation.Id;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Data
@@ -83,7 +84,7 @@ public class Resource {
     }
 
     public String getId() {
-        return identity.getId();
+        return Optional.ofNullable(identity.getId()).orElse(identity.getName());
     }
 
     public void setId(String id) {

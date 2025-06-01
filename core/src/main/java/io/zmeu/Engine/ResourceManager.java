@@ -9,13 +9,16 @@ import io.zmeu.Plugin.ResourceProvider;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
-import io.zmeu.api.resource.Resource;
 import io.zmeu.api.resource.Identity;
+import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import org.javers.core.Changes;
 import org.javers.core.Javers;
+import org.javers.core.metamodel.object.InstanceId;
 import org.javers.repository.jql.QueryBuilder;
+import org.javers.shadow.Shadow;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +63,7 @@ public class ResourceManager {
     @SneakyThrows
     private MergeResult plan(Provider provider, ResourceValue resource) {
         var schema = provider.getSchema(resource.getSchema().getType());
-        var srcResource =  mapper.convertValue(resource.getProperties().getVariables(), schema);
+        var srcResource = mapper.convertValue(resource.getProperties().getVariables(), schema);
         var sourceState = new Resource(resource.getName(), srcResource);
         updateStateMetadata(resource, sourceState);
 
@@ -75,15 +78,11 @@ public class ResourceManager {
         var cloudState = provider.read(src);
 
 //        var snapshot = javers.getLatestSnapshot(src.getResourceName(), src.getClass()).orElse(null);
-        var snapshots = javers.findSnapshots(QueryBuilder.byInstanceId(src.resourceName(), src.getClass()).limit(1).build());
-        if (snapshots == null || snapshots.isEmpty()) {
+        var localState = findByResourceName(src.getIdentity());
+        if (localState == null) {
             return diff.merge(null, src, cloudState);
         }
-        var snapshot = snapshots.get(0);
-        var javersState = JaversUtils.mapSnapshotToObject(snapshot, Resource.class);
-        javersState.setResource(mapper.convertValue(javersState.getResource(), schema));
-//        updateStateMetadata(src, javersState);
-        return diff.merge(javersState, src, cloudState);
+        return diff.merge(localState, src, cloudState);
     }
 
     public Plan toPlan(MergeResult src) {
@@ -122,15 +121,23 @@ public class ResourceManager {
         return factory.get(schema.getSimpleName());
     }
 
-    public Object findByResourceName(String resourceName) {
-        var snapshot = javers.getLatestSnapshot(new Identity(resourceName), Resource.class);
-        if (snapshot.isEmpty()) {
+    @Nullable
+    public Resource findByResourceName(Identity identity) {
+        var shadowList = javers.<Resource>findShadows(QueryBuilder.byInstanceId(identity, Resource.class).limit(1).build());
+        if (shadowList.isEmpty()) {
             return null;
         }
-        var state = JaversUtils.mapSnapshotToObject(snapshot.get(), Resource.class);
-        state.setResource(mapper.convertValue(state.getResource(), getSchema(state)));
-
-        return state;
+        Shadow<Resource> shadow = shadowList.get(0);
+        var resource = shadow.get();
+        if (shadow.getCdoSnapshot().getGlobalId() instanceof InstanceId id) {
+            if (id.getCdoId() instanceof Identity identity1) { // set state identity which has the stable id from state
+                resource.setIdentity(identity1);
+            } else { // or store the identity from source code (could not have any stable id)
+                resource.setIdentity(identity);
+            }
+        }
+        resource.setResource(mapper.convertValue(resource.getResource(), getSchema(resource)));
+        return resource;
     }
 
     private Class<?> getSchema(Resource state) {

@@ -4,9 +4,9 @@ import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
 import io.zmeu.Engine.ResourceManager;
+import io.zmeu.Plugin.Providers;
 import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
-import io.zmeu.Plugin.Providers;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.AfterEach;
@@ -49,9 +49,18 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
         // apply to state
         manager.apply(manager.toPlan(plan));
-        var state = manager.findByResourceName(src.getId());
+        // src with generated ID can be retrieved from state
+        var state = manager.findByResourceName(src.getIdentity());
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
+
+        // a new run of the same resource name but with a different uuid (new code execution)
+        // should look at the resource name instead of uuid since the uuid from src is different than the one
+        // from state so the match should happen based on the name
+        state = manager.findByResourceName(src.getIdentity());
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
+
 
         // read from cloud
         var provider = manager.getProvider(DummyResource.class);
@@ -80,10 +89,14 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(src, cloud);
 
         manager.apply(manager.toPlan(plan));
-        var state = manager.findByResourceName(src.getId().toString());
+        // asert old src with generated ID can be retrieved from state
+        var state = manager.findByResourceName(src.getIdentity());
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
+        state = manager.findByResourceName(src.getIdentity());
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
     }
 
 //    /**
