@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
  * 13. resource renamed in src but not deleted/added - renaming detection
  * 14. replace resource on immutable value change
  * 15. resource rename should only happen between local and source
+ * 16. replace resource on immutable value change and resource name
  */
 @Log4j2
 class DummyDiffTest extends JaversTest {
@@ -131,7 +132,7 @@ class DummyDiffTest extends JaversTest {
     void srcAndLocalOverridesRemote() {
         var localState = new Resource("main",
                 DummyResource.builder()
-                        .content("src")
+                        .content("local")
                         .build()
         );
 
@@ -143,7 +144,7 @@ class DummyDiffTest extends JaversTest {
 
         var cloudState = new Resource("main",
                 DummyResource.builder()
-                        .content("local")
+                        .content("remote")
                         .build()
         );
         var res = diff.merge(localState, sourceState, cloudState);
@@ -153,7 +154,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         plan.setId(sourceState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false));
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(plan, res.resource());
@@ -161,7 +162,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "local"	@|yellow ->|@ "src"
+                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -239,7 +240,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
+                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -436,7 +437,7 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
                 	name    = null
-                @|red -|@	content = "src"	@|white ->|@ @|white null|@
+                @|red -|@	content = "src" @|white ->|@ @|white null|@
                 	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -597,8 +598,8 @@ class DummyDiffTest extends JaversTest {
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
-                @|red -|@	name    = "local"	@|white ->|@ @|white null|@
-                @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
+                @|red -|@	name    = "local"  @|white ->|@ @|white null|@
+                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -661,8 +662,8 @@ class DummyDiffTest extends JaversTest {
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
-                @|red -|@	name    = "local"	@|white ->|@ @|white null|@
-                @|yellow ~|@	content = "remote"	@|yellow ->|@ "src"
+                @|red -|@	name    = "local"  @|white ->|@ @|white null|@
+                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
                 	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
@@ -725,7 +726,72 @@ class DummyDiffTest extends JaversTest {
             ± }
          */
         Assertions.assertEquals("""
-                @|Magenta ±|@ resource DummyResource main { @|Magenta # marked for replace|@
+                @|Magenta ±|@ resource DummyResource main {@|Magenta  # marked for replace|@
+                	name    = null
+                @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
+                @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
+                @|Magenta ±|@ }
+                """.trim(), log); // assert formatting remains intact
+    }
+
+    @Test
+    @DisplayName("replace resource on immutable value change and resource name")
+    void replaceDetectionAndResourceName() {
+        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        var localState = new Resource("main",
+                DummyResource.builder()
+                        .content("local")
+                        .build()
+        );
+
+        var srcState = new Resource("newMain",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("immutable-change")
+                        .build()
+        );
+
+        var cloudState = new Resource("unknown",
+                DummyResource.builder()
+                        .content("remote")
+                        .uid("immutable")
+                        .build()
+        );
+
+        var res = diff.merge(localState, srcState, cloudState);
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+
+        // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
+        Assertions.assertEquals(srcState, res.resource());
+        Assertions.assertFalse(res.changes().isEmpty());
+        Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
+
+
+        var expected = new Resource("newMain",
+                DummyResource.builder()
+                        .content("src")
+                        .uid("immutable-change")
+                        .build()
+        );
+        expected.setId(localState.getId());
+        expected.setImmutable(localState.getImmutable());
+        expected.setReplace(localState.getReplace());
+        Assertions.assertEquals(localState.getId(), srcState.getId());
+        // assert that:
+        // 1. name was removed
+        // 2. content is "src"
+        // 3. cloud immutable property was maintained
+        Assertions.assertEquals(expected, res.resource());
+
+        /*
+            ± resource DummyResource main {
+                name    = null
+            ~	content = "remote"    -> "src"
+            ±	uid     = "immutable" -> "immutable-change"
+            ± }
+         */
+        Assertions.assertEquals("""
+                @|Magenta ±|@ resource DummyResource main @|Magenta ->|@ newMain {@|Magenta  # marked for replace|@
                 	name    = null
                 @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
                 @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"

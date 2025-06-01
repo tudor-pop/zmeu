@@ -79,13 +79,6 @@ public class Resource {
         return resourceName;
     }
 
-    public void setReplace(Boolean replace) {
-        this.replace = replace;
-        if (this.immutable == null) {
-            this.immutable = HashSet.newHashSet(1);
-        }
-    }
-
     public void addImmutable(String immutable) {
         if (this.immutable == null) {
             this.immutable = new HashSet<>();
