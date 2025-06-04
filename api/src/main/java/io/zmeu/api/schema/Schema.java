@@ -75,7 +75,6 @@ public class Schema {
 
             String name = propertySchema.name().isBlank() ? field.getName() : propertySchema.name();
             property.name(name);
-            property.recreateOnChange(propertySchema.recreateOnChange());
 
             property.hidden(propertySchema.hidden());
 

@@ -9,6 +9,7 @@ import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
+import org.javers.core.diff.changetype.ValueChange;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
@@ -105,19 +106,24 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                         .build());
         var plan = manager.plan(src);
         manager.apply(manager.toPlan(plan)); // create cloud resource
+        manager.refresh();
 
         var provider = manager.getProvider(DummyResource.class);
         var cloud = provider.read(src);
         Assertions.assertEquals(src, cloud);
 
-        var dummy = (DummyResource) src.getResource();
-        dummy.setContent("new content"); // change some content
-        dummy.setColor("new color");
-        plan = manager.plan(src);
+        var newSrc = new Resource("src",
+                DummyResource.builder()
+                        .content("new content")
+                        .color("new color")
+                        .build());
+        manager.refresh();
+        plan = manager.plan(newSrc);
+        Assertions.assertTrue(plan.changes().get(0) instanceof ValueChange);
         manager.apply(manager.toPlan(plan));
 
         // asert old src with generated ID can be retrieved from state
-        var state = manager.findByResourceName(src.getIdentity());
+        var state = manager.findByResourceName(newSrc.getIdentity());
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
     }

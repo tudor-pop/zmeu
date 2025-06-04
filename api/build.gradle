@@ -1,15 +1,14 @@
 plugins {
     id 'java'
-    id("org.gradlex.extra-java-module-info") version "1.11"
+    id("org.gradlex.extra-java-module-info") version "1.12"
 }
 repositories {
     mavenCentral()
 }
 version = "0.0.1"
-def pf4jVersion = "3.12.1"
 def lombok = "1.18.36"
 dependencies {
-    implementation("org.pf4j:pf4j:${pf4jVersion}") {
+    implementation("org.pf4j:pf4j:3.13.0") {
         transitive = true
     }
     implementation 'org.apache.commons:commons-lang3:3.17.0'
@@ -17,6 +16,8 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     implementation 'com.github.zafarkhaja:java-semver:0.10.2'
     implementation 'org.javers:javers-core:7.8.0'
+    implementation "org.hibernate.orm:hibernate-core:6.6.17.Final"
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.10'
 
     testCompileOnly "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"

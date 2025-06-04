@@ -13,6 +13,7 @@ import io.zmeu.api.resource.Identity;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Changes;
 import org.javers.core.Javers;
 import org.javers.core.metamodel.object.InstanceId;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 import static io.zmeu.Engine.ResourceManagerUtils.updateStateMetadata;
 
+@Slf4j
 public class ResourceManager {
     private final Providers factory;
     private final ObjectMapper mapper;
@@ -33,6 +35,8 @@ public class ResourceManager {
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
     private final ResourceChangeLog changeLog;
     private final ResourceProvider resourceProvider;
+    private final Map<String, Identity> identities = new HashMap<>();
+
 
     public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff) {
         this.factory = factory;
@@ -41,6 +45,19 @@ public class ResourceManager {
         this.javers = diff.getJavers();
         this.changeLog = new ResourceChangeLog();
         this.resourceProvider = new ResourceProvider(factory);
+    }
+
+    public void refresh() {
+        // build mapping of resource logical name and ids
+//        javers.<Resource>findShadows(QueryBuilder.byClass(Resource.class).limit(10).build())
+//                .forEach(it -> {
+//                    var resource = it.get();
+//                    var identity = resource.getIdentity();
+//                    if (identity.getId() != null) {
+//                        identities.put(identity.getId(), identity);
+//                    }
+//                    identities.put(identity.getName(), identity);
+//                });
     }
 
     @SneakyThrows
@@ -77,12 +94,11 @@ public class ResourceManager {
 
         var cloudState = provider.read(src);
 
-//        var snapshot = javers.getLatestSnapshot(src.getResourceName(), src.getClass()).orElse(null);
+
         var localState = findByResourceName(src.getIdentity());
-        if (localState == null) {
-            return diff.merge(null, src, cloudState);
-        }
-        return diff.merge(localState, src, cloudState);
+        var merged = diff.merge(localState, src, cloudState);
+
+        return merged;
     }
 
     public Plan toPlan(MergeResult src) {
@@ -100,7 +116,9 @@ public class ResourceManager {
             Changes changes1 = mergeResult.changes();
             javers.processChangeList(changes1, changeLog);
             javers.processChangeList(changes1, resourceProvider);
-            javers.commit("Tudor", resourceProvider.result());
+            Resource result = resourceProvider.result();
+
+            javers.commit("Tudor", result);
         }
         return plan;
     }

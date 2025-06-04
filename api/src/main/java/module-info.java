@@ -10,4 +10,7 @@ open module zmeu.api {
     requires org.pf4j;
     requires java.compiler;
     requires org.apache.commons.lang3;
+    requires org.hibernate.orm.core;
+    requires jakarta.persistence;
+    requires io.hypersistence.utils.hibernate.type;
 }

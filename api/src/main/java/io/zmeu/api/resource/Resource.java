@@ -1,25 +1,32 @@
 package io.zmeu.api.resource;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import io.zmeu.api.annotations.Schema;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Type;
 import org.javers.core.metamodel.annotation.DiffIgnore;
-import org.javers.core.metamodel.annotation.Entity;
-import org.javers.core.metamodel.annotation.Id;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity
 @EqualsAndHashCode
 public class Resource {
-    @DiffIgnore
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @Embedded
     private Identity identity;
     private Set<String> dependencies;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "json")
     private Object resource;
+
     private String type;
     @DiffIgnore
     private Boolean replace;
@@ -81,14 +88,6 @@ public class Resource {
 
     public boolean isReplace() {
         return replace != null && replace;
-    }
-
-    public String getId() {
-        return Optional.ofNullable(identity.getId()).orElse(identity.getName());
-    }
-
-    public void setId(String id) {
-        identity.setId(id);
     }
 
     public void setResourceName(String resourceName) {

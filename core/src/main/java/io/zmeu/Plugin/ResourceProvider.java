@@ -3,7 +3,6 @@ package io.zmeu.Plugin;
 import io.zmeu.api.Provider;
 import io.zmeu.api.resource.Resource;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.javers.core.changelog.ChangeProcessor;
 import org.javers.core.commit.CommitMetadata;
 import org.javers.core.diff.Change;
@@ -93,9 +92,6 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
     public void onNewObject(NewObject newObject) {
         log.info("onNewObject {}", newObject);
         this.resource = provider.create(resource);
-        if (StringUtils.isBlank(this.resource.getIdentity().getId())) { // callback to stable ID
-            provider.onNewId(this.resource);
-        }
     }
 
     @Override

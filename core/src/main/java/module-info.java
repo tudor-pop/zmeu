@@ -18,4 +18,7 @@ module zmeu.io {
     requires jdk.jdi;
     requires java.desktop;
     requires org.apache.commons.beanutils;
+    requires org.hibernate.orm.core;
+    requires jakarta.persistence;
+    requires jakarta.transaction;
 }

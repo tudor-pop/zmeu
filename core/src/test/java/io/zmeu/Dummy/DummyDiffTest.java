@@ -2,7 +2,9 @@ package io.zmeu.Dummy;
 
 import io.zmeu.Base.JaversTest;
 import io.zmeu.Diff.Diff;
+import io.zmeu.Persistence.HibernateRepository;
 import io.zmeu.Plugin.Providers;
+import io.zmeu.api.resource.Identity;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
@@ -10,10 +12,13 @@ import lombok.extern.log4j.Log4j2;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
+import org.javers.repository.jql.QueryBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 /**
  * Use cases:
@@ -38,7 +43,7 @@ import org.junit.jupiter.api.Test;
 class DummyDiffTest extends JaversTest {
     private Diff diff;
     private Providers providers;
-
+    private HibernateRepository repository;
 
     @SneakyThrows
     @BeforeEach
@@ -47,6 +52,7 @@ class DummyDiffTest extends JaversTest {
         var provider = new DummyProvider();
         providers = new Providers();
         providers.putProvider(provider.schemasString(), provider);
+        repository = new HibernateRepository<Resource, UUID>(Resource.class);
     }
 
     /**
@@ -83,6 +89,24 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
         Assertions.assertTrue(res.changes().isEmpty());
+    }
+
+    @Test
+    void query() {
+        var localState = new Resource(new Identity("main", "1"),
+                DummyResource.builder()
+                        .content("local")
+                        .build());
+        var sec = new Resource(new Identity("sec", "2"),
+                DummyResource.builder()
+                        .content("local")
+                        .build());
+
+       repository.save(localState);
+
+        var shadowList = javers.<Resource>findShadows(QueryBuilder.byClass(Resource.class)
+                .limit(2).build());
+        Assertions.assertEquals(1, shadowList.size());
     }
 
     @Test
@@ -602,6 +626,7 @@ class DummyDiffTest extends JaversTest {
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
+
     @Test
     @DisplayName("resource rename should only happen between local and source")
     void renameDetectionShouldOnlyHappenBetweenLocalAndSource() {

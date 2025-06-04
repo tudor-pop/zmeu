@@ -15,7 +15,7 @@ public interface IProvider extends ExtensionPoint {
     boolean delete(Resource resource);
 
     default void onNewId(Resource resource){
-        resource.setId(UUID.randomUUID().toString());
+        resource.setId(UUID.randomUUID());
     }
 
 }

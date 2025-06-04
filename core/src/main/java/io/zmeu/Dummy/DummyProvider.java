@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DummyProvider extends Provider {
-    private final Map<String, Resource> resources = new HashMap<>();
+    private final Map<UUID, Resource> resources = new HashMap<>();
 
     @Override
     public Object initResource() {
@@ -28,7 +28,6 @@ public class DummyProvider extends Provider {
 
     @Override
     public void onNewId(Resource resource) {
-        resource.setId("arn:random:" + resources.size());
         resources.put(resource.getId(), resource);
     }
 

@@ -13,7 +13,6 @@ public record Property(
         String deprecationMessage,
         boolean required,
         boolean immutable,
-        boolean recreateOnChange,
         boolean hidden) {
 
     public Object getValue() {
