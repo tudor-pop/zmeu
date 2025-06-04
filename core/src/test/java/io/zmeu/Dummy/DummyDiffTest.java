@@ -2,7 +2,7 @@ package io.zmeu.Dummy;
 
 import io.zmeu.Base.JaversTest;
 import io.zmeu.Diff.Diff;
-import io.zmeu.Persistence.HibernateRepository;
+import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.api.resource.Identity;
 import io.zmeu.api.resource.Resource;
@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
 
 /**
  * Use cases:
@@ -42,7 +40,7 @@ import java.util.UUID;
 class DummyDiffTest extends JaversTest {
     private Diff diff;
     private Providers providers;
-    private HibernateRepository repository;
+    private ResourceRepository repository;
     private ResourceChangeLog changeProcessor;
 
 
@@ -53,7 +51,7 @@ class DummyDiffTest extends JaversTest {
         var provider = new DummyProvider();
         providers = new Providers();
         providers.putProvider(provider.schemasString(), provider);
-        repository = new HibernateRepository<Resource, UUID>(Resource.class);
+        repository = new ResourceRepository();
         changeProcessor = new ResourceChangeLog(true, mapper);
     }
 
@@ -106,7 +104,10 @@ class DummyDiffTest extends JaversTest {
 
        repository.save(localState);
 
-        var shadowList = repository.findById(localState.getId());
+        var byName = repository.findByName(sec.getResourceNameString());
+        Assertions.assertNull(byName);
+
+        var byProperties = repository.findByName(sec.getResourceNameString());
     }
 
     @Test

@@ -15,7 +15,9 @@ import java.util.UUID;
 @Data
 @Entity
 @EqualsAndHashCode
-@Table(name = "resources")
+@Table(name = "resources", indexes = {
+        @Index(name = "idx_name", columnList = "name")
+})
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

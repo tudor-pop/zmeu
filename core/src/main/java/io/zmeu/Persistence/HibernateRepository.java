@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 import static org.hibernate.internal.TransactionManagement.manageTransaction;
 
 public class HibernateRepository<T, ID> implements CrudRepository<T, ID> {
-    private final Class<T> type;
-    private final SessionFactory sessionFactory;
+    protected final Class<T> type;
+    protected final SessionFactory sessionFactory;
 
     public HibernateRepository(Class<T> type, SessionFactory sessionFactory) {
         this.type = type;
@@ -32,7 +32,7 @@ public class HibernateRepository<T, ID> implements CrudRepository<T, ID> {
     @Override
     public List<T> findAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM " + type.getName(), type).list();
+            return session.createQuery("FROM " + type.getSimpleName(), type).list();
         }
     }
 
@@ -44,7 +44,7 @@ public class HibernateRepository<T, ID> implements CrudRepository<T, ID> {
     @Override
     public void delete(T entity) {
 //            session.inTransaction(tx -> session.remove(entity));
-        inTransaction(session ->session.remove(entity));
+        inTransaction(session -> session.remove(entity));
     }
 
     void inTransaction(Consumer<Session> action) {
