@@ -15,20 +15,23 @@ import java.util.UUID;
 @Data
 @Entity
 @EqualsAndHashCode
+@Table(name = "resources")
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Embedded
     private Identity identity;
+    @Transient
     private Set<String> dependencies;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
-    private Object resource;
+    private Object properties;
 
     private String type;
     @DiffIgnore
+    @Transient
     private Boolean replace;
     @DiffIgnore
     private Set<String> immutable;
@@ -44,18 +47,18 @@ public class Resource {
         this.identity = new Identity(resourceName);
     }
 
-    public Resource(String resourceName, Object resource) {
+    public Resource(String resourceName, Object properties) {
         this.identity = new Identity(resourceName);
-        setResource(resource);
+        setProperties(properties);
     }
 
-    public Resource(Identity identity, Object resource) {
+    public Resource(Identity identity, Object properties) {
         this.identity = identity;
-        setResource(resource);
+        setProperties(properties);
     }
 
-    public void setResource(Object resource) {
-        this.resource = resource;
+    public void setProperties(Object resource) {
+        this.properties = resource;
         this.type = resource.getClass().getAnnotation(Schema.class).typeName();
     }
 
@@ -67,7 +70,7 @@ public class Resource {
     }
 
     public Class<?> getResourceClass() {
-        return resource.getClass();
+        return properties.getClass();
     }
 
     public Identity resourceName() {

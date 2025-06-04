@@ -154,7 +154,7 @@ public class ResourceManager {
                 resource.setIdentity(identity);
             }
         }
-        resource.setResource(mapper.convertValue(resource.getResource(), getSchema(resource)));
+        resource.setProperties(mapper.convertValue(resource.getProperties(), getSchema(resource)));
         return resource;
     }
 

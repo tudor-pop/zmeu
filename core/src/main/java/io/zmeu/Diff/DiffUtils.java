@@ -21,17 +21,17 @@ public class DiffUtils {
     }
 
     static void updateImmutableProperties(Resource source, Resource target) {
-        for (Field property : target.getResource().getClass().getDeclaredFields()) {
+        for (Field property : target.getProperties().getClass().getDeclaredFields()) {
             if (Reflections.isImmutable(property)) {
                 try {
-                    Field field = source.getResource().getClass().getDeclaredField(property.getName());
+                    Field field = source.getProperties().getClass().getDeclaredField(property.getName());
                     field.setAccessible(true);
                     property.setAccessible(true);
 
-                    var sourceValue = property.get(source.getResource());
+                    var sourceValue = property.get(source.getProperties());
                     // detect replacement. If immutable fields differ (src/cloud) then mark src for replacement by setting a new ID
                     // which will be detected as an remove/add operation
-                    var targetProperty = BeanUtilsBean2.getInstance().getProperty(target.getResource(), property.getName());
+                    var targetProperty = BeanUtilsBean2.getInstance().getProperty(target.getProperties(), property.getName());
                     if (targetProperty != null && !Objects.equals(sourceValue, targetProperty)) {
 //                        target.setId(UUID.randomUUID());
                         target.setReplace(true);
@@ -39,7 +39,7 @@ public class DiffUtils {
                         target.addImmutable(property.getName());
                         source.setImmutable(target.getImmutable());
                     } else {
-                        BeanUtilsBean2.getInstance().copyProperty(target.getResource(), property.getName(), sourceValue);
+                        BeanUtilsBean2.getInstance().copyProperty(target.getProperties(), property.getName(), sourceValue);
                     }
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     throw new RuntimeException(e);

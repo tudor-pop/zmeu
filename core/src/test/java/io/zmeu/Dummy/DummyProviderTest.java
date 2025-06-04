@@ -142,7 +142,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         var cloud = provider.read(src);
         Assertions.assertEquals(src, cloud);
 
-        var dummy = (DummyResource) src.getResource();
+        var dummy = (DummyResource) src.getProperties();
         dummy.setContent("new content"); // change some content
         dummy.setColor("new color");
         plan = manager.plan(src);
