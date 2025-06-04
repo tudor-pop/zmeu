@@ -1,6 +1,7 @@
 package io.zmeu.Engine;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
@@ -43,7 +44,7 @@ public class ResourceManager {
         this.mapper = mapper;
         this.diff = diff;
         this.javers = diff.getJavers();
-        this.changeLog = new ResourceChangeLog();
+        this.changeLog = new ResourceChangeLog(true, ObjectMapperConf.getObjectMapper());
         this.resourceProvider = new ResourceProvider(factory);
     }
 

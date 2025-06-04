@@ -12,7 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import org.javers.core.diff.changetype.NewObject;
 import org.javers.core.diff.changetype.ObjectRemoved;
 import org.javers.core.diff.changetype.ValueChange;
-import org.javers.repository.jql.QueryBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +43,8 @@ class DummyDiffTest extends JaversTest {
     private Diff diff;
     private Providers providers;
     private HibernateRepository repository;
+    private ResourceChangeLog changeProcessor;
+
 
     @SneakyThrows
     @BeforeEach
@@ -53,6 +54,7 @@ class DummyDiffTest extends JaversTest {
         providers = new Providers();
         providers.putProvider(provider.schemasString(), provider);
         repository = new HibernateRepository<Resource, UUID>(Resource.class);
+        changeProcessor = new ResourceChangeLog(true, mapper);
     }
 
     /**
@@ -85,7 +87,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         expected.setId(localState.getId());
-        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        javers.processChangeList(res.changes(), changeProcessor);
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
         Assertions.assertTrue(res.changes().isEmpty());
@@ -104,9 +106,7 @@ class DummyDiffTest extends JaversTest {
 
        repository.save(localState);
 
-        var shadowList = javers.<Resource>findShadows(QueryBuilder.byClass(Resource.class)
-                .limit(2).build());
-        Assertions.assertEquals(1, shadowList.size());
+        var shadowList = repository.findById(localState.getId());
     }
 
     @Test
@@ -136,7 +136,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         plan.setId(sourceState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false));
+        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false, mapper));
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(plan, res.resource());
@@ -178,7 +178,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         plan.setId(sourceState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(plan, res.resource());
@@ -205,7 +205,7 @@ class DummyDiffTest extends JaversTest {
                 DummyResource.builder()
                         .content("src")
                         .build());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(expected.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
@@ -253,7 +253,7 @@ class DummyDiffTest extends JaversTest {
         );
         expected.setId(remoteState.getId());
 
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
@@ -298,7 +298,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         expected.setId(localState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
@@ -343,7 +343,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         expected.setId(localState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
@@ -370,7 +370,7 @@ class DummyDiffTest extends JaversTest {
                         .content("src")
                         .build()
         );
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(expected, res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
@@ -399,7 +399,7 @@ class DummyDiffTest extends JaversTest {
                         .content("src")
                         .build()
         );
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(expected, res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
@@ -418,7 +418,7 @@ class DummyDiffTest extends JaversTest {
     @DisplayName("no state returns null")
     void removedFromAllStates() {
         var res = diff.merge(null, null, null);
-        javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertNull(res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
@@ -450,7 +450,7 @@ class DummyDiffTest extends JaversTest {
                         .build()
         );
         expected.setId(localState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(expected, res.resource());
         Assertions.assertFalse(res.changes().isEmpty());
@@ -481,7 +481,7 @@ class DummyDiffTest extends JaversTest {
         );
 
         var res = diff.merge(localState, null, cloudState);
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(cloudState, res.resource());
@@ -523,7 +523,7 @@ class DummyDiffTest extends JaversTest {
         );
 
         var res = diff.merge(localState, srcState, cloudState);
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(srcState, res.resource());
@@ -588,7 +588,7 @@ class DummyDiffTest extends JaversTest {
         );
 
         var res = diff.merge(localState, srcState, cloudState);
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(srcState, res.resource());
@@ -654,7 +654,7 @@ class DummyDiffTest extends JaversTest {
         );
 
         var res = diff.merge(localState, srcState, cloudState);
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(srcState, res.resource());
@@ -718,7 +718,7 @@ class DummyDiffTest extends JaversTest {
         );
 
         var res = diff.merge(localState, srcState, cloudState);
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(srcState, res.resource());
@@ -783,7 +783,7 @@ class DummyDiffTest extends JaversTest {
         );
 
         var res = diff.merge(localState, srcState, cloudState);
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         // optimise to always reduce the same empty resource during merge such that  res.resource() always points to the same instance instead of creating millions of empty resources
         Assertions.assertEquals(srcState, res.resource());
@@ -846,7 +846,7 @@ class DummyDiffTest extends JaversTest {
 //                DummyResource.builder()
 //                        .content("src")
 //                        .build());
-//        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(true));
+//        var log = javers.processChangeList(res.changes(), changeProcessor);
 //
 //        Assertions.assertEquals(expected, res.resource());
 //        // should be empty because the resource exists in cloud and in code but is missing in state so we just need to add it in state

@@ -1,7 +1,6 @@
 package io.zmeu.javers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
 import io.zmeu.api.resource.Resource;
@@ -36,15 +35,11 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     private boolean resourcePrinted = false;
     @Getter
     private Resource resource;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
-    public ResourceChangeLog(boolean enableStdout) {
-        this();
+    public ResourceChangeLog(boolean enableStdout,ObjectMapper mapper) {
         this.enableStdout = enableStdout;
-    }
-
-    public ResourceChangeLog() {
-        mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        this.mapper = mapper;
     }
 
     @Override

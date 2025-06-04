@@ -1,6 +1,7 @@
 package io.zmeu.Base;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.TypeChecker.BaseChecker;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +15,7 @@ public class JaversWithInterpreterTest extends BaseChecker {
     @SneakyThrows
     @BeforeEach
     void init() {
-        mapper = new ObjectMapper();
+        mapper = ObjectMapperConf.getObjectMapper();
         closeable = MockitoAnnotations.openMocks(this);
     }
 

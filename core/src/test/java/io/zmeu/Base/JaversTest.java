@@ -1,6 +1,7 @@
 package io.zmeu.Base;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.Diff.JaversFactory;
 import lombok.SneakyThrows;
 import org.javers.core.Javers;
@@ -14,6 +15,6 @@ public class JaversTest {
     @BeforeEach
     void init() {
         javers = JaversFactory.createNoDb();
-        mapper = new ObjectMapper();
+        mapper = ObjectMapperConf.getObjectMapper();
     }
 }

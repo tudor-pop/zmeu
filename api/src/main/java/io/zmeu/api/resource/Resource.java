@@ -26,7 +26,7 @@ public class Resource {
     private Set<String> dependencies;
 
     @Type(JsonType.class)
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "jsonb")
     private Object properties;
 
     private String type;
