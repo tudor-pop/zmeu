@@ -2,7 +2,6 @@ module zmeu.io {
     requires info.picocli;
     requires java.net.http;
     requires javers.core;
-    requires javers.persistence.sql;
     requires static lombok;
     requires org.apache.commons.lang3;
     requires org.apache.logging.log4j.core;

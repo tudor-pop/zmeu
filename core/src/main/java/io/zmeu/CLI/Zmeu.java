@@ -36,7 +36,7 @@ public class Zmeu {
         this.providers = new Providers(ZmeuInjector.createZmeufile());
 
         this.objectMapper = ZmeuInjector.createMapper();
-        this.javers = JaversFactory.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "password");
+        this.javers = JaversFactory.createNoDb();
         this.diff = new Diff(javers);
 
         this.interpreter = new Interpreter(new Environment<>());
