@@ -24,18 +24,20 @@ public class Resource {
     private UUID id;
     @Embedded
     private Identity identity;
-    @Transient
-    private Set<String> dependencies;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private Object properties;
 
     private String type;
+
+    @Transient
+    private Set<String> dependencies;
     @DiffIgnore
     @Transient
     private Boolean replace;
     @DiffIgnore
+    @Transient
     private Set<String> immutable;
     /**
      * indicate if this resource should exist in cloud

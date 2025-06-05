@@ -28,7 +28,7 @@ public class Diff {
     }
 
     /**
-     * @param base  javers state stored in the database
+     * @param base  database state
      * @param left  source code state
      * @param right state read from the cloud like a VM
      * @return

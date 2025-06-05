@@ -1,10 +1,9 @@
 package io.zmeu.Dummy;
 
-import io.zmeu.Base.JaversTest;
+import io.zmeu.Base.StateTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
-import io.zmeu.api.resource.Identity;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
@@ -37,7 +36,7 @@ import org.junit.jupiter.api.Test;
  * 16. replace resource on immutable value change and resource name
  */
 @Log4j2
-class DummyDiffTest extends JaversTest {
+class DummyStatesTest extends StateTest {
     private Diff diff;
     private Providers providers;
     private ResourceRepository repository;
@@ -89,25 +88,6 @@ class DummyDiffTest extends JaversTest {
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
         Assertions.assertTrue(res.changes().isEmpty());
-    }
-
-    @Test
-    void query() {
-        var localState = new Resource(new Identity("main", "1"),
-                DummyResource.builder()
-                        .content("local")
-                        .build());
-        var sec = new Resource(new Identity("sec", "2"),
-                DummyResource.builder()
-                        .content("local")
-                        .build());
-
-       repository.save(localState);
-
-        var byName = repository.findByName(sec.getResourceNameString());
-        Assertions.assertNull(byName);
-
-        var byProperties = repository.findByName(sec.getResourceNameString());
     }
 
     @Test

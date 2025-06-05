@@ -1,5 +1,6 @@
 package io.zmeu;
 
+import io.zmeu.Config.FlywayConf;
 import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Dependency;
 import io.zmeu.Zmeufile.Zmeufile;
@@ -19,6 +20,7 @@ public class Main {
         Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
 
         run();
+        FlywayConf.init();
 
 //        System.out.println("REPL FCL v0.1.0");
 //

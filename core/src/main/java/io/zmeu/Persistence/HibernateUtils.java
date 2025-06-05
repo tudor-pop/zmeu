@@ -1,5 +1,6 @@
 package io.zmeu.Persistence;
 
+import io.zmeu.Config.HibernateConf;
 import io.zmeu.api.resource.Resource;
 import lombok.Getter;
 import org.hibernate.SessionFactory;

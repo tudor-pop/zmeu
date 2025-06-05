@@ -21,4 +21,5 @@ module zmeu.io {
     requires org.hibernate.orm.core;
     requires jakarta.persistence;
     requires jakarta.transaction;
+    requires flyway.core;
 }
