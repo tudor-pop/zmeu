@@ -3,7 +3,6 @@ package io.zmeu.Dummy;
 import io.zmeu.Base.StateTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Persistence.ResourceRepository;
-import io.zmeu.Plugin.Providers;
 import io.zmeu.api.resource.Identity;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
@@ -39,18 +38,15 @@ import org.junit.jupiter.api.Test;
 @Log4j2
 class DummyIntegrationTest extends StateTest {
     private Diff diff;
-    private Providers providers;
     private ResourceRepository repository;
     private ResourceChangeLog changeProcessor;
+    private DummyProvider provider = new DummyProvider();
 
 
     @SneakyThrows
     @BeforeEach
     void init() {
         diff = new Diff(javers);
-        var provider = new DummyProvider();
-        providers = new Providers();
-        providers.putProvider(provider.schemasString(), provider);
         repository = new ResourceRepository();
         changeProcessor = new ResourceChangeLog(true, mapper);
         repository.deleteAll();
@@ -74,12 +70,12 @@ class DummyIntegrationTest extends StateTest {
                         .content("local")
                         .build()
         );
-
-        var cloudState = new Resource("main",
+        provider.create(new Resource("main",
                 DummyResource.builder()
                         .content("local")
                         .build()
-        );
+        ));
+        var cloudState = provider.read(sourceState);
 
         var res = diff.merge(localState, sourceState, cloudState);
         var expected = new Resource("main",
@@ -142,7 +138,7 @@ class DummyIntegrationTest extends StateTest {
                         .build()
         );
         plan.setId(sourceState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false, mapper));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(plan, res.resource());
@@ -211,6 +207,7 @@ class DummyIntegrationTest extends StateTest {
                 DummyResource.builder()
                         .content("src")
                         .build());
+        expected.setId(sourceState.getId());
         var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(expected.getId(), sourceState.getId());
@@ -377,7 +374,7 @@ class DummyIntegrationTest extends StateTest {
                         .build()
         );
         var log = javers.processChangeList(res.changes(), changeProcessor);
-
+        expected.setId(localState.getId());
         Assertions.assertEquals(expected, res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
         Assertions.assertFalse(res.changes().isEmpty());
@@ -406,7 +403,7 @@ class DummyIntegrationTest extends StateTest {
                         .build()
         );
         var log = javers.processChangeList(res.changes(), changeProcessor);
-
+        expected.setId(sourceState.getId());
         Assertions.assertEquals(expected, res.resource());
         // should not be empty because the resource exists in src+state but is missing in cloud so we should create it while processing
         Assertions.assertFalse(res.changes().isEmpty());

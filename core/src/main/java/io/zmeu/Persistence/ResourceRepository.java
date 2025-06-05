@@ -26,8 +26,21 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
     public Optional<Resource> findByName(String id) {
         try (Session session = sessionFactory.openSession()) {
             return Optional.ofNullable(
-                    session.createQuery("FROM Resource r WHERE r.identity.name = :name", type)
+                    session.createQuery("FROM Resource r WHERE r.identity.name = :name", aClass)
                             .setParameter("name", id)
+                            .getSingleResult()
+            );
+        } catch (NoResultException | NonUniqueResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Resource> findByNameAndType(String name, String type) {
+        try (Session session = sessionFactory.openSession()) {
+            return Optional.ofNullable(
+                    session.createQuery("FROM Resource r WHERE r.identity.name = :name AND r.type=:type", aClass)
+                            .setParameter("name", name)
+                            .setParameter("type", type)
                             .getSingleResult()
             );
         } catch (NoResultException | NonUniqueResultException e) {

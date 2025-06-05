@@ -49,16 +49,19 @@ public class Resource {
 
     public Resource(String resourceName) {
         this.identity = new Identity(resourceName);
+        setId(UUID.randomUUID());
     }
 
     public Resource(String resourceName, Object properties) {
         this.identity = new Identity(resourceName);
         setProperties(properties);
+        setId(UUID.randomUUID());
     }
 
     public Resource(Identity identity, Object properties) {
         this.identity = identity;
         setProperties(properties);
+        setId(UUID.randomUUID());
     }
 
     public void setProperties(Object resource) {

@@ -16,19 +16,9 @@ public class DummyProvider extends Provider {
     }
 
     @Override
-    public void setId(Resource resource) {
-        resource.setId(UUID.randomUUID().toString());
-    }
-
-    @Override
     public Resource create(Resource resource) {
         resources.put(resource.getId(), resource);
         return resources.get(resource.getId());
-    }
-
-    @Override
-    public void onNewId(Resource resource) {
-        resources.put(resource.getId(), resource);
     }
 
     @Override

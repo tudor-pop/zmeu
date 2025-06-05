@@ -9,30 +9,30 @@ import java.util.function.Consumer;
 import static org.hibernate.internal.TransactionManagement.manageTransaction;
 
 public class HibernateRepository<T, ID> implements CrudRepository<T, ID> {
-    protected final Class<T> type;
+    protected final Class<T> aClass;
     protected final SessionFactory sessionFactory;
 
-    public HibernateRepository(Class<T> type, SessionFactory sessionFactory) {
-        this.type = type;
+    public HibernateRepository(Class<T> aClass, SessionFactory sessionFactory) {
+        this.aClass = aClass;
         this.sessionFactory = sessionFactory;
     }
 
-    public HibernateRepository(Class<T> type) {
-        this.type = type;
+    public HibernateRepository(Class<T> aClass) {
+        this.aClass = aClass;
         this.sessionFactory = HibernateUtils.getSessionFactory();
     }
 
     @Override
     public T findById(ID id) {
         try (Session session = sessionFactory.openSession()) {
-            return session.find(type, id);
+            return session.find(aClass, id);
         }
     }
 
     @Override
     public List<T> findAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM " + type.getSimpleName(), type).list();
+            return session.createQuery("FROM " + aClass.getSimpleName(), aClass).list();
         }
     }
 
