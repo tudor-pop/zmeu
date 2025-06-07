@@ -1,9 +1,8 @@
 package io.zmeu.Resource;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.ValueObject;
 
 /**
@@ -26,11 +25,14 @@ import org.javers.core.metamodel.annotation.ValueObject;
 public class Identity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String name;
 
+    @DiffIgnore
     @OneToOne(fetch = FetchType.EAGER, mappedBy = "identity")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Resource resource;
 
     @Transient

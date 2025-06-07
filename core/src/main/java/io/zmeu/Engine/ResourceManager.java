@@ -17,7 +17,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Changes;
 import org.javers.core.Javers;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -88,8 +87,8 @@ public class ResourceManager {
 
     @SneakyThrows
     public MergeResult plan(Resource src) {
-        var provider = getProvider(src.getType().getKind());
-        var schema = provider.getSchema(src.getType().getKind());
+        var provider = getProvider(src.getKind());
+        var schema = provider.getSchema(src.getKind());
 
         var localState = find(src);
 
@@ -104,15 +103,16 @@ public class ResourceManager {
         return merged;
     }
 
-    private static @NotNull Resource populateCLoudState(Resource src, Object cloudResourceProperties) {
-        var cloudState = new Resource();
+    private static @Nullable Resource populateCLoudState(Resource src, Object cloudResourceProperties) {
         if (cloudResourceProperties != null) {
+            var cloudState = new Resource();
             cloudState.setType(src.getType());
             cloudState.setResourceName(src.getResourceNameString());
             cloudState.setProperties(cloudResourceProperties);
             cloudState.setId(src.getId());
+            return cloudState;
         }
-        return cloudState;
+        return null;
     }
 
     public Plan toPlan(MergeResult src) {
@@ -161,7 +161,7 @@ public class ResourceManager {
     }
 
     private Class<?> getSchema(Resource state) {
-        var type = state.getType().getKind();
+        var type = state.getKind();
         return getProvider(type)
                 .getSchema(type);
     }

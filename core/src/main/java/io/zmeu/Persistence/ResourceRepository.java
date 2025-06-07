@@ -39,21 +39,25 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
         ));
     }
 
+    /**
+     * find by id in case we have one...else match by name/properties
+     */
     @Override
     public Resource find(Resource resource) {
         return factory.fromTransaction(session -> {
             try {
                 return session.createNativeQuery("""
                                 SELECT res.*
-                                FROM resources res
-                                JOIN identity i ON res.identity_id = i.id
+                                FROM resources AS res
+                                JOIN identity AS i ON res.identity_id = i.id
                                 JOIn resource_type type ON res.resource_type_id = type.id
-                                WHERE (type.kind = :type AND i.name = :name)
+                                WHERE res.id = :id
+                                   OR (type.kind = :type AND i.name = :name)
                                    OR (type.kind = :type AND res.properties @> CAST(:properties AS jsonb))
                                 LIMIT 1
                                 """, Resource.class)
                         .setParameter("properties", mapper.writeValueAsString(resource.getProperties()), JsonBinaryType.INSTANCE)
-                        .setParameter("type", resource.getType().getKind())
+                        .setParameter("type", resource.getKind())
                         .setParameter("name", resource.getResourceNameString())
                         .getSingleResultOrNull();
             } catch (JsonProcessingException e) {

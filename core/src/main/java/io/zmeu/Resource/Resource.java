@@ -109,4 +109,13 @@ public class Resource extends Auditable {
     public void setResourceName(String resourceName) {
         identity.setName(resourceName);
     }
+
+    public boolean hasIdentity() {
+        return identity != null;
+    }
+
+    public String getKind() {
+        return type.getKind();
+    }
+
 }

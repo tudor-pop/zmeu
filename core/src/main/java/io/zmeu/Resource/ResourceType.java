@@ -2,6 +2,8 @@ package io.zmeu.Resource;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.javers.core.metamodel.annotation.ValueObject;
 
@@ -21,6 +23,9 @@ public class ResourceType {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
+    @DiffIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Resource resource;
 
     public ResourceType() {

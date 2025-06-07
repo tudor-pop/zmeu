@@ -9,7 +9,7 @@ public class DiffUtils {
         if (resource == null) {
             return;
         }
-        if (StringUtils.isBlank(resource.getResourceNameString())) {
+        if (resource.hasIdentity() && StringUtils.isBlank(resource.getResourceNameString())) {
             throw new IllegalArgumentException(resource + " is missing resource name");
         }
     }

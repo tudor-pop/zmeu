@@ -58,7 +58,7 @@ public class CloudProcessor implements ChangeProcessor<Resource> {
     public void beforeChange(Change change) {
         if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource resource) {
             this.resource = resource;
-            this.provider = providers.get(resource.getType().getKind());
+            this.provider = providers.get(resource.getKind());
         }
     }
 
@@ -95,13 +95,14 @@ public class CloudProcessor implements ChangeProcessor<Resource> {
     @Override
     public void onNewObject(NewObject newObject) {
         log.info("onNewObject {}", newObject);
-        this.resource.setProperties(provider.create(resource));
+        Object resource1 = provider.create(resource.getProperties());
+        this.resource.setProperties(resource1);
     }
 
     @Override
     public void onObjectRemoved(ObjectRemoved objectRemoved) {
         log.info("onObjectRemoved {}", objectRemoved);
-        provider.delete(resource);
+        provider.delete(resource.getProperties());
     }
 
     @Override
