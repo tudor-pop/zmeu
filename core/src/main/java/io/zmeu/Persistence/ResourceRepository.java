@@ -2,6 +2,7 @@ package io.zmeu.Persistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.Resource.Resource;
 import org.hibernate.SessionFactory;
@@ -43,16 +44,16 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
         return factory.fromTransaction(session -> {
             try {
                 return session.createNativeQuery("""
-                                SELECT *
-                                FROM resources r
-                                JOIN identity i ON r.identity_id = i.id
-                                JOIn resource_type rt ON r.resource_type_id = rt.id
-                                WHERE (rt.kind = :type AND i.name = :name)
-                                   OR (rt.kind = :type AND r.properties @> CAST(:properties AS jsonb))
+                                SELECT res.*
+                                FROM resources res
+                                JOIN identity i ON res.identity_id = i.id
+                                JOIn resource_type type ON res.resource_type_id = type.id
+                                WHERE (type.kind = :type AND i.name = :name)
+                                   OR (type.kind = :type AND res.properties @> CAST(:properties AS jsonb))
                                 LIMIT 1
                                 """, Resource.class)
-                        .setParameter("properties", mapper.writeValueAsString(resource.getProperties()))
-                        .setParameter("type", resource.getType())
+                        .setParameter("properties", mapper.writeValueAsString(resource.getProperties()), JsonBinaryType.INSTANCE)
+                        .setParameter("type", resource.getType().getKind())
                         .setParameter("name", resource.getResourceNameString())
                         .getSingleResultOrNull();
             } catch (JsonProcessingException e) {
