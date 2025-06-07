@@ -45,7 +45,8 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
     public void afterChangeList() {
         if (dirty && provider != null) {
             log.info("Applying batched update for resource {}", resource.getIdentity());
-            this.resource = provider.update(resource);
+            var properties = provider.update(resource.getProperties());
+            this.resource.setProperties(properties);
         }
         dirty = false;
     }
@@ -91,7 +92,7 @@ public class ResourceProvider implements ChangeProcessor<Resource> {
     @Override
     public void onNewObject(NewObject newObject) {
         log.info("onNewObject {}", newObject);
-        this.resource = provider.create(resource);
+        this.resource.setProperties(provider.create(resource));
     }
 
     @Override

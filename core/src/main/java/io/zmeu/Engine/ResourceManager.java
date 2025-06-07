@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Changes;
 import org.javers.core.Javers;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -95,11 +96,23 @@ public class ResourceManager {
         // cloud resource can only be read from local state if the local state contains an ARN or some id/name
         // otherwise it's a new resource and we can't read it from the cloud
         // => resources are only stored in db after they've been created in the cloud
-        var cloudState = provider.read(localState);
+        var cloudResourceProperties = provider.read(localState);
+        var cloudState = populateCLoudState(src, cloudResourceProperties);
 
         var merged = diff.merge(localState, src, cloudState);
 
         return merged;
+    }
+
+    private static @NotNull Resource populateCLoudState(Resource src, Object cloudResourceProperties) {
+        var cloudState = new Resource();
+        if (cloudResourceProperties != null) {
+            cloudState.setType(src.getType());
+            cloudState.setResourceName(src.getResourceNameString());
+            cloudState.setProperties(cloudResourceProperties);
+            cloudState.setId(src.getId());
+        }
+        return cloudState;
     }
 
     public Plan toPlan(MergeResult src) {

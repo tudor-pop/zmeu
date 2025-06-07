@@ -118,7 +118,7 @@ class DummyStatesTest extends StateTest {
                         .build()
         );
         plan.setId(sourceState.getId());
-        var log = javers.processChangeList(res.changes(), new ResourceChangeLog(false, mapper));
+        var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(localState.getId(), sourceState.getId());
         Assertions.assertEquals(plan, res.resource());
@@ -126,9 +126,9 @@ class DummyStatesTest extends StateTest {
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
+                	arn     = null
                 	color   = null
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -167,9 +167,9 @@ class DummyStatesTest extends StateTest {
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
+                	arn     = null
                 	color   = null
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -195,9 +195,9 @@ class DummyStatesTest extends StateTest {
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
                 @|green +|@ resource DummyResource main {
+                @|green +|@	arn     = null
                 @|green +|@	color   = null
                 @|green +|@	content = "src"
-                @|green +|@	uid     = null
                 @|green +|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -223,7 +223,7 @@ class DummyStatesTest extends StateTest {
         var remoteState = new Resource("main",
                 DummyResource.builder()
                         .content("remote")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
 
@@ -231,7 +231,7 @@ class DummyStatesTest extends StateTest {
         var expected = new Resource("main",
                 DummyResource.builder()
                         .content("src")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         expected.setId(remoteState.getId());
@@ -245,9 +245,9 @@ class DummyStatesTest extends StateTest {
 
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
+                	arn     = "cloud-id-random"
                 	color   = null
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -291,9 +291,9 @@ class DummyStatesTest extends StateTest {
 
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
+                	arn     = null
                 	color   = null
                 @|yellow ~|@	content = "local" @|yellow ->|@ "src"
-                	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -365,9 +365,9 @@ class DummyStatesTest extends StateTest {
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
                 @|green +|@ resource DummyResource main {
+                @|green +|@	arn     = null
                 @|green +|@	color   = null
                 @|green +|@	content = "src"
-                @|green +|@	uid     = null
                 @|green +|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -394,9 +394,9 @@ class DummyStatesTest extends StateTest {
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
                 @|green +|@ resource DummyResource main {
+                @|green +|@	arn     = null
                 @|green +|@	color   = null
                 @|green +|@	content = "src"
-                @|green +|@	uid     = null
                 @|green +|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -445,9 +445,9 @@ class DummyStatesTest extends StateTest {
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
+                	arn     = null
                 	color   = null
                 @|red -|@	content = "src" @|white ->|@ @|white null|@
-                	uid     = null
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -464,7 +464,7 @@ class DummyStatesTest extends StateTest {
         var cloudState = new Resource("main",
                 DummyResource.builder()
                         .content("remote") // note remote state will be shown in console instead of local state
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
 
@@ -478,9 +478,9 @@ class DummyStatesTest extends StateTest {
 
         Assertions.assertEquals("""
                 @|red -|@ resource DummyResource main {
+                @|red -|@	arn     = "cloud-id-random"
                 @|red -|@	color   = null
                 @|red -|@	content = "remote"
-                @|red -|@	uid     = "cloud-id-random"
                 @|red -|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -492,7 +492,7 @@ class DummyStatesTest extends StateTest {
                 DummyResource.builder()
                         .content("local")
                         .color("local")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         localState.setId(UUID.randomUUID());
@@ -507,7 +507,7 @@ class DummyStatesTest extends StateTest {
                 DummyResource.builder()
                         .color("local")
                         .content("remote")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
 
@@ -523,7 +523,7 @@ class DummyStatesTest extends StateTest {
         var expected = new Resource("main",
                 DummyResource.builder()
                         .content("src")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         expected.setId(localState.getId());
@@ -538,14 +538,14 @@ class DummyStatesTest extends StateTest {
         ~ resource DummyResource main {
         -	color    = "local"  -> null
         ~	content = "remote" -> "src"
-            uid     = "cloud-id-random"
+            arn     = "cloud-id-random"
         ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main {
+                	arn     = "cloud-id-random"
                 @|red -|@	color   = "local"  @|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -553,12 +553,12 @@ class DummyStatesTest extends StateTest {
     @Test
     @DisplayName("resource renamed in src but not deleted/added - renaming detection")
     void renameDetection() {
-        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        // resource was already added so local state has a stable/immutable ID (arn=cloud-id-random)
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
                         .color("local")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         localState.setId(UUID.randomUUID());
@@ -573,7 +573,7 @@ class DummyStatesTest extends StateTest {
                 DummyResource.builder()
                         .color("local")
                         .content("remote")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
 
@@ -589,7 +589,7 @@ class DummyStatesTest extends StateTest {
         var expected = new Resource("newName",
                 DummyResource.builder()
                         .content("src")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         expected.setId(localState.getId());
@@ -605,14 +605,14 @@ class DummyStatesTest extends StateTest {
             ~ resource DummyResource main -> newName {
             -	name    = "local"	-> null
             ~	content = "remote"	-> "src"
-                uid     = "cloud-id-random"
+                arn     = "cloud-id-random"
             ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
+                	arn     = "cloud-id-random"
                 @|red -|@	color   = "local"  @|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -620,12 +620,12 @@ class DummyStatesTest extends StateTest {
     @Test
     @DisplayName("resource rename should only happen between local and source")
     void renameDetectionShouldOnlyHappenBetweenLocalAndSource() {
-        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        // resource was already added so local state has a stable/immutable ID (arn=cloud-id-random)
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
                         .color("local")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         localState.setId(UUID.randomUUID());
@@ -640,7 +640,7 @@ class DummyStatesTest extends StateTest {
                 DummyResource.builder()
                         .color("local")
                         .content("remote")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
 
@@ -656,7 +656,7 @@ class DummyStatesTest extends StateTest {
         var expected = new Resource("newName",
                 DummyResource.builder()
                         .content("src")
-                        .uid("cloud-id-random")
+                        .arn("cloud-id-random")
                         .build()
         );
         expected.setId(localState.getId());
@@ -672,14 +672,14 @@ class DummyStatesTest extends StateTest {
             ~ resource DummyResource main -> newName {
             -	name    = "local"	-> null
             ~	content = "remote"	-> "src"
-                uid     = "cloud-id-random"
+                arn     = "cloud-id-random"
             ~ }
          */
         Assertions.assertEquals("""
                 @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
+                	arn     = "cloud-id-random"
                 @|red -|@	color   = "local"  @|white ->|@ @|white null|@
                 @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                	uid     = "cloud-id-random"
                 @|yellow ~|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -687,7 +687,7 @@ class DummyStatesTest extends StateTest {
     @Test
     @DisplayName("replace resource on immutable value change")
     void replaceDetection() {
-        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        // resource was already added so local state has a stable/immutable ID (arn=cloud-id-random)
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -698,14 +698,14 @@ class DummyStatesTest extends StateTest {
         var srcState = new Resource("main",
                 DummyResource.builder()
                         .content("src")
-                        .uid("immutable-change")
+                        .arn("immutable-change")
                         .build()
         );
 
         var cloudState = new Resource("unknown",
                 DummyResource.builder()
                         .content("remote")
-                        .uid("immutable")
+                        .arn("immutable")
                         .build()
         );
 
@@ -721,7 +721,7 @@ class DummyStatesTest extends StateTest {
         var expected = new Resource("main",
                 DummyResource.builder()
                         .content("src")
-                        .uid("immutable-change")
+                        .arn("immutable-change")
                         .build()
         );
         expected.setId(localState.getId());
@@ -738,14 +738,14 @@ class DummyStatesTest extends StateTest {
             ± resource DummyResource main {
                 name    = null
             ~	content = "remote"    -> "src"
-            ±	uid     = "immutable" -> "immutable-change"
+            ±	arn     = "immutable" -> "immutable-change"
             ± }
          */
         Assertions.assertEquals("""
                 @|Magenta ±|@ resource DummyResource main {@|Magenta  # marked for replace|@
+                @|Magenta ±|@	arn     = "immutable" @|Magenta ->|@ "immutable-change"
                 	color   = null
                 @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
-                @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
                 @|Magenta ±|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -753,7 +753,7 @@ class DummyStatesTest extends StateTest {
     @Test
     @DisplayName("replace resource on immutable value change and resource name")
     void replaceDetectionAndResourceName() {
-        // resource was already added so local state has a stable/immutable ID (uid=cloud-id-random)
+        // resource was already added so local state has a stable/immutable ID (arn=cloud-id-random)
         var localState = new Resource("main",
                 DummyResource.builder()
                         .content("local")
@@ -764,14 +764,14 @@ class DummyStatesTest extends StateTest {
         var srcState = new Resource("newMain",
                 DummyResource.builder()
                         .content("src")
-                        .uid("immutable-change")
+                        .arn("immutable-change")
                         .build()
         );
 
         var cloudState = new Resource("unknown",
                 DummyResource.builder()
                         .content("remote")
-                        .uid("immutable")
+                        .arn("immutable")
                         .build()
         );
 
@@ -787,7 +787,7 @@ class DummyStatesTest extends StateTest {
         var expected = new Resource("newMain",
                 DummyResource.builder()
                         .content("src")
-                        .uid("immutable-change")
+                        .arn("immutable-change")
                         .build()
         );
         expected.setId(localState.getId());
@@ -805,14 +805,14 @@ class DummyStatesTest extends StateTest {
             ± resource DummyResource main {
                 name    = null
             ~	content = "remote"    -> "src"
-            ±	uid     = "immutable" -> "immutable-change"
+            ±	arn     = "immutable" -> "immutable-change"
             ± }
          */
         Assertions.assertEquals("""
                 @|Magenta ±|@ resource DummyResource main @|Magenta ->|@ newMain {@|Magenta  # marked for replace|@
+                @|Magenta ±|@	arn     = "immutable" @|Magenta ->|@ "immutable-change"
                 	color   = null
                 @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
-                @|Magenta ±|@	uid     = "immutable" @|Magenta ->|@ "immutable-change"
                 @|Magenta ±|@ }
                 """.trim(), log); // assert formatting remains intact
     }
@@ -848,7 +848,7 @@ class DummyStatesTest extends StateTest {
 //                @|green +|@ resource DummyResource main {
 //                @|green +|@	name    = null
 //                @|green +|@	content = "src"
-//                @|green +|@	uid     = null
+//                @|green +|@	arn     = null
 //                @|green +|@ }
 //                """.trim(), log); // assert formatting remains intact
 //    }

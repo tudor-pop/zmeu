@@ -1,39 +1,39 @@
 package io.zmeu.Dummy;
 
 import io.zmeu.api.Provider;
-import io.zmeu.api.resource.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class DummyProvider extends Provider {
-    private final Map<UUID, Resource> resources = new HashMap<>();
+public class DummyProvider extends Provider<DummyResource> {
+    private final Map<String, DummyResource> resources = new HashMap<>();
 
     @Override
-    public Object initResource() {
+    public DummyResource initResource() {
         return new DummyResource();
     }
 
     @Override
-    public Resource create(Resource resource) {
-        resources.put(resource.getId(), resource);
-        return resources.get(resource.getId());
+    public DummyResource create(DummyResource resource) {
+        resource.setArn(UUID.randomUUID().toString());
+        resources.put(resource.getArn(), resource);
+        return resources.get(resource.getArn());
     }
 
     @Override
-    public Resource read(Resource resource) {
+    public DummyResource read(DummyResource resource) {
         if (resource == null) return null;
-        return resources.get(resource.getId());
+        return resources.get(resource.getArn());
     }
 
     @Override
-    public Resource update(Resource resource) {
-        return resources.put(resource.getId(), resource);
+    public DummyResource update(DummyResource resource) {
+        return resources.put(resource.getArn(), resource);
     }
 
     @Override
-    public boolean delete(Resource resource) {
-        return resources.remove(resource.getId()) != null;
+    public boolean delete(DummyResource resource) {
+        return resources.remove(resource.getArn()) != null;
     }
 }

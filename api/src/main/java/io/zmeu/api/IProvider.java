@@ -1,15 +1,14 @@
 package io.zmeu.api;
 
-import io.zmeu.api.resource.Resource;
 import org.pf4j.ExtensionPoint;
 
-public interface IProvider extends ExtensionPoint {
-    Resource create(Resource resource);
+public interface IProvider<T> extends ExtensionPoint {
+    T create(T resource);
 
-    Resource read(Resource resource);
+    T read(T resource);
 
-    Resource update(Resource resource);
+    T update(T resource);
 
-    boolean delete(Resource resource);
+    boolean delete(T resource);
 
 }

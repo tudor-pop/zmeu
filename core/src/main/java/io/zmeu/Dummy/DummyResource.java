@@ -23,5 +23,5 @@ public class DummyResource {
     @Property(type = Type.String)
     private String content;
     @Property(type = Type.String, immutable = true)
-    private String uid;
+    private String arn;
 }
