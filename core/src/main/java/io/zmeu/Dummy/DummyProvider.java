@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DummyProvider extends Provider<DummyResource> {
+    /**
+     * simulate as this state represent resources in the cloud
+     */
     private final Map<String, DummyResource> resources = new HashMap<>();
 
     @Override

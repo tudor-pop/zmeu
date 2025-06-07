@@ -15,18 +15,23 @@
  */
 package io.zmeu.api;
 
+import io.zmeu.api.resource.Property;
 import io.zmeu.api.schema.Schema;
 import lombok.Getter;
 import org.pf4j.Extension;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Extension
 public abstract class Provider<T> implements IProvider<T> {
     private final Map<String, Class<?>> schemaMap = new HashMap<>();
     @Getter
     private final T resource;
+
+    private final Set<String> immutableProperties = new HashSet<>();
 
     public Provider() {
         this.resource = initResource();
@@ -43,9 +48,22 @@ public abstract class Provider<T> implements IProvider<T> {
     }
 
     private Map<String, Class<?>> schemasMap() {
-        var definition = Schema.toSchema(resource);
+        var definition = schema();
         schemaMap.put(definition.getName(), definition.getResourceClass());
+        initImmutables(definition);
         return schemaMap;
+    }
+
+    private void initImmutables(Schema definition) {
+        for (Property property : definition.getProperties()) {
+            if (property.immutable()) {
+                immutableProperties.add(property.name());
+            }
+        }
+    }
+
+    public boolean isImmutable(String name) {
+        return immutableProperties.contains(name);
     }
 
     public Class<?> getSchema(String name) {

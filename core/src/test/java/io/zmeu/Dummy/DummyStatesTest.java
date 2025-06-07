@@ -46,7 +46,7 @@ class DummyStatesTest extends StateTest {
     @SneakyThrows
     @BeforeEach
     void init() {
-        diff = new Diff(javers);
+        diff = new Diff(javers, providers);
         var provider = new DummyProvider();
         providers = new Providers();
         providers.putProvider(provider.schemasString(), provider);
@@ -596,7 +596,7 @@ class DummyStatesTest extends StateTest {
         expected.getIdentity().setRenamedFrom(localState.getIdentity().getRenamedFrom());
         Assertions.assertEquals(localState.getId(), srcState.getId());
         // assert that:
-        // 1. name was removed
+        // 1. color was removed
         // 2. content is "src"
         // 3. cloud immutable property was maintained
         Assertions.assertEquals(expected, res.resource());
@@ -725,7 +725,6 @@ class DummyStatesTest extends StateTest {
                         .build()
         );
         expected.setId(localState.getId());
-        expected.setImmutable(localState.getImmutable());
         expected.setReplace(localState.getReplace());
         Assertions.assertEquals(localState.getId(), srcState.getId());
         // assert that:
@@ -791,7 +790,6 @@ class DummyStatesTest extends StateTest {
                         .build()
         );
         expected.setId(localState.getId());
-        expected.setImmutable(localState.getImmutable());
         expected.setReplace(localState.getReplace());
         expected.getIdentity().setRenamedFrom(localState.getIdentity().getRenamedFrom());
         Assertions.assertEquals(localState.getId(), srcState.getId());

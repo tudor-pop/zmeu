@@ -14,15 +14,18 @@ import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
 import org.javers.core.metamodel.object.GlobalId;
 
+/**
+ * Used to interact with the cloud and call provider specific methods based on what needs to be created/updated/destroyed
+ */
 @Log4j2
-public class ResourceProvider implements ChangeProcessor<Resource> {
+public class CloudProcessor implements ChangeProcessor<Resource> {
     private final Providers providers;
     private Provider provider;
     private Resource resource;
     // Temporary flag to know “this resource has pending updates”
     private boolean dirty = false;
 
-    public ResourceProvider(Providers providers) {
+    public CloudProcessor(Providers providers) {
         this.providers = providers;
     }
 

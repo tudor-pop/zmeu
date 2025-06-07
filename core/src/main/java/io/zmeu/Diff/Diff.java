@@ -1,15 +1,23 @@
 package io.zmeu.Diff;
 
+import io.zmeu.Plugin.Providers;
+import io.zmeu.Resource.ReplaceReason;
 import io.zmeu.Resource.Resource;
+import io.zmeu.Utils.Reflections;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.lang3.StringUtils;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 /**
  *
@@ -19,11 +27,13 @@ public class Diff {
     @Getter
     private Javers javers;
     private final IgnoreNullBeanUtilsBean ignoreNullBeanUtils = new IgnoreNullBeanUtilsBean();
+    private Providers providers;
 
     @SneakyThrows
-    public Diff(Javers javers) {
+    public Diff(Javers javers, Providers providers) {
         this();
         this.javers = javers;
+        this.providers = providers;
     }
 
     public Diff() {
@@ -59,8 +69,7 @@ public class Diff {
         // Preserve cloud-managed properties explicitly.
         // Src fields must get the cloud values because they are not explicitly set in code but rather set by the cloud provider(read only properties)
         if (base != null && right != null && base != right) {
-            DiffUtils.updateImmutableProperties(right, base);
-            base.setImmutable(right.getImmutable());
+            updateImmutableProperties(right, base);
             base.setReplace(right.getReplace());
         }
 
@@ -71,7 +80,6 @@ public class Diff {
             }
             left.setId(base.getId());
             ignoreNullBeanUtils.copyProperties(base, left);
-            base.setImmutable(left.getImmutable()); // for some reason copyProperties doesn't copy the set
         } else if (base == null && left != null) { // on object removed (src doesn't exist because it was removed) create an empty object of the same type
             base = left;
         }
@@ -79,8 +87,43 @@ public class Diff {
         return new MergeResult(diff.getChanges(), base);
     }
 
+    static void updateImmutableProperties(Resource source, Resource target) {
+        var sourceProps = source.getProperties();
+        var targetProps = target.getProperties();
+        var beanUtils = BeanUtilsBean2.getInstance();
+        var changedProperties = new HashSet<String>();
+        Stream.of(targetProps.getClass().getDeclaredFields())
+                .filter(Reflections::isImmutable)
+                .forEach(field -> {
+                    field.setAccessible(true);
+
+                    try {
+                        Field sourceField = sourceProps.getClass().getDeclaredField(field.getName());
+                        sourceField.setAccessible(true);
+
+                        Object sourceValue = sourceField.get(sourceProps);
+                        Object targetValue = beanUtils.getProperty(targetProps, field.getName());
+
+                        boolean isDifferent = targetValue != null && !Objects.equals(sourceValue, targetValue);
+                        if (isDifferent) {
+                            changedProperties.add(field.getName());
+                        } else {
+                            beanUtils.copyProperty(targetProps, field.getName(), sourceValue);
+                        }
+                    } catch (ReflectiveOperationException e) {
+                        throw new RuntimeException("Error copying immutable property: " + field.getName(), e);
+                    }
+                });
+        if (!changedProperties.isEmpty()) {
+            var replace = new ReplaceReason();
+            replace.setImmutableProperties(changedProperties);
+            source.setReplace(replace);
+            target.setReplace(replace);
+        }
+    }
+
     private static void updateSourceResourceId(@Nullable Resource base, Resource left) {
-        if (base != null && left != null ) { // update src id if present in state
+        if (base != null && left != null) { // update src id if present in state
             left.setId(base.getId()); // must be done before detecting resource replacement in the next step
         } else if (base == null && left != null) {
             left.setId(UUID.randomUUID());
@@ -112,6 +155,7 @@ public class Diff {
         }
         return null;
     }
+
     /**
      * Cloud resource was deleted but it's present in state and src
      */
@@ -131,7 +175,7 @@ public class Diff {
 
     private static void detectReplacement(Resource left, @Nullable Resource right) {
         if (left != null && right != null) {
-            DiffUtils.updateImmutableProperties(right, left);
+            updateImmutableProperties(right, left);
         }
     }
 

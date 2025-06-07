@@ -146,7 +146,7 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             } else if (change1 != null && value == null) {
                 appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color("null")));
             } else {
-                var color = this.resource.isReplace() && this.resource.getImmutable().contains(property) ? REPLACE : CHANGE;
+                var color = this.resource.hasImmutablePropetyChanged(property) ? REPLACE : CHANGE;
                 appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(color.toColor(), property, EQUALS, quotes(change1), color.color(ARROW.getSymbol()), quotes(value)));
             }
         }

@@ -7,7 +7,7 @@ import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
 import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
-import io.zmeu.Plugin.ResourceProvider;
+import io.zmeu.Plugin.CloudProcessor;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
@@ -33,7 +33,7 @@ public class ResourceManager {
     private final Javers javers;
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
     private final ResourceChangeLog changeLog;
-    private final ResourceProvider resourceProvider;
+    private final CloudProcessor cloudProcessor;
     private final ResourceRepository repository;
 
     public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff, ResourceRepository repository) {
@@ -42,7 +42,7 @@ public class ResourceManager {
         this.diff = diff;
         this.javers = diff.getJavers();
         this.changeLog = new ResourceChangeLog(true, ObjectMapperConf.getObjectMapper());
-        this.resourceProvider = new ResourceProvider(factory);
+        this.cloudProcessor = new CloudProcessor(factory);
         this.repository = repository;
     }
 
@@ -129,8 +129,8 @@ public class ResourceManager {
         for (MergeResult mergeResult : plan.getMergeResults()) {
             Changes changes1 = mergeResult.changes();
             javers.processChangeList(changes1, changeLog);
-            javers.processChangeList(changes1, resourceProvider);
-            Resource result = resourceProvider.result();
+            javers.processChangeList(changes1, cloudProcessor);
+            Resource result = cloudProcessor.result();
             repository.saveOrUpdate(result);
         }
         return plan;

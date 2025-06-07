@@ -24,7 +24,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     @BeforeEach
     void setUp() {
         providers = new Providers(new Zmeufile(new Dependencies(List.of())));
-        var diff = new Diff(JaversFactory.createNoDb());
+        var diff = new Diff(JaversFactory.createNoDb(), providers);
         repository = new ResourceRepository();
         manager = new ResourceManager(providers, gson, diff, repository);
         providers.loadPlugins();

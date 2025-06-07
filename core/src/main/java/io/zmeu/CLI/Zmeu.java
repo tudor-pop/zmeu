@@ -38,7 +38,7 @@ public class Zmeu {
 
         this.objectMapper = ZmeuInjector.createMapper();
         this.javers = JaversFactory.createNoDb();
-        this.diff = new Diff(javers);
+        this.diff = new Diff(javers, providers);
 
         this.interpreter = new Interpreter(new Environment<>());
         this.tokenizer = new Tokenizer();

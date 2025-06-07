@@ -14,11 +14,11 @@ import java.util.UUID;
 
 @Data
 @Entity
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 @Table(name = "resources", indexes = {
         @Index(name = "idx_name", columnList = "name")
 })
-public class Resource {
+public class Resource extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -29,18 +29,18 @@ public class Resource {
     @Column(columnDefinition = "jsonb")
     private Object properties;
 
+    // todo replace with ResoureType to be able to add some more meta info about the type(provider,alias,full class name etc)
     private String type;
-
-    @DiffIgnore
-    @Type(JsonType.class) // from hibernate-types library
-    @Column(columnDefinition = "jsonb")
-    private Set<String> immutable;
 
     @Transient
     private Set<String> dependencies;
+
+    /**
+     * reason of replacement. Could be because an immutable property has changed or any other future cases
+     */
     @DiffIgnore
     @Transient
-    private Boolean replace;
+    private ReplaceReason replace;
     /**
      * indicate if this resource should exist in cloud
      */
@@ -87,16 +87,12 @@ public class Resource {
         return identity.getName();
     }
 
-
-    public void addImmutable(String immutable) {
-        if (this.immutable == null) {
-            this.immutable = new HashSet<>();
-        }
-        this.immutable.add(immutable);
+    public boolean isReplace() {
+        return replace != null && replace.hasImmutableProperties();
     }
 
-    public boolean isReplace() {
-        return replace != null && replace;
+    public boolean hasImmutablePropetyChanged(String name) {
+        return isReplace() && replace.isImmutable(name);
     }
 
     public void setResourceName(String resourceName) {
