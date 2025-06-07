@@ -31,16 +31,16 @@ public class Resource {
 
     private String type;
 
+    @DiffIgnore
+    @Type(JsonType.class) // from hibernate-types library
+    @Column(columnDefinition = "jsonb")
+    private Set<String> immutable;
+
     @Transient
     private Set<String> dependencies;
     @DiffIgnore
     @Transient
     private Boolean replace;
-    @DiffIgnore
-    @Transient
-    private Set<String> immutable;
-    @Transient
-    private Boolean isNew;
     /**
      * indicate if this resource should exist in cloud
      */
