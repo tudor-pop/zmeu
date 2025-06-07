@@ -9,13 +9,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.fusesource.jansi.Ansi;
-import org.javers.core.changelog.AbstractTextChangeLog;
+import org.javers.core.changelog.ChangeProcessor;
+import org.javers.core.commit.CommitMetadata;
 import org.javers.core.diff.Change;
 import org.javers.core.diff.changetype.*;
 import org.javers.core.diff.changetype.container.ArrayChange;
+import org.javers.core.diff.changetype.container.ContainerChange;
 import org.javers.core.diff.changetype.container.ListChange;
 import org.javers.core.diff.changetype.container.SetChange;
 import org.javers.core.diff.changetype.map.MapChange;
+import org.javers.core.metamodel.object.GlobalId;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -27,7 +30,7 @@ import static io.zmeu.Diff.ResourceChange.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
-public class ResourceChangeLog extends AbstractTextChangeLog {
+public class ResourceChangeLog implements ChangeProcessor<String> {
     @Setter
     private ResourceChange type = NO_OP;
     private Ansi ansi;
@@ -37,8 +40,9 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     @Getter
     private Resource resource;
     private final ObjectMapper mapper;
+    private final StringBuilder builder = new StringBuilder();
 
-    public ResourceChangeLog(boolean enableStdout,ObjectMapper mapper) {
+    public ResourceChangeLog(boolean enableStdout, ObjectMapper mapper) {
         this.enableStdout = enableStdout;
         this.mapper = mapper;
     }
@@ -47,6 +51,8 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
     public void beforeChangeList() {
         ansi = ansi().eraseScreen();
         newLine();
+        builder.setLength(0);
+        resourcePrinted = false;
     }
 
     @Override
@@ -58,28 +64,33 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         if (enableStdout) {
             log.info(ansi);
         }
+        ansi.eraseScreen();
     }
 
     @Override
     public void beforeChange(Change change) {
-        if (change.getAffectedObject().isPresent()) {
-            if (change.getAffectedObject().get() instanceof Resource res){
-                this.resource = res;
-            } else if ((change.getAffectedObject().get() instanceof Identity res)) {
-                this.resource = res.getResource();
-            }
-            this.type = switch (change) {
-                case ObjectRemoved removed -> this.resource.isReplace() ? REPLACE : REMOVE;
-                case NewObject ignored1 -> this.resource.isReplace() ? REPLACE : ADD;
-                case InitialValueChange ignored -> this.resource.isReplace() ? REPLACE : ADD;
-                default -> this.resource.isReplace() ? REPLACE : CHANGE;
-            };
-
-            if (!resourcePrinted) {
-                resourcePrinted = true;
-                append(getText(type, this.resource));
-            }
+        if (change.getAffectedObject().isEmpty()) {
+            return;
         }
+
+        Object o = change.getAffectedObject().get();
+        if (o instanceof Resource res) {
+            this.resource = res;
+        } else if (o instanceof Identity res) {
+            this.resource = res.getResource();
+        }
+        this.type = switch (change) {
+            case ObjectRemoved removed -> this.resource.isReplace() ? REPLACE : REMOVE;
+            case NewObject ignored1 -> this.resource.isReplace() ? REPLACE : ADD;
+            case InitialValueChange ignored -> this.resource.isReplace() ? REPLACE : ADD;
+            default -> this.resource.isReplace() ? REPLACE : CHANGE;
+        };
+
+        if (!resourcePrinted) {
+            resourcePrinted = true;
+            append(formatResource(type, this.resource));
+        }
+
     }
 
     void newLine() {
@@ -101,6 +112,11 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             case PropertyChange ignored -> CHANGE;
             default -> NO_OP;
         };
+    }
+
+    @Override
+    public void onPropertyChange(PropertyChange propertyChange) {
+
     }
 
     public void onValueChange(ValueChange change) {
@@ -128,10 +144,10 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         var attributesLeft = mapper.convertValue(left, new TypeReference<LinkedHashMap<String, Object>>() {
         });
         /*
-        * compute where how many spaces after property value -> should be placed. Only consider properties that have changed
-        * -	name    = "local"  -> null
-        * ~	content = "remote" -> "src"
-        * */
+         * compute where how many spaces after property value -> should be placed. Only consider properties that have changed
+         * -	name    = "local"  -> null
+         * ~	content = "remote" -> "src"
+         * */
         int maxValueLen = attributesLeft.entrySet().stream()
                                   .filter(it -> !Objects.equals(attributes.get(it.getKey()), it.getValue()))
                                   .map(it -> {
@@ -176,8 +192,13 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
         appendln(CHANGE.toColor() + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
     }
 
-    private @NotNull String getText(ResourceChange coloredChange, Resource resource) {
-        String text = "";
+    @Override
+    public void onNewObject(NewObject newObject) {
+
+    }
+
+    private @NotNull String formatResource(ResourceChange coloredChange, Resource resource) {
+        var text = "";
         if (resource.isReplace()) {
             text = REPLACE.color(" # marked for replace");
         }
@@ -193,6 +214,11 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             return; // we can choose to handle replace in onNewObject or onObjectRemoved. We handle it in onNewObject
         }
         newLine();
+    }
+
+    @Override
+    public void onContainerChange(ContainerChange containerChange) {
+
     }
 
     @Override
@@ -218,5 +244,51 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     }
 
+    @Override
+    public String result() {
+        return builder.toString();
+    }
 
+    @Override
+    public void onCommit(CommitMetadata commitMetadata) {
+
+    }
+
+    @Override
+    public void onAffectedObject(GlobalId globalId) {
+
+    }
+
+    protected void append(String text) {
+        if (text != null) {
+            builder.append(text);
+        }
+    }
+
+    /**
+     * null safe
+     */
+    protected void append(Object text) {
+        if (text != null) {
+            builder.append(text.toString());
+        }
+    }
+
+    /**
+     * null safe
+     */
+    protected void appendln(String text) {
+        if (text != null) {
+            builder.append(text + "\n");
+        }
+    }
+
+    /**
+     * null safe
+     */
+    protected void appendln(Object text) {
+        if (text != null) {
+            builder.append(text.toString() + "\n");
+        }
+    }
 }

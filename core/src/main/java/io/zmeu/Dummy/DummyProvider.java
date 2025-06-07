@@ -4,7 +4,6 @@ import io.zmeu.api.Provider;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class DummyProvider extends Provider<DummyResource> {
     /**
@@ -19,7 +18,7 @@ public class DummyProvider extends Provider<DummyResource> {
 
     @Override
     public DummyResource create(DummyResource resource) {
-        resource.setArn(UUID.randomUUID().toString());
+        resource.setArn("arn:%s".formatted(resources.size() + 1));
         resources.put(resource.getArn(), resource);
         return resources.get(resource.getArn());
     }

@@ -100,34 +100,42 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
     @Test
     @DisplayName("src should update cloud property")
-    void srcShouldUpdateCloudProperty() {
+    void sameResourcePropertyChangeShouldUpdateCloudProperty() {
         var src = new Resource("src",
                 DummyResource.builder()
                         .content("src")
                         .build());
-        repository.saveOrUpdate(src);
-        var plan = manager.plan(src);
-        manager.apply(manager.toPlan(plan)); // create cloud resource
+        manager.apply(manager.toPlan(manager.plan(src))); // create cloud/state resource
 
         var provider = manager.getProvider(DummyResource.class);
-        var cloud = provider.read(src.getProperties());
+        DummyResource cloud = (DummyResource) provider.read(src.getProperties());
         Assertions.assertEquals(src.getProperties(), cloud);
 
-        // same resource changes a cloud property
-        var newSrc = new Resource("src",
+        // same resource changes all property except arn
+        src.setProperties(
                 DummyResource.builder()
                         .content("new content")
                         .color("new color")
-                        .build());
+                        .arn(cloud.getArn())
+                        .build()
+        );
 
-        plan = manager.plan(newSrc);
+        var plan = manager.plan(src);
         Assertions.assertTrue(plan.changes().get(0) instanceof ValueChange);
         manager.apply(manager.toPlan(plan));
 
         // asert old src with generated ID can be retrieved from state
-        var state = manager.find(newSrc);
+        var state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
+
+        Assertions.assertEquals("""
+                @|yellow ~|@ resource DummyResource src {
+                	arn     = "arn:1"
+                @|yellow ~|@	color   = null  @|yellow ->|@ "new color"
+                @|yellow ~|@	content = "src" @|yellow ->|@ "new content"
+                @|yellow ~|@ }
+                """.trim(), manager.changelog());
     }
 
     @Test

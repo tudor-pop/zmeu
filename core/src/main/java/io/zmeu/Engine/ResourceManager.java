@@ -82,11 +82,10 @@ public class ResourceManager {
         // cloud resource can only be read from local state if the local state contains an ARN or some id/name
         // otherwise it's a new resource and we can't read it from the cloud
         // => resources are only stored in db after they've been created in the cloud
-        Object cloudResourceProperties;
         Resource cloudState = null;
         if (localState != null) {
-            cloudResourceProperties = provider.read(localState.getProperties());
-            cloudState = populateCLoudState(src, cloudResourceProperties);
+            var cloudResourceProperties = provider.read(localState.getProperties());
+            cloudState = createCloudResource(src, cloudResourceProperties);
         }
 
         var merged = diff.merge(localState, src, cloudState);
@@ -94,7 +93,10 @@ public class ResourceManager {
         return merged;
     }
 
-    private static @Nullable Resource populateCLoudState(Resource src, Object cloudResourceProperties) {
+    /**
+     * Create an actual Resource from the properties
+     */
+    private static @Nullable Resource createCloudResource(Resource src, Object cloudResourceProperties) {
         if (cloudResourceProperties != null) {
             var cloudState = new Resource();
             cloudState.setType(src.getType());
@@ -155,6 +157,10 @@ public class ResourceManager {
         var type = state.getKind();
         return getProvider(type)
                 .getSchema(type);
+    }
+
+    public String changelog() {
+        return changeLog.result();
     }
 
 }

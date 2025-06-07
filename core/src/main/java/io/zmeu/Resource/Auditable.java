@@ -5,6 +5,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Data;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 
 import java.time.Instant;
 
@@ -13,9 +14,11 @@ import java.time.Instant;
 public abstract class Auditable {
 
     @Column(name = "created_on", updatable = false)
+    @DiffIgnore
     protected Instant createdOn;
 
     @Column(name = "updated_on")
+    @DiffIgnore
     protected Instant updatedOn;
 
     @PrePersist
