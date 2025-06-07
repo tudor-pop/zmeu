@@ -1,6 +1,6 @@
 package io.zmeu.Dummy;
 
-import io.zmeu.Base.StateTest;
+import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Resource.Resource;
@@ -37,7 +37,7 @@ import java.util.UUID;
  * 16. replace resource on immutable value change and resource name
  */
 @Log4j2
-class DummyStatesTest extends StateTest {
+class DummyStatesTest extends JaversWithInterpreterTest {
     private Diff diff;
     private Providers providers;
     private ResourceChangeLog changeProcessor;

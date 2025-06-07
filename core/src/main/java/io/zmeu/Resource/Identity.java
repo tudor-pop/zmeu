@@ -1,10 +1,10 @@
 package io.zmeu.Resource;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.javers.core.metamodel.annotation.ValueObject;
 
 /**
  * Logical identity of a resource.
@@ -13,15 +13,26 @@ import lombok.NoArgsConstructor;
  * 2. namespace for scoping (e.g., dev, prod, team-a)
  * 3. region helps localize identity in cloud-native systems
  * 4. account id useful if you’re deploying to multiple AWS/GCP accounts
- * 5. kind represents resource type (VM, bucket)
  * 6. version helps detect updates or conflicts over time
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Embeddable
+@ValueObject
+@Table(name = "identity", indexes = {
+        @Index(name = "idx_name", columnList = "name")
+})
+@Entity(name = "Identity")
 public class Identity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     private String name;
+
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "identity")
+    private Resource resource;
+
     @Transient
     private String renamedFrom;
 

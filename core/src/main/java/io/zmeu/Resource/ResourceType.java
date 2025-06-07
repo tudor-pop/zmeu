@@ -1,25 +1,27 @@
 package io.zmeu.Resource;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.javers.core.metamodel.annotation.DiffIgnore;
-import org.javers.core.metamodel.annotation.DiffIgnoreProperties;
 import org.javers.core.metamodel.annotation.ValueObject;
 
-@Entity
 @Data
-@DiffIgnoreProperties("id")
 @ValueObject
+@Entity(name = "ResourceType")
+@Table(name = "resource_type")
 public class ResourceType {
+
     @Id
-    @GeneratedValue
     @DiffIgnore
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @Column(nullable = false)
     private String kind;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
+    private Resource resource;
 
     public ResourceType() {
     }

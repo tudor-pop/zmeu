@@ -22,4 +22,5 @@ module zmeu.io {
     requires jakarta.transaction;
     requires flyway.core;
     requires io.hypersistence.utils.hibernate.type;
+    requires org.postgresql.jdbc;
 }

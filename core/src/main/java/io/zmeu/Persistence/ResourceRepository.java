@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.Resource.Resource;
 import org.hibernate.SessionFactory;
+import org.postgresql.util.PGobject;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -44,8 +45,10 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
                 return session.createNativeQuery("""
                                 SELECT *
                                 FROM resources r
-                                WHERE (r.type = :type AND r.name = :name)
-                                   OR (r.type = :type AND r.properties @> CAST(:properties AS jsonb))
+                                JOIN identity i ON r.identity_id = i.id
+                                JOIn resource_type rt ON r.resource_type_id = rt.id
+                                WHERE (rt.kind = :type AND i.name = :name)
+                                   OR (rt.kind = :type AND r.properties @> CAST(:properties AS jsonb))
                                 LIMIT 1
                                 """, Resource.class)
                         .setParameter("properties", mapper.writeValueAsString(resource.getProperties()))

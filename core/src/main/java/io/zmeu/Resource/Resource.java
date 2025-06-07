@@ -13,25 +13,25 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Entity
+@Entity(name = "Resource")
 @EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
-@Table(name = "resources", indexes = {
-        @Index(name = "idx_name", columnList = "name")
-})
+@Table(name = "resources")
 public class Resource extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Embedded
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "identity_id")
     private Identity identity;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "resource_type_id")
+    private ResourceType type;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private Object properties;
-
-    // todo replace with ResoureType to be able to add some more meta info about the type(provider,alias,full class name etc)
-    @OneToOne(fetch = FetchType.EAGER)
-    private ResourceType type;
 
     @Transient
     private Set<String> dependencies;
@@ -51,17 +51,27 @@ public class Resource extends Auditable {
     }
 
     public Resource(String resourceName) {
-        this.identity = new Identity(resourceName);
+        setIdentity(resourceName);
     }
 
     public Resource(String resourceName, Object properties) {
-        this.identity = new Identity(resourceName);
+        setIdentity(resourceName);
         setProperties(properties);
     }
 
     public Resource(Identity identity, Object properties) {
-        this.identity = identity;
+        setIdentity(identity);
         setProperties(properties);
+    }
+
+    public void setIdentity(String resourceName) {
+        this.identity = new Identity(resourceName);
+        this.identity.setResource(this);
+    }
+
+    public void setIdentity(Identity identity) {
+        this.identity = identity;
+        this.identity.setResource(this);
     }
 
     public void setProperties(Object resource) {

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DiffGenerationConfig">
-    <option name="sourceModelValue" value="zmeu.api.main:zmeu.api.main" />
-    <option name="targetDbValue" value="fb0ce334-6cce-4151-a87d-5653515c87f5" />
+    <option name="snapshotDb" value="false" />
+    <option name="snapshotDbValue" value="fb0ce334-6cce-4151-a87d-5653515c87f5" />
+    <option name="snapshotModelValue" value="zmeu.core.main:zmeu.core.main" />
+    <option name="sourceModelValue" value="zmeu.core.main:zmeu.core.main" />
+    <option name="targetDbValue" value="7cfdc892-c37f-47f8-a59b-c495260144bd" />
   </component>
 </project>
