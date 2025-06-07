@@ -45,19 +45,6 @@ public class ResourceManager {
         this.repository = repository;
     }
 
-    public void refresh() {
-        // build mapping of resource logical name and ids
-//        javers.<Resource>findShadows(QueryBuilder.byClass(Resource.class).limit(10).build())
-//                .forEach(it -> {
-//                    var resource = it.get();
-//                    var identity = resource.getIdentity();
-//                    if (identity.getId() != null) {
-//                        identities.put(identity.getId(), identity);
-//                    }
-//                    identities.put(identity.getName(), identity);
-//                });
-    }
-
     @SneakyThrows
     public Plan plan(Map<String, Environment<ResourceValue>> schemas) {
         var plan = new Plan();
@@ -95,8 +82,12 @@ public class ResourceManager {
         // cloud resource can only be read from local state if the local state contains an ARN or some id/name
         // otherwise it's a new resource and we can't read it from the cloud
         // => resources are only stored in db after they've been created in the cloud
-        var cloudResourceProperties = provider.read(localState);
-        var cloudState = populateCLoudState(src, cloudResourceProperties);
+        Object cloudResourceProperties;
+        Resource cloudState = null;
+        if (localState != null) {
+            cloudResourceProperties = provider.read(localState.getProperties());
+            cloudState = populateCLoudState(src, cloudResourceProperties);
+        }
 
         var merged = diff.merge(localState, src, cloudState);
 

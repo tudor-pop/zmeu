@@ -107,7 +107,11 @@ public class Resource extends Auditable {
     }
 
     public void setResourceName(String resourceName) {
-        identity.setName(resourceName);
+        if (identity == null) {
+            this.identity = new Identity(resourceName);
+        } else {
+            identity.setName(resourceName);
+        }
     }
 
     public boolean hasIdentity() {

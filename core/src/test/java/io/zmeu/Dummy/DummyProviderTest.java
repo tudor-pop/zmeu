@@ -84,19 +84,16 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
         var plan = manager.plan(src);
         Assertions.assertTrue(plan.isNewResource()); // if true, resource should be added to both state and cloud
+
         // simulate existing resource in cloud
         var provider = manager.getProvider(DummyResource.class);
-        provider.create(src); // can be any resource. We just use the existing one
-        var cloud = provider.read(src);
-        Assertions.assertEquals(src, cloud);
+        provider.create(src.getProperties()); // can be any resource. We just use the existing one
+        var cloud = provider.read(src.getProperties());
+        Assertions.assertEquals(src.getProperties(), cloud);
 
         manager.apply(manager.toPlan(plan));
         // asert old src with generated ID can be retrieved from state
         var state = manager.find(src);
-        Assertions.assertNotNull(state); // assert resource was saved in state
-        Assertions.assertEquals(src, state);
-
-        state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
     }
@@ -111,18 +108,18 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         repository.saveOrUpdate(src);
         var plan = manager.plan(src);
         manager.apply(manager.toPlan(plan)); // create cloud resource
-        manager.refresh();
 
         var provider = manager.getProvider(DummyResource.class);
-        var cloud = provider.read(src);
-        Assertions.assertEquals(src, cloud);
+        var cloud = provider.read(src.getProperties());
+        Assertions.assertEquals(src.getProperties(), cloud);
 
+        // same resource changes a cloud property
         var newSrc = new Resource("src",
                 DummyResource.builder()
                         .content("new content")
                         .color("new color")
                         .build());
-        manager.refresh();
+
         plan = manager.plan(newSrc);
         Assertions.assertTrue(plan.changes().get(0) instanceof ValueChange);
         manager.apply(manager.toPlan(plan));

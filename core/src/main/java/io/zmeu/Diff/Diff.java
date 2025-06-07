@@ -134,7 +134,7 @@ public class Diff {
      * Base state needs to get the cloud properties updated
      */
     private void updateBaseWithCloudProperties(@Nullable Resource base, @Nullable Resource right) throws IllegalAccessException, InvocationTargetException {
-        if (base != right && right != null) {// uuid doesn't come from cloud neither resource name so let's keep the state values that were generated when it was saved to state
+        if (base != right && right != null && base != null) {// uuid doesn't come from cloud neither resource name so let's keep the state values that were generated when it was saved to state
             right.setId(base.getId());
             right.setIdentity(base.getIdentity());
             ignoreNullBeanUtils.copyProperties(base, right); // update base with cloud
