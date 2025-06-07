@@ -30,7 +30,8 @@ public class Resource extends Auditable {
     private Object properties;
 
     // todo replace with ResoureType to be able to add some more meta info about the type(provider,alias,full class name etc)
-    private String type;
+    @OneToOne(fetch = FetchType.EAGER)
+    private ResourceType type;
 
     @Transient
     private Set<String> dependencies;
@@ -65,7 +66,7 @@ public class Resource extends Auditable {
 
     public void setProperties(Object resource) {
         this.properties = resource;
-        this.type = resource.getClass().getAnnotation(Schema.class).typeName();
+        this.type = new ResourceType(resource.getClass().getAnnotation(Schema.class).typeName());
     }
 
     public Set<String> getDependencies() {

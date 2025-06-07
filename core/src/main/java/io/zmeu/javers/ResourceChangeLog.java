@@ -177,9 +177,9 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
             text = REPLACE.color(" # marked for replace");
         }
         if (resource.resourceName().getRenamedFrom() != null) {
-            return coloredChange.toColor() + " resource %s %s %s %s {%s".formatted(resource.getType(), resource.resourceName().getRenamedFrom(), coloredChange.color(ARROW.getSymbol()), resource.resourceName().getName(), text);
+            return coloredChange.toColor() + " resource %s %s %s %s {%s".formatted(resource.getType().getKind(), resource.resourceName().getRenamedFrom(), coloredChange.color(ARROW.getSymbol()), resource.resourceName().getName(), text);
         }
-        return coloredChange.toColor() + " resource %s %s {%s".formatted(resource.getType(), resource.getIdentity().getName(), text);
+        return coloredChange.toColor() + " resource %s %s {%s".formatted(resource.getType().getKind(), resource.getIdentity().getName(), text);
     }
 
     @Override

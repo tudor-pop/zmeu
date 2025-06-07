@@ -6,12 +6,12 @@ import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
 import io.zmeu.Persistence.ResourceRepository;
-import io.zmeu.Plugin.Providers;
 import io.zmeu.Plugin.CloudProcessor;
+import io.zmeu.Plugin.Providers;
+import io.zmeu.Resource.Resource;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
-import io.zmeu.Resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -88,8 +88,8 @@ public class ResourceManager {
 
     @SneakyThrows
     public MergeResult plan(Resource src) {
-        var provider = getProvider(src.getType());
-        var schema = provider.getSchema(src.getType());
+        var provider = getProvider(src.getType().getKind());
+        var schema = provider.getSchema(src.getType().getKind());
 
         var localState = find(src);
 
@@ -161,8 +161,9 @@ public class ResourceManager {
     }
 
     private Class<?> getSchema(Resource state) {
-        return getProvider(state.getType())
-                .getSchema(state.getType());
+        var type = state.getType().getKind();
+        return getProvider(type)
+                .getSchema(type);
     }
 
 }

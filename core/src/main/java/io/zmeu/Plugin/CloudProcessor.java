@@ -58,7 +58,7 @@ public class CloudProcessor implements ChangeProcessor<Resource> {
     public void beforeChange(Change change) {
         if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource resource) {
             this.resource = resource;
-            this.provider = providers.get(resource.getType());
+            this.provider = providers.get(resource.getType().getKind());
         }
     }
 
