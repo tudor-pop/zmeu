@@ -95,6 +95,10 @@ public class CloudProcessor implements ChangeProcessor<Resource> {
     @Override
     public void onNewObject(NewObject newObject) {
         log.info("onNewObject {}", newObject);
+        if (this.resource.isExisting()) {
+            // marked as existing doesn't need to create the resource again in cloud since it already exists
+            return;
+        }
         Object resource1 = provider.create(resource.getProperties());
         this.resource.setProperties(resource1);
     }

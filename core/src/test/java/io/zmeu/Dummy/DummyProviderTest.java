@@ -68,35 +68,62 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         // read from cloud
         var provider = manager.getProvider(DummyResource.class);
         var cloud = provider.read(src.getProperties());
+        var cloudResource = ResourceFactory.from(src, cloud);
         Assertions.assertNotNull(cloud); // assert resource was saved in state
-        Assertions.assertEquals(src.getProperties(), cloud);
+        Assertions.assertEquals(src, cloudResource);
+        Assertions.assertEquals("""
+                @|green +|@ resource DummyResource dummy {
+                @|green +|@	arn     = null
+                @|green +|@	color   = null
+                @|green +|@	content = "some content"
+                @|green +|@ }
+                """.trim(), manager.changelog());
     }
 
     /**
-     * resource exist in src and cloud but not in state -> try implicit or explicit import or throw error if it can't be imported
-     * show import intent in cli
+     * resource exist in cloud but not in state and existing resource in src specifies an ARN for the cloud resource to be read
+     * -> try implicit or explicit import or throw error if it can't be imported
+     * show import intent in cli using the = sign in cyan color
      */
     @Test
-    void importToJaversFromCloudShouldFailWithoutImport() {
-        var dummyResource = DummyResource.builder()
+    void addResourceToState() {
+        var src = new Resource("dummy", DummyResource.builder()
                 .content("some content")
-                .build();
-        var src = new Resource("dummy", dummyResource);
+                .build()
+        );
 
-        var plan = manager.plan(src);
-        Assertions.assertTrue(plan.isNewResource()); // if true, resource should be added to both state and cloud
+        // create cloud resource
+        var provider = manager.getProvider(src.getProperties().getClass());
+        provider.create(src.getProperties());
+        // check it was saved
+        var cloud = (DummyResource) provider.read(src.getProperties());
+        var cloudResource = ResourceFactory.from(src, cloud);
+        Assertions.assertEquals(src, cloudResource);
 
-        // simulate existing resource in cloud
-        var provider = manager.getProvider(DummyResource.class);
-        provider.create(src.getProperties()); // can be any resource. We just use the existing one
-        var cloud = provider.read(src.getProperties());
-        Assertions.assertEquals(src.getProperties(), cloud);
+        var state = repository.find(src);// nothing should be in state. We just have a cloud resource up until now
+        Assertions.assertNull(state);
 
-        manager.apply(manager.toPlan(plan));
+        // src resource using an ARN should import the cloud resource into state(db)
+        var importedSrcByArn = new Resource("dummy", DummyResource.builder()
+                .content("some content")
+                .arn(cloud.getArn())
+                .build()
+        );
+        importedSrcByArn.setExisting(true);
+        var plan = manager.plan(importedSrcByArn);
+        manager.apply(manager.toPlan(plan)); // save to plan but omit creating it again since it was imported
+
         // asert old src with generated ID can be retrieved from state
-        var state = manager.find(src);
+        state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
+        Assertions.assertEquals("""
+                @|cyan =|@ resource DummyResource dummy {
+                @|cyan =|@	arn     = "arn:1"
+                @|cyan =|@	color   = null
+                @|cyan =|@	content = "some content"
+                @|cyan =|@ }
+                """.trim(), manager.changelog());
     }
 
     @Test

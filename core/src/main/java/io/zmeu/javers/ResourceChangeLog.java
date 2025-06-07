@@ -79,12 +79,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
         } else if (o instanceof Identity res) {
             this.resource = res.getResource();
         }
-        this.type = switch (change) {
-            case ObjectRemoved removed -> this.resource.isReplace() ? REPLACE : REMOVE;
-            case NewObject ignored1 -> this.resource.isReplace() ? REPLACE : ADD;
-            case InitialValueChange ignored -> this.resource.isReplace() ? REPLACE : ADD;
-            default -> this.resource.isReplace() ? REPLACE : CHANGE;
-        };
+        updateType(change);
 
         if (!resourcePrinted) {
             resourcePrinted = true;
@@ -99,19 +94,24 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     @Override
     public void afterChange(Change change) {
-//        append("\n");
+        updateType(change);
+    }
+
+    private void updateType(Change change) {
         if (this.resource.isReplace()) {
             this.type = REPLACE;
-            return;
+        } else if (resource.isExisting()) {
+            this.type = EXISTING;
+        } else {
+            this.type = switch (change) {
+                case ObjectRemoved removed -> REMOVE;
+                case TerminalValueChange removed -> REMOVE;
+                case NewObject object -> ADD;
+                case InitialValueChange ignored -> ADD;
+                case PropertyChange ignored -> CHANGE;
+                default -> NO_OP;
+            };
         }
-        this.type = switch (change) {
-            case ObjectRemoved removed -> REMOVE;
-            case TerminalValueChange removed -> REMOVE;
-            case NewObject object -> ADD;
-            case InitialValueChange ignored -> ADD;
-            case PropertyChange ignored -> CHANGE;
-            default -> NO_OP;
-        };
     }
 
     @Override
@@ -133,10 +133,14 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                 .max()
                 .orElse(0);
         append("\n");
-        switch (change) {
-            case InitialValueChange valueChange -> formatProperty(attributes, ADD, maxPropLen);
-            case TerminalValueChange valueChange -> formatProperty(attributes, REMOVE, maxPropLen);
-            case ValueChange valueChange -> valueChange(left, attributes, maxPropLen);
+        if (this.resource.isExisting()) {
+            formatProperty(attributes, EXISTING, maxPropLen);
+        } else {
+            switch (change) {
+                case InitialValueChange valueChange -> formatProperty(attributes, ADD, maxPropLen);
+                case TerminalValueChange valueChange -> formatProperty(attributes, REMOVE, maxPropLen);
+                case ValueChange valueChange -> valueChange(left, attributes, maxPropLen);
+            }
         }
     }
 

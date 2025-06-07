@@ -122,4 +122,8 @@ public class Resource extends Auditable {
         return type.getKind();
     }
 
+
+    public Boolean isExisting() {
+        return existing != null && existing;
+    }
 }

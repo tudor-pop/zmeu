@@ -9,7 +9,8 @@ public enum ResourceChange {
     REMOVE("-", "@|red %s|@"),
     ADD("+", "@|green %s|@"),
     ARROW("->", "@|white %s|@"),
-    REPLACE("±", "@|Magenta %s|@");
+    REPLACE("±", "@|Magenta %s|@"),
+    EXISTING("=", "@|cyan %s|@");
     private final String symbol;
     private final String color;
 
