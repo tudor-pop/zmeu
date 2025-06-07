@@ -3,6 +3,7 @@ package io.zmeu.javers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
+import io.zmeu.Resource.Identity;
 import io.zmeu.Resource.Resource;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,8 +62,12 @@ public class ResourceChangeLog extends AbstractTextChangeLog {
 
     @Override
     public void beforeChange(Change change) {
-        if (change.getAffectedObject().isPresent() && change.getAffectedObject().get() instanceof Resource res) {
-            this.resource = res;
+        if (change.getAffectedObject().isPresent()) {
+            if (change.getAffectedObject().get() instanceof Resource res){
+                this.resource = res;
+            } else if ((change.getAffectedObject().get() instanceof Identity res)) {
+                this.resource = res.getResource();
+            }
             this.type = switch (change) {
                 case ObjectRemoved removed -> this.resource.isReplace() ? REPLACE : REMOVE;
                 case NewObject ignored1 -> this.resource.isReplace() ? REPLACE : ADD;
