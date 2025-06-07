@@ -9,6 +9,7 @@ import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.CloudProcessor;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Resource.Resource;
+import io.zmeu.Resource.ResourceFactory;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
@@ -85,7 +86,7 @@ public class ResourceManager {
         Resource cloudState = null;
         if (localState != null) {
             var cloudResourceProperties = provider.read(localState.getProperties());
-            cloudState = createCloudResource(src, cloudResourceProperties);
+            cloudState = ResourceFactory.from(src, cloudResourceProperties);
         }
 
         var merged = diff.merge(localState, src, cloudState);
@@ -93,20 +94,6 @@ public class ResourceManager {
         return merged;
     }
 
-    /**
-     * Create an actual Resource from the properties
-     */
-    private static @Nullable Resource createCloudResource(Resource src, Object cloudResourceProperties) {
-        if (cloudResourceProperties != null) {
-            var cloudState = new Resource();
-            cloudState.setType(src.getType());
-            cloudState.setResourceName(src.getResourceNameString());
-            cloudState.setProperties(cloudResourceProperties);
-            cloudState.setId(src.getId());
-            return cloudState;
-        }
-        return null;
-    }
 
     public Plan toPlan(MergeResult src) {
         Plan plan = new Plan();

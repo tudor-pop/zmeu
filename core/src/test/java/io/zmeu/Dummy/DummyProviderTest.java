@@ -6,6 +6,7 @@ import io.zmeu.Diff.JaversFactory;
 import io.zmeu.Engine.ResourceManager;
 import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
+import io.zmeu.Resource.ResourceFactory;
 import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.Resource.Resource;
@@ -108,8 +109,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         manager.apply(manager.toPlan(manager.plan(src))); // create cloud/state resource
 
         var provider = manager.getProvider(DummyResource.class);
-        DummyResource cloud = (DummyResource) provider.read(src.getProperties());
-        Assertions.assertEquals(src.getProperties(), cloud);
+        var cloud = (DummyResource) provider.read(src.getProperties());
+        var cloudResource = ResourceFactory.from(src, cloud);
+        Assertions.assertEquals(src, cloudResource);
 
         // same resource changes all property except arn
         src.setProperties(
@@ -121,7 +123,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         );
 
         var plan = manager.plan(src);
-        Assertions.assertTrue(plan.changes().get(0) instanceof ValueChange);
+        Assertions.assertInstanceOf(ValueChange.class, plan.changes().get(0));
         manager.apply(manager.toPlan(plan));
 
         // asert old src with generated ID can be retrieved from state
@@ -149,8 +151,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         manager.apply(manager.toPlan(plan)); // create cloud resource
 
         var provider = manager.getProvider(DummyResource.class);
-        var cloud = provider.read(src);
-        Assertions.assertEquals(src, cloud);
+        var cloud = provider.read(src.getProperties());
+        var cloudResource = ResourceFactory.from(src, cloud);
+        Assertions.assertEquals(src, cloudResource);
 
         var dummy = (DummyResource) src.getProperties();
         dummy.setContent("new content"); // change some content
