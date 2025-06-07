@@ -4,6 +4,7 @@ import io.zmeu.Base.JaversWithInterpreterTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.JaversFactory;
 import io.zmeu.Engine.ResourceManager;
+import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
@@ -18,13 +19,16 @@ import java.util.List;
 class DummyProviderTest extends JaversWithInterpreterTest {
     private ResourceManager manager;
     private Providers providers;
+    private ResourceRepository repository;
 
     @BeforeEach
     void setUp() {
         providers = new Providers(new Zmeufile(new Dependencies(List.of())));
         var diff = new Diff(JaversFactory.createNoDb());
-        manager = new ResourceManager(providers, gson, diff);
+        repository = new ResourceRepository();
+        manager = new ResourceManager(providers, gson, diff, repository);
         providers.loadPlugins();
+        repository.deleteAll();
     }
 
     @AfterEach
@@ -48,14 +52,15 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         // apply to state
         manager.apply(manager.toPlan(plan));
         // src with generated ID can be retrieved from state
-        var state = manager.findByResourceName(src.getIdentity());
+        var state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
+        src.setId(state.getId());
         Assertions.assertEquals(src, state);
 
         // a new run of the same resource name but with a different uuid (new code execution)
         // should look at the resource name instead of uuid since the uuid from src is different than the one
         // from state so the match should happen based on the name
-        state = manager.findByResourceName(src.getIdentity());
+        state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
@@ -88,11 +93,11 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
         manager.apply(manager.toPlan(plan));
         // asert old src with generated ID can be retrieved from state
-        var state = manager.findByResourceName(src.getIdentity());
+        var state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
-        state = manager.findByResourceName(src.getIdentity());
+        state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
     }
@@ -104,6 +109,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 DummyResource.builder()
                         .content("src")
                         .build());
+        repository.saveOrUpdate(src);
         var plan = manager.plan(src);
         manager.apply(manager.toPlan(plan)); // create cloud resource
         manager.refresh();
@@ -123,7 +129,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         manager.apply(manager.toPlan(plan));
 
         // asert old src with generated ID can be retrieved from state
-        var state = manager.findByResourceName(newSrc.getIdentity());
+        var state = manager.find(newSrc);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
     }
@@ -149,7 +155,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         manager.apply(manager.toPlan(plan));
 
         // asert old src with generated ID can be retrieved from state
-        var state = manager.findByResourceName(src.getIdentity());
+        var state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
     }

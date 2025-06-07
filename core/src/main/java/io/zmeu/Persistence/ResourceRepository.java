@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.api.resource.Resource;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.criteria.CriteriaUpdate;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,55 +26,66 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
     }
 
     public Optional<Resource> findByName(String id) {
-        try (Session session = sessionFactory.openSession()) {
-            return Optional.ofNullable(
-                    session.createQuery("FROM Resource r WHERE r.identity.name = :name", aClass)
-                            .setParameter("name", id)
-                            .getSingleResult()
-            );
-        } catch (NoResultException | NonUniqueResultException e) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(factory.fromTransaction(session ->
+                session.createQuery("FROM Resource r WHERE r.identity.name = :name", aClass)
+                        .setParameter("name", id)
+                        .getSingleResultOrNull()
+        ));
     }
 
     public Optional<Resource> findByNameAndType(String name, String type) {
-        try (Session session = sessionFactory.openSession()) {
-            return Optional.ofNullable(
-                    session.createQuery("FROM Resource r WHERE r.identity.name = :name AND r.type=:type", aClass)
-                            .setParameter("name", name)
-                            .setParameter("type", type)
-                            .getSingleResult()
-            );
-        } catch (NoResultException | NonUniqueResultException e) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(factory.fromTransaction(session ->
+                session.createQuery("FROM Resource r WHERE r.identity.name = :name AND r.type=:type", aClass)
+                        .setParameter("name", name)
+                        .setParameter("type", type)
+                        .getSingleResultOrNull()
+        ));
     }
 
-    public Resource findByProperties(Resource resource) {
-        try (Session session = sessionFactory.openSession()) {
-            var res = session.createNativeQuery("""
-                            SELECT *
-                            FROM resources r
-                            WHERE r.type = :type
-                              AND r.properties @> CAST(:properties AS jsonb)
-                            LIMIT 1""", Resource.class)
-                    .setParameter("properties", mapper.writeValueAsString(resource.getProperties()))
-                    .setParameter("type", resource.getType())
-                    .getSingleResultOrNull();
-            if (res instanceof Resource resource1) {
-                return resource1;
+    @Override
+    public Resource find(Resource resource) {
+        return factory.fromTransaction(session -> {
+            try {
+                return session.createNativeQuery("""
+                                SELECT *
+                                FROM resources r
+                                WHERE (r.type = :type AND r.name = :name)
+                                   OR (r.type = :type AND r.properties @> CAST(:properties AS jsonb))
+                                LIMIT 1
+                                """, Resource.class)
+                        .setParameter("properties", mapper.writeValueAsString(resource.getProperties()))
+                        .setParameter("type", resource.getType())
+                        .setParameter("name", resource.getResourceNameString())
+                        .getSingleResultOrNull();
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
             }
-            return null;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        });
+    }
+
+    @Override
+    public void saveOrUpdate(Resource entity) {
+        factory.inTransaction(session -> {
+            if (entity.getId() == null) {
+                // No ID set → must be new
+                session.persist(entity);
+            } else if (session.contains(entity)) {
+                // Already managed → nothing to do
+            } else {
+                // Not managed, has ID → try update
+                Object persistent = session.get(entity.getClass(), entity.getId());
+                if (persistent == null) {
+                    // No such row → insert
+                    session.persist(entity);
+                } else {
+                    // Exists → update
+                    session.merge(entity);
+                }
+            }
+        });
     }
 
     public void deleteAll() {
-        try (var session = sessionFactory.openSession()) {
-            var tx = session.beginTransaction();
-            session.createQuery("DELETE FROM Resource").executeUpdate();
-            tx.commit();
-        }
+        factory.inTransaction(session -> session.createQuery("DELETE FROM Resource").executeUpdate());
     }
 }

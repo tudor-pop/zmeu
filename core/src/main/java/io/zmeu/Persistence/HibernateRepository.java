@@ -1,57 +1,46 @@
 package io.zmeu.Persistence;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.util.List;
-import java.util.function.Consumer;
-
-import static org.hibernate.internal.TransactionManagement.manageTransaction;
 
 public class HibernateRepository<T, ID> implements CrudRepository<T, ID> {
     protected final Class<T> aClass;
-    protected final SessionFactory sessionFactory;
+    protected final SessionFactory factory;
 
-    public HibernateRepository(Class<T> aClass, SessionFactory sessionFactory) {
+    public HibernateRepository(Class<T> aClass, SessionFactory factory) {
         this.aClass = aClass;
-        this.sessionFactory = sessionFactory;
+        this.factory = factory;
     }
 
     public HibernateRepository(Class<T> aClass) {
         this.aClass = aClass;
-        this.sessionFactory = HibernateUtils.getSessionFactory();
+        this.factory = HibernateUtils.getSessionFactory();
     }
 
     @Override
     public T findById(ID id) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.find(aClass, id);
-        }
+        return factory.fromTransaction(session -> session.get(aClass, id));
+    }
+
+    @Override
+    public T find(T object) {
+        return factory.fromTransaction(session -> session.find(aClass, object));
     }
 
     @Override
     public List<T> findAll() {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM " + aClass.getSimpleName(), aClass).list();
-        }
+        return factory.fromTransaction(session -> session.createSelectionQuery("FROM " + aClass.getSimpleName(), aClass).list());
     }
 
     @Override
-    public void save(T entity) {
-        inTransaction(session -> session.persist(entity));
+    public void saveOrUpdate(T entity) {
+        factory.inTransaction(session -> session.merge(entity));
     }
 
     @Override
     public void delete(T entity) {
-//            session.inTransaction(tx -> session.remove(entity));
-        inTransaction(session -> session.remove(entity));
+        factory.inTransaction(session -> session.remove(entity));
     }
 
-    void inTransaction(Consumer<Session> action) {
-        try (Session session = sessionFactory.openSession()) {
-            manageTransaction(session, session.beginTransaction(), session1 -> {
-                action.accept(session);
-            });
-        }
-    }
 }

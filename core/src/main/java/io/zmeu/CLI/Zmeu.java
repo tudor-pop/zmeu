@@ -8,6 +8,7 @@ import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.Tokenizer;
 import io.zmeu.Frontend.Parser.Parser;
 import io.zmeu.Frontend.Parser.Program;
+import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Interpreter;
@@ -43,7 +44,7 @@ public class Zmeu {
         this.tokenizer = new Tokenizer();
         this.parser = new Parser();
         this.typeChecker = new TypeChecker();
-        this.resourceManager = new ResourceManager(providers, objectMapper, diff);
+        this.resourceManager = new ResourceManager(providers, objectMapper, diff, new ResourceRepository());
     }
 
     @SneakyThrows

@@ -2,7 +2,6 @@ package io.zmeu.Dummy;
 
 import io.zmeu.Base.StateTest;
 import io.zmeu.Diff.Diff;
-import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
@@ -15,6 +14,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 /**
  * Use cases:
@@ -39,7 +40,6 @@ import org.junit.jupiter.api.Test;
 class DummyStatesTest extends StateTest {
     private Diff diff;
     private Providers providers;
-    private ResourceRepository repository;
     private ResourceChangeLog changeProcessor;
 
 
@@ -50,7 +50,6 @@ class DummyStatesTest extends StateTest {
         var provider = new DummyProvider();
         providers = new Providers();
         providers.putProvider(provider.schemasString(), provider);
-        repository = new ResourceRepository();
         changeProcessor = new ResourceChangeLog(true, mapper);
     }
 
@@ -64,6 +63,7 @@ class DummyStatesTest extends StateTest {
                 DummyResource.builder()
                         .content("local")
                         .build());
+        localState.setId(UUID.randomUUID()); // if local is present, must have an id which comes from the database
 
         var sourceState = new Resource("main",
                 DummyResource.builder()
@@ -98,6 +98,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
+        localState.setId(UUID.randomUUID()); // if local is present, must have an id which comes from the database
 
         var sourceState = new Resource("main",
                 DummyResource.builder()
@@ -140,7 +141,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
-
+        localState.setId(UUID.randomUUID()); // if local is present, must have an id which comes from the database
         var sourceState = new Resource("main",
                 DummyResource.builder()
                         .content("src")
@@ -210,6 +211,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var sourceState = new Resource("main",
                 DummyResource.builder()
@@ -258,6 +260,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var sourceState = new Resource("main",
                 DummyResource.builder()
@@ -303,6 +306,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var sourceState = new Resource("main",
                 DummyResource.builder()
@@ -339,6 +343,7 @@ class DummyStatesTest extends StateTest {
                         .content("src")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var sourceState = new Resource("main",
                 DummyResource.builder()
@@ -351,6 +356,7 @@ class DummyStatesTest extends StateTest {
                         .content("src")
                         .build()
         );
+        expected.setId(localState.getId());
         var log = javers.processChangeList(res.changes(), changeProcessor);
 
         Assertions.assertEquals(expected, res.resource());
@@ -414,6 +420,7 @@ class DummyStatesTest extends StateTest {
                         .content("src")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var srcState = new Resource("main",
                 DummyResource.builder()
@@ -453,7 +460,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
-
+        localState.setId(UUID.randomUUID());
         var cloudState = new Resource("main",
                 DummyResource.builder()
                         .content("remote") // note remote state will be shown in console instead of local state
@@ -488,6 +495,7 @@ class DummyStatesTest extends StateTest {
                         .uid("cloud-id-random")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var srcState = new Resource("main",
                 DummyResource.builder()
@@ -553,6 +561,7 @@ class DummyStatesTest extends StateTest {
                         .uid("cloud-id-random")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var srcState = new Resource("newName",
                 DummyResource.builder()
@@ -619,6 +628,7 @@ class DummyStatesTest extends StateTest {
                         .uid("cloud-id-random")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var srcState = new Resource("newName",
                 DummyResource.builder()
@@ -683,6 +693,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var srcState = new Resource("main",
                 DummyResource.builder()
@@ -748,6 +759,7 @@ class DummyStatesTest extends StateTest {
                         .content("local")
                         .build()
         );
+        localState.setId(UUID.randomUUID());
 
         var srcState = new Resource("newMain",
                 DummyResource.builder()

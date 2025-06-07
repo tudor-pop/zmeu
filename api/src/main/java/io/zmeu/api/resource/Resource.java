@@ -39,6 +39,8 @@ public class Resource {
     @DiffIgnore
     @Transient
     private Set<String> immutable;
+    @Transient
+    private Boolean isNew;
     /**
      * indicate if this resource should exist in cloud
      */
@@ -49,19 +51,16 @@ public class Resource {
 
     public Resource(String resourceName) {
         this.identity = new Identity(resourceName);
-        setId(UUID.randomUUID());
     }
 
     public Resource(String resourceName, Object properties) {
         this.identity = new Identity(resourceName);
         setProperties(properties);
-        setId(UUID.randomUUID());
     }
 
     public Resource(Identity identity, Object properties) {
         this.identity = identity;
         setProperties(properties);
-        setId(UUID.randomUUID());
     }
 
     public void setProperties(Object resource) {

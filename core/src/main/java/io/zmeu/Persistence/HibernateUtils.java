@@ -2,16 +2,18 @@ package io.zmeu.Persistence;
 
 import io.zmeu.Config.HibernateConf;
 import io.zmeu.api.resource.Resource;
-import lombok.Getter;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
-public class HibernateUtils {
-    @Getter
-    private static final SessionFactory sessionFactory;
+public final class HibernateUtils {
+    private static SessionFactory sessionFactory;
 
-    static {
+    private HibernateUtils() {
+    }
+
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory != null) return sessionFactory;
         try {
             var configuration = new Configuration()
                     .addProperties(HibernateConf.getProperties())
@@ -19,8 +21,8 @@ public class HibernateUtils {
 
             var registry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties());
-
             sessionFactory = configuration.buildSessionFactory(registry.build());
+            return sessionFactory;
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError(ex);
         }

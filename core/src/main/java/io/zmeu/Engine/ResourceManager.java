@@ -5,21 +5,18 @@ import io.zmeu.Config.ObjectMapperConf;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Diff.MergeResult;
 import io.zmeu.Diff.Plan;
+import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Plugin.ResourceProvider;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
-import io.zmeu.api.resource.Identity;
 import io.zmeu.api.resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Changes;
 import org.javers.core.Javers;
-import org.javers.core.metamodel.object.InstanceId;
-import org.javers.repository.jql.QueryBuilder;
-import org.javers.shadow.Shadow;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -36,16 +33,16 @@ public class ResourceManager {
     private final HashMap<String, ResourceValue> resources = new HashMap<>();
     private final ResourceChangeLog changeLog;
     private final ResourceProvider resourceProvider;
-    private final Map<String, Identity> identities = new HashMap<>();
+    private final ResourceRepository repository;
 
-
-    public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff) {
+    public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff, ResourceRepository repository) {
         this.factory = factory;
         this.mapper = mapper;
         this.diff = diff;
         this.javers = diff.getJavers();
         this.changeLog = new ResourceChangeLog(true, ObjectMapperConf.getObjectMapper());
         this.resourceProvider = new ResourceProvider(factory);
+        this.repository = repository;
     }
 
     public void refresh() {
@@ -93,10 +90,13 @@ public class ResourceManager {
         var provider = getProvider(src.getType());
         var schema = provider.getSchema(src.getType());
 
-        var cloudState = provider.read(src);
+        var localState = find(src);
 
+        // cloud resource can only be read from local state if the local state contains an ARN or some id/name
+        // otherwise it's a new resource and we can't read it from the cloud
+        // => resources are only stored in db after they've been created in the cloud
+        var cloudState = provider.read(localState);
 
-        var localState = findByResourceName(src.getIdentity());
         var merged = diff.merge(localState, src, cloudState);
 
         return merged;
@@ -118,8 +118,7 @@ public class ResourceManager {
             javers.processChangeList(changes1, changeLog);
             javers.processChangeList(changes1, resourceProvider);
             Resource result = resourceProvider.result();
-
-            javers.commit("Tudor", result);
+            repository.saveOrUpdate(result);
         }
         return plan;
     }
@@ -141,20 +140,9 @@ public class ResourceManager {
     }
 
     @Nullable
-    public Resource findByResourceName(Identity identity) {
-        var shadowList = javers.<Resource>findShadows(QueryBuilder.byInstanceId(identity, Resource.class).limit(1).build());
-        if (shadowList.isEmpty()) {
-            return null;
-        }
-        Shadow<Resource> shadow = shadowList.get(0);
-        var resource = shadow.get();
-        if (shadow.getCdoSnapshot().getGlobalId() instanceof InstanceId id) {
-            if (id.getCdoId() instanceof Identity identity1) { // set state identity which has the stable id from state
-                resource.setIdentity(identity1);
-            } else { // or store the identity from source code (could not have any stable id)
-                resource.setIdentity(identity);
-            }
-        }
+    public Resource find(Resource resource) {
+        resource = repository.find(resource);
+        if (resource == null) return null;
         resource.setProperties(mapper.convertValue(resource.getProperties(), getSchema(resource)));
         return resource;
     }
