@@ -3,7 +3,7 @@ package io.zmeu.javers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Diff.ResourceChange;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;

@@ -1,4 +1,4 @@
-package io.zmeu.api.resource;
+package io.zmeu.Resource;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Transient;

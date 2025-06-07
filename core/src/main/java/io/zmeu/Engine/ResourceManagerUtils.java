@@ -1,8 +1,8 @@
 package io.zmeu.Engine;
 
 import io.zmeu.Runtime.Values.ResourceValue;
-import io.zmeu.api.resource.Resource;
-import io.zmeu.api.resource.Identity;
+import io.zmeu.Resource.Resource;
+import io.zmeu.Resource.Identity;
 
 public class ResourceManagerUtils {
     static Resource updateStateMetadata(ResourceValue resource, Resource sourceState) {

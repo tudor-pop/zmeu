@@ -1,6 +1,6 @@
 package io.zmeu.Diff;
 
-import io.zmeu.api.resource.Identity;
+import io.zmeu.Resource.Identity;
 import lombok.extern.slf4j.Slf4j;
 import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;

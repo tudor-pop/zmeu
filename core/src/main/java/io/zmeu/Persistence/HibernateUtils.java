@@ -1,7 +1,7 @@
 package io.zmeu.Persistence;
 
 import io.zmeu.Config.HibernateConf;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;

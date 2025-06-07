@@ -11,7 +11,7 @@ import io.zmeu.Plugin.ResourceProvider;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

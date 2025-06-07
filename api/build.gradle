@@ -15,9 +15,6 @@ dependencies {
     compileOnly "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
     implementation 'com.github.zafarkhaja:java-semver:0.10.2'
-    implementation 'org.javers:javers-core:7.8.0'
-    implementation "org.hibernate.orm:hibernate-core:6.6.17.Final"
-    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.10'
 
     testCompileOnly "org.projectlombok:lombok:${lombok}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombok}"

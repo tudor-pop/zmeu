@@ -1,6 +1,6 @@
 package io.zmeu.Diff;
 
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import org.javers.core.Changes;
 import org.javers.core.diff.Change;
 import org.javers.core.diff.changetype.NewObject;

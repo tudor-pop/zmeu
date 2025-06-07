@@ -3,14 +3,9 @@ package io.zmeu.Persistence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.zmeu.Config.ObjectMapperConf;
-import io.zmeu.api.resource.Resource;
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.criteria.CriteriaUpdate;
-import org.hibernate.NonUniqueResultException;
-import org.hibernate.Session;
+import io.zmeu.Resource.Resource;
 import org.hibernate.SessionFactory;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

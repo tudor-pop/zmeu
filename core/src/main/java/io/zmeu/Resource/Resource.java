@@ -1,4 +1,4 @@
-package io.zmeu.api.resource;
+package io.zmeu.Resource;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import io.zmeu.api.annotations.Schema;

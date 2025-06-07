@@ -5,12 +5,8 @@ open module zmeu.api {
     exports io.zmeu.api.annotations;
 
     requires java.logging;
-    requires javers.core;
     requires static lombok;
     requires org.pf4j;
     requires java.compiler;
     requires org.apache.commons.lang3;
-    requires org.hibernate.orm.core;
-    requires jakarta.persistence;
-    requires io.hypersistence.utils.hibernate.type;
 }

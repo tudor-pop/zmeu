@@ -1,7 +1,7 @@
 package io.zmeu.Diff;
 
 import io.zmeu.Utils.Reflections;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;

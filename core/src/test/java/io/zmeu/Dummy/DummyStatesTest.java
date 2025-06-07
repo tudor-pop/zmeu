@@ -3,7 +3,7 @@ package io.zmeu.Dummy;
 import io.zmeu.Base.StateTest;
 import io.zmeu.Diff.Diff;
 import io.zmeu.Plugin.Providers;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import io.zmeu.javers.ResourceChangeLog;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;

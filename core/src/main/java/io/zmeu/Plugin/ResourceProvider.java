@@ -1,7 +1,7 @@
 package io.zmeu.Plugin;
 
 import io.zmeu.api.Provider;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.changelog.ChangeProcessor;
 import org.javers.core.commit.CommitMetadata;

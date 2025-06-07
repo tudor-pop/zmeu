@@ -8,7 +8,7 @@ import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.Providers;
 import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
-import io.zmeu.api.resource.Resource;
+import io.zmeu.Resource.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.diff.changetype.ValueChange;
 import org.junit.jupiter.api.*;

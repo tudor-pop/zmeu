@@ -1,6 +1,6 @@
 package io.zmeu.Diff;
 
-import io.zmeu.api.resource.Identity;
+import io.zmeu.Resource.Identity;
 import org.javers.core.diff.custom.CustomValueComparator;
 
 import java.util.Objects;
