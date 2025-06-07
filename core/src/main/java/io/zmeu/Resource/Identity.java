@@ -24,6 +24,8 @@ import org.javers.core.metamodel.annotation.ValueObject;
 @Entity(name = "Identity")
 public class Identity {
     @Id
+    @Column(name = "identity_id")
+    @DiffIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

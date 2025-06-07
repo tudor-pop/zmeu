@@ -15,14 +15,14 @@ public class ResourceType {
 
     @Id
     @DiffIgnore
+    @Column(name = "resource_type_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String kind;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "type")
     @DiffIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

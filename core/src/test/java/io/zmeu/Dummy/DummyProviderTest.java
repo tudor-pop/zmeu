@@ -53,8 +53,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         manager.apply(manager.toPlan(plan));
         // src with generated ID can be retrieved from state
         var state = manager.find(src);
-        Assertions.assertNotNull(state); // assert resource was saved in state
-        src.setId(state.getId());
+        Assertions.assertNotNull(state); // check resource was saved in state
         Assertions.assertEquals(src, state);
 
         // a new run of the same resource name but with a different uuid (new code execution)
@@ -67,9 +66,9 @@ class DummyProviderTest extends JaversWithInterpreterTest {
 
         // read from cloud
         var provider = manager.getProvider(DummyResource.class);
-        var cloud = provider.read(src);
+        var cloud = provider.read(src.getProperties());
         Assertions.assertNotNull(cloud); // assert resource was saved in state
-        Assertions.assertEquals(src, cloud);
+        Assertions.assertEquals(src.getProperties(), cloud);
     }
 
     /**

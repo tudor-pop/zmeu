@@ -49,8 +49,8 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
                 return session.createNativeQuery("""
                                 SELECT res.*
                                 FROM resources AS res
-                                JOIN identity AS i ON res.identity_id = i.id
-                                JOIn resource_type type ON res.resource_type_id = type.id
+                                JOIN identity AS i ON res.identity_id = i.identity_id
+                                JOIn resource_type type ON res.resource_type_id = type.resource_type_id
                                 WHERE res.id = :id
                                    OR (type.kind = :type AND i.name = :name)
                                    OR (type.kind = :type AND res.properties @> CAST(:properties AS jsonb))
@@ -58,6 +58,7 @@ public class ResourceRepository extends HibernateRepository<Resource, UUID> {
                                 """, Resource.class)
                         .setParameter("properties", mapper.writeValueAsString(resource.getProperties()), JsonBinaryType.INSTANCE)
                         .setParameter("type", resource.getKind())
+                        .setParameter("id", resource.getId())
                         .setParameter("name", resource.getResourceNameString())
                         .getSingleResultOrNull();
             } catch (JsonProcessingException e) {
