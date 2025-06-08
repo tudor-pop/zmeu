@@ -220,6 +220,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                     .reset();
             ansi.a("\t")
                     .format("%-" + maxPropLen + "s%s", property, EQUALS)
+                    .a(FG_STRING_COLOR)
                     .a(quotes(value))
                     .reset()
                     .newline();
@@ -336,12 +337,32 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     @Override
     public String result() {
-        return stripAnsi(ansi.toString());
+        return ansi.toString();
     }
 
-    private static String stripAnsi(String input) {
+    public static String stripAnsi(String input) {
         // Matches any ANSI escape code: ESC [ ... letters like m, J, K, etc.
         return input.replaceAll("\\u001B\\[[;\\d]*[ -/]*[@-~]", "").trim();
+    }
+    public static String tokenizeAnsi(String input) {
+        return input
+                .replaceAll("\u001B\\[2J", "") // Clear screen
+                // Standard ANSI colors
+                .replaceAll("\u001B\\[31m", "[RED]")
+                .replaceAll("\u001B\\[32m", "[GREEN]")
+                .replaceAll("\u001B\\[33m", "[YELLOW]")
+                .replaceAll("\u001B\\[34m", "[BLUE]")
+                .replaceAll("\u001B\\[35m", "[MAGENTA]")
+                .replaceAll("\u001B\\[36m", "[CYAN]")
+                // RGB colors
+                .replaceAll("\u001B\\[38;2;0;122;204m", "[BLUE]") // RGB blue
+                .replaceAll("\u001B\\[38;2;46;160;100m", "[GREEN-STR]")
+                .replaceAll("\u001B\\[38;2;95;95;95m", "[DARK-GREY]")
+                // Resets
+                .replaceAll("\u001B\\[0m", "") // Explicit reset
+                .replaceAll("\u001B\\[m", "")
+                .trim(); // Implicit reset (this is your missing piece!)
+
     }
 
     @Override
