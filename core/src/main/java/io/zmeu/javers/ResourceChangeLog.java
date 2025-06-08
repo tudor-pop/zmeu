@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static io.zmeu.Diff.ChangeColor.*;
+import static io.zmeu.Diff.ChangeColor.ARROW;
 import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
@@ -191,6 +191,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                         .a('\t')
                         .format("%-" + maxPropLen + "s", property)
                         .a(EQUALS)
+//                        .fg(Ansi.Color.RED)
                         .format("%-" + maxValueLen + "s", quotes(change1))
                         .a(FG_GREY_COLOR)
                         .a("-> null")
@@ -204,7 +205,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                         .a(" = ")
 //                        .a(FG_STRING_COLOR)
                         .a(quotes(change1))
-//                        .fg(color)
+                        .fg(color)
                         .a(" -> ")
                         .a(quotes(value))
                         .a("\n");
@@ -220,7 +221,6 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                     .reset();
             ansi.a("\t")
                     .format("%-" + maxPropLen + "s%s", property, EQUALS)
-                    .a(FG_STRING_COLOR)
                     .a(quotes(value))
                     .reset()
                     .newline();
@@ -230,7 +230,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     private Object quotes(Object change) {
         if (change == null) {
-            this.ansi.a(FG_GREY_COLOR);
+            ansi.a(FG_GREY_COLOR);
             return "null";
         }
         if (change instanceof String string) {
@@ -344,6 +344,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
         // Matches any ANSI escape code: ESC [ ... letters like m, J, K, etc.
         return input.replaceAll("\\u001B\\[[;\\d]*[ -/]*[@-~]", "").trim();
     }
+
     public static String tokenizeAnsi(String input) {
         return input
                 .replaceAll("\u001B\\[2J", "") // Clear screen
