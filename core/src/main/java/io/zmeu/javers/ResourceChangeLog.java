@@ -178,22 +178,33 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
             Object value = entry.getValue();
             Object change1 = attributesLeft.get(property);
             if (Objects.equals(change1, value)) {
-                ansi.format("\t%-" + maxPropLen + "s%s%s", property, EQUALS, quotes(change1))
+                ansi.a("\t")
+                        .format("%-" + maxPropLen + "s", property)
+                        .a(EQUALS)
+                        .a(FG_STRING_COLOR)
+                        .a(quotes(change1))
+                        .reset()
                         .newline();
             } else if (change1 != null && value == null) {
-                ansi.format("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s", REMOVE.toColor(), property, EQUALS, quotes(change1), Ansi.Color.YELLOW, ARROW.color("null"));
+                ansi.fg(Ansi.Color.RED)
+                        .a(colors.get(Ansi.Color.RED))
+                        .a('\t')
+                        .format("%-" + maxPropLen + "s", property)
+                        .a(EQUALS)
+                        .format("%-" + maxValueLen + "s", quotes(change1))
+                        .a(FG_GREY_COLOR)
+                        .a("-> null")
+                        .newline();
             } else {
                 var color = this.resource.hasImmutablePropetyChanged(property) ? Ansi.Color.MAGENTA : Ansi.Color.YELLOW;
                 ansi.fg(color)
                         .a(colors.get(color))
                         .a("\t")
-                        .reset()
                         .format("%-" + maxPropLen + "s", property)
-                        .reset()
                         .a(" = ")
-                        .a(FG_STRING_COLOR)
+//                        .a(FG_STRING_COLOR)
                         .a(quotes(change1))
-                        .a(FG_GREY_COLOR)
+//                        .fg(color)
                         .a(" -> ")
                         .a(quotes(value))
                         .a("\n");
@@ -221,7 +232,6 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
             return "null";
         }
         if (change instanceof String string) {
-            this.ansi.a(FG_STRING_COLOR);
             return "\"" + string + "\"";
         }
         return change;
@@ -269,20 +279,20 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                     .a(resource.resourceName().getName())
                     .a(" ");
         } else {
-            line.a(FG_RESOURCE_NAME_COLOR)
-                    .a(resource.getIdentity().getName())
+            line.a(resource.getIdentity().getName())
                     .reset()
                     .a(" ");
         }
 
+        line.a("{");
+
         // Suffix if replaced
         if (resource.isReplace()) {
-            line.fg(Ansi.Color.RED)
-                    .a("# marked for replace")
+            line.fg(Ansi.Color.MAGENTA)
+                    .a(" # marked for replace")
                     .reset();
         }
 
-        line.a("{");
 
         return line.toString();
     }
@@ -292,7 +302,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
         if (this.resource.isReplace()) {
             return; // we can choose to handle replace in onNewObject or onObjectRemoved. We handle it in onNewObject
         }
-        newLine();
+//        newLine();
     }
 
     @Override

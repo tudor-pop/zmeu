@@ -244,11 +244,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
 
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
+                ~ resource DummyResource main {
                 	arn     = "cloud-id-random"
                 	color   = null
-                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                ~	content = "remote" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -290,11 +290,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
 
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
+                ~ resource DummyResource main {
                 	arn     = null
                 	color   = null
-                @|yellow ~|@	content = "local" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                ~	content = "local" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -364,11 +364,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
-                @|green +|@ resource DummyResource main {
-                @|green +|@	arn     = null
-                @|green +|@	color   = null
-                @|green +|@	content = "src"
-                @|green +|@ }
+                + resource DummyResource main {
+                +	arn     = null
+                +	color   = null
+                +	content = "src"
+                + }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -393,11 +393,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(NewObject.class, res.changes().get(0));
         Assertions.assertEquals("""
-                @|green +|@ resource DummyResource main {
-                @|green +|@	arn     = null
-                @|green +|@	color   = null
-                @|green +|@	content = "src"
-                @|green +|@ }
+                + resource DummyResource main {
+                +	arn     = null
+                +	color   = null
+                +	content = "src"
+                + }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -444,11 +444,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
+                ~ resource DummyResource main {
                 	arn     = null
                 	color   = null
-                @|red -|@	content = "src" @|white ->|@ @|white null|@
-                @|yellow ~|@ }
+                -	content = "src" -> null
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -477,11 +477,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertInstanceOf(ObjectRemoved.class, res.changes().get(0));
 
         Assertions.assertEquals("""
-                @|red -|@ resource DummyResource main {
-                @|red -|@	arn     = "cloud-id-random"
-                @|red -|@	color   = null
-                @|red -|@	content = "remote"
-                @|red -|@ }
+                - resource DummyResource main {
+                -	arn     = "cloud-id-random"
+                -	color   = null
+                -	content = "remote"
+                - }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -542,11 +542,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         ~ }
          */
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
+                ~ resource DummyResource main {
                 	arn     = "cloud-id-random"
-                @|red -|@	color   = "local"  @|white ->|@ @|white null|@
-                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                -	color   = "local"  -> null
+                ~	content = "remote" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -609,11 +609,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
             ~ }
          */
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
+                ~ resource DummyResource main -> newName {
                 	arn     = "cloud-id-random"
-                @|red -|@	color   = "local"  @|white ->|@ @|white null|@
-                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                -	color   = "local"  -> null
+                ~	content = "remote" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -676,11 +676,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
             ~ }
          */
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main @|yellow ->|@ newName {
+                ~ resource DummyResource main -> newName {
                 	arn     = "cloud-id-random"
-                @|red -|@	color   = "local"  @|white ->|@ @|white null|@
-                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                -	color   = "local"  -> null
+                ~	content = "remote" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -741,11 +741,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
             ± }
          */
         Assertions.assertEquals("""
-                @|Magenta ±|@ resource DummyResource main {@|Magenta  # marked for replace|@
-                @|Magenta ±|@	arn     = "immutable" @|Magenta ->|@ "immutable-change"
+                ± resource DummyResource main { # marked for replace
+                ±	arn     = "immutable" -> "immutable-change"
                 	color   = null
-                @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
-                @|Magenta ±|@ }
+                ~	content = "remote" -> "src"
+                ± }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -807,11 +807,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
             ± }
          */
         Assertions.assertEquals("""
-                @|Magenta ±|@ resource DummyResource main @|Magenta ->|@ newMain {@|Magenta  # marked for replace|@
-                @|Magenta ±|@	arn     = "immutable" @|Magenta ->|@ "immutable-change"
+                ± resource DummyResource main -> newMain { # marked for replace
+                ±	arn     = "immutable" -> "immutable-change"
                 	color   = null
-                @|yellow ~|@	content = "remote"    @|yellow ->|@ "src"
-                @|Magenta ±|@ }
+                ~	content = "remote" -> "src"
+                ± }
                 """.trim(), log); // assert formatting remains intact
     }
 
