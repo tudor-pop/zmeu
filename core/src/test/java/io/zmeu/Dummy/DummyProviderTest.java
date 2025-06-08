@@ -127,6 +127,51 @@ class DummyProviderTest extends JaversWithInterpreterTest {
     }
 
     @Test
+    void addResourceToStateButWithPropertyChange() {
+        var src = new Resource("dummy", DummyResource.builder()
+                .content("some content")
+                .build()
+        );
+
+        // create cloud resource
+        var provider = manager.getProvider(src.getProperties().getClass());
+        provider.create(src.getProperties());
+        // check it was saved
+        var cloud = (DummyResource) provider.read(src.getProperties());
+        var cloudResource = ResourceFactory.from(src, cloud);
+        Assertions.assertEquals(src, cloudResource);
+
+        var state = repository.find(src);// nothing should be in state. We just have a cloud resource up until now
+        Assertions.assertNull(state);
+
+        // src resource using an ARN should import the cloud resource into state(db)
+        var importedSrcByArn = new Resource("dummy", DummyResource.builder()
+                .content("src content") // should show change in import not = (import) since the content value is different
+                .arn(cloud.getArn())
+                .build()
+        );
+        importedSrcByArn.setExisting(true);
+        var plan = manager.plan(importedSrcByArn);
+        manager.apply(manager.toPlan(plan)); // save to plan but omit creating it again since it was imported
+
+        var dummy = (DummyResource) importedSrcByArn.getProperties();
+        dummy.setContent("new content");
+        manager.apply(manager.toPlan(manager.plan(importedSrcByArn)));
+
+        // asert old src with generated ID can be retrieved from state
+        state = manager.find(src);
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
+        Assertions.assertEquals("""
+                @|cyan =|@ resource DummyResource dummy {
+                @|cyan =|@	arn     = "arn:1"
+                @|cyan =|@	color   = null
+                @|cyan =|@	content = "new content"
+                @|cyan =|@ }
+                """.trim(), manager.changelog());
+    }
+
+    @Test
     @DisplayName("src should update cloud property")
     void sameResourcePropertyChangeShouldUpdateCloudProperty() {
         var src = new Resource("src",

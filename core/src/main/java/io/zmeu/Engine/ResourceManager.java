@@ -41,7 +41,7 @@ public class ResourceManager {
         this.mapper = mapper;
         this.diff = diff;
         this.javers = diff.getJavers();
-        this.changeLog = new ResourceChangeLog(true, ObjectMapperConf.getObjectMapper());
+        this.changeLog = new ResourceChangeLog(ObjectMapperConf.getObjectMapper());
         this.cloudProcessor = new CloudProcessor(factory);
         this.repository = repository;
     }

@@ -50,7 +50,7 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         var provider = new DummyProvider();
         providers = new Providers();
         providers.putProvider(provider.schemasString(), provider);
-        changeProcessor = new ResourceChangeLog(true, mapper);
+        changeProcessor = new ResourceChangeLog(mapper);
     }
 
     /**

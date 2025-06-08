@@ -2,7 +2,6 @@ package io.zmeu.javers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.zmeu.Diff.ResourceChange;
 import io.zmeu.Resource.Identity;
 import io.zmeu.Resource.Resource;
 import lombok.Getter;
@@ -26,45 +25,49 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static io.zmeu.Diff.ResourceChange.*;
+import static io.zmeu.Diff.ChangeColor.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
 @Log4j2
 public class ResourceChangeLog implements ChangeProcessor<String> {
+    public static final String FG_PROPERTY_COLOR = "\u001B[38;2;0;122;204m";
+    public static final String FG_RESOURCE_NAME_COLOR = "\u001B[38;2;175;95;175m";
+    public static final String FG_GREY_COLOR = "\u001B[38;2;95;95;95m";
+    public static final String FG_STRING_COLOR = "\u001B[38;2;0;135;0m";
     @Setter
-    private ResourceChange type = NO_OP;
+    private Ansi.Color type = Ansi.Color.DEFAULT;
+
     private Ansi ansi;
-    private boolean enableStdout;
     private static final String EQUALS = " = ";
     private boolean resourcePrinted = false;
     @Getter
     private Resource resource;
     private final ObjectMapper mapper;
-    private final StringBuilder builder = new StringBuilder();
+//    private final StringBuilder builder = new StringBuilder();
 
-    public ResourceChangeLog(boolean enableStdout, ObjectMapper mapper) {
-        this.enableStdout = enableStdout;
+    public ResourceChangeLog(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     @Override
     public void beforeChangeList() {
-        ansi = ansi().eraseScreen();
+        ansi = ansi(50).reset()
+                .eraseScreen();
         newLine();
-        builder.setLength(0);
+//        builder.setLength(0);
         resourcePrinted = false;
     }
 
     @Override
     public void afterChangeList() {
-        if (type != NO_OP) {
-            append(type.toColor() + " }");
+        if (type != Ansi.Color.DEFAULT) {
+            ansi.fg(type)
+                    .a(" }")
+                    .reset()
+                    .newline();
         }
-        ansi = ansi.render(result());
-        if (enableStdout) {
-            log.info(ansi);
-        }
-        ansi.eraseScreen();
+        log.info(ansi.toString());
+        ansi.reset().eraseScreen();
     }
 
     @Override
@@ -99,17 +102,17 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     private void updateType(Change change) {
         if (this.resource.isReplace()) {
-            this.type = REPLACE;
+            this.type = Ansi.Color.MAGENTA;
         } else if (resource.isExisting()) {
-            this.type = EXISTING;
+            this.type = Ansi.Color.CYAN;
         } else {
             this.type = switch (change) {
-                case ObjectRemoved removed -> REMOVE;
-                case TerminalValueChange removed -> REMOVE;
-                case NewObject object -> ADD;
-                case InitialValueChange ignored -> ADD;
-                case PropertyChange ignored -> CHANGE;
-                default -> NO_OP;
+                case ObjectRemoved removed -> Ansi.Color.RED;
+                case TerminalValueChange removed -> Ansi.Color.RED;
+                case NewObject object -> Ansi.Color.GREEN;
+                case InitialValueChange ignored -> Ansi.Color.GREEN;
+                case PropertyChange ignored -> Ansi.Color.YELLOW;
+                default -> Ansi.Color.DEFAULT;
             };
         }
     }
@@ -134,11 +137,11 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                 .orElse(0);
         append("\n");
         if (this.resource.isExisting()) {
-            formatProperty(attributes, EXISTING, maxPropLen);
+            formatProperty(attributes, Ansi.Color.MAGENTA, maxPropLen);
         } else {
             switch (change) {
-                case InitialValueChange valueChange -> formatProperty(attributes, ADD, maxPropLen);
-                case TerminalValueChange valueChange -> formatProperty(attributes, REMOVE, maxPropLen);
+                case InitialValueChange valueChange -> formatProperty(attributes, Ansi.Color.GREEN, maxPropLen);
+                case TerminalValueChange valueChange -> formatProperty(attributes, Ansi.Color.RED, maxPropLen);
                 case ValueChange valueChange -> valueChange(left, attributes, maxPropLen);
             }
         }
@@ -167,20 +170,37 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
             Object value = entry.getValue();
             Object change1 = attributesLeft.get(property);
             if (Objects.equals(change1, value)) {
-                appendln(("\t%-" + maxPropLen + "s%s%s").formatted(property, EQUALS, quotes(value)));
+                ansi.format("\t%-" + maxPropLen + "s%s%s",property, EQUALS, quotes(change1))
+                        .newline();
             } else if (change1 != null && value == null) {
-                appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(REMOVE.toColor(), property, EQUALS, quotes(change1), ARROW.toColor(), ARROW.color("null")));
+                ansi.format("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s", REMOVE.toColor(), property, EQUALS, quotes(change1), Ansi.Color.YELLOW, ARROW.color("null"));
             } else {
-                var color = this.resource.hasImmutablePropetyChanged(property) ? REPLACE : CHANGE;
-                appendln(("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s").formatted(color.toColor(), property, EQUALS, quotes(change1), color.color(ARROW.getSymbol()), quotes(value)));
+                var color = this.resource.hasImmutablePropetyChanged(property) ? Ansi.Color.MAGENTA : Ansi.Color.YELLOW;
+                ansi.fg(color)
+                        .a("\t")
+                        .reset()
+                        .format("%-" + maxPropLen + "s", property)
+                        .reset()
+                        .a(" = ")
+                        .a(FG_STRING_COLOR)
+                        .a(quotes(change1))
+                        .a(FG_GREY_COLOR)
+                        .a(" -> ")
+                        .a(quotes(value))
+                        .a("\n");
             }
         }
     }
 
-    private void formatProperty(LinkedHashMap<String, Object> attributes, ResourceChange color, int maxPropLen) {
+    private void formatProperty(LinkedHashMap<String, Object> attributes, Ansi.Color color, int maxPropLen) {
         attributes.forEach((property, value) ->
                 // %-10s Left justifies the output. Spaces ('\u0020') will be added at the end of the converted value as required to fill the minimum width of the field
-                appendln(("%s\t%-" + maxPropLen + "s%s%s").formatted(color.toColor(), property, EQUALS, quotes(value)))
+                ansi.fg(type)
+                        .a(color)
+                        .reset()
+                        .a("\t")
+                        .format("%-" + maxPropLen + "s%s%s", property, EQUALS, quotes(value))
+                        .newline()
         );
     }
 
@@ -193,7 +213,15 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     @Override
     public void onReferenceChange(ReferenceChange change) {
-        appendln(CHANGE.toColor() + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
+        ansi.fg(Ansi.Color.YELLOW)
+                .a("\t")
+                .a(change.getPropertyName())
+                .reset()
+                .a("=")
+                .a(change.getLeft())
+                .a(FG_GREY_COLOR)
+                .a(change.getRight())
+                .reset();
     }
 
     @Override
@@ -201,15 +229,46 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     }
 
-    private @NotNull String formatResource(ResourceChange coloredChange, Resource resource) {
-        var text = "";
-        if (resource.isReplace()) {
-            text = REPLACE.color(" # marked for replace");
-        }
+    private @NotNull String formatResource(Ansi.Color coloredChange, Resource resource) {
+        Ansi line = ansi();
+
+        // Left symbol
+        line.fg(coloredChange)
+                .a("+")
+                .reset()
+                .a(FG_PROPERTY_COLOR)
+                .a(" resource ")
+                .a(Ansi.Attribute.RESET)
+                .a(resource.getKind())
+                .reset()
+                .a(" ");
+
         if (resource.resourceName().getRenamedFrom() != null) {
-            return coloredChange.toColor() + " resource %s %s %s %s {%s".formatted(resource.getKind(), resource.resourceName().getRenamedFrom(), coloredChange.color(ARROW.getSymbol()), resource.resourceName().getName(), text);
+            line.a(resource.resourceName().getRenamedFrom())
+                    .a(" ")
+                    .fg(Ansi.Color.MAGENTA)
+                    .a(ARROW.getSymbol())
+                    .reset()
+                    .a(" ")
+                    .a(resource.resourceName().getName())
+                    .a(" ");
+        } else {
+            line.a(FG_RESOURCE_NAME_COLOR)
+                    .a(resource.getIdentity().getName())
+                    .reset()
+                    .a(" ");
         }
-        return coloredChange.toColor() + " resource %s %s {%s".formatted(resource.getKind(), resource.getIdentity().getName(), text);
+
+        // Suffix if replaced
+        if (resource.isReplace()) {
+            line.fg(Ansi.Color.RED)
+                    .a("# marked for replace")
+                    .reset();
+        }
+
+        line.a("{");
+
+        return line.toString();
     }
 
     @Override
@@ -250,7 +309,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     @Override
     public String result() {
-        return builder.toString();
+        return ansi().toString();
     }
 
     @Override
@@ -265,7 +324,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     protected void append(String text) {
         if (text != null) {
-            builder.append(text);
+            ansi.append(text).append("\n");
         }
     }
 
@@ -274,7 +333,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
      */
     protected void append(Object text) {
         if (text != null) {
-            builder.append(text.toString());
+            ansi.append(text.toString()).append("\n");
         }
     }
 
@@ -283,7 +342,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
      */
     protected void appendln(String text) {
         if (text != null) {
-            builder.append(text + "\n");
+            ansi.append(text).append("\n");
         }
     }
 
@@ -292,7 +351,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
      */
     protected void appendln(Object text) {
         if (text != null) {
-            builder.append(text.toString() + "\n");
+            ansi.append(text.toString()).append("\n");
         }
     }
 }
