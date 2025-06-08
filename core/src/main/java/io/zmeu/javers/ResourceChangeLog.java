@@ -213,17 +213,18 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
     }
 
     private void formatProperty(LinkedHashMap<String, Object> attributes, Ansi.Color color, int maxPropLen) {
-        attributes.forEach((property, value) ->
-                // %-10s Left justifies the output. Spaces ('\u0020') will be added at the end of the converted value as required to fill the minimum width of the field
-                ansi.fg(this.color)
-                        .a(colors.get(this.color))
-                        .reset()
-                        .a("\t")
-                        .format("%-" + maxPropLen + "s%s", property, EQUALS)
-                        .a(quotes(value))
-                        .reset()
-                        .newline()
-        );
+        attributes.forEach((property, value) -> {
+            // %-10s Left justifies the output. Spaces ('\u0020') will be added at the end of the converted value as required to fill the minimum width of the field
+            ansi.fg(this.color)
+                    .a(colors.get(this.color))
+                    .reset();
+            ansi.a("\t")
+                    .format("%-" + maxPropLen + "s%s", property, EQUALS)
+                    .a(quotes(value))
+                    .reset()
+                    .newline();
+
+        });
     }
 
     private Object quotes(Object change) {
