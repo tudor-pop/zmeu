@@ -33,9 +33,16 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
     public static final String FG_PROPERTY_COLOR = "\u001B[38;2;0;122;204m";
     public static final String FG_RESOURCE_NAME_COLOR = "\u001B[38;2;175;95;175m";
     public static final String FG_GREY_COLOR = "\u001B[38;2;95;95;95m";
-    public static final String FG_STRING_COLOR = "\u001B[38;2;0;135;0m";
+    public static final String FG_STRING_COLOR = "\u001B[38;2;46;160;100m";
+    private final Map<Ansi.Color, String> colors = Map.of(
+            Ansi.Color.RED, "-",
+            Ansi.Color.GREEN, "+",
+            Ansi.Color.YELLOW, "~",
+            Ansi.Color.MAGENTA, "±",
+            Ansi.Color.CYAN, "<="
+    );
     @Setter
-    private Ansi.Color type = Ansi.Color.DEFAULT;
+    private Ansi.Color color = Ansi.Color.DEFAULT;
 
     private Ansi ansi;
     private static final String EQUALS = " = ";
@@ -51,19 +58,20 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     @Override
     public void beforeChangeList() {
-        ansi = ansi(50).reset()
+        ansi = ansi(50)
+                .reset()
                 .eraseScreen();
         newLine();
-//        builder.setLength(0);
         resourcePrinted = false;
     }
 
     @Override
     public void afterChangeList() {
-        if (type != Ansi.Color.DEFAULT) {
-            ansi.fg(type)
-                    .a(" }")
+        if (color != Ansi.Color.DEFAULT) {
+            ansi.fg(color)
+                    .a(colors.get(color))
                     .reset()
+                    .a(" }")
                     .newline();
         }
         log.info(ansi.toString());
@@ -86,7 +94,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
         if (!resourcePrinted) {
             resourcePrinted = true;
-            append(formatResource(type, this.resource));
+            append(formatResource(color, this.resource));
         }
 
     }
@@ -102,11 +110,11 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     private void updateType(Change change) {
         if (this.resource.isReplace()) {
-            this.type = Ansi.Color.MAGENTA;
+            this.color = Ansi.Color.MAGENTA;
         } else if (resource.isExisting()) {
-            this.type = Ansi.Color.CYAN;
+            this.color = Ansi.Color.CYAN;
         } else {
-            this.type = switch (change) {
+            this.color = switch (change) {
                 case ObjectRemoved removed -> Ansi.Color.RED;
                 case TerminalValueChange removed -> Ansi.Color.RED;
                 case NewObject object -> Ansi.Color.GREEN;
@@ -135,7 +143,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                 .mapToInt(String::length)
                 .max()
                 .orElse(0);
-        append("\n");
+//        append("\n");
         if (this.resource.isExisting()) {
             formatProperty(attributes, Ansi.Color.MAGENTA, maxPropLen);
         } else {
@@ -170,13 +178,14 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
             Object value = entry.getValue();
             Object change1 = attributesLeft.get(property);
             if (Objects.equals(change1, value)) {
-                ansi.format("\t%-" + maxPropLen + "s%s%s",property, EQUALS, quotes(change1))
+                ansi.format("\t%-" + maxPropLen + "s%s%s", property, EQUALS, quotes(change1))
                         .newline();
             } else if (change1 != null && value == null) {
                 ansi.format("%s\t%-" + maxPropLen + "s%s%-" + maxValueLen + "s%s %s", REMOVE.toColor(), property, EQUALS, quotes(change1), Ansi.Color.YELLOW, ARROW.color("null"));
             } else {
                 var color = this.resource.hasImmutablePropetyChanged(property) ? Ansi.Color.MAGENTA : Ansi.Color.YELLOW;
                 ansi.fg(color)
+                        .a(colors.get(color))
                         .a("\t")
                         .reset()
                         .format("%-" + maxPropLen + "s", property)
@@ -195,17 +204,24 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
     private void formatProperty(LinkedHashMap<String, Object> attributes, Ansi.Color color, int maxPropLen) {
         attributes.forEach((property, value) ->
                 // %-10s Left justifies the output. Spaces ('\u0020') will be added at the end of the converted value as required to fill the minimum width of the field
-                ansi.fg(type)
-                        .a(color)
+                ansi.fg(this.color)
+                        .a(colors.get(this.color))
                         .reset()
                         .a("\t")
-                        .format("%-" + maxPropLen + "s%s%s", property, EQUALS, quotes(value))
+                        .format("%-" + maxPropLen + "s%s", property, EQUALS)
+                        .a(quotes(value))
+                        .reset()
                         .newline()
         );
     }
 
-    private static Object quotes(Object change) {
+    private Object quotes(Object change) {
+        if (change == null) {
+            this.ansi.a(FG_GREY_COLOR);
+            return "null";
+        }
         if (change instanceof String string) {
+            this.ansi.a(FG_STRING_COLOR);
             return "\"" + string + "\"";
         }
         return change;
@@ -234,7 +250,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
         // Left symbol
         line.fg(coloredChange)
-                .a("+")
+                .a(colors.get(coloredChange))
                 .reset()
                 .a(FG_PROPERTY_COLOR)
                 .a(" resource ")
@@ -286,30 +302,35 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     @Override
     public void onSetChange(SetChange change) {
-        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
+        appendln(color + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
     }
 
     @Override
     public void onArrayChange(ArrayChange change) {
-        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
+        appendln(color + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
 
     }
 
     @Override
     public void onListChange(ListChange change) {
-        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
+        appendln(color + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
 
     }
 
     @Override
     public void onMapChange(MapChange change) {
-        appendln(type + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
+        appendln(color + "\t" + change.getPropertyName() + EQUALS + change.getLeft() + " -> " + change.getRight());
 
     }
 
     @Override
     public String result() {
-        return ansi().toString();
+        return stripAnsi(ansi.toString());
+    }
+
+    private static String stripAnsi(String input) {
+        // Matches any ANSI escape code: ESC [ ... letters like m, J, K, etc.
+        return input.replaceAll("\\u001B\\[[;\\d]*[ -/]*[@-~]", "").trim();
     }
 
     @Override

@@ -125,11 +125,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertInstanceOf(ValueChange.class, res.changes().get(0));
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
+                ~ resource DummyResource main {
                 	arn     = null
                 	color   = null
-                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                ~	content = "remote" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -166,11 +166,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(plan, res.resource());
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource main {
+                ~ resource DummyResource main {
                 	arn     = null
                 	color   = null
-                @|yellow ~|@	content = "remote" @|yellow ->|@ "src"
-                @|yellow ~|@ }
+                ~	content = "remote" -> "src"
+                ~ }
                 """.trim(), log); // assert formatting remains intact
     }
 
@@ -194,11 +194,11 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertFalse(res.changes().isEmpty());
         Assertions.assertEquals(sourceState, res.resource());
         Assertions.assertEquals("""
-                @|green +|@ resource DummyResource main {
-                @|green +|@	arn     = null
-                @|green +|@	color   = null
-                @|green +|@	content = "src"
-                @|green +|@ }
+                + resource DummyResource main {
+                +	arn     = null
+                +	color   = null
+                +	content = "src"
+                + }
                 """.trim(), log); // assert formatting remains intact
     }
 
