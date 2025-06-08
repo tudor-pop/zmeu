@@ -145,11 +145,11 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                 .orElse(0);
 //        append("\n");
         if (this.resource.isExisting()) {
-            formatProperty(attributes, Ansi.Color.MAGENTA, maxPropLen);
+            formatProperty(attributes, maxPropLen);
         } else {
             switch (change) {
-                case InitialValueChange valueChange -> formatProperty(attributes, Ansi.Color.GREEN, maxPropLen);
-                case TerminalValueChange valueChange -> formatProperty(attributes, Ansi.Color.RED, maxPropLen);
+                case InitialValueChange valueChange -> formatProperty(attributes, maxPropLen);
+                case TerminalValueChange valueChange -> formatProperty(attributes, maxPropLen);
                 case ValueChange valueChange -> valueChange(left, attributes, maxPropLen);
             }
         }
@@ -213,15 +213,18 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
         }
     }
 
-    private void formatProperty(LinkedHashMap<String, Object> attributes, Ansi.Color color, int maxPropLen) {
+    private void formatProperty(LinkedHashMap<String, Object> attributes, int maxPropLen) {
         attributes.forEach((property, value) -> {
             // %-10s Left justifies the output. Spaces ('\u0020') will be added at the end of the converted value as required to fill the minimum width of the field
             ansi.fg(this.color)
                     .a(colors.get(this.color))
                     .reset();
             ansi.a("\t")
-                    .format("%-" + maxPropLen + "s%s", property, EQUALS)
-                    .a(quotes(value))
+                    .format("%-" + maxPropLen + "s%s", property, EQUALS);
+            if (value != null) {
+                ansi.a(FG_STRING_COLOR);
+            }
+            ansi.a(quotes(value))
                     .reset()
                     .newline();
 
