@@ -17,6 +17,7 @@ public class ResourceType {
     @DiffIgnore
     @Column(name = "resource_type_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Integer id;
 
     @Column(nullable = false)

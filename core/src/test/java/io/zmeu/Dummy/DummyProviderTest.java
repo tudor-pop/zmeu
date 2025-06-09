@@ -61,7 +61,11 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         // a new run of the same resource name but with a different uuid (new code execution)
         // should look at the resource name instead of uuid since the uuid from src is different than the one
         // from state so the match should happen based on the name
-        state = manager.find(src);
+        state = manager.find(new Resource("dummy", new DummyResource())); // look by name+type
+        Assertions.assertNotNull(state); // assert resource was saved in state
+        Assertions.assertEquals(src, state);
+
+        state = manager.find(new Resource("rummy", dummyResource)); // look by type+properties
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
 
@@ -84,6 +88,69 @@ class DummyProviderTest extends JaversWithInterpreterTest {
                 [GREEN]+	arn     = [DARK-GREY]null
                 [GREEN]+	color   = [DARK-GREY]null
                 [GREEN]+	content = [GREEN-STR]"some content"
+                [GREEN]+ }
+                """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
+    }
+    /**
+     * resource doesn't exist in cloud or state. Should be created/added
+     */
+    @Test
+    void similarResourceMissingCloudAndState() {
+        var src1 = new Resource("dummy", DummyResource.builder()
+                .content("some content")
+                .build());
+        var src2 = new Resource("dummy2", DummyResource.builder()
+                .content("other content")
+                .build());
+
+        // apply to state
+        manager.apply(manager.toPlan(manager.plan(src1)));
+        manager.apply(manager.toPlan(manager.plan(src2)));
+        // src with generated ID can be retrieved from state
+        var state1 = manager.find(src1);
+        Assertions.assertNotNull(state1);
+        Assertions.assertEquals(src1, state1);
+        var state2 = manager.find(src2);
+        Assertions.assertNotNull(state2);
+        Assertions.assertEquals(src2, state2);
+        Assertions.assertNotEquals(state1, state2);
+
+        // a new run of the same resource name but with a different uuid (new code execution)
+        // should look at the resource name instead of uuid since the uuid from src is different than the one
+        // from state so the match should happen based on the name
+        state1 = manager.find(new Resource("dummy", new DummyResource())); // look by name+type
+        Assertions.assertNotNull(state1); // assert resource was saved in state
+        Assertions.assertEquals(src1, state1);
+
+        state1 = manager.find(new Resource("rummy", src1.getProperties())); // look by type+properties
+        Assertions.assertNotNull(state1); // assert resource was saved in state
+        Assertions.assertEquals(src1, state1);
+        Assertions.assertNotEquals(src2, state1);
+
+        state2 = manager.find(new Resource("rummy1", src2.getProperties())); // look by type+properties
+        Assertions.assertNotNull(state2); // assert resource was saved in state
+        Assertions.assertEquals(src2, state2);
+        Assertions.assertNotEquals(state1, state2);
+
+
+        // read from cloud
+        var provider = manager.getProvider(DummyResource.class);
+        var cloud = provider.read(src1.getProperties());
+        var cloudResource = ResourceFactory.from(src1, cloud);
+        Assertions.assertNotNull(cloud); // assert resource was saved in state
+        Assertions.assertEquals(src1, cloudResource);
+        Assertions.assertEquals("""
+                + resource DummyResource dummy2 {
+                +	arn     = null
+                +	color   = null
+                +	content = "other content"
+                + }
+                """.trim(), ResourceChangeLog.stripAnsi(manager.changelog()));
+        Assertions.assertEquals("""
+                [GREEN]+[BLUE] resource DummyResource dummy2 {
+                [GREEN]+	arn     = [DARK-GREY]null
+                [GREEN]+	color   = [DARK-GREY]null
+                [GREEN]+	content = [GREEN-STR]"other content"
                 [GREEN]+ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
     }

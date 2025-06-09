@@ -19,18 +19,22 @@ import java.util.UUID;
 public class Resource extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
     @JoinColumn(name = "identity_id")
+    @EqualsAndHashCode.Include
     private Identity identity;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
     @JoinColumn(name = "resource_type_id")
+    @EqualsAndHashCode.Include
     private ResourceType type;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
+    @EqualsAndHashCode.Include
     private Object properties;
 
     @Transient

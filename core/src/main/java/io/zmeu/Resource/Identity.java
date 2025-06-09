@@ -27,6 +27,7 @@ public class Identity {
     @Column(name = "identity_id")
     @DiffIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Integer id;
 
     private String name;
@@ -38,6 +39,7 @@ public class Identity {
     private Resource resource;
 
     @Transient
+    @EqualsAndHashCode.Exclude
     private String renamedFrom;
 
     public Identity(String name) {
