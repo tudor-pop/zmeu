@@ -10,6 +10,7 @@ import io.zmeu.Resource.ResourceFactory;
 import io.zmeu.Zmeufile.Dependencies;
 import io.zmeu.Zmeufile.Zmeufile;
 import io.zmeu.Resource.Resource;
+import io.zmeu.javers.ResourceChangeLog;
 import lombok.extern.log4j.Log4j2;
 import org.javers.core.diff.changetype.ValueChange;
 import org.junit.jupiter.api.*;
@@ -72,12 +73,19 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertNotNull(cloud); // assert resource was saved in state
         Assertions.assertEquals(src, cloudResource);
         Assertions.assertEquals("""
-                @|green +|@ resource DummyResource dummy {
-                @|green +|@	arn     = null
-                @|green +|@	color   = null
-                @|green +|@	content = "some content"
-                @|green +|@ }
-                """.trim(), manager.changelog());
+                + resource DummyResource dummy {
+                +	arn     = null
+                +	color   = null
+                +	content = "some content"
+                + }
+                """.trim(), ResourceChangeLog.stripAnsi(manager.changelog()));
+        Assertions.assertEquals("""
+                [GREEN]+[BLUE] resource DummyResource dummy {
+                [GREEN]+	arn     = [DARK-GREY]null
+                [GREEN]+	color   = [DARK-GREY]null
+                [GREEN]+	content = [GREEN-STR]"some content"
+                [GREEN]+ }
+                """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
     }
 
     /**
@@ -103,7 +111,7 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         var state = repository.find(src);// nothing should be in state. We just have a cloud resource up until now
         Assertions.assertNull(state);
 
-        // src resource using an ARN should import the cloud resource into state(db)
+        // src resource using an ARN should import/read existing cloud resource into state(db)
         var importedSrcByArn = new Resource("dummy", DummyResource.builder()
                 .content("some content")
                 .arn(cloud.getArn())
@@ -116,14 +124,23 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         // asert old src with generated ID can be retrieved from state
         state = manager.find(src);
         Assertions.assertNotNull(state); // assert resource was saved in state
-        Assertions.assertEquals(src, state);
+        Assertions.assertEquals(importedSrcByArn, state);
+        Assertions.assertEquals(importedSrcByArn.getProperties(), state.getProperties());
+        Assertions.assertEquals(src.getProperties(), state.getProperties());
         Assertions.assertEquals("""
-                @|cyan =|@ resource DummyResource dummy {
-                @|cyan =|@	arn     = "arn:1"
-                @|cyan =|@	color   = null
-                @|cyan =|@	content = "some content"
-                @|cyan =|@ }
-                """.trim(), manager.changelog());
+                <= resource DummyResource dummy {
+                <=	arn     = "arn:1"
+                <=	color   = null
+                <=	content = "some content"
+                <= }
+                """.trim(), ResourceChangeLog.stripAnsi(manager.changelog()));
+        Assertions.assertEquals("""
+                [CYAN]<=[BLUE] resource DummyResource dummy {
+                [CYAN]<=	arn     = [GREEN-STR]"arn:1"
+                [CYAN]<=	color   = [DARK-GREY]null
+                [CYAN]<=	content = [GREEN-STR]"some content"
+                [CYAN]<= }
+                """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
     }
 
     @Test
@@ -163,12 +180,19 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertNotNull(state); // assert resource was saved in state
         Assertions.assertEquals(src, state);
         Assertions.assertEquals("""
-                @|cyan =|@ resource DummyResource dummy {
-                @|cyan =|@	arn     = "arn:1"
-                @|cyan =|@	color   = null
-                @|cyan =|@	content = "new content"
-                @|cyan =|@ }
-                """.trim(), manager.changelog());
+                <= resource DummyResource dummy {
+                <=	arn     = "arn:1"
+                <=	color   = null
+                <=	content = "new content"
+                <= }
+                """.trim(), ResourceChangeLog.stripAnsi(manager.changelog()));
+        Assertions.assertEquals("""
+                [CYAN]<=[BLUE] resource DummyResource dummy {
+                [CYAN]<=	arn     = [GREEN-STR]"arn:1"
+                [CYAN]<=	color   = [DARK-GREY]null
+                [CYAN]<=	content = [GREEN-STR]"new content"
+                [CYAN]<= }
+                """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
     }
 
     @Test
@@ -204,12 +228,19 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals(src, state);
 
         Assertions.assertEquals("""
-                @|yellow ~|@ resource DummyResource src {
+                ~ resource DummyResource src {
                 	arn     = "arn:1"
-                @|yellow ~|@	color   = null  @|yellow ->|@ "new color"
-                @|yellow ~|@	content = "src" @|yellow ->|@ "new content"
-                @|yellow ~|@ }
-                """.trim(), manager.changelog());
+                ~	color   = null -> "new color"
+                ~	content = "src" -> "new content"
+                ~ }
+                """.trim(), ResourceChangeLog.stripAnsi(manager.changelog()));
+        Assertions.assertEquals("""
+                [YELLOW]~[BLUE] resource DummyResource src {
+                	arn     = [GREEN-STR]"arn:1"
+                [YELLOW]~	color   = [DARK-GREY]null[YELLOW] -> "new color"
+                [YELLOW]~	content = "src"[YELLOW] -> "new content"
+                [YELLOW]~ }
+                """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
     }
 
     @Test
