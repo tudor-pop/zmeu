@@ -237,8 +237,8 @@ class DummyProviderTest extends JaversWithInterpreterTest {
         Assertions.assertEquals("""
                 [YELLOW]~[BLUE] resource DummyResource src {
                 	arn     = [GREEN-STR]"arn:1"
-                [YELLOW]~	color   = [DARK-GREY]null[YELLOW] -> "new color"
-                [YELLOW]~	content = "src"[YELLOW] -> "new content"
+                [YELLOW]~	color   = [YELLOW]null[YELLOW] -> "new color"
+                [YELLOW]~	content = [YELLOW]"src"[YELLOW] -> "new content"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(manager.changelog()));
     }

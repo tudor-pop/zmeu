@@ -181,7 +181,7 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                 ansi.a("\t")
                         .format("%-" + maxPropLen + "s", property)
                         .a(EQUALS)
-                        .a(FG_STRING_COLOR)
+                        .a(value == null ? FG_GREY_COLOR : FG_STRING_COLOR)
                         .a(quotes(change1))
                         .reset()
                         .newline();
@@ -203,12 +203,12 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                         .a("\t")
                         .format("%-" + maxPropLen + "s", property)
                         .a(" = ")
-//                        .a(FG_STRING_COLOR)
+                        .fg(color)
                         .a(quotes(change1))
                         .fg(color)
                         .a(" -> ")
                         .a(quotes(value))
-                        .a("\n");
+                        .newline();
             }
         }
     }
@@ -223,6 +223,8 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
                     .format("%-" + maxPropLen + "s%s", property, EQUALS);
             if (value != null) {
                 ansi.a(FG_STRING_COLOR);
+            } else if (value == null) {
+                ansi.a(FG_GREY_COLOR);
             }
             ansi.a(quotes(value))
                     .reset()
@@ -233,7 +235,6 @@ public class ResourceChangeLog implements ChangeProcessor<String> {
 
     private Object quotes(Object change) {
         if (change == null) {
-            ansi.a(FG_GREY_COLOR);
             return "null";
         }
         if (change instanceof String string) {

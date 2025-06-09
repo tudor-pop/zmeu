@@ -133,9 +133,9 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 """.trim(), ResourceChangeLog.stripAnsi(log));
         Assertions.assertEquals("""
                 [YELLOW]~[BLUE] resource DummyResource main {
-                	arn     = [GREEN-STR][DARK-GREY]null
-                	color   = [GREEN-STR][DARK-GREY]null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                	arn     = [DARK-GREY]null
+                	color   = [DARK-GREY]null
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log)); // assert formatting remains intact
     }
@@ -181,9 +181,9 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 """.trim(), ResourceChangeLog.stripAnsi(log));
         Assertions.assertEquals("""
                 [YELLOW]~[BLUE] resource DummyResource main {
-                	arn     = [GREEN-STR][DARK-GREY]null
-                	color   = [GREEN-STR][DARK-GREY]null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                	arn     = [DARK-GREY]null
+                	color   = [DARK-GREY]null
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log)); // assert formatting remains intact
     }
@@ -274,8 +274,8 @@ class DummyStatesTest extends JaversWithInterpreterTest {
         Assertions.assertEquals("""
                 [YELLOW]~[BLUE] resource DummyResource main {
                 	arn     = [GREEN-STR]"cloud-id-random"
-                	color   = [GREEN-STR][DARK-GREY]null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                	color   = [DARK-GREY]null
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
@@ -326,9 +326,9 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 """.trim(), ResourceChangeLog.stripAnsi(log));
         Assertions.assertEquals("""
                 [YELLOW]~[BLUE] resource DummyResource main {
-                	arn     = [GREEN-STR][DARK-GREY]null
-                	color   = [GREEN-STR][DARK-GREY]null
-                [YELLOW]~	content = "local"[YELLOW] -> "src"
+                	arn     = [DARK-GREY]null
+                	color   = [DARK-GREY]null
+                [YELLOW]~	content = [YELLOW]"local"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
@@ -501,8 +501,8 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 """.trim(), ResourceChangeLog.stripAnsi(log));
         Assertions.assertEquals("""
                 [YELLOW]~[BLUE] resource DummyResource main {
-                	arn     = [GREEN-STR][DARK-GREY]null
-                	color   = [GREEN-STR][DARK-GREY]null
+                	arn     = [DARK-GREY]null
+                	color   = [DARK-GREY]null
                 [RED]-	content = "src" [DARK-GREY]-> null
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
@@ -615,7 +615,7 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 [YELLOW]~[BLUE] resource DummyResource main {
                 	arn     = [GREEN-STR]"cloud-id-random"
                 [RED]-	color   = "local"  [DARK-GREY]-> null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
@@ -689,7 +689,7 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 [YELLOW]~[BLUE] resource DummyResource main [MAGENTA]-> newName {
                 	arn     = [GREEN-STR]"cloud-id-random"
                 [RED]-	color   = "local"  [DARK-GREY]-> null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
@@ -763,7 +763,7 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 [YELLOW]~[BLUE] resource DummyResource main [MAGENTA]-> newName {
                 	arn     = [GREEN-STR]"cloud-id-random"
                 [RED]-	color   = "local"  [DARK-GREY]-> null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [YELLOW]~ }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
@@ -833,9 +833,9 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 """.trim(), ResourceChangeLog.stripAnsi(log));
         Assertions.assertEquals("""
                 [MAGENTA]±[BLUE] resource DummyResource main {[MAGENTA] # marked for replace
-                [MAGENTA]±	arn     = "immutable"[MAGENTA] -> "immutable-change"
-                	color   = [GREEN-STR][DARK-GREY]null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                [MAGENTA]±	arn     = [MAGENTA]"immutable"[MAGENTA] -> "immutable-change"
+                	color   = [DARK-GREY]null
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [MAGENTA]± }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
@@ -906,9 +906,9 @@ class DummyStatesTest extends JaversWithInterpreterTest {
                 """.trim(), ResourceChangeLog.stripAnsi(log));
         Assertions.assertEquals("""
                 [MAGENTA]±[BLUE] resource DummyResource main [MAGENTA]-> newMain {[MAGENTA] # marked for replace
-                [MAGENTA]±	arn     = "immutable"[MAGENTA] -> "immutable-change"
-                	color   = [GREEN-STR][DARK-GREY]null
-                [YELLOW]~	content = "remote"[YELLOW] -> "src"
+                [MAGENTA]±	arn     = [MAGENTA]"immutable"[MAGENTA] -> "immutable-change"
+                	color   = [DARK-GREY]null
+                [YELLOW]~	content = [YELLOW]"remote"[YELLOW] -> "src"
                 [MAGENTA]± }
                 """.trim(), ResourceChangeLog.tokenizeAnsi(log));
     }
