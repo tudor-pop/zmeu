@@ -76,6 +76,6 @@ public class SchemaValue {
     }
 
     public ResourceValue getInstance(String name) {
-        return (ResourceValue) instances.get(name);
+        return instances.get(name);
     }
 }

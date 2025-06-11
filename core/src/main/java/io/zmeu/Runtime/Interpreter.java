@@ -380,7 +380,7 @@ public final class Interpreter implements Visitor<Object> {
             // clone all properties from schema properties to the new resource
             var resourceEnv = new Environment(typeEnvironment, typeEnvironment.getVariables());
             resourceEnv.remove(SchemaValue.INSTANCES); // instances should not be available to a resource only to it's schema
-            instance = new ResourceValue(resource.name(), resourceEnv, installedSchema);
+            instance = new ResourceValue(resource.name(), resourceEnv, installedSchema, resource.isExisting());
             // init any kind of new resource
             installedSchema.initInstance(resource.name(), instance);
         }

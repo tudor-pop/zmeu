@@ -2,29 +2,27 @@ package io.zmeu.Runtime.Values;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.zmeu.Runtime.Environment.Environment;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Data
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
-public class ResourceValue  {
+public class ResourceValue {
     private Environment properties;
     private SchemaValue schema;
     @JsonProperty("resourceName")
     private String name;
     private Set<String> dependencies;
+
     /**
-     * indicate if the cloud resource should only be read and not updated
+     * indicate if the cloud resource
      */
-    private Boolean existing;
+    private boolean existing;
 
     public ResourceValue() {
     }
@@ -38,6 +36,19 @@ public class ResourceValue  {
         this.name = name;
         this.properties = parent;
         this.schema = schema;
+    }
+
+    public ResourceValue(String name, Environment parent, @NonNull SchemaValue schema, boolean existing) {
+        this(name, parent, schema);
+        this.existing = existing;
+    }
+
+    public boolean isExisting() {
+        return existing;
+    }
+
+    public void setExisting(boolean existing) {
+        this.existing = existing;
     }
 
     public static Object of(String string) {
@@ -91,6 +102,7 @@ public class ResourceValue  {
         }
         return dependencies;
     }
+
     public Set<String> dependenciesOrNull() {
         if (dependencies != null && dependencies.isEmpty()) {
             return null;
@@ -105,4 +117,27 @@ public class ResourceValue  {
     public record Data(String name, Map<String, Object> args) {
     }
 
+    public Environment getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Environment properties) {
+        this.properties = properties;
+    }
+
+    public SchemaValue getSchema() {
+        return schema;
+    }
+
+    public void setSchema(SchemaValue schema) {
+        this.schema = schema;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

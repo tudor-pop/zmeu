@@ -7,7 +7,6 @@ import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.Runtime.exceptions.RuntimeError;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,7 @@ public class ResourceTest extends BaseRuntimeTest {
                 
                 }
                 """);
-        Assertions.assertFalse(ErrorSystem.getErrors().isEmpty());
+        assertFalse(ErrorSystem.getErrors().isEmpty());
     }
 
     /**
@@ -515,7 +514,28 @@ public class ResourceTest extends BaseRuntimeTest {
 
         var resource = schema.getInstances().get("main");
 
-        Assertions.assertEquals(2, resource.getProperties().lookup("x"));
+        assertEquals(2, resource.getProperties().lookup("x"));
+    }
+
+
+    @Test
+    void existingResourceGetsParsed() {
+        var res = eval("""
+                schema vm {
+                   var x = 2
+                }
+                
+                existing resource vm main {
+                
+                }
+                """);
+        log.warn(toJson(res));
+        var schema = (SchemaValue) global.get("vm");
+
+        var resource = schema.getInstances().get("main");
+
+        assertEquals(2, resource.getProperties().lookup("x"));
+        assertTrue(resource.isExisting());
     }
 
     @Test
@@ -538,7 +558,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var resource = schema.getInstances().get("main");
         assertSame(2, resource.getProperties().get("x"));
         // make sure main's x has been changed
-        Assertions.assertEquals(2, resource.getProperties().get("x"));
+        assertEquals(2, resource.getProperties().get("x"));
 
         // assert y holds reference to vm.main
         var y = global.lookup("y");
@@ -557,7 +577,7 @@ public class ResourceTest extends BaseRuntimeTest {
      */
     @Test
     void resourceSetMemberAccess() {
-        Assertions.assertThrows(RuntimeError.class, () -> eval("""
+        assertThrows(RuntimeError.class, () -> eval("""
                 schema vm {
                    var x = 2
                 }
@@ -586,7 +606,7 @@ public class ResourceTest extends BaseRuntimeTest {
         var resource = schema.getInstances().get("main");
 
         // default x in schema remains the same
-        Assertions.assertEquals(2, schema.getEnvironment().get("x"));
+        assertEquals(2, schema.getEnvironment().get("x"));
 
         // x of main resource was updated with a new value
         var x = resource.get("x");
@@ -610,7 +630,7 @@ public class ResourceTest extends BaseRuntimeTest {
 
         var resource = schema.getInstances().get("main");
 
-        Assertions.assertInstanceOf(ResourceValue.class, resource);
+        assertInstanceOf(ResourceValue.class, resource);
     }
 
 

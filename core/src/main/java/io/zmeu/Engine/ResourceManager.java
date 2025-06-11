@@ -8,6 +8,7 @@ import io.zmeu.Diff.Plan;
 import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.CloudProcessor;
 import io.zmeu.Plugin.Providers;
+import io.zmeu.Resource.Identity;
 import io.zmeu.Resource.Resource;
 import io.zmeu.Resource.ResourceFactory;
 import io.zmeu.Runtime.Environment.Environment;
@@ -22,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static io.zmeu.Engine.ResourceManagerUtils.updateStateMetadata;
 
 @Slf4j
 public class ResourceManager {
@@ -68,7 +67,9 @@ public class ResourceManager {
         var schema = provider.getSchema(resource.getSchema().getType());
         var srcResource = mapper.convertValue(resource.getProperties().getVariables(), schema);
         var sourceState = new Resource(resource.getName(), srcResource);
-        updateStateMetadata(resource, sourceState);
+        sourceState.setIdentity(new Identity(resource.getName()));
+        sourceState.setDependencies(resource.getDependencies());
+        sourceState.setExisting(resource.isExisting());
 
         return plan(sourceState);
     }
