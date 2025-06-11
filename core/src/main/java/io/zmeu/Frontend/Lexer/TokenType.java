@@ -182,11 +182,11 @@ public enum TokenType {
             case "var" -> Var;
             case "param" -> Param;
             case "this" -> This;
+            case "existing" -> Existing;
             case "resource" -> Resource;
             case "public" -> Public;
             case "private" -> Private;
             case "secure" -> Secure;
-            case "existing" -> Existing;
             case "module" -> Module;
             case "null" -> Null;
             case "and" -> Logical_And;

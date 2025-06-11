@@ -41,6 +41,20 @@ public class ResourceTest extends BaseTest {
     }
 
     @Test
+    void existingResourceWithAssignment() {
+        var res = parse("""
+                    existing resource vm main { 
+                        name = "main" 
+                    }
+                """);
+        var expected = program(resource(true, "vm", "main", block(
+                assign("name", "main")
+        )));
+        assertEquals(expected, res);
+        log.info(toJson(res));
+    }
+
+    @Test
     void resourceWithNumberAssignment() {
         var res = parse("""
                     resource vm main { 

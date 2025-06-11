@@ -130,7 +130,7 @@ public class Parser {
             return switch (lookAhead().type()) {
                 case Fun -> FunctionDeclaration();
                 case Schema -> SchemaDeclaration();
-                case Resource -> ResourceDeclaration();
+                case Resource, Existing -> ResourceDeclaration();
                 case Module -> ModuleDeclaration();
                 case Var -> VariableDeclarations();
                 default -> Statement();
@@ -693,6 +693,11 @@ public class Parser {
      * ;
      */
     private Statement ResourceDeclaration() {
+        boolean existing = false;
+        if (IsLookAhead(Existing)) {
+            eat(Existing);
+            existing = true;
+        }
         eat(Resource);
         var type = typeParser.TypeIdentifier();
         Identifier name = null;
@@ -703,7 +708,7 @@ public class Parser {
         }
         var body = BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body.");
 
-        return ResourceExpression.resource(type, name, (BlockExpression) body);
+        return ResourceExpression.resource(existing, type, name, (BlockExpression) body);
     }
 
 

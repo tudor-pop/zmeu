@@ -58,6 +58,10 @@ public class Factory {
         return ResourceExpression.resource(TypeIdentifier.type(type), Identifier.id(name), operator);
     }
 
+    public static Statement resource(boolean existing, String type, String name, BlockExpression operator) {
+        return ResourceExpression.resource(existing, TypeIdentifier.type(type), Identifier.id(name), operator);
+    }
+
     public static Expression assign(Expression type, Expression name) {
         return AssignmentExpression.assign("=", type, name);
     }

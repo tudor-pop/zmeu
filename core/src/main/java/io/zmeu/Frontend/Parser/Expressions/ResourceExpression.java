@@ -20,6 +20,7 @@ public final class ResourceExpression extends Statement implements DeferredObser
     private Identifier name;
     private BlockExpression block;
     private boolean isEvaluated;
+    private boolean existing;
 
     private ResourceExpression() {
         this.name = new SymbolIdentifier();
@@ -45,6 +46,14 @@ public final class ResourceExpression extends Statement implements DeferredObser
         this.block = block;
     }
 
+    private ResourceExpression(boolean existing, Identifier type, Identifier name, BlockExpression block) {
+        this();
+        this.type = type;
+        this.name = name;
+        this.block = block;
+        this.existing = existing;
+    }
+
     public static Statement resource(Identifier type, Identifier name, BlockExpression block) {
         return new ResourceExpression(type, name, block);
     }
@@ -55,6 +64,10 @@ public final class ResourceExpression extends Statement implements DeferredObser
 
     public static Statement resource(TypeIdentifier type, Identifier name, BlockExpression block) {
         return new ResourceExpression(type, name, block);
+    }
+
+    public static Statement resource(boolean existing, TypeIdentifier type, Identifier name, BlockExpression block) {
+        return new ResourceExpression(existing, type, name, block);
     }
 
     public List<Statement> getArguments() {
