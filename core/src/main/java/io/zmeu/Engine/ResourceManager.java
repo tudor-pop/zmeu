@@ -8,10 +8,8 @@ import io.zmeu.Diff.Plan;
 import io.zmeu.Persistence.ResourceRepository;
 import io.zmeu.Plugin.CloudProcessor;
 import io.zmeu.Plugin.Providers;
-import io.zmeu.Resource.Identity;
 import io.zmeu.Resource.Resource;
 import io.zmeu.Resource.ResourceFactory;
-import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Values.ResourceValue;
 import io.zmeu.api.Provider;
 import io.zmeu.javers.ResourceChangeLog;
@@ -21,12 +19,12 @@ import org.javers.core.Changes;
 import org.javers.core.Javers;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 public class ResourceManager {
-    private final Providers factory;
+    private final Providers providers;
     private final ObjectMapper mapper;
     private final Diff diff;
     private final Javers javers;
@@ -35,43 +33,26 @@ public class ResourceManager {
     private final CloudProcessor cloudProcessor;
     private final ResourceRepository repository;
 
-    public ResourceManager(Providers factory, ObjectMapper mapper, Diff diff, ResourceRepository repository) {
-        this.factory = factory;
+    public ResourceManager(Providers providers, ObjectMapper mapper, Diff diff, ResourceRepository repository) {
+        this.providers = providers;
         this.mapper = mapper;
         this.diff = diff;
         this.javers = diff.getJavers();
         this.changeLog = new ResourceChangeLog(ObjectMapperConf.getObjectMapper());
-        this.cloudProcessor = new CloudProcessor(factory);
+        this.cloudProcessor = new CloudProcessor(providers);
         this.repository = repository;
     }
 
     @SneakyThrows
-    public Plan plan(Map<String, Environment<ResourceValue>> schemas) {
+    public Plan plan(Collection<Resource> resources) {
         var plan = new Plan();
-        for (var schemaValue : schemas.entrySet()) {
-            String schemaName = schemaValue.getKey();
-            Environment<ResourceValue> instances = schemaValue.getValue();
 
-            for (ResourceValue resourceObject : instances.getVariables().values()) {
-                var provider = getProvider(schemaName);
-
-                var mergeResult = plan(provider, resourceObject);
-                plan.add(mergeResult);
-            }
+        for (var resource : resources) {
+            var result = plan(resource);
+            plan.add(result);
         }
+
         return plan;
-    }
-
-    @SneakyThrows
-    private MergeResult plan(Provider provider, ResourceValue resource) {
-        var schema = provider.getSchema(resource.getSchema().getType());
-        var srcResource = mapper.convertValue(resource.getProperties().getVariables(), schema);
-        var sourceState = new Resource(resource.getName(), srcResource);
-        sourceState.setIdentity(new Identity(resource.getName()));
-        sourceState.setDependencies(resource.getDependencies());
-        sourceState.setExisting(resource.isExisting());
-
-        return plan(sourceState);
     }
 
     @SneakyThrows
@@ -117,20 +98,16 @@ public class ResourceManager {
         return plan;
     }
 
-    public Plan apply(Map<String, Environment<ResourceValue>> schemas) {
-        return apply(plan(schemas));
-    }
-
     public ResourceValue add(ResourceValue resource) {
         return resources.put(resource.name(), resource);
     }
 
     public Provider getProvider(String schema) {
-        return factory.get(schema);
+        return providers.get(schema);
     }
 
     public Provider getProvider(Class schema) {
-        return factory.get(schema.getSimpleName());
+        return providers.get(schema.getSimpleName());
     }
 
     @Nullable

@@ -37,9 +37,9 @@ public class Schema {
             } else {
                 properties.append("\tvar ");
             }
-            properties.append(name);
-            properties.append("\t:");
             properties.append(property.type().name());
+            properties.append(" ");
+            properties.append(name);
             properties.append("\n");
         }
         properties.append("} \n");

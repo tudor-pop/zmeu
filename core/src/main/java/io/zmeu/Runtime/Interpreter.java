@@ -7,6 +7,8 @@ import io.zmeu.Frontend.Parser.Expressions.*;
 import io.zmeu.Frontend.Parser.Literals.*;
 import io.zmeu.Frontend.Parser.Program;
 import io.zmeu.Frontend.Parser.Statements.*;
+import io.zmeu.Mappers.ResourceMapper;
+import io.zmeu.Resource.Resource;
 import io.zmeu.Runtime.Environment.ActivationEnvironment;
 import io.zmeu.Runtime.Environment.Environment;
 import io.zmeu.Runtime.Functions.Cast.BooleanCastFunction;
@@ -27,8 +29,8 @@ import lombok.extern.log4j.Log4j2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static io.zmeu.Frontend.Parser.Statements.FunctionDeclaration.fun;
@@ -171,39 +173,38 @@ public final class Interpreter implements Visitor<Object> {
         Object lhs = executeBlock(expression.getLeft(), env);
         Object rhs = executeBlock(expression.getRight(), env);
         if (expression.getOperator() instanceof String op
-            && lhs  instanceof Number ln
-            && rhs  instanceof Number rn)
-        {
+            && lhs instanceof Number ln
+            && rhs instanceof Number rn) {
             // if both were ints, do int math → preserve integer result
             if (ln instanceof Integer a && rn instanceof Integer b) {
                 return switch (op) {
-                    case "+"  -> a + b;
-                    case "-"  -> a - b;
-                    case "*"  -> a * b;
-                    case "/"  -> a / b;
-                    case "%"  -> a % b;
+                    case "+" -> a + b;
+                    case "-" -> a - b;
+                    case "*" -> a * b;
+                    case "/" -> a / b;
+                    case "%" -> a % b;
                     case "==" -> a.equals(b);
-                    case "<"  -> a < b;
+                    case "<" -> a < b;
                     case "<=" -> a <= b;
-                    case ">"  -> a > b;
+                    case ">" -> a > b;
                     case ">=" -> a >= b;
-                    default   -> throw new RuntimeException("Operator could not be evaluated: " + op);
+                    default -> throw new RuntimeException("Operator could not be evaluated: " + op);
                 };
             }
             // otherwise treat both as doubles
             double a = ln.doubleValue(), b = rn.doubleValue();
             return switch (op) {
-                case "+"  -> a + b;
-                case "-"  -> a - b;
-                case "*"  -> a * b;
-                case "/"  -> a / b;
-                case "%"  -> a % b;
+                case "+" -> a + b;
+                case "-" -> a - b;
+                case "*" -> a * b;
+                case "/" -> a / b;
+                case "%" -> a % b;
                 case "==" -> a == b;
-                case "<"  -> a < b;
+                case "<" -> a < b;
                 case "<=" -> a <= b;
-                case ">"  -> a > b;
+                case ">" -> a > b;
                 case ">=" -> a >= b;
-                default   -> throw new RuntimeException("Operator could not be evaluated: " + op);
+                default -> throw new RuntimeException("Operator could not be evaluated: " + op);
             };
         }
         throw new RuntimeException("Invalid number: %s %s".formatted(lhs, rhs));
@@ -647,19 +648,14 @@ public final class Interpreter implements Visitor<Object> {
         hadRuntimeError = true;
     }
 
-    public Map<String, Environment<ResourceValue>> resourcesGroupedBySchema() {
-        return env.getVariables()
-                .values()
-                .stream()
-                .filter(it -> it instanceof SchemaValue)
-                .map(SchemaValue.class::cast)
-                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
-    }
-
-    public Map<String, Environment<ResourceValue>> getResources() {
-        return getEnv().getVariables().values().stream()
-                .filter(it-> it instanceof SchemaValue)
-                .map(SchemaValue.class::cast)
-                .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances));
+    public Collection<Resource> getResources() {
+        return ResourceMapper.from(
+                getEnv().getVariables()
+                        .values()
+                        .stream()
+                        .filter(it -> it instanceof SchemaValue)
+                        .map(SchemaValue.class::cast)
+                        .collect(Collectors.toMap(SchemaValue::getType, SchemaValue::getInstances))
+        );
     }
 }

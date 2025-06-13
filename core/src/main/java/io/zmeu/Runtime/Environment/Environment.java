@@ -6,6 +6,7 @@ import io.zmeu.Runtime.exceptions.NotFoundException;
 import io.zmeu.Runtime.exceptions.VarExistsException;
 import io.zmeu.Resource.Resource;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +23,7 @@ public class Environment<T> implements IEnvironment<T> {
     @Getter
     @JsonIgnore
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final Environment<T> parent;
 
     @Getter

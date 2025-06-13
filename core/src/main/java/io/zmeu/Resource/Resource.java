@@ -9,6 +9,7 @@ import org.hibernate.annotations.Type;
 import org.javers.core.metamodel.annotation.DiffIgnore;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -80,7 +81,9 @@ public class Resource extends Auditable {
 
     public void setProperties(Object resource) {
         this.properties = resource;
-        this.type = new ResourceType(resource.getClass().getAnnotation(Schema.class).typeName());
+        if (!(resource instanceof Map<?,?>)) {
+            this.type = new ResourceType(resource.getClass().getAnnotation(Schema.class).typeName());
+        }
     }
 
     public Set<String> getDependencies() {

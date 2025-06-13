@@ -22,7 +22,7 @@ public class ResourceValue {
     /**
      * indicate if the cloud resource
      */
-    private boolean existing;
+    private Boolean existing;
 
     public ResourceValue() {
     }
@@ -44,6 +44,10 @@ public class ResourceValue {
     }
 
     public boolean isExisting() {
+        return existing != null && existing;
+    }
+
+    public Boolean getExisting() {
         return existing;
     }
 

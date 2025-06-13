@@ -23,4 +23,5 @@ module zmeu.io {
     requires flyway.core;
     requires io.hypersistence.utils.hibernate.type;
     requires org.postgresql.jdbc;
+    requires org.mapstruct;
 }
