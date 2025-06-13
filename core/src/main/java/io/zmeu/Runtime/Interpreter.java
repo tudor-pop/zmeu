@@ -563,9 +563,10 @@ public final class Interpreter implements Visitor<Object> {
     public Object visit(ValDeclaration expression) {
         String symbol = expression.getId().string();
         Object value = null;
-        if (expression.hasInit()) {
-            value = executeBlock(expression.getInit(), env);
+        if (!expression.hasInit()) {
+            throw new InvalidInitException("Val declaration must be initialised: " + expression.getId().string()+" is null");
         }
+        value = executeBlock(expression.getInit(), env);
         if (value instanceof Dependency dependency) { // a dependency access on another resource
             return env.init(symbol, dependency.value());
         }
