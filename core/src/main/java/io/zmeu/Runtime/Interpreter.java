@@ -164,6 +164,15 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
+    public Object visit(ValStatement statement) {
+        Object res = NullValue.of();
+        for (var it : statement.getDeclarations()) {
+            res = executeBlock(it, env);
+        }
+        return res;
+    }
+
+    @Override
     public Object visit(GroupExpression expression) {
         return null;
     }
@@ -539,6 +548,19 @@ public final class Interpreter implements Visitor<Object> {
 
     @Override
     public Object visit(VariableDeclaration expression) {
+        String symbol = expression.getId().string();
+        Object value = null;
+        if (expression.hasInit()) {
+            value = executeBlock(expression.getInit(), env);
+        }
+        if (value instanceof Dependency dependency) { // a dependency access on another resource
+            return env.init(symbol, dependency.value());
+        }
+        return env.init(symbol, value);
+    }
+
+    @Override
+    public Object visit(ValDeclaration expression) {
         String symbol = expression.getId().string();
         Object value = null;
         if (expression.hasInit()) {

@@ -243,6 +243,14 @@ public final class Resolver implements Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(ValStatement statement) {
+        for (ValDeclaration declaration : statement.getDeclarations()) {
+            visit(declaration);
+        }
+        return null;
+    }
+
     /**
      * Here, we see how resolution is different from interpretation. When we resolve an if statement, there is no control flow.
      * We resolve the condition and both branches. Where a dynamic execution steps only into the branch that is run,
@@ -328,6 +336,16 @@ public final class Resolver implements Visitor<Void> {
 
     @Override
     public Void visit(VariableDeclaration declaration) {
+        declare(declaration.getId());
+        if (declaration.hasInit()) {
+            resolve(declaration.getInit());
+        }
+        define(declaration.getId());
+        return null;
+    }
+
+    @Override
+    public Void visit(ValDeclaration declaration) {
         declare(declaration.getId());
         if (declaration.hasInit()) {
             resolve(declaration.getInit());

@@ -71,6 +71,19 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
+    public String visit(ValDeclaration expression) {
+        StringBuilder val = new StringBuilder("val ");
+        if (expression.hasType()) {
+            val.append(" ").append(expression.getType().getType().getValue());
+        }
+        val.append(expression.getId().string());
+        if (expression.hasInit()) {
+            val.append(" = ").append(visit(expression.getInit()));
+        }
+        return val.toString();
+    }
+
+    @Override
     public String visit(AssignmentExpression expression) {
         return visit(expression.getLeft()) + " " + expression.getOperator().toString() + " " + visit(expression.getRight());
     }
@@ -145,6 +158,14 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     @Override
     public String visit(VariableStatement statement) {
         return "var " + statement.getDeclarations()
+                .stream()
+                .map(this::visit)
+                .collect(Collectors.joining(","));
+    }
+
+    @Override
+    public String visit(ValStatement statement) {
+        return "val " + statement.getDeclarations()
                 .stream()
                 .map(this::visit)
                 .collect(Collectors.joining(","));

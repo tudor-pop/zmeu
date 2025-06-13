@@ -133,6 +133,7 @@ public class Parser {
                 case Resource, Existing -> ResourceDeclaration();
                 case Module -> ModuleDeclaration();
                 case Var -> VariableDeclarations();
+                case Val -> ValDeclarations();
                 default -> Statement();
             };
         } catch (RuntimeException error) {
@@ -264,6 +265,25 @@ public class Parser {
         var statement = VariableStatementInit();
         return statement;
     }
+    /**
+     * ValStatement
+     * : var ValDeclarations LineTerminator
+     * ;
+     */
+    private Statement ValDeclarations() {
+        eat(Val);
+        var statement = ValStatementInit();
+        return statement;
+    }
+
+    /**
+     * ValStatementInit
+     * : var ValStatements ";"
+     */
+    private Statement ValStatementInit() {
+        var declarations = ValDeclarationList();
+        return ValStatement.val(declarations);
+    }
 
     /**
      * VariableStatementInit
@@ -318,6 +338,19 @@ public class Parser {
         } while (IsLookAhead(Comma) && eat(Comma) != null);
         return declarations;
     }
+    /**
+     * ValDeclarationList
+     * : ValDeclaration
+     * | ValDeclarationList , ValDeclaration
+     * ;
+     */
+    private List<ValDeclaration> ValDeclarationList() {
+        var declarations = new ArrayList<ValDeclaration>();
+        do {
+            declarations.add(ValDeclaration());
+        } while (IsLookAhead(Comma) && eat(Comma) != null);
+        return declarations;
+    }
 
     /**
      * VariableDeclaration
@@ -331,12 +364,34 @@ public class Parser {
         return VariableDeclaration.of(id, type, init);
     }
 
+    /**
+     * ValDeclaration
+     * : Identifier (TypeDeclaration)? ValInitialization?
+     * ;
+     */
+    private ValDeclaration ValDeclaration() {
+        var id = Identifier();
+        var type = typeParser.Declaration();
+        var init = IsLookAhead(lineTerminator, Comma, EOF) ? null : ValInitializer();
+        return ValDeclaration.val(id, type, init);
+    }
+
 
     /**
      * VariableInitializer
      * : SIMPLE_ASSIGN Expression
      */
     private Expression VariableInitializer() {
+        if (IsLookAhead(Equal, Equal_Complex)) {
+            eat(Equal, Equal_Complex);
+        }
+        return Expression();
+    }
+    /**
+     * ValInitializer
+     * : SIMPLE_ASSIGN Expression
+     */
+    private Expression ValInitializer() {
         if (IsLookAhead(Equal, Equal_Complex)) {
             eat(Equal, Equal_Complex);
         }

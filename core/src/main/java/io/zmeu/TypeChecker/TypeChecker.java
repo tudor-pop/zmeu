@@ -375,6 +375,15 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
+    public Type visit(ValStatement statement) {
+        Type type = ValueType.Null;
+        for (var declaration : statement.getDeclarations()) {
+            type = executeBlock(declaration, this.env);
+        }
+        return type;
+    }
+
+    @Override
     public Type visit(IfStatement statement) {
         Type t1 = visit(statement.getTest());
         expect(t1, ValueType.Boolean, statement.getTest());
@@ -470,6 +479,25 @@ public final class TypeChecker implements Visitor<Type> {
 
     @Override
     public Type visit(VariableDeclaration expression) {
+        String var = expression.getId().string();
+        if (expression.getInit() != null) {
+            var implicitType = visit(expression.getInit());
+            if (expression.hasType()) {
+                var explicitType = visit(expression.getType());
+                expect(implicitType, explicitType, expression);
+                return env.init(var, explicitType);
+            }
+            return env.init(var, implicitType);
+        } else if (expression.hasType()) {
+            var explicitType = visit(expression.getType());
+            return env.init(var, explicitType);
+        } else {
+            throw new IllegalArgumentException("Missing explicit and implicit type for variable " + var);
+        }
+    }
+
+    @Override
+    public Type visit(ValDeclaration expression) {
         String var = expression.getId().string();
         if (expression.getInit() != null) {
             var implicitType = visit(expression.getInit());
