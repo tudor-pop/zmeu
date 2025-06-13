@@ -1,5 +1,6 @@
 package io.zmeu.Runtime;
 
+import io.zmeu.Runtime.exceptions.InvalidInitException;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,16 +13,12 @@ public class ValDeclarationTest extends BaseRuntimeTest {
 
     @Test
     void valNull() {
-        var res = eval("val x");
-        assertNull(res);
-        Assertions.assertTrue(global.hasVar("x"));
-        assertNull(global.get("x"));
-        log.info(toJson(res));
+        Assertions.assertThrows(InvalidInitException.class, () -> eval("val x"));
     }
 
     @Test
     void varInt() {
-        var res = eval("var x = 2");
+        var res = eval("val x = 2");
         assertEquals(2, res);
         log.info(toJson(res));
     }
@@ -29,14 +26,14 @@ public class ValDeclarationTest extends BaseRuntimeTest {
 
     @Test
     void varDecimal() {
-        var res = (Double) eval("var x = 2.1");
+        var res = (Double) eval("val x = 2.1");
         assertEquals(2.1, res);
         log.info(toJson(res));
     }
 
     @Test
     void varBool() {
-        var res = (Boolean) eval("var x = true");
+        var res = (Boolean) eval("val x = true");
         assertTrue(res);
         log.info(toJson(res));
     }
@@ -44,35 +41,35 @@ public class ValDeclarationTest extends BaseRuntimeTest {
 
     @Test
     void varExpressionPlus() {
-        var res = eval("var x = 2+2");
+        var res = eval("val x = 2+2");
         assertEquals(4, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionMinus() {
-        var res = eval("var x = 2-2");
+        var res = eval("val x = 2-2");
         assertEquals(0, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionMultiplication() {
-        var res = eval("var x = 2*2");
+        var res = eval("val x = 2*2");
         assertEquals(4, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionDivision() {
-        var res = eval("var x = 2/2");
+        var res = eval("val x = 2/2");
         assertEquals(1, res);
         log.info(toJson(res));
     }
 
     @Test
     void varExpressionBoolean() {
-        var res = eval("var x = 2==2");
+        var res = eval("val x = 2==2");
         var expected = true;
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -80,7 +77,7 @@ public class ValDeclarationTest extends BaseRuntimeTest {
 
     @Test
     void varExpressionBooleanFalse() {
-        var res = eval("var x = 2==1");
+        var res = eval("val x = 2==1");
         var expected = false;
         assertEquals(expected, res);
         log.info(toJson(res));
@@ -90,7 +87,7 @@ public class ValDeclarationTest extends BaseRuntimeTest {
     void varMultiDeclaration() {
         var res = eval("""
                 {
-                    var y = 0
+                    val y = 0
                     y=1
                 }
                 """);
