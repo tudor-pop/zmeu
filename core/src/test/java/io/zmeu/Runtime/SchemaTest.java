@@ -47,37 +47,43 @@ public class SchemaTest extends BaseRuntimeTest {
         var res = eval("""
                 schema Vm {
                     var x
+                    val int y // init not mandatory in schema
                 }
                 """);
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
         assertNull(actual.getEnvironment().get("x"));
+        assertNull(actual.getEnvironment().get("y"));
     }
 
     @Test
     void declareWithVariableInit() {
         var res = eval("""
                 schema Vm {
-                    var x=20.2
+                    var x = 20.2
+                    val int y = 20.2 // init can be a default value schema
                 }
                 """);
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
         Assertions.assertEquals(20.2, actual.getEnvironment().get("x"));
+        Assertions.assertEquals(20.2, actual.getEnvironment().get("y"));
     }
 
     @Test
     void declareWithVariableInitString() {
         var res = eval("""
                 schema Vm {
-                    var x="hello"
+                    var x = "hello"
+                    val String y = "hello"
                 }
                 """);
         log.warn(toJson(res));
         var actual = (SchemaValue) global.get("Vm");
 
+        Assertions.assertEquals("hello", actual.getEnvironment().get("x"));
         Assertions.assertEquals("hello", actual.getEnvironment().get("x"));
     }
 
@@ -117,6 +123,7 @@ public class SchemaTest extends BaseRuntimeTest {
         var res = eval("""
                 schema Vm {
                     var x = 1;
+                    val number y = 1;
                 }
                 """);
 
@@ -124,13 +131,16 @@ public class SchemaTest extends BaseRuntimeTest {
         var actual = (SchemaValue) global.get("Vm");
 
         assertEquals(res, actual);
+        Assertions.assertEquals(1, actual.getEnvironment().get("x"));
+        Assertions.assertEquals(1, actual.getEnvironment().get("y"));
     }
 
     @Test
     void initDeclarationWithPathType() {
         var res = eval("""
                 schema Vm {
-                    var x Number = 1;
+                    var Number x = 1;
+                    val Number y = 1;
                 }
                 """);
 
@@ -139,13 +149,16 @@ public class SchemaTest extends BaseRuntimeTest {
 
         assertNotNull(res);
         assertEquals(res, actual);
+        Assertions.assertEquals(1, actual.getEnvironment().get("x"));
+        Assertions.assertEquals(1, actual.getEnvironment().get("y"));
     }
 
     @Test
     void initDeclarationWithWrontInit() {
         var res = eval("""
                 schema Vm {
-                    var x Number = "test";
+                    var Number x  = "test";
+                    val Number y  = "test";
                 }
                 """);
 

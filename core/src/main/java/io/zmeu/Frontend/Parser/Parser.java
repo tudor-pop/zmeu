@@ -1,6 +1,7 @@
 package io.zmeu.Frontend.Parser;
 
 import io.zmeu.ErrorSystem;
+import io.zmeu.ExecutionContext;
 import io.zmeu.Frontend.Lexer.Token;
 import io.zmeu.Frontend.Lexer.TokenType;
 import io.zmeu.Frontend.Parser.Expressions.*;
@@ -67,6 +68,13 @@ public class Parser {
     private Program program = new Program();
     private SyntaxPrinter printer = new SyntaxPrinter();
     public TypeParser typeParser = new TypeParser(this);
+    /**
+     * Used to detect when a val/var is declared in a schema or in a resource.
+     * When in a schema, a val can be left uninitialised:
+     * val String x
+     * this is ok because it's just a declaration but when in a resource, it must be initialised
+     */
+    private ExecutionContext parseContext;
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -137,7 +145,8 @@ public class Parser {
                 default -> Statement();
             };
         } catch (RuntimeException error) {
-            ErrorSystem.error(error.toString());
+            ErrorSystem.error(error.getMessage());
+            log.error(error.getMessage());
             iterator.synchronize();
             return null;
         }
@@ -267,7 +276,7 @@ public class Parser {
     }
     /**
      * ValStatement
-     * : var ValDeclarations LineTerminator
+     * : val ValDeclarations = InitStatement LineTerminator
      * ;
      */
     private Statement ValDeclarations() {
@@ -278,11 +287,11 @@ public class Parser {
 
     /**
      * ValStatementInit
-     * : var ValStatements ";"
+     * : val ValStatements ";"
      */
     private Statement ValStatementInit() {
         var declarations = ValDeclarationList();
-        return ValStatement.val(declarations);
+        return ValStatement.valStatement(declarations);
     }
 
     /**
@@ -366,13 +375,25 @@ public class Parser {
 
     /**
      * ValDeclaration
-     * : Identifier (TypeDeclaration)? ValInitialization?
+     * : TypeDeclaration? Identifier = ValInitialization?
      * ;
      */
     private ValDeclaration ValDeclaration() {
+        TypeIdentifier type = null;
+        if (parseContext == ExecutionContext.SCHEMA) {
+            if (IsLookAheadAfter(Identifier, Identifier)) { // type mandatory inside a schema. Init/default value is optional
+                type = typeParser.Declaration();
+            } else {
+                throw new RuntimeException("Type declaration expected during schema declaration: val "+Identifier().string());
+            }
+        }
         var id = Identifier();
-        var type = typeParser.Declaration();
-        var init = IsLookAhead(lineTerminator, Comma, EOF) ? null : ValInitializer();
+        if (parseContext != ExecutionContext.SCHEMA){
+            if (!IsLookAhead(Equal)){
+                throw new RuntimeException("val \"" + id.string() + "\" must be initialized");
+            }
+        }
+        var init = ValInitializer();
         return ValDeclaration.val(id, type, init);
     }
 
@@ -394,6 +415,8 @@ public class Parser {
     private Expression ValInitializer() {
         if (IsLookAhead(Equal, Equal_Complex)) {
             eat(Equal, Equal_Complex);
+        } else { // when no init
+            return null;
         }
         return Expression();
     }
@@ -452,11 +475,21 @@ public class Parser {
         return FunctionDeclaration.fun(name, params, type, body);
     }
 
+    /**
+     * SchemaDeclaration
+     * schema Name '{'
+     *    VarDeclaration
+     *    ValDeclaration
+     * '}'
+     * ;
+     */
     private Statement SchemaDeclaration() {
         eat(Schema);
         var packageIdentifier = Identifier();
 
+        parseContext = ExecutionContext.SCHEMA;
         Expression body = BlockExpression();
+        parseContext = null;
         return SchemaDeclaration.of(packageIdentifier, body);
     }
 
@@ -759,10 +792,11 @@ public class Parser {
         if (IsLookAhead(TokenType.Identifier)) {
             name = Identifier();
         } else {
-            throw ErrorSystem.error("Missing identifier when declaring: resource " + name.string());
+            throw ErrorSystem.error("Missing identifier when declaring: resource " + type.string());
         }
+        parseContext = ExecutionContext.RESOURCE;
         var body = BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body.");
-
+        parseContext = null;
         return ResourceExpression.resource(existing, type, name, (BlockExpression) body);
     }
 

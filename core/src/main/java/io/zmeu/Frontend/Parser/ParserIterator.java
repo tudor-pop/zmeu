@@ -52,10 +52,6 @@ public class ParserIterator {
             }
             if (token.is(after)) {
                 token = iterator.next();
-                if (token.is(TokenType.Identifier)) { // indication of a Type. Skip over it to check if we're in a lambda
-//                    token = iterator.next();
-                    token = iterator.next();
-                }
                 if (token.is(type)) {
                     return true;
                 }

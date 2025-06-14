@@ -29,15 +29,15 @@ public final class ValStatement extends Statement {
         this(Collections.emptyList());
     }
 
-    public static Statement val(ValDeclaration... expression) {
+    public static Statement valStatement(ValDeclaration... expression) {
         return new ValStatement(List.of(expression));
     }
 
-    public static Statement val(List<ValDeclaration> expression) {
+    public static Statement valStatement(List<ValDeclaration> expression) {
         return new ValStatement(expression);
     }
 
-    public static Statement val() {
+    public static Statement valStatement() {
         return new ValStatement();
     }
 
