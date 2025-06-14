@@ -366,9 +366,9 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type visit(VariableStatement statement) {
+    public Type visit(VarStatement statement) {
         Type type = ValueType.Null;
-        for (VariableDeclaration declaration : statement.getDeclarations()) {
+        for (VarDeclaration declaration : statement.getDeclarations()) {
             type = executeBlock(declaration, this.env);
         }
         return type;
@@ -478,7 +478,7 @@ public final class TypeChecker implements Visitor<Type> {
     }
 
     @Override
-    public Type visit(VariableDeclaration expression) {
+    public Type visit(VarDeclaration expression) {
         String var = expression.getId().string();
         if (expression.getInit() != null) {
             var implicitType = visit(expression.getInit());

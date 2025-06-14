@@ -53,7 +53,7 @@ public non-sealed class SyntaxPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(VariableDeclaration expression) {
+    public String visit(VarDeclaration expression) {
         return null;
     }
 
@@ -123,7 +123,7 @@ public non-sealed class SyntaxPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(VariableStatement statement) {
+    public String visit(VarStatement statement) {
         return "";
     }
 

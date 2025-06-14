@@ -53,7 +53,7 @@ public final class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(VariableDeclaration expression) {
+    public String visit(VarDeclaration expression) {
         return null;
     }
 
@@ -123,7 +123,7 @@ public final class AstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(VariableStatement statement) {
+    public String visit(VarStatement statement) {
         return "";
     }
 

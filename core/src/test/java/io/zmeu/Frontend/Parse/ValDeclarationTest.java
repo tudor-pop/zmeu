@@ -44,7 +44,7 @@ public class ValDeclarationTest extends BaseTest {
     @Test
     void testDeclarationsWithValues() {
         var res = parse("val x,y=2");
-        assertEquals("java.lang.RuntimeException: val x must be initialized", ErrorSystem.getErrors().getFirst().getMessage());
+        assertEquals("val \"x\" must be initialized", ErrorSystem.getErrors().getFirst().getMessage());
     }
 
     @Test

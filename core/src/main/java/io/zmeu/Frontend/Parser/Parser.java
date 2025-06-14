@@ -74,7 +74,7 @@ public class Parser {
      * val String x
      * this is ok because it's just a declaration but when in a resource, it must be initialised
      */
-    private ExecutionContext parseContext;
+    private ExecutionContext context;
 
     public Parser(List<Token> tokens) {
         setTokens(tokens);
@@ -140,7 +140,7 @@ public class Parser {
                 case Schema -> SchemaDeclaration();
                 case Resource, Existing -> ResourceDeclaration();
                 case Module -> ModuleDeclaration();
-                case Var -> VariableDeclarations();
+                case Var -> VarDeclarations();
                 case Val -> ValDeclarations();
                 default -> Statement();
             };
@@ -156,7 +156,7 @@ public class Parser {
      * {@snippet
              *: Statement
      * | EmptyStatement
-     * | VariableStatement
+     * | VarStatement
      * | IfStatement
      * | IterationStatement
      * | ForStatement
@@ -257,7 +257,7 @@ public class Parser {
         return switch (lookAhead().type()) {
             case Var -> {
                 eat(Var);
-                yield VariableStatementInit();
+                yield VarStatementInit();
             }
             case SemiColon -> null;
             default -> ExpressionStatement();
@@ -265,13 +265,13 @@ public class Parser {
     }
 
     /**
-     * VariableStatement
-     * : var VariableDeclarations LineTerminator
+     * VarStatement
+     * : var VarDeclarations LineTerminator
      * ;
      */
-    private Statement VariableDeclarations() {
+    private Statement VarDeclarations() {
         eat(Var);
-        var statement = VariableStatementInit();
+        var statement = VarStatementInit();
         return statement;
     }
     /**
@@ -295,12 +295,12 @@ public class Parser {
     }
 
     /**
-     * VariableStatementInit
-     * : var VariableStatements ";"
+     * VarStatementInit
+     * : var VarStatements ";"
      */
-    private Statement VariableStatementInit() {
-        var declarations = VariableDeclarationList();
-        return VariableStatement.of(declarations);
+    private Statement VarStatementInit() {
+        var declarations = VarDeclarationList();
+        return VarStatement.of(declarations);
     }
 
     /**
@@ -335,15 +335,15 @@ public class Parser {
     }
 
     /**
-     * VariableDeclarationList
-     * : VariableDeclaration
-     * | VariableDeclarationList , VariableDeclaration
+     * VarDeclarationList
+     * : VarDeclaration
+     * | VarDeclarationList , VarDeclaration
      * ;
      */
-    private List<VariableDeclaration> VariableDeclarationList() {
-        var declarations = new ArrayList<VariableDeclaration>();
+    private List<VarDeclaration> VarDeclarationList() {
+        var declarations = new ArrayList<VarDeclaration>();
         do {
-            declarations.add(VariableDeclaration());
+            declarations.add(VarDeclaration());
         } while (IsLookAhead(Comma) && eat(Comma) != null);
         return declarations;
     }
@@ -362,15 +362,15 @@ public class Parser {
     }
 
     /**
-     * VariableDeclaration
-     * : Identifier (TypeDeclaration)? VariableInitialization?
+     * VarDeclaration
+     * : TypeDeclaration? Identifier VarInitialization?
      * ;
      */
-    private VariableDeclaration VariableDeclaration() {
-        var id = Identifier();
+    private VarDeclaration VarDeclaration() {
         var type = typeParser.Declaration();
-        var init = IsLookAhead(lineTerminator, Comma, EOF) ? null : VariableInitializer();
-        return VariableDeclaration.of(id, type, init);
+        var id = Identifier();
+        var init = IsLookAhead(lineTerminator, Comma, EOF) ? null : VarInitializer();
+        return VarDeclaration.of(id, type, init);
     }
 
     /**
@@ -380,7 +380,7 @@ public class Parser {
      */
     private ValDeclaration ValDeclaration() {
         TypeIdentifier type = null;
-        if (parseContext == ExecutionContext.SCHEMA) {
+        if (context == ExecutionContext.SCHEMA) {
             if (IsLookAheadAfter(Identifier, Identifier)) { // type mandatory inside a schema. Init/default value is optional
                 type = typeParser.Declaration();
             } else {
@@ -388,7 +388,7 @@ public class Parser {
             }
         }
         var id = Identifier();
-        if (parseContext != ExecutionContext.SCHEMA){
+        if (context != ExecutionContext.SCHEMA){
             if (!IsLookAhead(Equal)){
                 throw new RuntimeException("val \"" + id.string() + "\" must be initialized");
             }
@@ -399,10 +399,10 @@ public class Parser {
 
 
     /**
-     * VariableInitializer
+     * VarInitializer
      * : SIMPLE_ASSIGN Expression
      */
-    private Expression VariableInitializer() {
+    private Expression VarInitializer() {
         if (IsLookAhead(Equal, Equal_Complex)) {
             eat(Equal, Equal_Complex);
         }
@@ -487,9 +487,9 @@ public class Parser {
         eat(Schema);
         var packageIdentifier = Identifier();
 
-        parseContext = ExecutionContext.SCHEMA;
+        context = ExecutionContext.SCHEMA;
         Expression body = BlockExpression();
-        parseContext = null;
+        context = null;
         return SchemaDeclaration.of(packageIdentifier, body);
     }
 
@@ -776,7 +776,7 @@ public class Parser {
     /**
      * ResourceDeclaration
      * : resource TypeIdentifier name '{'
-     * :    VariableDeclaration
+     * :    VarDeclaration
      * : '}'
      * ;
      */
@@ -794,9 +794,9 @@ public class Parser {
         } else {
             throw ErrorSystem.error("Missing identifier when declaring: resource " + type.string());
         }
-        parseContext = ExecutionContext.RESOURCE;
+        context = ExecutionContext.RESOURCE;
         var body = BlockExpression("Expect '{' after resource name.", "Expect '}' after resource body.");
-        parseContext = null;
+        context = null;
         return ResourceExpression.resource(existing, type, name, (BlockExpression) body);
     }
 

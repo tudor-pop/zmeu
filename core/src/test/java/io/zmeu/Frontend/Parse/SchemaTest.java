@@ -1,6 +1,6 @@
 package io.zmeu.Frontend.Parse;
 
-import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
+import io.zmeu.Frontend.Parser.Expressions.VarDeclaration;
 import io.zmeu.Frontend.Parser.Literals.TypeIdentifier;
 import io.zmeu.Frontend.Parser.Program;
 import lombok.extern.log4j.Log4j2;
@@ -25,7 +25,7 @@ public class SchemaTest extends BaseTest {
                 """);
         var expected = program(
                 schema(id("square"), block(
-                        VariableDeclaration.var(id("x"), TypeIdentifier.type("Number"), number(1)))
+                        VarDeclaration.var(id("x"), TypeIdentifier.type("Number"), number(1)))
                 )
         );
         log.warn(toJson(actual));

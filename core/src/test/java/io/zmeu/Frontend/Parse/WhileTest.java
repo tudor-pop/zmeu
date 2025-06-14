@@ -2,7 +2,7 @@ package io.zmeu.Frontend.Parse;
 
 import io.zmeu.Frontend.Parser.Expressions.AssignmentExpression;
 import io.zmeu.Frontend.Parser.Expressions.BinaryExpression;
-import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
+import io.zmeu.Frontend.Parser.Expressions.VarDeclaration;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Program;
@@ -49,8 +49,8 @@ public class WhileTest extends BaseTest {
                 """);
         var expected = Program.of(
                 ForStatement.builder()
-                        .init(VariableStatement.builder()
-                                .declarations(List.of(VariableDeclaration.of(Identifier.id("i"), NumberLiteral.of(0))))
+                        .init(VarStatement.builder()
+                                .declarations(List.of(VarDeclaration.of(Identifier.id("i"), NumberLiteral.of(0))))
                                 .build())
                         .test(BinaryExpression.binary(Identifier.id("i"), NumberLiteral.of(10), "<"))
                         .update(AssignmentExpression.assign("+=", Identifier.id("i"), NumberLiteral.of(1)))

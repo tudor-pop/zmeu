@@ -90,8 +90,8 @@ public class Factory {
         return (BlockExpression) BlockExpression.block(operator);
     }
 
-    public static VariableStatement var(Identifier id, TypeIdentifier type) {
-        return (VariableStatement) VariableStatement.of(VariableDeclaration.of(id, type));
+    public static VarStatement var(Identifier id, TypeIdentifier type) {
+        return (VarStatement) VarStatement.of(VarDeclaration.of(id, type));
     }
 
     public static SchemaDeclaration schema(Identifier type, Statement statement) {

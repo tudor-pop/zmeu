@@ -23,7 +23,7 @@ public sealed interface Visitor<R>
             case MemberExpression expression -> visit(expression);
             case ThisExpression expression -> visit(expression);
             case UnaryExpression expression -> visit(expression);
-            case VariableDeclaration expression -> visit(expression);
+            case VarDeclaration expression -> visit(expression);
             case ValDeclaration expression -> visit(expression);
             case Identifier identifier -> visit(identifier);
             case Literal literal -> visit(literal);
@@ -54,7 +54,7 @@ public sealed interface Visitor<R>
             case InitStatement initStatement -> visit(initStatement);
             case ReturnStatement returnStatement -> visit(returnStatement);
             case SchemaDeclaration schemaDeclaration -> visit(schemaDeclaration);
-            case VariableStatement variableStatement -> visit(variableStatement);
+            case VarStatement varStatement -> visit(varStatement);
             case ValStatement valStatement -> visit(valStatement);
             case WhileStatement whileStatement -> visit(whileStatement);
             default -> throw new IllegalStateException("Unexpected value: " + statement);
@@ -92,7 +92,7 @@ public sealed interface Visitor<R>
 
     R visit(UnaryExpression expression);
 
-    R visit(VariableDeclaration expression);
+    R visit(VarDeclaration expression);
 
     R visit(ValDeclaration expression);
 
@@ -123,7 +123,7 @@ public sealed interface Visitor<R>
 
     R visit(ExpressionStatement statement);
 
-    R visit(VariableStatement statement);
+    R visit(VarStatement statement);
 
     R visit(ValStatement statement);
 

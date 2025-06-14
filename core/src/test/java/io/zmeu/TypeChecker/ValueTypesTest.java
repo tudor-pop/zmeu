@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
+import static io.zmeu.Frontend.Parser.Expressions.VarDeclaration.var;
 import static io.zmeu.Frontend.Parser.Factory.number;
 import static io.zmeu.Frontend.Parser.Factory.program;
 import static io.zmeu.Frontend.Parser.Literals.TypeIdentifier.id;

@@ -157,7 +157,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object visit(VariableStatement statement) {
+    public Object visit(VarStatement statement) {
         Object res = NullValue.of();
         for (var it : statement.getDeclarations()) {
             res = executeBlock(it, env);
@@ -553,7 +553,7 @@ public final class Interpreter implements Visitor<Object> {
     }
 
     @Override
-    public Object visit(VariableDeclaration expression) {
+    public Object visit(VarDeclaration expression) {
         String symbol = expression.getId().string();
         Object value = null;
         if (expression.hasInit()) {

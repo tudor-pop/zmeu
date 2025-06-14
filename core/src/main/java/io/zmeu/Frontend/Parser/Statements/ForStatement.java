@@ -27,7 +27,7 @@ public final class ForStatement extends Statement {
     private Statement body;
 
 
-    private ForStatement(Expression test, @Nullable VariableStatement init, @Nullable Statement body,
+    private ForStatement(Expression test, @Nullable VarStatement init, @Nullable Statement body,
                          @Nullable Expression update) {
         this.update = update;
         this.init = init;

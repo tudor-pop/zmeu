@@ -5,7 +5,7 @@ import io.zmeu.TypeChecker.Types.ValueType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
+import static io.zmeu.Frontend.Parser.Expressions.VarDeclaration.var;
 import static io.zmeu.Frontend.Parser.Literals.BooleanLiteral.bool;
 import static io.zmeu.Frontend.Parser.Literals.Identifier.id;
 import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;

@@ -236,8 +236,8 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void visit(VariableStatement statement) {
-        for (VariableDeclaration declaration : statement.getDeclarations()) {
+    public Void visit(VarStatement statement) {
+        for (VarDeclaration declaration : statement.getDeclarations()) {
             visit(declaration);
         }
         return null;
@@ -335,7 +335,7 @@ public final class Resolver implements Visitor<Void> {
     }
 
     @Override
-    public Void visit(VariableDeclaration declaration) {
+    public Void visit(VarDeclaration declaration) {
         declare(declaration.getId());
         if (declaration.hasInit()) {
             resolve(declaration.getInit());

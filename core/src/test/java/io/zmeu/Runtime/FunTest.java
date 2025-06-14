@@ -1,11 +1,11 @@
 package io.zmeu.Runtime;
 
-import io.zmeu.Frontend.Parser.Expressions.VariableDeclaration;
+import io.zmeu.Frontend.Parser.Expressions.VarDeclaration;
 import io.zmeu.Frontend.Parser.Literals.Identifier;
 import io.zmeu.Frontend.Parser.Literals.NumberLiteral;
 import io.zmeu.Frontend.Parser.Statements.BlockExpression;
 import io.zmeu.Frontend.Parser.Statements.ExpressionStatement;
-import io.zmeu.Frontend.Parser.Statements.VariableStatement;
+import io.zmeu.Frontend.Parser.Statements.VarStatement;
 import io.zmeu.Runtime.Values.FunValue;
 import io.zmeu.Runtime.exceptions.VarExistsException;
 import lombok.extern.log4j.Log4j2;
@@ -29,8 +29,8 @@ public class FunTest extends BaseRuntimeTest {
         var expected = FunValue.of(
                 Identifier.id("myFun"),
                 List.of(),
-                ExpressionStatement.expressionStatement(BlockExpression.block(VariableStatement.of(
-                        VariableDeclaration.of(Identifier.id("x"), NumberLiteral.of(1))))),
+                ExpressionStatement.expressionStatement(BlockExpression.block(VarStatement.of(
+                        VarDeclaration.of(Identifier.id("x"), NumberLiteral.of(1))))),
                 global
         );
         log.warn(toJson(res));
@@ -49,8 +49,8 @@ public class FunTest extends BaseRuntimeTest {
         var expected = FunValue.of(
                 Identifier.id("myFun"),
                 List.of(),
-                ExpressionStatement.expressionStatement(BlockExpression.block(VariableStatement.of(
-                                VariableDeclaration.of(Identifier.id("x"), NumberLiteral.of(1))
+                ExpressionStatement.expressionStatement(BlockExpression.block(VarStatement.of(
+                                VarDeclaration.of(Identifier.id("x"), NumberLiteral.of(1))
                         ),
                         ExpressionStatement.expressionStatement(Identifier.id("x")))),
                 global

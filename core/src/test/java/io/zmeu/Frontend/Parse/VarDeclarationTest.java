@@ -5,17 +5,17 @@ import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.zmeu.Frontend.Parser.Expressions.VariableDeclaration.var;
+import static io.zmeu.Frontend.Parser.Expressions.VarDeclaration.var;
 import static io.zmeu.Frontend.Parser.Literals.NumberLiteral.number;
 import static io.zmeu.Frontend.Parser.Program.program;
 import static io.zmeu.Frontend.Parser.Statements.BlockExpression.block;
 import static io.zmeu.Frontend.Parser.Statements.ExpressionStatement.expressionStatement;
-import static io.zmeu.Frontend.Parser.Statements.VariableStatement.statement;
+import static io.zmeu.Frontend.Parser.Statements.VarStatement.statement;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Log4j2
 @DisplayName("Parser Var")
-public class VariableDeclarationTest extends BaseTest {
+public class VarDeclarationTest extends BaseTest {
 
     @Test
     void testDeclaration() {

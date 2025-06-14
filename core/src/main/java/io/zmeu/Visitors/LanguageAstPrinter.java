@@ -59,7 +59,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(VariableDeclaration expression) {
+    public String visit(VarDeclaration expression) {
         StringBuilder var = new StringBuilder("var " + expression.getId().string());
         if (expression.hasType()) {
             var.append(" :").append(expression.getType().getType().getValue());
@@ -156,7 +156,7 @@ public non-sealed class LanguageAstPrinter implements Visitor<String> {
     }
 
     @Override
-    public String visit(VariableStatement statement) {
+    public String visit(VarStatement statement) {
         return "var " + statement.getDeclarations()
                 .stream()
                 .map(this::visit)
